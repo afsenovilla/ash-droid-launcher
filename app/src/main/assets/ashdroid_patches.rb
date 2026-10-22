@@ -7,6 +7,10 @@
 ASHDROID_KEYS = {} # __ASHDROID_KEYS__
 # System language of the device ("es", "en"…), used when the game's own language can't be read.
 ASHDROID_LANG = "en" # __ASHDROID_LANG__
+# PC patch: the same file dropped into the Windows/PC game. The launcher always
+# fills ASHDROID_KEYS, so an empty table means we are not on the device: keep the
+# keyboard texts, the window size option and the PC-only notices.
+ASHDROID_PC = ASHDROID_KEYS.empty?
 
 # Small diagnostics log (shown by the launcher under "Diagnostics")
 module AshDroidLog
@@ -232,7 +236,7 @@ module AshDroidText
     # shadow, which is hard to read: give it a dark shadow instead.
     out = out.gsub("\\c[8]", "<c3=F8F8F8,404048>") if out.include?("\\w[]") && out.include?("\\c[8]")
     SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
-    FIXES.each do |re, rep|
+    (ASHDROID_PC ? [] : FIXES).each do |re, rep|
       next unless out =~ re
       out = rep.is_a?(Proc) ? out.gsub(re) { rep.call(Regexp.last_match) } : out.gsub(re, rep)
     end
@@ -300,7 +304,7 @@ begin
 
     def self.method_added(name)
       super
-      if self == Object && name == :pbSetResizeFactor && !@__ashdroid_wrapping
+      if self == Object && name == :pbSetResizeFactor && !@__ashdroid_wrapping && !ASHDROID_PC
         # Window sizes make no sense on a handheld: always fill the screen
         # (the game's "screen size" option would otherwise shrink it to a window).
         @__ashdroid_wrapping = true
@@ -340,7 +344,7 @@ begin
         begin
           orig = instance_method(name)
           define_method(name) do |message, *args, &blk|
-            next 0 if message.is_a?(String) && message =~ AshDroidText::SKIP_MESSAGES
+            next 0 if !ASHDROID_PC && message.is_a?(String) && message =~ AshDroidText::SKIP_MESSAGES
             orig.bind(self).call(message, *args, &blk)
           end
           private name
@@ -484,7 +488,7 @@ module AshDroidFixes
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
-    "PokemonOption_Scene" => OptionsNoScreenSize,
+    "PokemonOption_Scene" => (ASHDROID_PC ? nil : OptionsNoScreenSize),
     "PokemonSaveScreen" => SaveScreenQuit,
     "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
   }

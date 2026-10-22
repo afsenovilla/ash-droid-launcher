@@ -1,0 +1,23 @@
+PARCHE "ESPAÑOL (ESPAÑA)" PARA POKÉMON FIRE ASH (PC)
+=====================================================
+
+Retraducción completa del juego al castellano de España (diálogos, menús, combates,
+objetos, movimientos, habilidades, Pokédex), con los nombres oficiales de los juegos
+y el doblaje de España, gráficos con texto redibujados en español y la intro en
+castellano. Es el mismo parche que usa Ash Droid Launcher en Android.
+
+No modifica ningún archivo del juego salvo una línea de mkxp.json (se guarda una copia
+en mkxp.json.bak). Tus partidas no se tocan.
+
+INSTALACIÓN
+1. Copia TODO el contenido de esta carpeta dentro de la carpeta del juego, donde está
+   Game.exe y mkxp.json.
+2. Ejecuta INSTALAR.bat (doble clic).
+3. Abre el juego y, en la pantalla de carga, elige el idioma "Español (España)"
+   (opción Language / Idioma).
+
+DESINSTALACIÓN
+Ejecuta DESINSTALAR.bat (o restaura mkxp.json.bak) y borra los archivos que empiezan
+por "ashdroid".
+
+Proyecto: https://github.com/afsenovilla/ash-droid-launcher
