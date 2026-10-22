@@ -228,6 +228,9 @@ module AshDroidText
     return s unless s.is_a?(String)
     out = translate(s)
     out = fix_articles(out) if out.include?("un/a") || out.include?("un(a)")
+    # Text straight on a black screen (e.g. after a defeat) uses white with a pale
+    # shadow, which is hard to read: give it a dark shadow instead.
+    out = out.gsub("\\c[8]", "<c3=F8F8F8,404048>") if out.include?("\\w[]") && out.include?("\\c[8]")
     SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
     FIXES.each do |re, rep|
       next unless out =~ re
