@@ -136,6 +136,11 @@ jobs:
           tar -C "$A" -czf out/mkxp-z-linux-x86_64.tar.gz .
           ls -la out
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mkxp-z-linux-x86_64
+          path: out/
+
       - name: Smoke test (stdlib, preload script, Steam Deck detection)
         shell: bash tools/linux/ci_step.sh smoke {0}
         run: |
@@ -149,16 +154,11 @@ jobs:
           printf '[Game]\r\nTitle=Smoke\r\nScripts=Data\\Scripts.rxdata\r\n' > "$T/game/Game.ini"
           printf '{ "preloadScript": ["ashdroid_patches.rb"], "rgssVersion": 1 }\n' > "$T/game/mkxp.json"
           cd "$T/game"
-          SteamDeck=1 SRCDIR="$T/game" LIBGL_ALWAYS_SOFTWARE=1 SDL_AUDIODRIVER=dummy \
+          SteamDeck=1 SRCDIR="$T/game" LIBGL_ALWAYS_SOFTWARE=1 SDL_AUDIODRIVER=dummy ALSOFT_DRIVERS=null \
             timeout 120 xvfb-run -a -s '-screen 0 1280x800x24' "$T/engine/mkxp-z.x86_64" || true
           cat smoke_test.log
           cat ashdroid_patch.log || true
           grep -q '^OK' smoke_test.log
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: mkxp-z-linux-x86_64
-          path: out/
 
       - name: Publish to the "linux-runtime" prerelease (used to build the PC / Steam Deck zip)
         uses: softprops/action-gh-release@v2
