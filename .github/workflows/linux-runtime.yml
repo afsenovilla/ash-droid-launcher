@@ -8,7 +8,7 @@ name: Linux runtime
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/linux-runtime.yml', 'tools/linux/**']
+    paths: ['.github/workflows/linux-runtime.yml', 'tools/linux/**', 'app/src/main/assets/ashdroid_patches.rb']
   workflow_dispatch:
 
 permissions:
@@ -43,6 +43,7 @@ jobs:
           meson --version
 
       - name: Set up sysroot (Ubuntu 16.04)
+        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh sysroot {0}
         run: |
           keyrings="$(realpath mkxp-z/keyrings)"
           cd ${{ runner.temp }}
@@ -76,6 +77,7 @@ jobs:
           restore-keys: linux-x86_64-
 
       - name: Configure
+        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh configure {0}
         working-directory: mkxp-z
         run: |
           ccache --set-config=cache_dir="$GITHUB_WORKSPACE/ccache"
@@ -104,7 +106,12 @@ jobs:
         working-directory: mkxp-z
         run: |
           code=0
-          ninja -C build || code=$?
+          ninja -C build > ${{ runner.temp }}/ninja.log 2>&1 || code=$?
+          tail -n 200 ${{ runner.temp }}/ninja.log
+          if [ "$code" != 0 ]; then
+            msg=$(grep -B2 -A12 -m3 -E "error|FAILED" ${{ runner.temp }}/ninja.log | tail -n 60 | cut -c1-300 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=build failed::$msg"
+          fi
           echo "code=$code" >> "$GITHUB_OUTPUT"
           date -u +time=%Y-%m-%dT%H:%M:%SZ >> "$GITHUB_OUTPUT"
 
@@ -116,6 +123,7 @@ jobs:
           key: linux-x86_64-${{ env.MKXPZ_REF }}-${{ steps.build.outputs.time }}
 
       - name: Package
+        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh package {0}
         run: |
           [ "${{ steps.build.outputs.code }}" = 0 ] || exit 1
           meson install -C mkxp-z/build --no-rebuild --tags mkxp-z
@@ -129,6 +137,7 @@ jobs:
           ls -la out
 
       - name: Smoke test (stdlib, preload script, Steam Deck detection)
+        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh smoke {0}
         run: |
           set -x
           T=$(mktemp -d); mkdir -p "$T/engine" "$T/game"
