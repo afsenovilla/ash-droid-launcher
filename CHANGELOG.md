@@ -7,6 +7,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
+- New game language "Español (España)" (added to Fire Ash's language list): a from-scratch Spain Spanish
+  retranslation from the English text, with Spain terminology and the Spain anime dub (Team Rocket motto).
+  Pilot so far: intro, Pallet Town, Oak's lab, Route 1, Viridian City and the core battle messages; the rest
+  falls back to the game's Spanish. Trainer names follow Spanish order and verbs agree in plural ("Jessie y
+  James del Team Rocket han sacado a Ekans").
+- Title screen "PULSA A" and Spanish ability splash order ("Presión / de Ho-Oh").
 - Spanish translation pack for Pokémon Fire Ash: ~2,270 lines the game's own Spanish translation leaves in
   English (NPC dialogue, menus, battle and bag messages), applied at runtime only when the game is set to Spanish.
 - Spanish battle command buttons (LUCHAR / MOCHILA / HUIR…), redrawn on the device from the game's own art and
