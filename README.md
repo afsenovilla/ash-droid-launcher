@@ -37,6 +37,14 @@ Save files are kept when you update the app or re-import a new version of the ga
 Edit [`devices.json`](app/src/main/assets/devices.json) and open a PR. The screen is always detected live and buttons
 are always confirmed in the wizard, so the database only provides a friendly name and hints.
 
+## PC and Steam Deck
+
+The same Spanish patch exists for the Windows version of the game (`tools/pc/`): a zip with a graphical
+installer (`Instalar parche.exe`). On the **Steam Deck** (LCD and OLED) and other Linux machines the zip
+also brings a native Linux build of mkxp-z, so no Proton is needed: `Instalar en Steam Deck.sh` (desktop
+mode) finds the game, installs the patch and adds it to Steam. The patch detects the Deck and shows its
+buttons (A, B, X, Y, L1, R1, R3…) in texts and images; ☰ opens the menu.
+
 ## Building
 
 GitHub Actions builds the APK on every push (`.github/workflows/build.yml`):

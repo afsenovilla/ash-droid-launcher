@@ -7,6 +7,50 @@
 ASHDROID_KEYS = {} # __ASHDROID_KEYS__
 # System language of the device ("es", "en"…), used when the game's own language can't be read.
 ASHDROID_LANG = "en" # __ASHDROID_LANG__
+# PC patch on a Steam Deck (the Windows game through Proton, or the native Linux
+# engine): detected here, it gets the Deck's buttons like a handheld does on Android.
+# Returns "lcd" (Jupiter), "oled" (Galileo), "deck" (Steam says so, model unknown) or nil.
+# ASHDROID_DEVICE=pc|deck|lcd|oled in the launch options overrides the detection.
+module AshDroidDeck
+  DMI = ["/sys/devices/virtual/dmi/id", "Z:/sys/devices/virtual/dmi/id"] # Linux, Wine/Proton
+
+  def self.read(name)
+    DMI.each do |dir|
+      begin
+        f = "#{dir}/#{name}"
+        return File.read(f).to_s.strip if File.exist?(f)
+      rescue StandardError
+      end
+    end
+    nil
+  end
+
+  def self.detect
+    forced = ENV["ASHDROID_DEVICE"].to_s.downcase
+    return nil if forced == "pc"
+    return forced if %w[lcd oled].include?(forced)
+    return "deck" if forced == "deck"
+    product = read("product_name").to_s
+    return "oled" if product =~ /galileo/i
+    return "lcd" if product =~ /jupiter/i
+    # Steam sets SteamDeck=1 for games started from its Deck interface (also on other
+    # SteamOS handhelds, which use the same Xbox-style button names through Steam Input)
+    return "deck" if ENV["SteamDeck"] == "1"
+    nil
+  rescue StandardError
+    nil
+  end
+end
+
+# Keyboard key the game mentions -> Steam Deck button, following mkxp-z's default
+# controller bindings (A=C, B=B, X=A, Y=X, L3=Y, R3=Z, L1=L, R1=R). START (the ☰
+# button) also opens the menu, like B. LCD and OLED have the same buttons.
+ASHDROID_DECK = ASHDROID_KEYS.empty? ? AshDroidDeck.detect : nil
+if ASHDROID_DECK
+  ASHDROID_KEYS.merge!("C" => "A", "X" => "B / START", "Z" => "X", "D" => "R3",
+                       "A" => "Y", "S" => "L3", "Q" => "L1", "W" => "R1")
+end
+
 # PC patch: the same file dropped into the Windows/PC game. The launcher always
 # fills ASHDROID_KEYS, so an empty table means we are not on the device: keep the
 # keyboard texts, the window size option and the PC-only notices.
@@ -23,7 +67,7 @@ module AshDroidLog
   rescue StandardError
   end
 end
-AshDroidLog.log("patch loaded; cwd=#{Dir.pwd rescue '?'} ruby=#{RUBY_VERSION}")
+AshDroidLog.log("patch loaded; cwd=#{Dir.pwd rescue '?'} ruby=#{RUBY_VERSION} deck=#{ASHDROID_DECK.inspect}")
 
 module AshDroidText
   BUTTON_WORD = { "Default" => "Button", "default" => "button",
@@ -189,15 +233,24 @@ module AshDroidText
     [/\bpuedes usarlas\b/i, "puedes usarla"],
     # F1 (mkxp key bindings window) doesn't exist on the device
     [/\A.*(Key Bindings window|ventana de asignación de teclas).*\z/m, lambda { |m|
-      m[0] =~ /asignaci/ ?
-        "En esta consola los botones se configuran desde Ash Droid Launcher (\"Configurar botones\")." :
-        "On this device, buttons are configured in Ash Droid Launcher (\"Configure buttons\")."
+      es = m[0] =~ /asignaci/
+      if ASHDROID_DECK
+        es ? "En la Steam Deck los botones se cambian en la configuración del mando de Steam (botón STEAM > Configuración del mando)." :
+             "On the Steam Deck, change the buttons in Steam's controller settings (STEAM button > Controller settings)."
+      else
+        es ? "En esta consola los botones se configuran desde Ash Droid Launcher (\"Configurar botones\")." :
+             "On this device, buttons are configured in Ash Droid Launcher (\"Configure buttons\")."
+      end
     }],
     # F8 screenshot: use the device's own screenshot instead
     [/\A.*(captura de pantalla\. Se guarda|Takes? a screenshot).*\z/m, lambda { |m|
-      m[0] =~ /captura/ ?
-        "Para hacer capturas usa la función de captura de pantalla de la consola." :
-        "To take screenshots, use your device's screenshot function."
+      es = m[0] =~ /captura/
+      if ASHDROID_DECK
+        es ? "Para hacer capturas pulsa STEAM + R1." : "To take screenshots, press STEAM + R1."
+      else
+        es ? "Para hacer capturas usa la función de captura de pantalla de la consola." :
+             "To take screenshots, use your device's screenshot function."
+      end
     }],
   ]
 
@@ -255,16 +308,21 @@ module AshDroidGfx
   ES = {}
   ANY = {}
   LOGGED = {}
-  INDEX = "ashdroid_art/index.txt"
+  # Android writes its own images to ashdroid_art/; the PC patch ships one set with
+  # keyboard keys (ashdroid_art/) and one with the Steam Deck's buttons (ashdroid_art_deck/).
+  DIR = ASHDROID_DECK && File.exist?("ashdroid_art_deck/index.txt") ? "ashdroid_art_deck" : "ashdroid_art"
+  INDEX = "#{DIR}/index.txt"
 
   begin
     if File.exist?(INDEX)
       File.read(INDEX).each_line do |line|
         lang, key, file = line.chomp.split("\t")
         next unless file
+        file = "#{DIR}/#{file}" unless file.include?("/") # bare file names are relative to the index
         (lang == "any" ? ANY : ES)[key] = file
       end
     end
+    AshDroidLog.log("art: #{INDEX} es=#{ES.size} any=#{ANY.size}")
   rescue StandardError
   end
 
@@ -553,4 +611,39 @@ begin
     end
   end
 rescue StandardError, NameError
+end
+
+# Steam Deck: the ☰ button (START) also works as B (open the pause menu, cancel),
+# like "B / START" on Android. mkxp-z leaves START unbound by default.
+if ASHDROID_DECK
+  module AshDroidDeck
+    def self.start?(kind)
+      return false unless defined?(Input::Controller) && Input::Controller.respond_to?(kind)
+      Input::Controller.send(kind, :START) ? true : false
+    rescue StandardError
+      false
+    end
+  end
+
+  begin
+    module Input
+      class << self
+        alias_method :__ashdroid_trigger, :trigger?
+        alias_method :__ashdroid_press, :press?
+        alias_method :__ashdroid_repeat, :repeat?
+        def trigger?(b)
+          __ashdroid_trigger(b) || (b == Input::B && AshDroidDeck.start?(:triggerex?))
+        end
+        def press?(b)
+          __ashdroid_press(b) || (b == Input::B && AshDroidDeck.start?(:pressex?))
+        end
+        def repeat?(b)
+          __ashdroid_repeat(b) || (b == Input::B && AshDroidDeck.start?(:repeatex?))
+        end
+      end
+    end
+    AshDroidLog.log("deck: START works as B")
+  rescue StandardError, NameError => e
+    AshDroidLog.log("deck: START hook failed: #{e.class}: #{e.message}")
+  end
 end

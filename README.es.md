@@ -38,6 +38,14 @@ Las partidas guardadas se conservan al actualizar la app o reimportar una versi�
 Edita [`devices.json`](app/src/main/assets/devices.json) y abre un PR. La pantalla siempre se detecta en vivo y los
 botones siempre se confirman con el asistente, así que la base de datos solo aporta nombre y pistas.
 
+## PC y Steam Deck
+
+El mismo parche en castellano existe para la versión de Windows del juego (`tools/pc/`): un zip con un
+instalador gráfico (`Instalar parche.exe`). En la **Steam Deck** (LCD y OLED) y otros Linux, el zip trae
+además el motor mkxp-z compilado para Linux, así que no hace falta Proton: `Instalar en Steam Deck.sh`
+(modo escritorio) busca el juego, instala el parche y lo añade a Steam. El parche detecta la Deck y
+muestra sus botones (A, B, X, Y, L1, R1, R3…) en textos e imágenes; ☰ abre el menú.
+
 ## Compilación
 
 GitHub Actions compila el APK en cada push (`.github/workflows/build.yml`):

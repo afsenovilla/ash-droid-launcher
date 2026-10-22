@@ -6,6 +6,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+- PC patch on the Steam Deck (LCD and OLED): the runtime patch detects the Deck (DMI model, or Steam's
+  `SteamDeck=1`; override with `ASHDROID_DEVICE=pc|deck|lcd|oled`) and, as on Android, names the Deck's
+  buttons instead of keyboard keys, uses images redrawn with them (including the controls screen) and
+  the ☰ button opens the menu like B.
+- Steam Deck / Linux package in the PC zip: native Linux build of mkxp-z (no Proton needed) and
+  "Instalar en Steam Deck.sh", which finds the game (also on the microSD), installs the patch and adds
+  the game to Steam with its artwork.
+
+### Fixed
+- PC patch: the Spanish images were not found (their index listed bare file names).
+
 ## [0.2.2] - 2026-10-22
 
 ### Added
