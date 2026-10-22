@@ -19,3 +19,5 @@ captures/
 .LSOverride
 Thumbs.db
 dist/
+__pycache__/
+*.pyc
