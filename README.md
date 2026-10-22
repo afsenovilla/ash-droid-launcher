@@ -7,7 +7,7 @@ Android launcher for **Pokémon Fire Ash** (and, in principle, other Pokémon Es
 (Retroid, AYN, Anbernic…).
 
 **This repository does not contain or distribute any game.** You need the game's original `.zip`, downloaded from
-its official source (for Fire Ash, its Discord server).
+its official source (for Fire Ash, its [Discord server](https://discord.com/invite/7EvBgnrpcU)).
 
 ## How it works
 

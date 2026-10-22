@@ -8,7 +8,7 @@ con [mkxp-z](https://github.com/mkxp-z/mkxp-z)), pensado para **consolas portát
 
 
 **Este repositorio no contiene ni distribuye ningún juego.** Necesitas el `.zip` original del juego descargado de
-su fuente oficial (en el caso de Fire Ash, su servidor de Discord).
+su fuente oficial (en el caso de Fire Ash, su [servidor de Discord](https://discord.com/invite/7EvBgnrpcU)).
 
 ## Cómo funciona
 
