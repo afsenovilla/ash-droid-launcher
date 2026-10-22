@@ -34,6 +34,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Launcher "Diagnostics" screen with the runtime patch log (translation pack, language detection, image swaps).
 
 ### Changed
+- Launcher redesigned: big Play button and a console-style settings list (rows with values and toggles,
+  D-pad focus bar); it opens instantly (config and image generation run in the background and are cached).
+- The game always fills the screen (its window-size option is removed); PC-only notices are skipped and PC
+  keys in tips (F/F7, Alt) name the device buttons; "Quit Game" shows Salir/Quit instead of Cancel;
+  items get the right Spanish article instead of "un/a"; white text on black screens is readable.
 - Battle buttons lettered with a pixel font in the game's style (light letters, dark outline).
 - Controls screen: single buttons (A, B, X, Y) are drawn as square key caps in the game's style, with a crisp
   pixel font, instead of the long USE/BACK-sized caps.
