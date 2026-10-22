@@ -237,3 +237,45 @@ begin
 rescue StandardError
   # Never break the game because of a cosmetic patch
 end
+
+# Spanish word order fixes in game classes, applied as each class is defined
+# (game scripts load after this file).
+module AshDroidFixes
+  # Battle ability splash: English draws "Ho-Oh's" over "Pressure"; with the
+  # Spanish "{1}'s" => "de {1}" that reads "de Ho-Oh / Presión". In Spanish put
+  # the ability first: "Presión / de Ho-Oh".
+  module AbilitySplashBarES
+    def refresh
+      return super unless AshDroidText.spanish?
+      self.bitmap.clear
+      return if !@battler
+      textX = (@side == 0) ? 10 : self.bitmap.width - 8
+      ability = @ability.is_a?(String) ? @ability : @battler.abilityName
+      textPos = [
+        [ability, textX, -4, @side == 1, self.class::TEXT_BASE_COLOR, self.class::TEXT_SHADOW_COLOR, true],
+        [_INTL("{1}'s", @battler.name), textX, 32, @side == 1,
+         self.class::TEXT_BASE_COLOR, self.class::TEXT_SHADOW_COLOR, true],
+      ]
+      pbDrawTextPositions(self.bitmap, textPos)
+    rescue StandardError
+      super
+    end
+  end
+
+  HOOKS = { "AbilitySplashBar" => AbilitySplashBarES }
+
+  begin
+    @tp = TracePoint.new(:end) do |tp|
+      begin
+        klass = tp.self
+        if klass.is_a?(Class) && (mod = HOOKS[klass.name]) && !klass.ancestors.include?(mod)
+          klass.prepend(mod)
+          AshDroidLog.log("fix applied: #{klass.name}")
+        end
+      rescue StandardError
+      end
+    end
+    @tp.enable
+  rescue StandardError
+  end
+end
