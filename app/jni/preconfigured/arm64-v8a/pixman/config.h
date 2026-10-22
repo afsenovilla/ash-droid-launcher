@@ -133,7 +133,7 @@
 #define TOOLCHAIN_SUPPORTS_ATTRIBUTE_CONSTRUCTOR /**/
 
 /* use ARM A64_NEON assembly optimizations */
-#define USE_ARM_A64_NEON 1
+/* #undef USE_ARM_A64_NEON */
 
 /* use ARM IWMMXT compiler intrinsics */
 /* #undef USE_ARM_IWMMXT */
