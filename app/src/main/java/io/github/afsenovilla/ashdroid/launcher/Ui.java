@@ -24,6 +24,8 @@ final class Ui
     static final int DIM = Color.rgb(0x9A, 0xA0, 0xA8);
     static final int ACCENT = Color.rgb(0xF2, 0x8C, 0x28);
     static final int SURFACE = Color.rgb(0x22, 0x26, 0x2D);
+    static final int GREEN = Color.rgb(0x2E, 0x9E, 0x4F);
+    static final int GREEN_FOCUS = Color.rgb(0x3C, 0xC2, 0x63);
 
     private final Activity mAct;
 
@@ -118,6 +120,35 @@ final class Ui
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, dp(6), dp(12), dp(6));
+        b.setLayoutParams(lp);
+        return b;
+    }
+
+    /** Big full-width green button for the main action. */
+    Button primaryButton(String label, View.OnClickListener l)
+    {
+        Button b = button(label, l);
+        b.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+        b.setTypeface(Typeface.DEFAULT_BOLD);
+        b.setTextColor(Color.WHITE);
+        b.setPadding(dp(24), dp(22), dp(24), dp(22));
+
+        GradientDrawable normal = new GradientDrawable();
+        normal.setColor(GREEN);
+        normal.setCornerRadius(dp(14));
+        GradientDrawable focused = new GradientDrawable();
+        focused.setColor(GREEN_FOCUS);
+        focused.setCornerRadius(dp(14));
+        focused.setStroke(dp(4), Color.WHITE);
+        StateListDrawable sl = new StateListDrawable();
+        sl.addState(new int[] { android.R.attr.state_focused }, focused);
+        sl.addState(new int[] { android.R.attr.state_pressed }, focused);
+        sl.addState(new int[] {}, normal);
+        b.setBackground(sl);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, dp(12), 0, dp(16));
         b.setLayoutParams(lp);
         return b;
     }

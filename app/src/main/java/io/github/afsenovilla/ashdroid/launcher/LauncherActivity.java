@@ -32,6 +32,31 @@ public class LauncherActivity extends Activity
     private DeviceProfile mDevice;
     private volatile boolean mBusy = false;
     private Button mScaleButton;
+    private Button mPlayButton;
+
+    // Auto-start: on a fresh app launch, start the game after a short countdown.
+    // Any button press or touch cancels it and stays in the menu.
+    private static final String PREFS = "ashdroid";
+    private static final String KEY_AUTOSTART = "autostart";
+    private static final int AUTOSTART_SECONDS = 3;
+    private boolean mAutostartPending = false;
+    private int mCountdown;
+    private final android.os.Handler mHandler = new android.os.Handler();
+    private final Runnable mTick = new Runnable() {
+        @Override
+        public void run()
+        {
+            if (!mAutostartPending || mPlayButton == null) return;
+            if (mCountdown <= 0) {
+                mAutostartPending = false;
+                play();
+                return;
+            }
+            mPlayButton.setText(getString(R.string.btn_play_countdown, mCountdown));
+            mCountdown--;
+            mHandler.postDelayed(this, 1000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -40,6 +65,48 @@ public class LauncherActivity extends Activity
         mUi = new Ui(this);
         mRoot = mUi.column();
         setContentView(mUi.scroll(mRoot));
+        // Only on a fresh launch from the home screen, not when returning from the game
+        mAutostartPending = savedInstanceState == null && autostartEnabled();
+    }
+
+    private boolean autostartEnabled()
+    {
+        return getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_AUTOSTART, true);
+    }
+
+    private void cancelAutostart()
+    {
+        if (!mAutostartPending) return;
+        mAutostartPending = false;
+        mHandler.removeCallbacks(mTick);
+        if (mPlayButton != null) mPlayButton.setText(R.string.btn_play);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(android.view.KeyEvent evt)
+    {
+        if (mAutostartPending && evt.getAction() == android.view.KeyEvent.ACTION_DOWN) {
+            cancelAutostart();
+            return true; // swallow the press that cancelled
+        }
+        return super.dispatchKeyEvent(evt);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(android.view.MotionEvent evt)
+    {
+        if (mAutostartPending && evt.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+            cancelAutostart();
+            return true;
+        }
+        return super.dispatchTouchEvent(evt);
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        cancelAutostart();
     }
 
     @Override
@@ -62,6 +129,7 @@ public class LauncherActivity extends Activity
     {
         mDevice = DeviceProfile.detect(this);
         mScaleButton = null;
+        mPlayButton = null;
         mRoot.removeAllViews();
         mRoot.addView(mUi.title(getString(R.string.launcher_title)));
 
@@ -88,6 +156,9 @@ public class LauncherActivity extends Activity
     {
         mRoot.addView(mUi.big(GameInstaller.gameTitle(this)));
 
+        mPlayButton = mUi.primaryButton(getString(R.string.btn_play), v -> { cancelAutostart(); play(); });
+        mRoot.addView(mPlayButton);
+
         String scaleInfo;
         try {
             ConfigWriter.Result r = ConfigWriter.write(this, mDevice);
@@ -102,17 +173,28 @@ public class LauncherActivity extends Activity
         mRoot.addView(mUi.small(controlsInfo()));
         mRoot.addView(mUi.spacer(16));
 
-        Button play = mUi.button(getString(R.string.btn_play), v -> play());
-        mRoot.addView(play);
         mRoot.addView(mUi.button(getString(R.string.btn_buttons), v ->
                 startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD)));
         mScaleButton = mUi.button(getString(R.string.btn_scale_mode, ConfigWriter.scaleMode(this).label(this)), v -> cycleScaleMode());
         mRoot.addView(mScaleButton);
+        mRoot.addView(mUi.button(getString(autostartEnabled() ? R.string.btn_autostart_on : R.string.btn_autostart_off),
+                v -> toggleAutostart()));
         mRoot.addView(mUi.button(getString(R.string.btn_reimport), v -> pickZip()));
         mRoot.addView(mUi.button(getString(R.string.btn_delete), v -> confirmDelete()));
         mRoot.addView(mUi.spacer(12));
         mRoot.addView(mUi.small(getString(R.string.saves_kept)));
-        play.requestFocus();
+        mPlayButton.requestFocus();
+
+        // Auto-start only when everything is ready (no wizard pending)
+        boolean ready = ButtonMapping.isConfigured(this) || !ButtonMapping.hasPhysicalGamepad();
+        if (mAutostartPending && ready) {
+            mCountdown = AUTOSTART_SECONDS;
+            mHandler.removeCallbacks(mTick);
+            mHandler.post(mTick);
+            mRoot.addView(mUi.small(getString(R.string.autostart_hint)), mRoot.indexOfChild(mPlayButton) + 1);
+        } else {
+            mAutostartPending = false;
+        }
     }
 
     private View deviceInfo()
@@ -158,6 +240,12 @@ public class LauncherActivity extends Activity
             return;
         }
         startActivity(new Intent(this, MainActivity.class));
+    }
+
+    private void toggleAutostart()
+    {
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_AUTOSTART, !autostartEnabled()).apply();
+        render();
     }
 
     private void cycleScaleMode()

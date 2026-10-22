@@ -8,6 +8,10 @@
     <string name="welcome_hint">Copy the .zip to the device (for example to Downloads) and press Import.</string>
     <string name="btn_import">Import game (.zip)</string>
     <string name="btn_play">▶  Play</string>
+    <string name="btn_play_countdown">▶  Play (%1$d)</string>
+    <string name="autostart_hint">Starting automatically… press any button to stay in the menu.</string>
+    <string name="btn_autostart_on">Auto-start on launch: ON</string>
+    <string name="btn_autostart_off">Auto-start on launch: OFF</string>
     <string name="btn_buttons">Configure buttons</string>
     <string name="btn_scale_mode">Display mode: %1$s</string>
     <string name="btn_reimport">Update / re-import game (.zip)</string>

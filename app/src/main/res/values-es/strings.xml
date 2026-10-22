@@ -5,6 +5,10 @@
     <string name="welcome_hint">Copia el .zip a la consola (por ejemplo a Descargas) y pulsa Importar.</string>
     <string name="btn_import">Importar juego (.zip)</string>
     <string name="btn_play">▶  Jugar</string>
+    <string name="btn_play_countdown">▶  Jugar (%1$d)</string>
+    <string name="autostart_hint">Arrancando automáticamente… pulsa cualquier botón para quedarte en el menú.</string>
+    <string name="btn_autostart_on">Arrancar el juego al abrir: SÍ</string>
+    <string name="btn_autostart_off">Arrancar el juego al abrir: NO</string>
     <string name="btn_buttons">Configurar botones</string>
     <string name="btn_scale_mode">Modo de imagen: %1$s</string>
     <string name="btn_reimport">Actualizar / reimportar juego (.zip)</string>
