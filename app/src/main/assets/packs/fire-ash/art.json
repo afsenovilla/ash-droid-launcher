@@ -1454,6 +1454,106 @@
      "height": 10
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/memo",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      2,
+      40,
+      11
+     ],
+     "text": "Cerrar",
+     "bgx": 8
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      18,
+      40,
+      11
+     ],
+     "text": "Notas",
+     "bgx": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      20,
+      110,
+      26,
+      4
+     ],
+     "text": "{ACTION}",
+     "font": "tiny",
+     "style": "plain",
+     "fills": [
+      "#ffffff",
+      "#e7e7e7",
+      "#cecece",
+      "#adadad"
+     ],
+     "height": 4,
+     "bgx": 20
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      124,
+      36,
+      13
+     ],
+     "text": "Abrir",
+     "bgx": 14
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      140,
+      36,
+      11
+     ],
+     "text": "Notas",
+     "bgx": 14
+    }
+   ]
   }
  ]
 }
