@@ -200,9 +200,34 @@ module AshDroidText
   # Spanish contractions broken by placeholders: "de el Pidgey salvaje" -> "del ..."
   SPAIN_FIXES = [[/(?<![[:alpha:]])([Dd])e el /, '\1el '], [/(?<![[:alpha:]])([Aa]) el /, '\1l ']]
 
+  # The game's Spanish writes "un/a <item>"; pick the article from the item name.
+  FEM_WORDS = %w[Ball Bici Caña MT MO DT Baya Piedra Pluma Tabla Llave Carta Medalla Gema Nota Tarjeta Bola
+                 Cinta Banda Hierba Semilla Seda Escama Garra Concha Perla Estrella Raíz Miel Leche Lupa Lente Sal Flor Def.]
+  MASC_WORDS = %w[Mapa Día Sistema Programa Planeta Tema Clima Agua Hacha Ala Alma Arma Aura Ancla Aula]
+  def self.article_for(name)
+    words = name.to_s.strip.split(/\s+/)
+    first = words.first.to_s.gsub(/[^[:alnum:]áéíóúüñÁÉÍÓÚÜÑ]/, "")
+    return "una" if words.include?("Ball") || first =~ /\A(MT|MO|DT)\d*\z/
+    return "un" if MASC_WORDS.include?(first) || first =~ /\A(Para|Busca|Quita|Saca|Corta|Lanza|Porta)[a-záéíóú]/
+    return "una" if FEM_WORDS.include?(first)
+    return "unos" if first =~ /os\z/
+    return "unas" if first =~ /as\z/ && first.size > 3
+    return "una" if first =~ /(a|ión|dad|tud|umbre|sis)\z/
+    "un"
+  rescue StandardError
+    "un"
+  end
+
+  def self.fix_articles(s)
+    s.gsub(%r{\b(un/a|un\(a\)) ((?:\\c\[\d+\])?)([^\\.!,?¡¿]+)}) do
+      "#{article_for($3)} #{$2}#{$3}"
+    end
+  end
+
   def self.fix(s)
     return s unless s.is_a?(String)
     out = translate(s)
+    out = fix_articles(out) if out.include?("un/a") || out.include?("un(a)")
     SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
     FIXES.each do |re, rep|
       next unless out =~ re
