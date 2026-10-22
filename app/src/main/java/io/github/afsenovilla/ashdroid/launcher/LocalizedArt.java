@@ -78,6 +78,18 @@ final class LocalizedArt
 
     // ------------------------------------------------------------------ core
 
+    private static int sat(int c)
+    {
+        int r = Color.red(c), g = Color.green(c), b = Color.blue(c);
+        return Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b));
+    }
+
+    private static int dist(int a, int b)
+    {
+        return Math.abs(Color.red(a) - Color.red(b)) + Math.abs(Color.green(a) - Color.green(b))
+                + Math.abs(Color.blue(a) - Color.blue(b));
+    }
+
     private static int lum(int c)
     {
         return Color.red(c) + Color.green(c) + Color.blue(c);
@@ -115,25 +127,36 @@ final class LocalizedArt
             if (label == null) continue;
             for (int col = 0; col < cols; col++) {
                 int x0 = col * cw, y0 = row * ch;
-                // Old text = dark (outline) pixels away from the button border
-                int tx0 = Integer.MAX_VALUE, tx1 = -1, ty0 = Integer.MAX_VALUE, ty1 = -1, dark = 0;
-                for (int y = y0 + 4; y < y0 + ch - 4; y++) {
+                // Old text = grey/cream lettering (unsaturated) inside the button.
+                // Button fills are saturated gradients, so saturation separates them
+                // robustly (absolute brightness varies with PNG gamma handling).
+                java.util.HashMap<Integer, Integer> grey = new java.util.HashMap<>();
+                for (int y = y0 + 4; y < y0 + ch - 4; y++)
                     for (int x = x0 + 4; x < x0 + cw - 4; x++) {
                         int px = im.getPixel(x, y);
-                        if (Color.alpha(px) > 200 && lum(px) < 200) {
-                            if (dark == 0) dark = px;
+                        if (Color.alpha(px) > 200 && sat(px) < 40) {
+                            Integer n = grey.get(px);
+                            grey.put(px, n == null ? 1 : n + 1);
+                        }
+                    }
+                int dark = 0, light = 0, darkN = 0, lightN = 0;
+                for (java.util.Map.Entry<Integer, Integer> e : grey.entrySet()) {
+                    int cc = e.getKey(), n = e.getValue();
+                    if (lum(cc) < 384) { if (n > darkN) { darkN = n; dark = cc; } }
+                    else if (n > lightN) { lightN = n; light = cc; }
+                }
+                if (dark == 0 || light == 0) continue;
+                int tx0 = Integer.MAX_VALUE, tx1 = -1, ty0 = Integer.MAX_VALUE, ty1 = -1;
+                for (int y = y0 + 4; y < y0 + ch - 4; y++)
+                    for (int x = x0 + 4; x < x0 + cw - 4; x++) {
+                        int px = im.getPixel(x, y);
+                        if (Color.alpha(px) > 200 && sat(px) < 40
+                                && (dist(px, dark) < 40 || dist(px, light) < 40)) {
                             if (x < tx0) tx0 = x; if (x > tx1) tx1 = x;
                             if (y < ty0) ty0 = y; if (y > ty1) ty1 = y;
                         }
                     }
-                }
-                if (tx1 < 0) continue;
-                int light = 0;
-                for (int y = ty0; y <= ty1; y++)
-                    for (int x = tx0; x <= tx1; x++) {
-                        int px = im.getPixel(x, y);
-                        if (light == 0 || lum(px) > lum(light)) light = px;
-                    }
+                if (tx1 < 0 || ty1 - ty0 < 4) continue;
                 // Erase it with the button's own background, row by row (keeps gradients)
                 for (int y = ty0; y <= ty1; y++) {
                     int bg = im.getPixel(x0 + 6, y);
