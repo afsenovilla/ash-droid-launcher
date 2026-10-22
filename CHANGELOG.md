@@ -6,6 +6,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+- Spanish translation pack for Pokémon Fire Ash: ~2,270 lines the game's own Spanish translation leaves in
+  English (NPC dialogue, menus, battle and bag messages), applied at runtime only when the game is set to Spanish.
+- Spanish battle command buttons (LUCHAR / MOCHILA / HUIR…), redrawn on the device from the game's own art and
+  font. Original files are untouched; the English images are used when the game is in English.
+- Translation tooling (`tools/translation`) to extract missing strings from a new game version.
+
+### Fixed
+- Controls screen hint "(Por defecto: X)" now also shows the device button.
+
 ## [0.1.0] - 2026-10-22
 
 First version that runs Pokémon Fire Ash on an Android handheld (tested on a Retroid Pocket Nova).

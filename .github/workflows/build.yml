@@ -155,6 +155,9 @@ jobs:
         working-directory: app/jni/mkxp-z
         run: bash ./make_xxd.sh > /dev/null
 
+      - name: Build translation packs
+        run: ruby tools/translation/build_pack.rb
+
       - name: Build APK
         run: ci/run.sh gradle-apk ./gradlew --no-daemon assembleRelease
 

@@ -114,6 +114,8 @@ public final class ConfigWriter
             try {
                 writeTextPatches(ctx, game);
                 writeControlsArt(ctx, game);
+                LocalizedArt.generate(game);
+                installTranslationPack(ctx, game);
                 org.json.JSONArray pre = o.optJSONArray("preloadScript");
                 org.json.JSONArray merged = new org.json.JSONArray();
                 if (pre != null) {
@@ -172,6 +174,30 @@ public final class ConfigWriter
         String lang = java.util.Locale.getDefault().getLanguage().replaceAll("[^a-zA-Z_-]", "");
         out = out.replace("ASHDROID_LANG = \"en\" # __ASHDROID_LANG__", "ASHDROID_LANG = \"" + lang + "\"");
         Util.writeText(new File(game, PATCH_FILE), out);
+    }
+
+    /**
+     * Copies the bundled Spanish translation pack for this game (if there is one)
+     * next to the runtime patch, which uses it while the game language is Spanish.
+     * Packs live in assets/packs/<id>/ashdroid_es.dat, matched by game title.
+     */
+    private static void installTranslationPack(Context ctx, File game)
+    {
+        String title = GameInstaller.gameTitle(ctx).toLowerCase(java.util.Locale.ROOT);
+        String id = title.contains("fire ash") ? "fire-ash" : null;
+        File dst = new File(game, "ashdroid_es.dat");
+        if (id == null) {
+            //noinspection ResultOfMethodCallIgnored
+            dst.delete();
+            return;
+        }
+        try (java.io.InputStream in = ctx.getAssets().open("packs/" + id + "/ashdroid_es.dat");
+             java.io.OutputStream os = new java.io.FileOutputStream(dst)) {
+            byte[] buf = new byte[1 << 16];
+            int n;
+            while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
+        } catch (IOException ignored) {
+        }
     }
 
     /** Button label currently assigned to an RGSS action (e.g. "A", "L1"), or null. */
