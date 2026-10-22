@@ -174,9 +174,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dev
-          name: Dev build (último commit de main)
+          name: Dev build (latest commit on main)
           prerelease: true
           files: dist/ash-droid-launcher-dev.apk
           body: |
-            Compilación automática del último commit de `main` (${{ github.sha }}).
-            Para versiones estables, mira las releases `v*`.
+            Automatic build of the latest commit on `main` (${{ github.sha }}).
+            Untested development build: for stable versions, see the `v*` releases.
