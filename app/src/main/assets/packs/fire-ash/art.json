@@ -1212,6 +1212,64 @@
      "shade": "#000000"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/icon_mode",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      2,
+      7,
+      26,
+      8
+     ],
+     "text": "ABC"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      32,
+      7,
+      26,
+      8
+     ],
+     "text": "abc"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      92,
+      7,
+      26,
+      8
+     ],
+     "text": "Otros"
+    }
+   ]
   }
  ]
 }

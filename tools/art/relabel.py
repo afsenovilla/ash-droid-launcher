@@ -16,7 +16,7 @@ Recipe format:
     "regions": [ { "rect": [x, y, w, h], "text": "NV" | "bitmap": ["##s", ...],
                    "font": "5x7" | ["type5", "type"], "bold": false, "spacing": 1,
                    "style": "shadow" | "outline" | "plain", "align": "left" | "center" | "right",
-                   "fill": "#rrggbb", "fills": ["#..", ...], "shade": "#rrggbb", "height": 7,
+                   "fill": "#rrggbb", "corner": "#rrggbb", "fills": ["#..", ...], "shade": "#rrggbb", "height": 7,
                    "erase": "row" | "transparent" | "none", "bgx": x, "bg": "#rrggbb",
                    "dx": 0, "dy": 0 } ] } ] }
 
@@ -185,7 +185,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
     text = r.get("text", "")
     for k, v in buttons.items():
         text = text.replace("{" + k + "}", v)
-    text = text.upper().translate(ACCENTS)
+    raw = text
     names = r.get("font", "5x7")
     names = names if isinstance(names, list) else [names]
     bold = 1 if r.get("bold") else 0
@@ -196,6 +196,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
     for fi, name in enumerate(names):
         font = fonts[name]
         blank = ["." * font["w"]] * font["h"]
+        text = "".join(pick_char(font, ch) for ch in raw)
         glyphs = [font["g"].get(ch) or blank for ch in text]
         widths = [len(g[0]) + bold for g in glyphs]
         spacing = r.get("spacing", 1)
@@ -222,7 +223,8 @@ def apply_region(cv, r, fonts, buttons, game=None):
     gx0 = ox + (1 if style == "outline" else 0)
     gy0 = oy + (1 if style == "outline" else 0)
 
-    for pass_ in (0, 1):
+    corner = hexcol(r["corner"]) if r.get("corner") else None
+    for pass_ in ((-1, 0, 1) if corner and style == "outline" else (0, 1)):
         if pass_ == 0 and (style == "plain" or not shade):
             continue
         cx = gx0
@@ -237,13 +239,27 @@ def apply_region(cv, r, fonts, buttons, game=None):
                         X, Y = cx + gx + b, gy0 + ty
                         if pass_ == 1:
                             cv.put(X, Y, col)
+                        elif pass_ == -1:  # diagonal-only outline pixels
+                            for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
+                                cv.put(X + dx, Y + dy, corner)
                         elif style == "shadow":
                             cv.put(X + 1, Y + 1, shade)
+                        elif corner:
+                            for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):
+                                cv.put(X + dx, Y + dy, shade)
                         else:
                             for dy in (-1, 0, 1):
                                 for dx in (-1, 0, 1):
                                     cv.put(X + dx, Y + dy, shade)
             cx += gw + spacing
+
+
+def pick_char(font, ch):
+    """The glyph to use for ch: itself, its uppercase, then without accent."""
+    for c in (ch, ch.upper(), ch.translate(ACCENTS), ch.translate(ACCENTS).upper()):
+        if c in font["g"]:
+            return c
+    return ch.translate(ACCENTS).upper()
 
 
 def find_image(game, path):
