@@ -165,6 +165,18 @@ module AshDroidText
       word = BUTTON_WORD[m[1]] || (m[1] =~ /^p/i ? "Botón" : "Button")
       "(#{word}: #{btn})"
     }],
+    # Fire Ash tips about PC keys: speed-up is Input::AUX2 (= R, keyboard W) and
+    # quick save Input::AUX1 (= L, keyboard Q); name the device buttons instead.
+    [/(Press|Pulsa) (the|la tecla) 'F' (or|o) 'F7'( key)?/, lambda { |m|
+      btn = ASHDROID_KEYS["W"]
+      next m[0] unless btn
+      m[1] == "Pulsa" ? "Pulsa #{btn}" : "Press #{btn}"
+    }],
+    [/(Press the left 'Alt' key|Pulsa la tecla 'Alt' izquierda)/, lambda { |m|
+      btn = ASHDROID_KEYS["Q"]
+      next m[0] unless btn
+      m[0].start_with?("Pulsa") ? "Pulsa #{btn}" : "Press #{btn}"
+    }],
     # Arrow keys -> D-pad
     [/\bthe Arrow keys\b/i, "the D-pad"],
     [/\bArrow keys\b/i, "D-pad"],
