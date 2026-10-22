@@ -182,9 +182,13 @@ module AshDroidText
     }],
   ]
 
+  # Spanish contractions broken by placeholders: "de el Pidgey salvaje" -> "del ..."
+  SPAIN_FIXES = [[/(?<![[:alpha:]])([Dd])e el /, '\1el '], [/(?<![[:alpha:]])([Aa]) el /, '\1l ']]
+
   def self.fix(s)
     return s unless s.is_a?(String)
     out = translate(s)
+    SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
     FIXES.each do |re, rep|
       next unless out =~ re
       out = rep.is_a?(Proc) ? out.gsub(re) { rep.call(Regexp.last_match) } : out.gsub(re, rep)
