@@ -6,11 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-## [0.2.1] - 2026-10-22
+## [0.2.2] - 2026-10-22
 
 ### Added
 - In-app updates: the launcher checks GitHub for a newer release and offers "Actualizar a vX"; it downloads
   and installs it over the current version (saves and settings are kept).
+
+## [0.2.1] - 2026-10-22
+
+### Added
 - "Música en castellano" includes the Spanish intro theme out of the box; every track (bundled or added) can
   be switched on or off from the launcher.
 - Español (España): the whole game retranslated and reviewed (maps, system/battle texts, trainers, places,
