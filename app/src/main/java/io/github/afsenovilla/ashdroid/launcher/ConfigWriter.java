@@ -113,6 +113,7 @@ public final class ConfigWriter
             // Runtime text patches (controls screen talks about buttons, not keys)
             try {
                 writeTextPatches(ctx, game);
+                writeControlsArt(ctx, game);
                 org.json.JSONArray pre = o.optJSONArray("preloadScript");
                 org.json.JSONArray merged = new org.json.JSONArray();
                 if (pre != null) {
@@ -169,6 +170,24 @@ public final class ConfigWriter
         rb.append("}");
         String out = tpl.replace("ASHDROID_KEYS = {} # __ASHDROID_KEYS__", rb.toString());
         Util.writeText(new File(game, PATCH_FILE), out);
+    }
+
+    /** Button label currently assigned to an RGSS action (e.g. "A", "L1"), or null. */
+    private static String labelFor(Context ctx, ButtonMapping m, String actionId)
+    {
+        for (ButtonMapping.Action a : ButtonMapping.ACTIONS) {
+            if (!a.id.equals(actionId)) continue;
+            Integer phys = m.isIdentity() ? Integer.valueOf(a.target) : m.physicalFor(a);
+            return phys == null ? null : ButtonMapping.keyName(ctx, phys);
+        }
+        return null;
+    }
+
+    private static void writeControlsArt(Context ctx, File game)
+    {
+        ButtonMapping m = ButtonMapping.load(ctx);
+        ControlsArt.generate(game, labelFor(ctx, m, "C"), labelFor(ctx, m, "B"),
+                labelFor(ctx, m, "A"), labelFor(ctx, m, "Z"));
     }
 
     private static void applyScaling(Context ctx, JSONObject o, Result r, DeviceProfile dev, ScaleMode mode) throws JSONException
