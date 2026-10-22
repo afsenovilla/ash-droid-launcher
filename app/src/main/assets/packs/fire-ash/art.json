@@ -1554,6 +1554,353 @@
      "bgx": 14
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "FICHA",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "FICHA",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "PARA",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "PARA",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "PARA",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "PARA",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GANA",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GANA",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GANA",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GANA",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "NADA",
+     "font": "dot9",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "es",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "NADA",
+     "font": "dot9",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bg",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      181,
+      25,
+      34,
+      5
+     ],
+     "text": "FICHAS"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      221,
+      25,
+      33,
+      5
+     ],
+     "text": "PREMIO"
+    }
+   ]
   }
  ]
 }
