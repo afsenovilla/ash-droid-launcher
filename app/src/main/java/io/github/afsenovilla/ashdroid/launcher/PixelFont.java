@@ -79,6 +79,42 @@ final class PixelFont
         }
     }
 
+    /** Width of a label drawn with {@link #drawOutlined} (regular weight, 1px gaps, 1px outline). */
+    static int widthOutlined(String s)
+    {
+        return s.isEmpty() ? 0 : s.length() * (W + 1) - 1 + 2;
+    }
+
+    /**
+     * Draws `s` stretched to `height` pixels tall (rows repeated evenly) with a
+     * 1px outline all around, like the lettering of Essentials' battle buttons.
+     * (x, y) is the top-left of the outline box.
+     */
+    static void drawOutlined(Bitmap b, String s, int x, int y, int height, int color, int outline)
+    {
+        int gh = Math.max(H, height);
+        for (int pass = 0; pass < 2; pass++) {
+            int cx = x + 1;
+            for (int i = 0; i < s.length(); i++) {
+                String[] g = glyph(s.charAt(i));
+                for (int ty = 0; ty < gh; ty++) {
+                    int gy = ty * H / gh;
+                    for (int gx = 0; gx < W; gx++) {
+                        if (g[gy].charAt(gx) != '#') continue;
+                        int px = cx + gx, py = y + 1 + ty;
+                        if (pass == 0) {
+                            for (int dy = -1; dy <= 1; dy++)
+                                for (int dx = -1; dx <= 1; dx++) fill(b, px + dx, py + dy, 1, outline);
+                        } else {
+                            fill(b, px, py, 1, color);
+                        }
+                    }
+                }
+                cx += W + 1;
+            }
+        }
+    }
+
     private static void fill(Bitmap b, int x, int y, int s, int c)
     {
         for (int yy = y; yy < y + s; yy++)

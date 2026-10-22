@@ -15,6 +15,8 @@
     <string name="btn_scale_mode">Modo de imagen: %1$s</string>
     <string name="btn_reimport">Actualizar / reimportar juego (.zip)</string>
     <string name="btn_delete">Borrar juego importado</string>
+    <string name="btn_diagnostics">Diagnóstico</string>
+    <string name="diag_no_log">Aún no hay registro: arranca el juego una vez y vuelve.</string>
     <string name="saves_kept">Las partidas guardadas se conservan al reimportar o actualizar el juego.</string>
     <string name="imported_game">Juego importado</string>
     <string name="display_info">Imagen: %1$dx%2$d → %3$dx%4$d · %5$s</string>

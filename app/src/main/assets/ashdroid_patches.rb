@@ -8,6 +8,19 @@ ASHDROID_KEYS = {} # __ASHDROID_KEYS__
 # System language of the device ("es", "en"…), used when the game's own language can't be read.
 ASHDROID_LANG = "en" # __ASHDROID_LANG__
 
+# Small diagnostics log (shown by the launcher under "Diagnostics")
+module AshDroidLog
+  FILE = "ashdroid_patch.log"
+  @n = 0
+  def self.log(msg)
+    return if @n > 200
+    @n += 1
+    File.open(FILE, @n == 1 ? "w" : "a") { |f| f.puts(msg.to_s) }
+  rescue StandardError
+  end
+end
+AshDroidLog.log("patch loaded; cwd=#{Dir.pwd rescue '?'} ruby=#{RUBY_VERSION}")
+
 module AshDroidText
   BUTTON_WORD = { "Default" => "Button", "default" => "button",
                   "Predeterminada" => "Botón", "Predeterminado" => "Botón",
@@ -43,9 +56,12 @@ module AshDroidText
     return @pack if defined?(@pack)
     @pack = begin
       File.exist?(PACK_FILE) ? File.open(PACK_FILE, "rb") { |f| Marshal.load(f) } : {}
-    rescue StandardError
+    rescue StandardError => e
+      AshDroidLog.log("pack load error: #{e.class}: #{e.message}")
       {}
     end
+    AshDroidLog.log("pack: exists=#{File.exist?(PACK_FILE)} entries=#{@pack.size}")
+    @pack
   end
 
   def self.norm(s)
@@ -54,9 +70,24 @@ module AshDroidText
 
   # Spanish for an untranslated source string (before {1}-style formatting), or nil
   def self.lookup(key)
-    return nil unless key.is_a?(String) && !pack.empty? && spanish?
-    pack[norm(key)]
-  rescue StandardError
+    return nil unless key.is_a?(String) && !pack.empty?
+    sp = spanish?
+    if @logged_lang != sp
+      @logged_lang = sp
+      AshDroidLog.log("spanish?=#{sp} lang=#{($PokemonSystem.language rescue 'n/a')} langs=#{(Settings::LANGUAGES.map(&:first) rescue 'n/a')}")
+    end
+    return nil unless sp
+    r = pack[norm(key)]
+    @misses = (@misses || 0)
+    if r.nil? && key =~ /[a-z]{3}/ && @misses < 25
+      @misses += 1
+      AshDroidLog.log("miss: #{key[0, 100].inspect}")
+    elsif r && (@hits = (@hits || 0) + 1) <= 5
+      AshDroidLog.log("hit: #{key[0, 60].inspect}")
+    end
+    r
+  rescue StandardError => e
+    AshDroidLog.log("lookup error: #{e.class}: #{e.message}")
     nil
   end
 
@@ -137,7 +168,9 @@ module AshDroidGfx
     return nil unless path.is_a?(String) && AshDroidText.spanish?
     key = path.tr("\\", "/").sub(/\.png\z/i, "").downcase
     alt = ES[key]
-    alt && File.exist?(alt) ? alt : nil
+    res = alt && File.exist?(alt) ? alt : nil
+    AshDroidLog.log("gfx #{key} -> #{res.inspect} (exists=#{alt && File.exist?(alt)})") if alt
+    res
   rescue StandardError
     nil
   end
@@ -166,6 +199,7 @@ begin
       super
       return unless self == Object && ASHDROID_WRAP.include?(name)
       return if @__ashdroid_wrapping
+      AshDroidLog.log("wrapping #{name}")
       @__ashdroid_wrapping = true
       begin
         orig = instance_method(name)

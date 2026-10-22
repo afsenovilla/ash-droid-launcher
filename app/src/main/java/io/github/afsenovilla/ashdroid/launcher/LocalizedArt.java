@@ -46,7 +46,7 @@ final class LocalizedArt
     private static final GridRecipe[] RECIPES = {
         new GridRecipe("Graphics/Pictures/Battle/cursor_command", "battle_cursor_command.png", 130, 46,
                 "LUCHAR", null, "MOCHILA", "HUIR", "LLAMAR", "BALL", "ROCA", "CEBO", "BALL",
-                "CANCELAR", "ÁNIMO", "CAMPO"),
+                "CANCELAR", "ANIMO", "CAMPO"),
     };
 
     private LocalizedArt() {}
@@ -140,31 +140,13 @@ final class LocalizedArt
                     for (int x = tx0; x <= tx1; x++) im.setPixel(x, y, bg);
                 }
 
-                // Font size: same cap height as the old text (minus 1px outline top+bottom)
-                int cap = ty1 - ty0 + 1 - 2;
-                Rect b = new Rect();
-                float size = 4;
-                for (; size < 64; size++) {
-                    p.setTextSize(size);
-                    p.getTextBounds("H", 0, 1, b);
-                    if (b.height() >= cap) break;
-                }
-                int maxW = cw - 12;
-                int spacing = 1;
-                while (textWidth(p, label, spacing) + 2 > maxW && (spacing > 0 || size > 4)) {
-                    if (spacing > 0) spacing = 0; else { size -= 1; p.setTextSize(size); }
-                }
-                p.getTextBounds("H", 0, 1, b);
-                int tw = textWidth(p, label, spacing);
+                // Pixel lettering in the same style: light fill, 1px dark outline,
+                // same height as the old letters, centred in the button.
+                int height = ty1 - ty0 + 1 - 2;               // letters without outline
+                int tw = PixelFont.widthOutlined(label);
                 int ox = x0 + (cw - tw) / 2;
-                int baseline = ty0 + 1 - b.top; // top of caps at ty0+1
-
-                p.setColor(dark != 0 ? dark : Color.rgb(0x40, 0x40, 0x40));
-                for (int dx = -1; dx <= 1; dx++)
-                    for (int dy = -1; dy <= 1; dy++)
-                        if (dx != 0 || dy != 0) drawSpaced(c, p, label, ox + dx, baseline + dy, spacing);
-                p.setColor(light != 0 ? light : Color.WHITE);
-                drawSpaced(c, p, label, ox, baseline, spacing);
+                PixelFont.drawOutlined(im, label, ox, ty0, height,
+                        light != 0 ? light : Color.WHITE, dark != 0 ? dark : Color.rgb(0x40, 0x40, 0x40));
             }
         }
         Bitmap out = Bitmap.createScaledBitmap(im, W * s, H * s, false);

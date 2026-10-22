@@ -18,6 +18,8 @@
     <string name="btn_scale_mode">Display mode: %1$s</string>
     <string name="btn_reimport">Update / re-import game (.zip)</string>
     <string name="btn_delete">Delete imported game</string>
+    <string name="btn_diagnostics">Diagnostics</string>
+    <string name="diag_no_log">No log yet: start the game once and come back.</string>
     <string name="saves_kept">Save files are kept when you re-import or update the game.</string>
     <string name="imported_game">Imported game</string>
     <string name="display_info">Display: %1$dx%2$d → %3$dx%4$d · %5$s</string>

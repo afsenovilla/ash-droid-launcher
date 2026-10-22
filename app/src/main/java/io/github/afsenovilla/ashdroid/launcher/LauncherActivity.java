@@ -187,6 +187,7 @@ public class LauncherActivity extends Activity
         }));
         mRoot.addView(mUi.button(getString(R.string.btn_reimport), v -> pickZip()));
         mRoot.addView(mUi.button(getString(R.string.btn_delete), v -> confirmDelete()));
+        mRoot.addView(mUi.button(getString(R.string.btn_diagnostics), v -> showDiagnostics()));
         mRoot.addView(mUi.spacer(12));
         mRoot.addView(mUi.small(getString(R.string.saves_kept)));
         mPlayButton.requestFocus();
@@ -276,6 +277,33 @@ public class LauncherActivity extends Activity
         } catch (Exception e) {
             showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
         }
+    }
+
+    /** Shows what the runtime patch reported during the last game session. */
+    private void showDiagnostics()
+    {
+        java.io.File game = GameInstaller.gameDir(this);
+        StringBuilder sb = new StringBuilder();
+        sb.append("v").append(io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME).append('\n');
+        for (String f : new String[] { "mkxp.json", "ashdroid_patches.rb", "ashdroid_es.dat",
+                "ashdroid_es/battle_cursor_command.png" }) {
+            java.io.File x = new java.io.File(game, f);
+            sb.append(f).append(": ").append(x.exists() ? x.length() + " B" : "—").append('\n');
+        }
+        sb.append("\n");
+        java.io.File log = new java.io.File(game, "ashdroid_patch.log");
+        try {
+            sb.append(log.exists() ? Util.readText(log) : getString(R.string.diag_no_log));
+        } catch (IOException e) {
+            sb.append(e.toString());
+        }
+        TextView tv = mUi.small(sb.toString());
+        tv.setTextIsSelectable(true);
+        android.widget.ScrollView sv = new android.widget.ScrollView(this);
+        sv.setPadding(32, 16, 32, 16);
+        sv.addView(tv);
+        new AlertDialog.Builder(this).setTitle(R.string.btn_diagnostics).setView(sv)
+                .setPositiveButton(R.string.ok, null).show();
     }
 
     private void confirmDelete()

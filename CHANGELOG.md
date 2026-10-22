@@ -13,7 +13,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   font. Original files are untouched; the English images are used when the game is in English.
 - Translation tooling (`tools/translation`) to extract missing strings from a new game version.
 
+- Launcher "Diagnostics" screen with the runtime patch log (translation pack, language detection, image swaps).
+
 ### Changed
+- Battle buttons lettered with a pixel font in the game's style (light letters, dark outline).
 - Controls screen: single buttons (A, B, X, Y) are drawn as square key caps in the game's style, with a crisp
   pixel font, instead of the long USE/BACK-sized caps.
 
