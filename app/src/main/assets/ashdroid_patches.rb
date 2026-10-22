@@ -51,6 +51,17 @@ if ASHDROID_DECK
                        "A" => "Y", "S" => "L3", "Q" => "L1", "W" => "R1")
 end
 
+# Native Linux engine of the Steam Deck package (ashdroid_linux/): put its Ruby standard
+# library on the load path (the Windows engine's stdlib, if the game lists it, can't load there).
+begin
+  lib = File.join(Dir.pwd, "ashdroid_linux", "stdlib")
+  if File.directory?(lib)
+    arch = Dir.glob(File.join(lib, "*-linux*")).find { |d| File.directory?(d) }
+    [arch, lib].compact.each { |d| $LOAD_PATH.unshift(d) unless $LOAD_PATH.include?(d) }
+  end
+rescue StandardError
+end
+
 # PC patch: the same file dropped into the Windows/PC game. The launcher always
 # fills ASHDROID_KEYS, so an empty table means we are not on the device: keep the
 # keyboard texts, the window size option and the PC-only notices.

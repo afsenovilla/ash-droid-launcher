@@ -145,8 +145,10 @@ jobs:
         shell: bash tools/linux/ci_step.sh smoke {0}
         run: |
           set -x
-          T=$(mktemp -d); mkdir -p "$T/engine" "$T/game"
-          tar -C "$T/engine" -xzf out/mkxp-z-linux-x86_64.tar.gz
+          # Same layout as the installer: engine in <game>/ashdroid_linux, started with SRCDIR=<game>
+          T=$(mktemp -d); mkdir -p "$T/game/ashdroid_linux"
+          tar -C "$T/game/ashdroid_linux" -xzf out/mkxp-z-linux-x86_64.tar.gz
+          ls "$T/game/ashdroid_linux" "$T/game/ashdroid_linux/stdlib" | head -40
           cp app/src/main/assets/ashdroid_patches.rb "$T/game/"
           mkdir -p "$T/game/Data"
           ruby -rzlib -e 'File.binwrite(ARGV[1], Marshal.dump([[0, "Main", Zlib::Deflate.deflate(File.read(ARGV[0]))]]))' \
@@ -155,7 +157,7 @@ jobs:
           printf '{ "preloadScript": ["ashdroid_patches.rb"], "rgssVersion": 1 }\n' > "$T/game/mkxp.json"
           cd "$T/game"
           SteamDeck=1 SRCDIR="$T/game" LIBGL_ALWAYS_SOFTWARE=1 SDL_AUDIODRIVER=dummy ALSOFT_DRIVERS=null \
-            timeout 120 xvfb-run -a -s '-screen 0 1280x800x24' "$T/engine/mkxp-z.x86_64" || true
+            timeout 120 xvfb-run -a -s '-screen 0 1280x800x24' "$T/game/ashdroid_linux/mkxp-z.x86_64" || true
           cat smoke_test.log
           cat ashdroid_patch.log || true
           grep -q '^OK' smoke_test.log
