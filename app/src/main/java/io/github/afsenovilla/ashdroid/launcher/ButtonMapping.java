@@ -157,6 +157,30 @@ public final class ButtonMapping
         return new ButtonMapping(map);
     }
 
+    /**
+     * The game receives controller buttons as keyboard keys (that's how the
+     * mkxp-z Android port feeds input; SDL's own joystick path isn't used).
+     * Converts a standard gamepad keycode to the keyboard key mkxp-z binds by
+     * default to the same RGSS input (see gamepad/GamepadConfig):
+     *   C=C  B=X  A=Z  X=A  Y=S  Z=D  L=Q  R=W
+     * START opens the menu like B. Returns 0 if the key isn't a game button.
+     */
+    public static int toKeyboard(int gamepadKeyCode)
+    {
+        switch (gamepadKeyCode) {
+            case KeyEvent.KEYCODE_BUTTON_A: return KeyEvent.KEYCODE_C;       // C: confirm
+            case KeyEvent.KEYCODE_BUTTON_B: return KeyEvent.KEYCODE_X;       // B: cancel/menu
+            case KeyEvent.KEYCODE_BUTTON_X: return KeyEvent.KEYCODE_Z;       // A: run
+            case KeyEvent.KEYCODE_BUTTON_Y: return KeyEvent.KEYCODE_A;       // X
+            case KeyEvent.KEYCODE_BUTTON_THUMBL: return KeyEvent.KEYCODE_S;  // Y
+            case KeyEvent.KEYCODE_BUTTON_THUMBR: return KeyEvent.KEYCODE_D;  // Z
+            case KeyEvent.KEYCODE_BUTTON_L1: return KeyEvent.KEYCODE_Q;      // L
+            case KeyEvent.KEYCODE_BUTTON_R1: return KeyEvent.KEYCODE_W;      // R
+            case KeyEvent.KEYCODE_BUTTON_START: return KeyEvent.KEYCODE_X;   // menu
+            default: return 0;
+        }
+    }
+
     public int translate(int keyCode)
     {
         Integer t = mMap.get(keyCode);

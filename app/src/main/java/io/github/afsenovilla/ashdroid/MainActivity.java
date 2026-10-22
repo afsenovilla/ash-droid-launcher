@@ -138,16 +138,22 @@ public class MainActivity extends SDLActivity
             }
         }
 
-        // Apply the user's button mapping to physical controller events
-        if (mMapping != null && ButtonMapping.isGamepadEvent(evt)) {
+        // Physical controller buttons: apply the user's mapping, then feed the
+        // game the keyboard key mkxp-z binds to that input. (D-pad keys fall
+        // through to the gamepad helper below, which sends arrow keys.)
+        if (mMapping != null && ButtonMapping.isGamepadEvent(evt) && !isDpadKey(code)) {
             int target = mMapping.translate(code);
             if (target == ButtonMapping.DROP) {
                 return true;
             }
-            if (target != code) {
-                evt = new KeyEvent(evt.getDownTime(), evt.getEventTime(), evt.getAction(), target,
-                        evt.getRepeatCount(), evt.getMetaState(), evt.getDeviceId(), evt.getScanCode(),
-                        evt.getFlags(), evt.getSource());
+            int kb = ButtonMapping.toKeyboard(target);
+            if (kb != 0) {
+                if (evt.getAction() == KeyEvent.ACTION_DOWN && evt.getRepeatCount() == 0) {
+                    SDLActivity.onNativeKeyDown(kb);
+                } else if (evt.getAction() == KeyEvent.ACTION_UP) {
+                    SDLActivity.onNativeKeyUp(kb);
+                }
+                return true;
             }
         }
 
@@ -155,6 +161,13 @@ public class MainActivity extends SDLActivity
             return true;
 
         return super.dispatchKeyEvent(evt);
+    }
+
+    private static boolean isDpadKey(int code)
+    {
+        return code == KeyEvent.KEYCODE_DPAD_UP || code == KeyEvent.KEYCODE_DPAD_DOWN
+                || code == KeyEvent.KEYCODE_DPAD_LEFT || code == KeyEvent.KEYCODE_DPAD_RIGHT
+                || code == KeyEvent.KEYCODE_DPAD_CENTER;
     }
 
     @Override
