@@ -412,7 +412,14 @@
      ],
      "text": "DOR",
      "font": "status",
-     "style": "plain"
+     "style": "plain",
+     "image": "assets_E/Dormido_E.png",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -423,7 +430,14 @@
      ],
      "text": "ENV",
      "font": "status",
-     "style": "plain"
+     "style": "plain",
+     "image": "assets_E/Envenenado_E.png",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -434,7 +448,14 @@
      ],
      "text": "QUE",
      "font": "status",
-     "style": "plain"
+     "style": "plain",
+     "image": "assets_E/Quemado_E.png",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -445,7 +466,14 @@
      ],
      "text": "CON",
      "font": "status",
-     "style": "plain"
+     "style": "plain",
+     "image": "assets_E/Congelado_E.png",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -456,7 +484,30 @@
      ],
      "text": "DEB",
      "font": "status",
-     "style": "plain"
+     "style": "plain",
+     "image": "assets_E/Debilitado_E.png",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      1,
+      25,
+      20,
+      6
+     ],
+     "image": "assets_E/Paralizado_E.png",
+     "imageRect": [
+      1,
+      24,
+      20,
+      8
+     ],
+     "onlyImage": true
     }
    ]
   },
@@ -474,7 +525,14 @@
      ],
      "text": "DOR",
      "font": "icon",
-     "style": "shadow"
+     "style": "shadow",
+     "image": "assets_E/Dormido_E.png",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -485,7 +543,14 @@
      ],
      "text": "ENV",
      "font": "icon",
-     "style": "shadow"
+     "style": "shadow",
+     "image": "assets_E/Envenenado_E.png",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -496,7 +561,14 @@
      ],
      "text": "QUE",
      "font": "icon",
-     "style": "shadow"
+     "style": "shadow",
+     "image": "assets_E/Quemado_E.png",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -507,7 +579,14 @@
      ],
      "text": "CON",
      "font": "icon",
-     "style": "shadow"
+     "style": "shadow",
+     "image": "assets_E/Congelado_E.png",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
     },
     {
      "rect": [
@@ -518,7 +597,30 @@
      ],
      "text": "ENV",
      "font": "icon",
-     "style": "shadow"
+     "style": "shadow",
+     "image": "assets_E/Envenenado_E.png",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      1,
+      25,
+      20,
+      6
+     ],
+     "image": "assets_E/Paralizado_E.png",
+     "imageRect": [
+      1,
+      24,
+      20,
+      8
+     ],
+     "onlyImage": true
     }
    ]
   },
