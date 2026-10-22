@@ -39,6 +39,7 @@ final class ControlsArt
     /** label: text drawn on the button for each action, e.g. "A", "L1". */
     static void generate(File game, String use, String back, String action, String special)
     {
+        Typeface font = findGameFont(game);
         File dir = findControlsDir(game);
         if (dir == null) return;
         File[] files = dir.listFiles();
@@ -64,15 +65,29 @@ final class ControlsArt
                 BitmapFactory.decodeFile(backup.getAbsolutePath(), o);
                 if (o.outWidth <= 0 || o.outHeight <= 0) continue;
 
-                Bitmap bmp = Bitmap.createBitmap(o.outWidth, o.outHeight, Bitmap.Config.ARGB_8888);
-                Canvas c = new Canvas(bmp);
-                switch (kind) {
-                    case DPAD: drawDpad(c, o.outWidth, o.outHeight); break;
-                    case USE: drawButton(c, o.outWidth, o.outHeight, use); break;
-                    case BACK: drawButton(c, o.outWidth, o.outHeight, back); break;
-                    case ACTION: drawButton(c, o.outWidth, o.outHeight, action); break;
-                    case SPECIAL: drawButton(c, o.outWidth, o.outHeight, special); break;
-                    case HIDE: default: break; // transparent
+                // Preferred: reuse the game's own key-cap art (same colours, border, font)
+                // and only replace the text. Falls back to a generic drawing.
+                Bitmap bmp = null;
+                Bitmap orig = BitmapFactory.decodeFile(backup.getAbsolutePath());
+                if (orig != null) {
+                    String label = kind == Kind.USE ? use : kind == Kind.BACK ? back
+                            : kind == Kind.ACTION ? action : kind == Kind.SPECIAL ? special : null;
+                    if (kind == Kind.DPAD) bmp = restyleAsDpad(orig);
+                    else if (label != null) bmp = relabel(orig, mainLabel(label), font);
+                    else if (kind == Kind.HIDE) bmp = null;
+                    orig.recycle();
+                }
+                if (bmp == null) {
+                    bmp = Bitmap.createBitmap(o.outWidth, o.outHeight, Bitmap.Config.ARGB_8888);
+                    Canvas c = new Canvas(bmp);
+                    switch (kind) {
+                        case DPAD: drawDpad(c, o.outWidth, o.outHeight); break;
+                        case USE: drawButton(c, o.outWidth, o.outHeight, use); break;
+                        case BACK: drawButton(c, o.outWidth, o.outHeight, back); break;
+                        case ACTION: drawButton(c, o.outWidth, o.outHeight, action); break;
+                        case SPECIAL: drawButton(c, o.outWidth, o.outHeight, special); break;
+                        case HIDE: default: break; // transparent
+                    }
                 }
                 try (OutputStream os = new FileOutputStream(f)) {
                     bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
@@ -117,6 +132,209 @@ final class ControlsArt
     {
         String r = root.getAbsolutePath(), p = f.getAbsolutePath();
         return p.startsWith(r) ? p.substring(r.length()).replaceFirst("^/", "") : f.getName();
+    }
+
+    // ------------------------------------------------- game-style key caps
+
+    private static String mainLabel(String label)
+    {
+        String main = label.split("/")[0].trim();
+        int sp = main.indexOf(' ');
+        return sp > 0 ? main.substring(0, sp) : main;
+    }
+
+    /** First .ttf/.otf in the game's Fonts folder, preferring Pokémon-style fonts. */
+    private static Typeface findGameFont(File game)
+    {
+        File fonts = Util.findChildIgnoreCase(game, "Fonts");
+        File[] list = fonts == null ? null : fonts.listFiles();
+        if (list == null) return null;
+        File best = null;
+        for (File f : list) {
+            String n = f.getName().toLowerCase(Locale.ROOT);
+            if (!(n.endsWith(".ttf") || n.endsWith(".otf"))) continue;
+            boolean preferred = n.contains("power") || n.contains("pokemon") || n.contains("pkmn");
+            if (best == null || preferred) best = f;
+            if (preferred && n.contains("clear")) { best = f; break; }
+        }
+        try {
+            return best == null ? null : Typeface.createFromFile(best);
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private static int dist(int a, int b)
+    {
+        return Math.abs(Color.red(a) - Color.red(b)) + Math.abs(Color.green(a) - Color.green(b))
+                + Math.abs(Color.blue(a) - Color.blue(b));
+    }
+
+    /** Most frequent opaque colour among px[] (optionally ignoring colours close to `exclude`). */
+    private static int modeColor(int[] px, int exclude, int minDist)
+    {
+        java.util.HashMap<Integer, Integer> count = new java.util.HashMap<>();
+        int best = 0, bestN = -1;
+        for (int c : px) {
+            if (Color.alpha(c) < 200) continue;
+            int key = c | 0xFF000000;
+            if (exclude != 0 && dist(key, exclude) < minDist) continue;
+            Integer n = count.get(key);
+            n = n == null ? 1 : n + 1;
+            count.put(key, n);
+            if (n > bestN) { bestN = n; best = key; }
+        }
+        return bestN < 0 ? 0 : best;
+    }
+
+    /**
+     * Keeps the game's key-cap (shape, colours, shadow) and replaces its text
+     * with `label`, drawn in the cap's text colour with the game's font.
+     */
+    private static Bitmap relabel(Bitmap orig, String label, Typeface font)
+    {
+        int w = orig.getWidth(), h = orig.getHeight();
+        Bitmap bmp = orig.copy(Bitmap.Config.ARGB_8888, true);
+        int[] px = new int[w * h];
+        bmp.getPixels(px, 0, w, 0, 0, w, h);
+
+        // Opaque bounding box = the key cap
+        int minX = w, minY = h, maxX = -1, maxY = -1;
+        for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) {
+            if (Color.alpha(px[y * w + x]) > 200) {
+                if (x < minX) minX = x; if (x > maxX) maxX = x;
+                if (y < minY) minY = y; if (y > maxY) maxY = y;
+            }
+        }
+        if (maxX < 0) return null;
+        int capW = maxX - minX + 1, capH = maxY - minY + 1;
+
+        int face = modeColor(px, 0, 0);
+        if (face == 0) return null;
+
+        // Inner area (skip border and bottom shadow)
+        int mx = Math.max(3, capW / 10), myTop = Math.max(3, capH / 7), myBot = Math.max(4, capH / 4);
+        int ix0 = minX + mx, ix1 = maxX - mx, iy0 = minY + myTop, iy1 = maxY - myBot;
+        if (ix1 <= ix0 || iy1 <= iy0) return null;
+
+        // Text pixels = inner pixels that differ from the face colour
+        int tMinY = h, tMaxY = -1;
+        java.util.ArrayList<Integer> textPx = new java.util.ArrayList<>();
+        for (int y = iy0; y <= iy1; y++) for (int x = ix0; x <= ix1; x++) {
+            int c = px[y * w + x];
+            if (Color.alpha(c) > 200 && dist(c, face) > 60) {
+                textPx.add(c);
+                if (y < tMinY) tMinY = y; if (y > tMaxY) tMaxY = y;
+                px[y * w + x] = face; // erase
+            }
+        }
+        int[] tp = new int[textPx.size()];
+        for (int i = 0; i < tp.length; i++) tp[i] = textPx.get(i);
+        int textColor = tp.length > 0 ? modeColor(tp, 0, 0) : Color.rgb(0x60, 0x60, 0x70);
+        int shadowColor = tp.length > 0 ? modeColor(tp, textColor, 40) : 0;
+        int textH = tMaxY >= tMinY ? (tMaxY - tMinY + 1) : (iy1 - iy0) * 2 / 3;
+        bmp.setPixels(px, 0, w, 0, 0, w, h);
+
+        // Draw the new label, pixel-crisp, centred where the old text was
+        Canvas c = new Canvas(bmp);
+        Paint t = new Paint();
+        t.setAntiAlias(false);
+        t.setTypeface(font != null ? font : Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        t.setTextAlign(Paint.Align.CENTER);
+        android.graphics.Rect b = new android.graphics.Rect();
+        float size = Math.max(6, textH);
+        for (int i = 0; i < 40; i++) {
+            t.setTextSize(size);
+            t.getTextBounds("A", 0, 1, b);
+            if (b.height() >= textH - 1 || size > h) break;
+            size += 1;
+        }
+        while (t.measureText(label) > (ix1 - ix0 + 1) && size > 6) {
+            size -= 1;
+            t.setTextSize(size);
+        }
+        t.getTextBounds(label, 0, label.length(), b);
+        float cx = (ix0 + ix1 + 1) / 2f;
+        float centerY = tMaxY >= tMinY ? (tMinY + tMaxY + 1) / 2f : (iy0 + iy1 + 1) / 2f;
+        float baseline = Math.round(centerY - b.exactCenterY());
+        if (shadowColor != 0) {
+            t.setColor(shadowColor);
+            c.drawText(label, Math.round(cx) + 1, baseline + 1, t);
+        }
+        t.setColor(textColor);
+        c.drawText(label, Math.round(cx), baseline, t);
+        return bmp;
+    }
+
+    /**
+     * Turns the arrow-keys cluster into a D-pad using the same palette as the
+     * game's key caps (face, border, arrow colour sampled from the original).
+     */
+    private static Bitmap restyleAsDpad(Bitmap orig)
+    {
+        int w = orig.getWidth(), h = orig.getHeight();
+        int[] px = new int[w * h];
+        orig.getPixels(px, 0, w, 0, 0, w, h);
+        int face = modeColor(px, 0, 0);
+        if (face == 0) return null;
+        int arrow = modeColor(px, face, 60);
+        // Border: darkest frequent opaque colour
+        int border = arrow;
+        int darkest = 765;
+        java.util.HashMap<Integer, Integer> cnt = new java.util.HashMap<>();
+        for (int c : px) if (Color.alpha(c) > 200) {
+            int k = c | 0xFF000000;
+            Integer n = cnt.get(k);
+            cnt.put(k, n == null ? 1 : n + 1);
+        }
+        for (java.util.Map.Entry<Integer, Integer> e : cnt.entrySet()) {
+            int k = e.getKey();
+            int lum = Color.red(k) + Color.green(k) + Color.blue(k);
+            if (e.getValue() > px.length / 200 && lum < darkest) { darkest = lum; border = k; }
+        }
+        if (arrow == 0) arrow = border;
+
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        int s = Math.min(w, h) - 2;
+        int arm = Math.max(5, (s / 3) | 1);
+        int half = s / 2;
+        int cx = w / 2, cy = h / 2;
+        int a2 = arm / 2;
+
+        Paint p = new Paint();
+        p.setAntiAlias(false);
+        // shadow/border
+        p.setColor(border);
+        c.drawRect(cx - a2 - 1, cy - half, cx + a2 + 2, cy + half + 2, p);
+        c.drawRect(cx - half, cy - a2 - 1, cx + half + 2, cy + a2 + 2, p);
+        // face
+        p.setColor(face);
+        c.drawRect(cx - a2, cy - half + 1, cx + a2 + 1, cy + half, p);
+        c.drawRect(cx - half + 1, cy - a2, cx + half, cy + a2 + 1, p);
+        // arrows
+        p.setColor(arrow);
+        int t = Math.max(2, arm / 4);
+        int d = half - arm / 2;
+        pixelTriangle(c, p, cx, cy - d, t, 0);
+        pixelTriangle(c, p, cx, cy + d, t, 2);
+        pixelTriangle(c, p, cx - d, cy, t, 3);
+        pixelTriangle(c, p, cx + d, cy, t, 1);
+        return bmp;
+    }
+
+    /** Pixel-art triangle made of rectangles. dir: 0 up, 1 right, 2 down, 3 left. */
+    private static void pixelTriangle(Canvas c, Paint p, int x, int y, int size, int dir)
+    {
+        for (int i = 0; i < size; i++) {
+            int len = i; // half-width of this row
+            switch (dir) {
+                case 0: c.drawRect(x - len, y - size / 2 + i, x + len + 1, y - size / 2 + i + 1, p); break;
+                case 2: c.drawRect(x - len, y + size / 2 - i, x + len + 1, y + size / 2 - i + 1, p); break;
+                case 3: c.drawRect(x - size / 2 + i, y - len, x - size / 2 + i + 1, y + len + 1, p); break;
+                case 1: default: c.drawRect(x + size / 2 - i, y - len, x + size / 2 - i + 1, y + len + 1, p); break;
+            }
+        }
     }
 
     // ---------------------------------------------------------------- drawing

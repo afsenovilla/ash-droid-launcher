@@ -169,6 +169,8 @@ public final class ConfigWriter
         }
         rb.append("}");
         String out = tpl.replace("ASHDROID_KEYS = {} # __ASHDROID_KEYS__", rb.toString());
+        String lang = java.util.Locale.getDefault().getLanguage().replaceAll("[^a-zA-Z_-]", "");
+        out = out.replace("ASHDROID_LANG = \"en\" # __ASHDROID_LANG__", "ASHDROID_LANG = \"" + lang + "\"");
         Util.writeText(new File(game, PATCH_FILE), out);
     }
 
