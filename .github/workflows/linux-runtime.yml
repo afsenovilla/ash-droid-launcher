@@ -43,7 +43,7 @@ jobs:
           meson --version
 
       - name: Set up sysroot (Ubuntu 16.04)
-        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh sysroot {0}
+        shell: bash tools/linux/ci_step.sh sysroot {0}
         run: |
           keyrings="$(realpath mkxp-z/keyrings)"
           cd ${{ runner.temp }}
@@ -77,9 +77,9 @@ jobs:
           restore-keys: linux-x86_64-
 
       - name: Configure
-        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh configure {0}
-        working-directory: mkxp-z
+        shell: bash tools/linux/ci_step.sh configure {0}
         run: |
+          cd mkxp-z
           ccache --set-config=cache_dir="$GITHUB_WORKSPACE/ccache"
           ccache --set-config=compiler_check=content
           ccache --set-config=max_size=1280MiB
@@ -123,7 +123,7 @@ jobs:
           key: linux-x86_64-${{ env.MKXPZ_REF }}-${{ steps.build.outputs.time }}
 
       - name: Package
-        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh package {0}
+        shell: bash tools/linux/ci_step.sh package {0}
         run: |
           [ "${{ steps.build.outputs.code }}" = 0 ] || exit 1
           meson install -C mkxp-z/build --no-rebuild --tags mkxp-z
@@ -137,7 +137,7 @@ jobs:
           ls -la out
 
       - name: Smoke test (stdlib, preload script, Steam Deck detection)
-        shell: bash ${{ github.workspace }}/tools/linux/ci_step.sh smoke {0}
+        shell: bash tools/linux/ci_step.sh smoke {0}
         run: |
           set -x
           T=$(mktemp -d); mkdir -p "$T/engine" "$T/game"
