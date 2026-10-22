@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # This script downloads/git clones project dependencies
 # such as libogg, SDL2, Ruby, etc.
@@ -36,15 +37,18 @@ if [[ ! -d "libiconv" ]]; then
 fi
 
 # Freedesktop uchardet
-if [[ ! -d "uchardet" ]]; then
+if [[ ! -f "uchardet/src/uchardet.cpp" ]]; then
   echo "Downloading uchardet..."
-  git clone $GIT_ARGS -b v0.0.8 https://github.com/freedesktop/uchardet uchardet
+  rm -rf uchardet
+  git clone $GIT_ARGS -b v0.0.8 https://gitlab.freedesktop.org/uchardet/uchardet.git uchardet
 fi
 
 # Freedesktop Pixman
-if [[ ! -d "pixman" ]]; then
+# (the GitHub mirror is gone; use freedesktop's GitLab)
+if [[ ! -f "pixman/pixman/pixman.c" ]]; then
   echo "Downloading Pixman..."
-  git clone $GIT_ARGS -b pixman-0.42.2 https://github.com/freedesktop/pixman pixman
+  rm -rf pixman
+  git clone $GIT_ARGS -b pixman-0.42.2 https://gitlab.freedesktop.org/pixman/pixman.git pixman
 fi
 
 # PhysicsFS
