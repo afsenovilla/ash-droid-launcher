@@ -316,6 +316,23 @@ begin
         end
         return
       end
+      if self == Object && name == :pbConfirmMessage && !@__ashdroid_wrapping
+        # Remember when the player confirmed "Quit Game": the save menu shown next
+        # then says "Exit" instead of "Cancel" (cancelling there quits the game).
+        @__ashdroid_wrapping = true
+        begin
+          orig = instance_method(name)
+          define_method(name) do |message, *args, &blk|
+            r = orig.bind(self).call(message, *args, &blk)
+            $ashdroid_quitting = true if r && message.to_s =~ /quit the game|salir del juego/i
+            r
+          end
+          private name
+        ensure
+          @__ashdroid_wrapping = false
+        end
+        return
+      end
       if self == Object && name == :pbMessage && !@__ashdroid_wrapping
         # Skip PC-only notices (e.g. "...in the Helpful Notes folder": that folder
         # is part of the PC download, not of the game on this device).
@@ -340,6 +357,9 @@ begin
         orig = instance_method(name)
         key_index = name.to_s.start_with?("_MAP") ? 1 : 0
         define_method(name) do |*args, &blk|
+          if $ashdroid_quitting && name == :_INTL && args[0] == "Cancel"
+            next AshDroidText.spanish? ? "Salir" : "Quit"
+          end
           es = AshDroidText.spain_lookup(args[key_index], args[key_index + 1])
           if es && es =~ /\A[¡¿]?\{1\}/ && args[key_index + 1].is_a?(String) &&
              args[key_index + 1] =~ /\A[a-záéíóúñ]/
@@ -412,6 +432,15 @@ module AshDroidFixes
     end
   end
 
+  # Leaving the save screen ends the "quitting" context
+  module SaveScreenQuit
+    def pbSaveScreen
+      super
+    ensure
+      $ashdroid_quitting = false
+    end
+  end
+
   # Adds "Español (España)" to the game's language list (same Spanish data file)
   def self.add_language(settings)
     langs = settings::LANGUAGES
@@ -434,6 +463,7 @@ module AshDroidFixes
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
     "PokemonOption_Scene" => OptionsNoScreenSize,
+    "PokemonSaveScreen" => SaveScreenQuit,
     "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
   }
 
