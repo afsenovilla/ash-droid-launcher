@@ -25,6 +25,8 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # tags + history for versioning and release notes
 
       - uses: actions/setup-java@v5
         with:
@@ -51,7 +53,11 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             echo "VERSION_NAME=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
           else
-            echo "VERSION_NAME=0.0.${GITHUB_RUN_NUMBER}-dev" >> "$GITHUB_ENV"
+            # Next patch after the last tag + commits since it, e.g. 0.1.1-dev.4
+            last=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || echo v0.0.0)
+            IFS=. read -r ma mi pa <<< "${last#v}"
+            n=$(git rev-list --count "${last}..HEAD" 2>/dev/null || git rev-list --count HEAD)
+            echo "VERSION_NAME=${ma}.${mi}.$((pa+1))-dev.${n}" >> "$GITHUB_ENV"
           fi
           echo "VERSION_CODE=${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
 
@@ -156,12 +162,22 @@ jobs:
           name: ash-droid-launcher-${{ env.VERSION_NAME }}
           path: dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
 
+      - name: Release notes
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            ci/release-notes.sh "${VERSION_NAME}" > dist/notes.md
+          else
+            ci/release-notes.sh dev > dist/notes.md
+          fi
+          cat dist/notes.md >> "$GITHUB_STEP_SUMMARY"
+
       - name: Publish release (tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          name: Ash Droid Launcher v${{ env.VERSION_NAME }}
           files: dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
-          generate_release_notes: true
+          body_path: dist/notes.md
 
       - name: Move "dev" tag to this commit
         if: github.ref == 'refs/heads/main'
@@ -174,9 +190,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dev
-          name: Dev build (latest commit on main)
+          name: Dev build ${{ env.VERSION_NAME }} (latest commit on main)
           prerelease: true
           files: dist/ash-droid-launcher-dev.apk
-          body: |
-            Automatic build of the latest commit on `main` (${{ github.sha }}).
-            Untested development build: for stable versions, see the `v*` releases.
+          body_path: dist/notes.md

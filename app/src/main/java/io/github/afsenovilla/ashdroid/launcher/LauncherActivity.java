@@ -132,6 +132,7 @@ public class LauncherActivity extends Activity
         mPlayButton = null;
         mRoot.removeAllViews();
         mRoot.addView(mUi.title(getString(R.string.launcher_title)));
+        mRoot.addView(mUi.small("v" + io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME));
 
         if (!GameInstaller.isInstalled(this)) {
             renderWelcome();

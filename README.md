@@ -50,6 +50,13 @@ Locally: NDK r25c, JDK 17, and the same steps as the workflow (`app/jni/get_deps
 The APK is signed with a fixed public key (see [`keystore/README.md`](keystore/README.md)) so each version installs
 over the previous one without losing data.
 
+## Versions and releases
+
+- Versions follow [Semantic Versioning](https://semver.org/); changes are listed in [CHANGELOG.md](CHANGELOG.md).
+- **Stable releases** (`vX.Y.Z` tags): release notes come from the changelog, plus the list of commits.
+- **Dev build** (`dev` prerelease): rebuilt on every push to `main`, versioned as the next patch plus the number of
+  commits since the last release (e.g. `0.1.1-dev.3`). The version is shown in the launcher.
+
 ## Credits and license
 
 - Engine: [mkxp-z](https://github.com/mkxp-z/mkxp-z) (Ancurio, Struma and contributors).
