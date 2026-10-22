@@ -11,11 +11,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   English (NPC dialogue, menus, battle and bag messages), applied at runtime only when the game is set to Spanish.
 - Spanish battle command buttons (LUCHAR / MOCHILA / HUIR…), redrawn on the device from the game's own art and
   font. Original files are untouched; the English images are used when the game is in English.
-- Spanish lettering in the rest of Fire Ash's images with English text: type labels (LUCHA, VOLAD., FUEGO…),
-  status icons (DOR, ENV, QUE, CON, DEB), "Lv." → "Nv." and "HP" → "PS" in battle, party, storage and summary
-  screens, and the Pokédex "FORMS" tab. Redrawn on the device with pixel fonts copied from the game's own icons.
-- Mega Evolution / Z-Move / Ultra Burst / Dynamax buttons show the device button instead of the keyboard
-  "ACTION" key, and the double-battle shift button reads "CAMBIO" plus the device button.
+- Spanish lettering in the rest of Fire Ash's images with English text, redrawn on the device with pixel fonts
+  taken from the game's own art: type labels (Emerald abbreviations: VOLAD., FANT., ELÉCT., PSÍQ., SINIE.),
+  status icons (DOR, ENV, QUE, CON, DEB), "Lv." → "Nv." and "HP" → "PS" (battle, party, storage, summary),
+  Pokédex "FORMAS" tab, double-battle "CAMBIO" button, trainer card title ("FICHA ENTREN."), naming screen
+  (ABC / abc / Otros, ATRÁS), Voltorb Flip memo (Abrir/Cerrar Notas) and the slot machine
+  (FICHA, PARA, GANA, NADA, FICHAS, PREMIO).
+- Official Spanish art supplied by the user: put Emerald's type and status icons in `assets_E/` inside the game
+  folder (e.g. `Tipo_lucha_E.png`, `Dormido_E.png`) and they are used instead of the redrawn ones.
+  Nothing from the games is shipped with the app.
+- Key names in game art follow the device buttons in any language: Mega Evolution / Z-Move / Ultra Burst /
+  Dynamax buttons, the shift button, the naming screen key bar and Voltorb Flip.
 - Recipe-based art engine (`assets/packs/<game>/art.json`, `assets/pixelfonts.txt`) with a PC preview tool
   (`tools/art/relabel.py`) to add more images without touching code.
 - Translation tooling (`tools/translation`) to extract missing strings from a new game version.
