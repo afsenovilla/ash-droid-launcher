@@ -191,8 +191,12 @@ final class ControlsArt
      * Keeps the game's key-cap (shape, colours, shadow) and replaces its text
      * with `label`, drawn in the cap's text colour with the game's font.
      */
-    private static Bitmap relabel(Bitmap orig, String label, Typeface font)
+    private static Bitmap relabel(Bitmap full, String label, Typeface font)
     {
+        // Work at the art's native pixel size (Essentials art is often drawn with 2x2 pixels)
+        int scale = LocalizedArt.pixelScale(full);
+        Bitmap orig = scale == 1 ? full
+                : Bitmap.createScaledBitmap(full, full.getWidth() / scale, full.getHeight() / scale, false);
         int w = orig.getWidth(), h = orig.getHeight();
         Bitmap bmp = orig.copy(Bitmap.Config.ARGB_8888, true);
         int[] px = new int[w * h];
@@ -213,7 +217,8 @@ final class ControlsArt
         if (face == 0) return null;
 
         // Inner area (skip border and bottom shadow)
-        int mx = Math.max(3, capW / 10), myTop = Math.max(3, capH / 7), myBot = Math.max(4, capH / 4);
+        // Inside the border (2px) on the sides; skip the top highlight and bottom shadow
+        int mx = 2, myTop = Math.max(3, capH / 7), myBot = Math.max(4, capH / 4);
         int ix0 = minX + mx, ix1 = maxX - mx, iy0 = minY + myTop, iy1 = maxY - myBot;
         if (ix1 <= ix0 || iy1 <= iy0) return null;
 
@@ -235,35 +240,42 @@ final class ControlsArt
         int textH = tMaxY >= tMinY ? (tMaxY - tMinY + 1) : (iy1 - iy0) * 2 / 3;
         bmp.setPixels(px, 0, w, 0, 0, w, h);
 
-        // Draw the new label, pixel-crisp, centred where the old text was
-        Canvas c = new Canvas(bmp);
-        Paint t = new Paint();
-        t.setAntiAlias(false);
-        t.setTypeface(font != null ? font : Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
-        t.setTextAlign(Paint.Align.CENTER);
-        android.graphics.Rect b = new android.graphics.Rect();
-        float size = Math.max(6, textH);
-        for (int i = 0; i < 40; i++) {
-            t.setTextSize(size);
-            t.getTextBounds("A", 0, 1, b);
-            if (b.height() >= textH - 1 || size > h) break;
-            size += 1;
+        // Single buttons (A, B, X, Y…) get a square key cap: keep the cap's left and
+        // right ends (rounded corners, border, shadow) and drop the middle.
+        if (label.length() <= 2 && capW > capH + 2) {
+            int newW = Math.max(capH, 8);
+            int half = newW / 2;
+            int dstX0 = minX + (capW - newW) / 2;
+            Bitmap sq = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            int[] col = new int[h];
+            for (int i = 0; i < newW; i++) {
+                int srcX = i < half ? minX + i : maxX - (newW - 1 - i);
+                bmp.getPixels(col, 0, 1, srcX, 0, 1, h);
+                sq.setPixels(col, 0, 1, dstX0 + i, 0, 1, h);
+            }
+            bmp.recycle();
+            bmp = sq;
+            int m = ix0 - minX;
+            ix0 = dstX0 + m;
+            ix1 = dstX0 + newW - 1 - m;
         }
-        while (t.measureText(label) > (ix1 - ix0 + 1) && size > 6) {
-            size -= 1;
-            t.setTextSize(size);
-        }
-        t.getTextBounds(label, 0, label.length(), b);
-        float cx = (ix0 + ix1 + 1) / 2f;
-        float centerY = tMaxY >= tMinY ? (tMinY + tMaxY + 1) / 2f : (iy0 + iy1 + 1) / 2f;
-        float baseline = Math.round(centerY - b.exactCenterY());
-        if (shadowColor != 0) {
-            t.setColor(shadowColor);
-            c.drawText(label, Math.round(cx) + 1, baseline + 1, t);
-        }
-        t.setColor(textColor);
-        c.drawText(label, Math.round(cx), baseline, t);
-        return bmp;
+
+        // Draw the new label with the 5x7 pixel font (crisp at this size), centred
+        // where the old text was, in the key's own text and shadow colours.
+        String txt = label.toUpperCase(Locale.ROOT);
+        int availW = ix1 - ix0 + 1;
+        int ps = Math.max(1, Math.min((textH + 1) / (PixelFont.H + 1), (availW - 4) / Math.max(1, PixelFont.width(txt, 1))));
+        if (PixelFont.width(txt, ps) > availW) ps = 1;
+        int tw = PixelFont.width(txt, ps), th = PixelFont.H * ps;
+        int centerY = tMaxY >= tMinY ? (tMinY + tMaxY + 1) / 2 : (iy0 + iy1 + 1) / 2;
+        int tx = ix0 + (availW - tw) / 2;
+        int ty = centerY - th / 2 - (shadowColor != 0 ? 0 : 0);
+        PixelFont.draw(bmp, txt, tx, ty, ps, textColor, shadowColor);
+        if (scale == 1) return bmp;
+        Bitmap up = Bitmap.createScaledBitmap(bmp, w * scale, h * scale, false);
+        bmp.recycle();
+        if (orig != full) orig.recycle();
+        return up;
     }
 
     /**

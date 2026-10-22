@@ -13,6 +13,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   font. Original files are untouched; the English images are used when the game is in English.
 - Translation tooling (`tools/translation`) to extract missing strings from a new game version.
 
+### Changed
+- Controls screen: single buttons (A, B, X, Y) are drawn as square key caps in the game's style, with a crisp
+  pixel font, instead of the long USE/BACK-sized caps.
+
 ### Fixed
 - Controls screen hint "(Por defecto: X)" now also shows the device button.
 

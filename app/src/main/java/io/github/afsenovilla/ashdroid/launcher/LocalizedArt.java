@@ -84,7 +84,7 @@ final class LocalizedArt
     }
 
     /** 2 if the art is drawn with 2x2 "big pixels" (common in Essentials), else 1. */
-    private static int pixelScale(Bitmap b)
+    static int pixelScale(Bitmap b)
     {
         int w = b.getWidth(), h = b.getHeight();
         if (w % 2 != 0 || h % 2 != 0) return 1;
