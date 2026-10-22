@@ -68,8 +68,8 @@ Each release (`vX.Y.Z` tag) has three downloads:
 | Windows | `FireAsh-Espanol-Espana-Windows-X.Y.Z.zip` |
 | Steam Deck / Linux | `FireAsh-Espanol-Espana-SteamDeck-Linux-X.Y.Z.zip` |
 
-To release: add a `## [X.Y.Z]` section to the changelog and push the tag `vX.Y.Z` (or run the "Build APK"
-workflow with that version). Pushes to `main` are only built, never published.
+To release: add a `## [X.Y.Z]` section at the top of the changelog and push it to `main`; the workflow
+tags `vX.Y.Z` and publishes the release. Any other push to `main` is only built, never published.
 
 ## Credits and license
 

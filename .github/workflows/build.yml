@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       release:
-        description: 'Publish a stable release with this version (e.g. 0.2.0). Needs a "## [x.y.z]" section in CHANGELOG.md. Leave empty to only build (nothing is published). Pushing a vX.Y.Z tag does the same as this.'
+        description: 'Publish a stable release with this version (e.g. 0.2.0). Needs a "## [x.y.z]" section in CHANGELOG.md. Leave empty to only build. A push to main whose CHANGELOG.md has a new "## [X.Y.Z]" section (no vX.Y.Z tag yet) also releases X.Y.Z.'
         required: false
         default: ''
 
@@ -72,6 +72,13 @@ jobs:
           elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             echo "VERSION_NAME=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
             echo "RELEASE=true" >> "$GITHUB_ENV"
+          elif [ "$GITHUB_EVENT_NAME" = push ] && [ "$GITHUB_REF" = refs/heads/main ] && \
+               top=$(grep -m1 -oP '^## \[\K[0-9]+\.[0-9]+\.[0-9]+(?=\])' CHANGELOG.md) && \
+               ! git rev-parse -q --verify "refs/tags/v$top" >/dev/null; then
+            # A new "## [X.Y.Z]" section at the top of the changelog on main = release X.Y.Z
+            echo "VERSION_NAME=$top" >> "$GITHUB_ENV"
+            echo "RELEASE=true" >> "$GITHUB_ENV"
+            git tag "v$top"
           else
             # Not a release (push to main / PR): only built, never published. Next patch after
             # the last tag + commits since it, e.g. 0.1.1-build.4
