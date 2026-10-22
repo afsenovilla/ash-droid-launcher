@@ -2,7 +2,7 @@
 // Format: '@font <name> <width> <height>' then per glyph: a line 'char:<c>' followed by <height> rows ('#' = ink).
 // Glyphs taller than <height> (accented capitals) have their extra rows drawn above the line.
 // Glyphs may be narrower than <width> (proportional fonts): a glyph's width is the length of its rows.
-// 'cmd' follows the battle command buttons; 'dot9'/'dot5' follow the slot machine's lamp lettering; 'memo' follows Voltorb Flip's memo button; 'card' follows the trainer card title; 'tiny' follows the naming screen's key labels; 'bold8' follows the Pokédex tabs / SHIFT button lettering; 'type5' (short words) and 'type' (long words), 'status' and 'icon' follow the lettering of Essentials' type, status and battle status icons.
+// 'wide' follows the title screen prompt; 'cmd' follows the battle command buttons; 'dot9'/'dot5' follow the slot machine's lamp lettering; 'memo' follows Voltorb Flip's memo button; 'card' follows the trainer card title; 'tiny' follows the naming screen's key labels; 'bold8' follows the Pokédex tabs / SHIFT button lettering; 'type5' (short words) and 'type' (long words), 'status' and 'icon' follow the lettering of Essentials' type, status and battle status icons.
 // Fonts may have lowercase glyphs ('naming'); missing ones fall back to uppercase, then to the plain letter without accent.
 @font 5x7 5 7
 char:-
@@ -2028,6 +2028,98 @@ char:U
 #...#
 #...#
 .###.
+
+@font wide 7 5
+char:A
+#######
+##...##
+#######
+##...##
+##...##
+char:B
+######.
+##...##
+######.
+##...##
+######.
+char:E
+#######
+##.....
+######.
+##.....
+#######
+char:L
+##.....
+##.....
+##.....
+##.....
+#######
+char:N
+###..##
+####.##
+##.####
+##..###
+##...##
+char:P
+#######
+##...##
+##...##
+#######
+##.....
+char:R
+######.
+##...##
+##.###.
+##..###
+##...##
+char:S
+#######
+##.....
+#######
+.....##
+#######
+char:T
+########
+...##...
+...##...
+...##...
+...##...
+char:U
+##...##
+##...##
+##...##
+##...##
+#######
+char:X
+##...##
+.##.##.
+..###..
+.##.##.
+##...##
+char:Y
+##...##
+.##.##.
+..###..
+...##..
+...##..
+char:1
+..##...
+.###...
+..##...
+..##...
+.####..
+char:2
+#######
+.....##
+#######
+##.....
+#######
+char: 
+.....
+.....
+.....
+.....
+.....
 
 @font status 4 6
 char:A

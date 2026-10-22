@@ -2142,6 +2142,60 @@
      "text": "PREMIO"
     }
    ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "PRESS {USE}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "PULSA {USE}"
+    }
+   ]
   }
  ]
 }
