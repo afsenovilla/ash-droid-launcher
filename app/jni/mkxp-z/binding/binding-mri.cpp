@@ -283,6 +283,16 @@ static void mriBindingInit()
 	rb_str_freeze(vers);
 	rb_define_const(mod, "VERSION", vers);
 
+	// Load Zlib like upstream mkxp-z does: RGSS1 had it built in and
+	// Essentials (PluginManager) uses it without require. (ash-droid-launcher)
+	{
+		int zstate;
+		rb_eval_string_protect("require('zlib') if !Kernel.const_defined?(:Zlib)", &zstate);
+		if (zstate) {
+			Debug() << "Could not load Zlib (Ruby built without static zlib extension?)";
+		}
+	}
+
 	// Set $stdout and its ilk accordingly on Windows
 	// I regret teaching you that word
 #ifdef __WIN32__
