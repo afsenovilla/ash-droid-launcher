@@ -86,6 +86,7 @@ final class Ui
     TextView body(String s) { return text(s, 16, FG, false); }
     TextView small(String s) { return text(s, 13, DIM, false); }
     TextView accent(String s) { return text(s, 16, ACCENT, true); }
+    TextView highlight(String s) { return text(s, 20, ACCENT, true); }
 
     Button button(String label, View.OnClickListener l)
     {

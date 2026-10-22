@@ -70,8 +70,6 @@
     <string name="wizard_defaults">Use default mapping</string>
     <string name="wizard_step">Step %1$d of %2$d</string>
     <string name="wizard_press">Press the button for: %1$s</string>
-    <string name="wizard_hint_nintendo">On your device this is usually the A button (the right one).</string>
-    <string name="wizard_hint_xbox">On your device this is usually the A button (the bottom one).</string>
     <string name="wizard_no_dpad">The D-pad and sticks already move the character: use another button.</string>
     <string name="wizard_taken">%1$s is already assigned to %2$s. Choose another one (or SELECT to go back).</string>
     <string name="wizard_skipped">Step skipped</string>
@@ -97,4 +95,24 @@
     <string name="action_y_hint">Page down in menus</string>
     <string name="key_l3">L3 (left stick)</string>
     <string name="key_r3">R3 (right stick)</string>
+
+    <!-- Suggested button per action. _n = Nintendo-style labels (A right), _x = Xbox-style (A bottom), _g = unknown layout -->
+    <string name="wizard_suggested">Suggested: %1$s</string>
+    <string name="wizard_not_sure">Not sure? Just press the suggested button.</string>
+    <string name="sug_c_n">A (right face button)</string>
+    <string name="sug_c_x">A (bottom face button)</string>
+    <string name="sug_c_g">A</string>
+    <string name="sug_b_n">B (bottom face button)</string>
+    <string name="sug_b_x">B (right face button)</string>
+    <string name="sug_b_g">B</string>
+    <string name="sug_a_n">Y (left face button)</string>
+    <string name="sug_a_x">X (left face button)</string>
+    <string name="sug_a_g">the left face button</string>
+    <string name="sug_r">R1 (right shoulder)</string>
+    <string name="sug_l">L1 (left shoulder)</string>
+    <string name="sug_z_n">X (top face button)</string>
+    <string name="sug_z_x">Y (top face button)</string>
+    <string name="sug_z_g">the top face button</string>
+    <string name="sug_x">L2 (left trigger)</string>
+    <string name="sug_y">R2 (right trigger)</string>
 </resources>

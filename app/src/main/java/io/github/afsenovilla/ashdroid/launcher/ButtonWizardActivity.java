@@ -26,7 +26,7 @@ public class ButtonWizardActivity extends Activity
     private int mStep = 0;
     private boolean mDone = false;
 
-    private TextView mStepView, mTitleView, mHintView, mFeedbackView, mSummaryView;
+    private TextView mStepView, mTitleView, mSuggestView, mHintView, mFeedbackView, mSummaryView;
     private DeviceProfile mDevice;
     private final Handler mHandler = new Handler();
 
@@ -46,17 +46,20 @@ public class ButtonWizardActivity extends Activity
 
         mStepView = ui.small("");
         mTitleView = ui.big("");
+        mSuggestView = ui.highlight("");
         mHintView = ui.body("");
         mFeedbackView = ui.accent("");
         mSummaryView = ui.body("");
         root.addView(ui.spacer(24));
         root.addView(mStepView);
         root.addView(mTitleView);
+        root.addView(mSuggestView);
         root.addView(mHintView);
         root.addView(ui.spacer(12));
         root.addView(mFeedbackView);
         root.addView(mSummaryView);
         root.addView(ui.spacer(24));
+        root.addView(ui.small(getString(R.string.wizard_not_sure)));
         root.addView(ui.small(getString(R.string.wizard_footer)));
 
         LinearLayout row = ui.row();
@@ -79,12 +82,8 @@ public class ButtonWizardActivity extends Activity
         ButtonMapping.Action a = ButtonMapping.ACTIONS[mStep];
         mStepView.setText(getString(R.string.wizard_step, mStep + 1, ButtonMapping.ACTIONS.length));
         mTitleView.setText(getString(R.string.wizard_press, a.label(this)));
-        String hint = a.hint(this);
-        if ("C".equals(a.id) && mDevice.faceLayout != null) {
-            hint += "\n" + getString("nintendo".equals(mDevice.faceLayout)
-                    ? R.string.wizard_hint_nintendo : R.string.wizard_hint_xbox);
-        }
-        mHintView.setText(hint);
+        mSuggestView.setText(getString(R.string.wizard_suggested, a.suggestion(this, mDevice.faceLayout)));
+        mHintView.setText(a.hint(this));
         mSummaryView.setText(summary());
     }
 
@@ -175,6 +174,7 @@ public class ButtonWizardActivity extends Activity
         mDone = true;
         mapping.save(this);
         mStepView.setText("");
+        mSuggestView.setText("");
         mTitleView.setText(getString(R.string.wizard_done));
         mHintView.setText(mapping.isIdentity() ? getString(R.string.wizard_done_default) : summary());
         mFeedbackView.setText("");

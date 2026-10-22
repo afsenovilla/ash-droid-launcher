@@ -65,8 +65,6 @@
     <string name="wizard_defaults">Usar mapeo por defecto</string>
     <string name="wizard_step">Paso %1$d de %2$d</string>
     <string name="wizard_press">Pulsa el botón para: %1$s</string>
-    <string name="wizard_hint_nintendo">En tu consola suele ser el botón A (el de la derecha).</string>
-    <string name="wizard_hint_xbox">En tu consola suele ser el botón A (el de abajo).</string>
     <string name="wizard_no_dpad">La cruceta y los sticks ya mueven al personaje: usa otro botón.</string>
     <string name="wizard_taken">%1$s ya está asignado a %2$s. Elige otro (o SELECT para volver).</string>
     <string name="wizard_skipped">Paso omitido</string>
@@ -92,4 +90,24 @@
     <string name="action_y_hint">Página abajo en menús</string>
     <string name="key_l3">L3 (stick izq.)</string>
     <string name="key_r3">R3 (stick der.)</string>
+
+    <!-- Botón sugerido por acción -->
+    <string name="wizard_suggested">Sugerido: %1$s</string>
+    <string name="wizard_not_sure">¿No sabes cuál? Pulsa el sugerido.</string>
+    <string name="sug_c_n">A (botón de la derecha)</string>
+    <string name="sug_c_x">A (botón de abajo)</string>
+    <string name="sug_c_g">A</string>
+    <string name="sug_b_n">B (botón de abajo)</string>
+    <string name="sug_b_x">B (botón de la derecha)</string>
+    <string name="sug_b_g">B</string>
+    <string name="sug_a_n">Y (botón de la izquierda)</string>
+    <string name="sug_a_x">X (botón de la izquierda)</string>
+    <string name="sug_a_g">el botón de la izquierda</string>
+    <string name="sug_r">R1 (gatillo superior derecho)</string>
+    <string name="sug_l">L1 (gatillo superior izquierdo)</string>
+    <string name="sug_z_n">X (botón de arriba)</string>
+    <string name="sug_z_x">Y (botón de arriba)</string>
+    <string name="sug_z_g">el botón de arriba</string>
+    <string name="sug_x">L2 (gatillo inferior izquierdo)</string>
+    <string name="sug_y">R2 (gatillo inferior derecho)</string>
 </resources>

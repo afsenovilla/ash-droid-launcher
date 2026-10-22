@@ -41,30 +41,50 @@ public final class ButtonMapping
         private final int labelRes;
         private final int hintRes;
         public final int target;
+        // Suggested physical button for Nintendo-style, Xbox-style and unknown layouts
+        private final int sugN, sugX, sugG;
 
-        Action(String id, int labelRes, int hintRes, int target)
+        Action(String id, int labelRes, int hintRes, int target, int sugN, int sugX, int sugG)
         {
             this.id = id;
             this.labelRes = labelRes;
             this.hintRes = hintRes;
             this.target = target;
+            this.sugN = sugN;
+            this.sugX = sugX;
+            this.sugG = sugG;
         }
 
         public String label(Context ctx) { return ctx.getString(labelRes); }
 
         public String hint(Context ctx) { return ctx.getString(hintRes); }
+
+        /** @param faceLayout "nintendo", "xbox" or null (unknown device) */
+        public String suggestion(Context ctx, String faceLayout)
+        {
+            int res = "nintendo".equals(faceLayout) ? sugN : "xbox".equals(faceLayout) ? sugX : sugG;
+            return ctx.getString(res);
+        }
     }
 
     /** Actions in the order the wizard asks them. Labels follow Pokémon Essentials v19. */
     public static final Action[] ACTIONS = {
-        new Action("C", R.string.action_c, R.string.action_c_hint, KeyEvent.KEYCODE_BUTTON_A),
-        new Action("B", R.string.action_b, R.string.action_b_hint, KeyEvent.KEYCODE_BUTTON_B),
-        new Action("A", R.string.action_a, R.string.action_a_hint, KeyEvent.KEYCODE_BUTTON_X),
-        new Action("R", R.string.action_r, R.string.action_r_hint, KeyEvent.KEYCODE_BUTTON_R1),
-        new Action("L", R.string.action_l, R.string.action_l_hint, KeyEvent.KEYCODE_BUTTON_L1),
-        new Action("Z", R.string.action_z, R.string.action_z_hint, KeyEvent.KEYCODE_BUTTON_THUMBR),
-        new Action("X", R.string.action_x, R.string.action_x_hint, KeyEvent.KEYCODE_BUTTON_Y),
-        new Action("Y", R.string.action_y, R.string.action_y_hint, KeyEvent.KEYCODE_BUTTON_THUMBL),
+        new Action("C", R.string.action_c, R.string.action_c_hint, KeyEvent.KEYCODE_BUTTON_A,
+                R.string.sug_c_n, R.string.sug_c_x, R.string.sug_c_g),
+        new Action("B", R.string.action_b, R.string.action_b_hint, KeyEvent.KEYCODE_BUTTON_B,
+                R.string.sug_b_n, R.string.sug_b_x, R.string.sug_b_g),
+        new Action("A", R.string.action_a, R.string.action_a_hint, KeyEvent.KEYCODE_BUTTON_X,
+                R.string.sug_a_n, R.string.sug_a_x, R.string.sug_a_g),
+        new Action("R", R.string.action_r, R.string.action_r_hint, KeyEvent.KEYCODE_BUTTON_R1,
+                R.string.sug_r, R.string.sug_r, R.string.sug_r),
+        new Action("L", R.string.action_l, R.string.action_l_hint, KeyEvent.KEYCODE_BUTTON_L1,
+                R.string.sug_l, R.string.sug_l, R.string.sug_l),
+        new Action("Z", R.string.action_z, R.string.action_z_hint, KeyEvent.KEYCODE_BUTTON_THUMBR,
+                R.string.sug_z_n, R.string.sug_z_x, R.string.sug_z_g),
+        new Action("X", R.string.action_x, R.string.action_x_hint, KeyEvent.KEYCODE_BUTTON_Y,
+                R.string.sug_x, R.string.sug_x, R.string.sug_x),
+        new Action("Y", R.string.action_y, R.string.action_y_hint, KeyEvent.KEYCODE_BUTTON_THUMBL,
+                R.string.sug_y, R.string.sug_y, R.string.sug_y),
     };
 
     private final Map<Integer, Integer> mMap;
