@@ -126,9 +126,9 @@
     <string name="tile_buttons_default">Por defecto</string>
     <string name="tile_buttons_unset">Sin configurar</string>
     <string name="tile_display">Imagen</string>
-    <string name="tile_autostart">Arranque auto.</string>
-    <string name="tile_touch">Táctiles</string>
-    <string name="tile_reimport">Reimportar</string>
+    <string name="tile_autostart">Arranque automático</string>
+    <string name="tile_touch">Controles táctiles</string>
+    <string name="tile_reimport">Reimportar .zip</string>
     <string name="tile_reimport_value">Conserva partidas</string>
     <string name="tile_diagnostics">Diagnóstico</string>
     <string name="tile_diagnostics_value">Registro del parche</string>
@@ -138,4 +138,5 @@
     <string name="off">No</string>
     <string name="preparing">Preparando…</string>
     <string name="settings">Ajustes</string>
+    <string name="game_section">Juego</string>
 </resources>

@@ -214,6 +214,94 @@ final class Ui
         return r;
     }
 
+    static final int LIST_BG = Color.rgb(0x1F, 0x23, 0x29);
+    static final int LIST_FOCUS = Color.rgb(0x2C, 0x32, 0x3B);
+    static final int LIST_LINE = Color.rgb(0x2A, 0x2F, 0x37);
+    static final int DANGER = Color.rgb(0xFF, 0x6B, 0x5E);
+
+    /** Rounded group of settings rows (console-style list). */
+    LinearLayout group()
+    {
+        LinearLayout g = new LinearLayout(mAct);
+        g.setOrientation(LinearLayout.VERTICAL);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(LIST_BG);
+        bg.setCornerRadius(dp(12));
+        g.setBackground(bg);
+        g.setClipToOutline(true);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 0, dp(14));
+        g.setLayoutParams(lp);
+        return g;
+    }
+
+    /** Adds a row to a group (with a divider above it if it isn't the first). */
+    LinearLayout item(LinearLayout group, String label, View right, boolean danger, View.OnClickListener l)
+    {
+        if (group.getChildCount() > 0) {
+            View line = new View(mAct);
+            line.setBackgroundColor(LIST_LINE);
+            group.addView(line, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, dp(1))));
+        }
+        LinearLayout r = new LinearLayout(mAct);
+        r.setOrientation(LinearLayout.HORIZONTAL);
+        r.setGravity(Gravity.CENTER_VERTICAL);
+        r.setPadding(dp(18), 0, dp(18), 0);
+        r.setMinimumHeight(dp(50));
+        r.setFocusable(true);
+        r.setClickable(true);
+        r.setOnClickListener(l);
+
+        GradientDrawable fbg = new GradientDrawable();
+        fbg.setColor(LIST_FOCUS);
+        GradientDrawable bar = new GradientDrawable();
+        bar.setColor(ACCENT);
+        android.graphics.drawable.LayerDrawable focused =
+                new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[] { fbg, bar });
+        focused.setLayerWidth(1, dp(4));
+        focused.setLayerGravity(1, Gravity.LEFT | Gravity.FILL_VERTICAL);
+        StateListDrawable sl = new StateListDrawable();
+        sl.addState(new int[] { android.R.attr.state_focused }, focused);
+        sl.addState(new int[] { android.R.attr.state_pressed }, focused);
+        sl.addState(new int[] {}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        r.setBackground(sl);
+
+        TextView t = text(label, 17, danger ? DANGER : FG, false);
+        r.addView(t, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        if (right != null) r.addView(right);
+        group.addView(r, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return r;
+    }
+
+    TextView value(String s)
+    {
+        TextView t = text(s, 15, DIM, false);
+        t.setSingleLine(true);
+        return t;
+    }
+
+    /** On/off switch drawn like the console's own toggles (display only; the row toggles it). */
+    View toggle(boolean on)
+    {
+        android.widget.FrameLayout f = new android.widget.FrameLayout(mAct);
+        GradientDrawable track = new GradientDrawable();
+        track.setColor(on ? GREEN : Color.rgb(0x3A, 0x3F, 0x48));
+        track.setCornerRadius(dp(10));
+        f.setBackground(track);
+        View thumb = new View(mAct);
+        GradientDrawable k = new GradientDrawable();
+        k.setShape(GradientDrawable.OVAL);
+        k.setColor(on ? Color.WHITE : DIM);
+        thumb.setBackground(k);
+        android.widget.FrameLayout.LayoutParams tl = new android.widget.FrameLayout.LayoutParams(dp(16), dp(16));
+        tl.gravity = Gravity.CENTER_VERTICAL | (on ? Gravity.RIGHT : Gravity.LEFT);
+        tl.setMargins(dp(2), 0, dp(2), 0);
+        f.addView(thumb, tl);
+        f.setLayoutParams(new LinearLayout.LayoutParams(dp(38), dp(20)));
+        return f;
+    }
+
     TextView caption(String s) { return text(s, 12, DIM, true); }
 
     @SuppressWarnings("deprecation")

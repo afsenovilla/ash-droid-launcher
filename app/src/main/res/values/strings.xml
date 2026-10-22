@@ -133,7 +133,7 @@
     <string name="tile_display">Display</string>
     <string name="tile_autostart">Auto-start</string>
     <string name="tile_touch">Touch controls</string>
-    <string name="tile_reimport">Re-import</string>
+    <string name="tile_reimport">Re-import .zip</string>
     <string name="tile_reimport_value">Keeps saves</string>
     <string name="tile_diagnostics">Diagnostics</string>
     <string name="tile_diagnostics_value">Patch log</string>
@@ -143,4 +143,5 @@
     <string name="off">Off</string>
     <string name="preparing">Preparing…</string>
     <string name="settings">Settings</string>
+    <string name="game_section">Game</string>
 </resources>

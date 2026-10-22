@@ -193,35 +193,37 @@ public class LauncherActivity extends Activity
         left.addView(status);
         mRoot.addView(left);
 
-        // ---- right: settings tiles
+        // ---- right: console-style settings list
         LinearLayout right = new LinearLayout(this);
         right.setOrientation(LinearLayout.VERTICAL);
         right.setGravity(android.view.Gravity.CENTER_VERTICAL);
         right.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1f));
-        TextView cap = mUi.caption(getString(R.string.settings).toUpperCase(java.util.Locale.getDefault()));
-        cap.setPadding(mUi.dp(8), 0, 0, mUi.dp(2));
-        right.addView(cap);
 
-        View buttons = mUi.tile(getString(R.string.tile_buttons), buttonsValue(), v ->
+        TextView cap = mUi.caption(getString(R.string.settings).toUpperCase(java.util.Locale.getDefault()));
+        cap.setPadding(mUi.dp(4), 0, 0, mUi.dp(4));
+        right.addView(cap);
+        LinearLayout g1 = mUi.group();
+        mUi.item(g1, getString(R.string.tile_buttons), mUi.value(buttonsValue() + "  ›"), false, v ->
                 startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD));
-        mScaleButton = mUi.tile(getString(R.string.tile_display), ConfigWriter.scaleMode(this).label(this),
-                v -> cycleScaleMode());
-        View auto = mUi.tile(getString(R.string.tile_autostart), getString(autostartEnabled() ? R.string.on : R.string.off),
-                v -> toggleAutostart());
-        View touch = mUi.tile(getString(R.string.tile_touch),
-                getString(ButtonMapping.touchControlsEnabled(this) ? R.string.on : R.string.off), v -> {
+        mScaleButton = mUi.item(g1, getString(R.string.tile_display),
+                mUi.value("‹  " + ConfigWriter.scaleMode(this).label(this) + "  ›"), false, v -> cycleScaleMode());
+        mUi.item(g1, getString(R.string.tile_autostart), mUi.toggle(autostartEnabled()), false, v -> toggleAutostart());
+        mUi.item(g1, getString(R.string.tile_touch), mUi.toggle(ButtonMapping.touchControlsEnabled(this)), false, v -> {
             ButtonMapping.setTouchControlsEnabled(this, !ButtonMapping.touchControlsEnabled(this));
             render();
-            focusTile(1, 1);
+            focusItem(3);
         });
-        View reimport = mUi.tile(getString(R.string.tile_reimport), getString(R.string.tile_reimport_value), v -> pickZip());
-        View diag = mUi.tile(getString(R.string.tile_diagnostics), getString(R.string.tile_diagnostics_value),
-                v -> showDiagnostics());
-        View del = mUi.tile(getString(R.string.tile_delete), getString(R.string.tile_delete_value), v -> confirmDelete());
-        right.addView(mUi.tileRow(buttons, mScaleButton));
-        right.addView(mUi.tileRow(auto, touch));
-        right.addView(mUi.tileRow(reimport, del));
-        right.addView(mUi.tileRow(diag));
+        right.addView(g1);
+
+        TextView cap2 = mUi.caption(getString(R.string.game_section).toUpperCase(java.util.Locale.getDefault()));
+        cap2.setPadding(mUi.dp(4), mUi.dp(6), 0, mUi.dp(4));
+        right.addView(cap2);
+        LinearLayout g2 = mUi.group();
+        mUi.item(g2, getString(R.string.tile_reimport), mUi.value(getString(R.string.tile_reimport_value) + "  ›"),
+                false, v -> pickZip());
+        mUi.item(g2, getString(R.string.tile_delete), mUi.value(getString(R.string.tile_delete_value)), true,
+                v -> confirmDelete());
+        right.addView(g2);
         mRoot.addView(right);
 
         mPlayButton.requestFocus();
@@ -251,12 +253,13 @@ public class LauncherActivity extends Activity
         }
     }
 
-    /** Puts the focus back on a settings tile after re-rendering (row, column). */
-    private void focusTile(int row, int col)
+    /** Puts the focus back on a row of the settings list after re-rendering. */
+    private void focusItem(int index)
     {
         try {
             LinearLayout right = (LinearLayout) mRoot.getChildAt(1);
-            ((LinearLayout) right.getChildAt(1 + row)).getChildAt(col).requestFocus();
+            LinearLayout g1 = (LinearLayout) right.getChildAt(1);
+            g1.getChildAt(index * 2).requestFocus(); // rows alternate with dividers
         } catch (RuntimeException ignored) {
         }
     }
@@ -346,7 +349,7 @@ public class LauncherActivity extends Activity
     {
         getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_AUTOSTART, !autostartEnabled()).apply();
         render();
-        focusTile(1, 0);
+        focusItem(2);
     }
 
     private void cycleScaleMode()
