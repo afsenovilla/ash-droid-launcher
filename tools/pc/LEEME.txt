@@ -6,18 +6,19 @@ objetos, movimientos, habilidades, Pokédex), con los nombres oficiales de los j
 y el doblaje de España, gráficos con texto redibujados en español y la intro en
 castellano. Es el mismo parche que usa Ash Droid Launcher en Android.
 
-No modifica ningún archivo del juego salvo una línea de mkxp.json (se guarda una copia
-en mkxp.json.bak). Tus partidas no se tocan.
+No modifica los archivos del juego (solo añade una línea a mkxp.json, del que guarda
+una copia en mkxp.json.bak). Tus partidas no se tocan.
 
-INSTALACIÓN
-1. Copia TODO el contenido de esta carpeta dentro de la carpeta del juego, donde está
-   Game.exe y mkxp.json.
-2. Ejecuta INSTALAR.bat (doble clic).
-3. Abre el juego y, en la pantalla de carga, elige el idioma "Español (España)"
-   (opción Language / Idioma).
+CÓMO INSTALARLO
+1. Descomprime el zip entero (el programa necesita la carpeta "parche" a su lado).
+2. Abre "Instalar parche.exe". Busca el juego solo; si no lo encuentra, pulsa
+   "Examinar…" y elige la carpeta donde está Game.exe.
+3. Pulsa "Instalar" y luego "Jugar".
+4. En la pantalla de carga del juego, elige el idioma "Español (España)" (Language).
 
-DESINSTALACIÓN
-Ejecuta DESINSTALAR.bat (o restaura mkxp.json.bak) y borra los archivos que empiezan
-por "ashdroid".
+Si Windows muestra "Windows protegió tu PC", pulsa "Más información" > "Ejecutar de
+todas formas" (el programa no está firmado).
+
+Para quitarlo: abre "Instalar parche.exe" y pulsa "Desinstalar".
 
 Proyecto: https://github.com/afsenovilla/ash-droid-launcher
