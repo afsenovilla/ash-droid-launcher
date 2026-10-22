@@ -40,8 +40,7 @@ are always confirmed in the wizard, so the database only provides a friendly nam
 ## PC and Steam Deck
 
 The same Spanish patch exists for the Windows version of the game (`tools/pc/`): a zip with a graphical
-installer (`Instalar parche.exe`). On the **Steam Deck** (LCD and OLED) and other Linux machines the zip
-also brings a native Linux build of mkxp-z, so no Proton is needed: `Instalar en Steam Deck.sh` (desktop
+installer (`Instalar parche.exe`). For the **Steam Deck** (LCD and OLED) and other Linux machines there is a separate zip with a native Linux build of mkxp-z, so no Proton is needed: `Instalar en Steam Deck.sh` (desktop
 mode) finds the game, installs the patch and adds it to Steam. The patch detects the Deck and shows its
 buttons (A, B, X, Y, L1, R1, R3…) in texts and images; ☰ opens the menu.
 
@@ -60,12 +59,17 @@ over the previous one without losing data.
 
 ## Versions and releases
 
-Each release has two downloads: the Android **APK** and the **PC / Steam Deck zip**.
+Versions follow [Semantic Versioning](https://semver.org/); changes are listed in [CHANGELOG.md](CHANGELOG.md).
+Each release (`vX.Y.Z` tag) has three downloads:
 
-- Versions follow [Semantic Versioning](https://semver.org/); changes are listed in [CHANGELOG.md](CHANGELOG.md).
-- **Stable releases** (`vX.Y.Z` tags): release notes come from the changelog, plus the list of commits.
-- **Dev build** (`dev` prerelease): rebuilt on every push to `main`, versioned as the next patch plus the number of
-  commits since the last release (e.g. `0.1.1-dev.3`). The version is shown in the launcher.
+| Platform | File |
+|---|---|
+| Android | `ash-droid-launcher-X.Y.Z.apk` |
+| Windows | `FireAsh-Espanol-Espana-Windows-X.Y.Z.zip` |
+| Steam Deck / Linux | `FireAsh-Espanol-Espana-SteamDeck-Linux-X.Y.Z.zip` |
+
+To release: add a `## [X.Y.Z]` section to the changelog and push the tag `vX.Y.Z` (or run the "Build APK"
+workflow with that version). Pushes to `main` are only built, never published.
 
 ## Credits and license
 

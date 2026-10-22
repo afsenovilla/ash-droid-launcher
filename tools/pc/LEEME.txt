@@ -1,5 +1,5 @@
-PARCHE "ESPAÑOL (ESPAÑA)" PARA POKÉMON FIRE ASH (PC Y STEAM DECK)
-=================================================================
+PARCHE "ESPAÑOL (ESPAÑA)" PARA POKÉMON FIRE ASH (WINDOWS)
+=======================================================
 
 Retraducción completa del juego al castellano de España (diálogos, menús, combates,
 objetos, movimientos, habilidades, Pokédex), con los nombres oficiales de los juegos
@@ -20,19 +20,5 @@ Si Windows muestra "Windows protegió tu PC", pulsa "Más información" > "Ejecu
 todas formas" (el programa no está firmado).
 
 Para quitarlo: abre "Instalar parche.exe" y pulsa "Desinstalar".
-
-STEAM DECK (LCD y OLED) Y LINUX
-No hace falta Proton: el zip trae el motor del juego (mkxp-z) para Linux.
-1. En el modo escritorio, copia la carpeta del juego (la versión de Windows, con
-   Game.exe) donde quieras y descomprime este zip entero.
-2. Abre "Instalar en Steam Deck.sh" (doble clic > Ejecutar). Busca el juego solo
-   (también en la microSD), instala el parche y añade "Pokémon Fire Ash" a Steam.
-   Cierra Steam un momento para eso; se vuelve a abrir solo.
-3. Vuelve al modo juego y ábrelo desde la biblioteca (pestaña "No-Steam").
-El parche detecta la Steam Deck: los textos y los gráficos muestran sus botones
-(A, B, X, Y, L1, R1, R3…) en lugar de las teclas, y el botón ☰ abre el menú.
-En la OLED (90 Hz), pon la frecuencia de actualización a 60 Hz para este juego
-(botón ··· > Rendimiento) para que el movimiento vaya más fino.
-Para quitarlo, vuelve a abrir "Instalar en Steam Deck.sh" y elige "Desinstalar".
 
 Proyecto: https://github.com/afsenovilla/ash-droid-launcher

@@ -166,43 +166,72 @@ def rect(px, w, h, x0, y0, x1, y1, c):
             px[x, y] = c
 
 
+def palette(im):
+    """face (most common), hi (lighter), mid and ink (the next darker ones) of a key cap."""
+    cnt = Counter((c[0], c[1], c[2], 255) for c in im.getdata() if c[3] > 200)
+    tot = sum(cnt.values())
+    face = cnt.most_common(1)[0][0]
+    lum = lambda c: sum(c[:3])
+    cols = sorted((c for c, n in cnt.items() if n * 100 >= tot), key=lambda c: (lum(c), c))
+    hi = cols[-1] if lum(cols[-1]) > lum(face) else face
+    below = [c for c in cols if lum(c) < lum(face)]
+    mid = below[-1] if below else face
+    ink = below[-2] if len(below) > 1 else mid
+    return face, hi, mid, ink
+
+
 def dpad(orig):
-    """Arrow keys -> D-pad in the key caps' own colours (see ControlsArt.restyleAsDpad)."""
-    w, h = orig.size
-    opx = orig.load()
-    colors = [opx[x, y] for y in range(h) for x in range(w)]
-    face = mode_color(colors)
-    if not face:
+    """Arrow keys -> a D-pad drawn like the game's key caps (light top-left edge, darker
+    bottom-right bevel, concave centre, arrows in the arrow colour). Pixel art at the
+    art's own scale, then scaled up."""
+    if not [c for c in orig.getdata() if c[3] > 200]:
         return None
-    arrow = mode_color(colors, face, 60)
-    cnt = Counter((c[0], c[1], c[2], 255) for c in colors if c[3] > 200)
-    border, darkest = arrow, 765
-    for k, n in cnt.items():
-        if n > len(colors) // 200 and sum(k[:3]) < darkest:
-            darkest, border = sum(k[:3]), k
-    arrow = arrow or border
-    bmp = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    px = bmp.load()
-    s = min(w, h) - 2
-    arm = max(5, (s // 3) | 1)
-    half, cx, cy, a2 = s // 2, w // 2, h // 2, arm // 2
-    rect(px, w, h, cx - a2 - 1, cy - half, cx + a2 + 2, cy + half + 2, border)
-    rect(px, w, h, cx - half, cy - a2 - 1, cx + half + 2, cy + a2 + 2, border)
-    rect(px, w, h, cx - a2, cy - half + 1, cx + a2 + 1, cy + half, face)
-    rect(px, w, h, cx - half + 1, cy - a2, cx + half, cy + a2 + 1, face)
-    t = max(2, arm // 4)
-    d = half - arm // 2
-    for (x, y, dr) in ((cx, cy - d, 0), (cx, cy + d, 2), (cx - d, cy, 3), (cx + d, cy, 1)):
+    sc = pixel_scale(orig)
+    small = orig if sc == 1 else orig.resize((orig.width // sc, orig.height // sc), Image.NEAREST)
+    face, hi, mid, ink = palette(small)
+    w, h = small.size
+    s = min(w, h) - 1
+    s -= 1 - s % 2
+    a = s // 3
+    a += 1 - a % 2
+    x0, y0, c = (w - s) // 2, (h - s) // 2, s // 2
+
+    def out(x, y):
+        u, v = x - x0, y - y0
+        if not (0 <= u < s and 0 <= v < s):
+            return True
+        return not (c - a // 2 <= u <= c + a // 2 or c - a // 2 <= v <= c + a // 2)
+
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            if out(x, y):
+                continue
+            if (out(x - 1, y) or out(x + 1, y)) and (out(x, y - 1) or out(x, y + 1)):
+                continue  # rounded arm ends
+            col = face
+            if out(x, y - 1) or out(x - 1, y):
+                col = hi
+            if out(x, y + 1) or out(x, y + 2) or out(x + 1, y) or out(x + 2, y):
+                col = mid
+            px[x, y] = col
+    cx, cy = x0 + c, y0 + c
+    r = max(2, a // 2 - 2) + 0.5
+    for y in range(cy - 4, cy + 5):
+        for x in range(cx - 4, cx + 5):
+            d = (x - cx) ** 2 + (y - cy) ** 2
+            if (r - 1) ** 2 < d <= r * r:
+                px[x, y] = mid if (x - cx) + (y - cy) < 0 else hi
+    t = max(2, (a - 1) // 2 - 1)
+    pos = c - (c - a // 2) // 2 - 1
+    for dn in range(4):
         for i in range(t):
-            if dr == 0:
-                rect(px, w, h, x - i, y - t // 2 + i, x + i + 1, y - t // 2 + i + 1, arrow)
-            elif dr == 2:
-                rect(px, w, h, x - i, y + t // 2 - i, x + i + 1, y + t // 2 - i + 1, arrow)
-            elif dr == 3:
-                rect(px, w, h, x - t // 2 + i, y - i, x - t // 2 + i + 1, y + i + 1, arrow)
-            else:
-                rect(px, w, h, x + t // 2 - i, y - i, x + t // 2 - i + 1, y + i + 1, arrow)
-    return bmp
+            o = pos + t // 2 - i  # i = 0: the tip, outermost
+            for j in range(-i, i + 1):
+                x, y = ((cx + j, cy - o), (cx + j, cy + o), (cx - o, cy + j), (cx + o, cy + j))[dn]
+                px[x, y] = ink
+    return im if sc == 1 else im.resize((w * sc, h * sc), Image.NEAREST)
 
 
 def find_child(d, name):

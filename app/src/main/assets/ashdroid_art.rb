@@ -376,43 +376,71 @@ module AshDroidArt
       ([y0, 0].max...[y1, img.h].min).each { |y| ([x0, 0].max...[x1, img.w].min).each { |x| img.px[y * img.w + x] = c } }
     end
 
-    def dpad(orig)
-      w, h = orig.w, orig.h
-      colors = orig.px
-      face = mode_color(colors)
-      return nil unless face
-      arrow = mode_color(colors, face, 60)
+    def lum(c) ((c >> 24) & 255) + ((c >> 16) & 255) + ((c >> 8) & 255) end
+
+    # face (most common), hi (lighter), mid and ink (the next darker ones) of a key cap
+    def palette(img)
       cnt = {}
-      colors.each { |c| next unless (c & 255) > 200; k = c | 255; cnt[k] = (cnt[k] || 0) + 1 }
-      border, darkest = arrow, 765
-      cnt.each do |k, n|
-        lum = ((k >> 24) & 255) + ((k >> 16) & 255) + ((k >> 8) & 255)
-        if n > colors.size / 200 && lum < darkest
-          darkest, border = lum, k
+      img.px.each { |c| next unless (c & 255) > 200; k = c | 255; cnt[k] = (cnt[k] || 0) + 1 }
+      tot = cnt.values.sum
+      face = AshDroidArt.most_common(cnt)[0]
+      cols = cnt.select { |_, n| n * 100 >= tot }.keys.sort_by { |c| [lum(c), c] }
+      hi = lum(cols[-1]) > lum(face) ? cols[-1] : face
+      below = cols.select { |c| lum(c) < lum(face) }
+      mid = below[-1] || face
+      ink = below.size > 1 ? below[-2] : mid
+      [face, hi, mid, ink]
+    end
+
+    # Arrow keys -> a D-pad drawn like the game's key caps (light top-left edge, darker
+    # bottom-right bevel, concave centre, arrows in the arrow colour), at the art's scale
+    def dpad(orig)
+      return nil unless orig.px.any? { |c| (c & 255) > 200 }
+      sc = pixel_scale(orig)
+      small = sc == 1 ? orig : scale(orig, 1.0 / sc)
+      face, hi, mid, ink = palette(small)
+      w, h = small.w, small.h
+      s = [w, h].min - 1
+      s -= 1 - s % 2
+      a = s / 3
+      a += 1 - a % 2
+      x0, y0, c = (w - s) / 2, (h - s) / 2, s / 2
+      out = lambda do |x, y|
+        u, v = x - x0, y - y0
+        next true unless u >= 0 && u < s && v >= 0 && v < s
+        !((c - a / 2 <= u && u <= c + a / 2) || (c - a / 2 <= v && v <= c + a / 2))
+      end
+      img = Img.new(w, h, Array.new(w * h, CLEAR))
+      h.times do |y|
+        w.times do |x|
+          next if out.call(x, y)
+          next if (out.call(x - 1, y) || out.call(x + 1, y)) && (out.call(x, y - 1) || out.call(x, y + 1))
+          col = face
+          col = hi if out.call(x, y - 1) || out.call(x - 1, y)
+          col = mid if out.call(x, y + 1) || out.call(x, y + 2) || out.call(x + 1, y) || out.call(x + 2, y)
+          img.px[y * w + x] = col
         end
       end
-      arrow ||= border
-      img = Img.new(w, h, Array.new(w * h, CLEAR))
-      s = [w, h].min - 2
-      arm = [5, (s / 3) | 1].max
-      half, cx, cy, a2 = s / 2, w / 2, h / 2, arm / 2
-      rect(img, cx - a2 - 1, cy - half, cx + a2 + 2, cy + half + 2, border)
-      rect(img, cx - half, cy - a2 - 1, cx + half + 2, cy + a2 + 2, border)
-      rect(img, cx - a2, cy - half + 1, cx + a2 + 1, cy + half, face)
-      rect(img, cx - half + 1, cy - a2, cx + half, cy + a2 + 1, face)
-      t = [2, arm / 4].max
-      d = half - arm / 2
-      [[cx, cy - d, 0], [cx, cy + d, 2], [cx - d, cy, 3], [cx + d, cy, 1]].each do |x, y, dr|
+      cx, cy = x0 + c, y0 + c
+      r = [2, a / 2 - 2].max + 0.5
+      (cy - 4..cy + 4).each do |y|
+        (cx - 4..cx + 4).each do |x|
+          d = (x - cx)**2 + (y - cy)**2
+          img.px[y * w + x] = (x - cx) + (y - cy) < 0 ? mid : hi if (r - 1)**2 < d && d <= r * r
+        end
+      end
+      t = [2, (a - 1) / 2 - 1].max
+      pos = c - (c - a / 2) / 2 - 1
+      4.times do |dn|
         t.times do |i|
-          case dr
-          when 0 then rect(img, x - i, y - t / 2 + i, x + i + 1, y - t / 2 + i + 1, arrow)
-          when 2 then rect(img, x - i, y + t / 2 - i, x + i + 1, y + t / 2 - i + 1, arrow)
-          when 3 then rect(img, x - t / 2 + i, y - i, x - t / 2 + i + 1, y + i + 1, arrow)
-          else rect(img, x + t / 2 - i, y - i, x + t / 2 - i + 1, y + i + 1, arrow)
+          o = pos + t / 2 - i
+          (-i..i).each do |j|
+            x, y = [[cx + j, cy - o], [cx + j, cy + o], [cx - o, cy + j], [cx + o, cy + j]][dn]
+            img.px[y * w + x] = ink
           end
         end
       end
-      img
+      sc == 1 ? img : scale(img, sc)
     end
 
     # nil = leave the image alone

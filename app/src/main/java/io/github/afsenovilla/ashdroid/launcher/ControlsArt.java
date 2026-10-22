@@ -278,75 +278,105 @@ final class ControlsArt
         return up;
     }
 
-    /**
-     * Turns the arrow-keys cluster into a D-pad using the same palette as the
-     * game's key caps (face, border, arrow colour sampled from the original).
-     */
-    private static Bitmap restyleAsDpad(Bitmap orig)
+    private static int lum(int c)
     {
-        int w = orig.getWidth(), h = orig.getHeight();
-        int[] px = new int[w * h];
-        orig.getPixels(px, 0, w, 0, 0, w, h);
-        int face = modeColor(px, 0, 0);
-        if (face == 0) return null;
-        int arrow = modeColor(px, face, 60);
-        // Border: darkest frequent opaque colour
-        int border = arrow;
-        int darkest = 765;
-        java.util.HashMap<Integer, Integer> cnt = new java.util.HashMap<>();
-        for (int c : px) if (Color.alpha(c) > 200) {
+        return Color.red(c) + Color.green(c) + Color.blue(c);
+    }
+
+    /**
+     * Turns the arrow-keys cluster into a D-pad drawn like the game's key caps: light
+     * top-left edge, darker bottom-right bevel, concave centre and arrows in the arrow
+     * colour, all sampled from the original. Drawn at the art's own pixel scale.
+     * Same algorithm as tools/art/controls_art.py and ashdroid_art.rb (PC / Steam Deck).
+     */
+    private static Bitmap restyleAsDpad(Bitmap full)
+    {
+        int sc = pixelScale(full);
+        Bitmap orig = sc == 1 ? full
+                : Bitmap.createScaledBitmap(full, full.getWidth() / sc, full.getHeight() / sc, false);
+        final int w = orig.getWidth(), h = orig.getHeight();
+        int[] src = new int[w * h];
+        orig.getPixels(src, 0, w, 0, 0, w, h);
+        if (orig != full) orig.recycle();
+
+        // Palette: face = most common opaque colour; hi = lightest frequent one; mid / ink =
+        // the next darker ones (frequent = at least 1% of the opaque pixels)
+        java.util.LinkedHashMap<Integer, Integer> cnt = new java.util.LinkedHashMap<>();
+        int tot = 0;
+        for (int c : src) {
+            if (Color.alpha(c) <= 200) continue;
             int k = c | 0xFF000000;
             Integer n = cnt.get(k);
             cnt.put(k, n == null ? 1 : n + 1);
+            tot++;
         }
-        for (java.util.Map.Entry<Integer, Integer> e : cnt.entrySet()) {
-            int k = e.getKey();
-            int lum = Color.red(k) + Color.green(k) + Color.blue(k);
-            if (e.getValue() > px.length / 200 && lum < darkest) { darkest = lum; border = k; }
-        }
-        if (arrow == 0) arrow = border;
+        if (tot == 0) return null;
+        int face = 0, best = -1;
+        for (java.util.Map.Entry<Integer, Integer> e : cnt.entrySet())
+            if (e.getValue() > best) { best = e.getValue(); face = e.getKey(); }
+        java.util.ArrayList<Integer> cols = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<Integer, Integer> e : cnt.entrySet())
+            if (e.getValue() * 100 >= tot) cols.add(e.getKey());
+        java.util.Collections.sort(cols, (x, y) -> lum(x) != lum(y) ? Integer.compare(lum(x), lum(y))
+                : Long.compare(rgbaKey(x), rgbaKey(y)));
+        int last = cols.get(cols.size() - 1);
+        int hi = lum(last) > lum(face) ? last : face;
+        java.util.ArrayList<Integer> below = new java.util.ArrayList<>();
+        for (int c : cols) if (lum(c) < lum(face)) below.add(c);
+        int mid = below.isEmpty() ? face : below.get(below.size() - 1);
+        int ink = below.size() > 1 ? below.get(below.size() - 2) : mid;
 
+        int s = Math.min(w, h) - 1;
+        s -= 1 - s % 2;
+        int a = s / 3;
+        a += 1 - a % 2;
+        final int x0 = (w - s) / 2, y0 = (h - s) / 2, c = s / 2, S = s, A = a;
+        java.util.function.BiPredicate<Integer, Integer> out = (x, y) -> {
+            int u = x - x0, v = y - y0;
+            if (u < 0 || u >= S || v < 0 || v >= S) return true;
+            return !((c - A / 2 <= u && u <= c + A / 2) || (c - A / 2 <= v && v <= c + A / 2));
+        };
+        int[] px = new int[w * h];
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++) {
+                if (out.test(x, y)) continue;
+                if ((out.test(x - 1, y) || out.test(x + 1, y)) && (out.test(x, y - 1) || out.test(x, y + 1)))
+                    continue; // rounded arm ends
+                int col = face;
+                if (out.test(x, y - 1) || out.test(x - 1, y)) col = hi;
+                if (out.test(x, y + 1) || out.test(x, y + 2) || out.test(x + 1, y) || out.test(x + 2, y)) col = mid;
+                px[y * w + x] = col;
+            }
+        int cx = x0 + c, cy = y0 + c;
+        double r = Math.max(2, a / 2 - 2) + 0.5;
+        for (int y = cy - 4; y <= cy + 4; y++)
+            for (int x = cx - 4; x <= cx + 4; x++) {
+                int d = (x - cx) * (x - cx) + (y - cy) * (y - cy);
+                if ((r - 1) * (r - 1) < d && d <= r * r) px[y * w + x] = (x - cx) + (y - cy) < 0 ? mid : hi;
+            }
+        int t = Math.max(2, (a - 1) / 2 - 1);
+        int pos = c - (c - a / 2) / 2 - 1;
+        for (int dn = 0; dn < 4; dn++)
+            for (int i = 0; i < t; i++) {
+                int o = pos + t / 2 - i;
+                for (int j = -i; j <= i; j++) {
+                    int x = dn < 2 ? cx + j : (dn == 2 ? cx - o : cx + o);
+                    int y = dn == 0 ? cy - o : (dn == 1 ? cy + o : cy + j);
+                    px[y * w + x] = ink;
+                }
+            }
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmp);
-        int s = Math.min(w, h) - 2;
-        int arm = Math.max(5, (s / 3) | 1);
-        int half = s / 2;
-        int cx = w / 2, cy = h / 2;
-        int a2 = arm / 2;
-
-        Paint p = new Paint();
-        p.setAntiAlias(false);
-        // shadow/border
-        p.setColor(border);
-        c.drawRect(cx - a2 - 1, cy - half, cx + a2 + 2, cy + half + 2, p);
-        c.drawRect(cx - half, cy - a2 - 1, cx + half + 2, cy + a2 + 2, p);
-        // face
-        p.setColor(face);
-        c.drawRect(cx - a2, cy - half + 1, cx + a2 + 1, cy + half, p);
-        c.drawRect(cx - half + 1, cy - a2, cx + half, cy + a2 + 1, p);
-        // arrows
-        p.setColor(arrow);
-        int t = Math.max(2, arm / 4);
-        int d = half - arm / 2;
-        pixelTriangle(c, p, cx, cy - d, t, 0);
-        pixelTriangle(c, p, cx, cy + d, t, 2);
-        pixelTriangle(c, p, cx - d, cy, t, 3);
-        pixelTriangle(c, p, cx + d, cy, t, 1);
-        return bmp;
+        bmp.setPixels(px, 0, w, 0, 0, w, h);
+        if (sc == 1) return bmp;
+        Bitmap up = Bitmap.createScaledBitmap(bmp, w * sc, h * sc, false);
+        bmp.recycle();
+        return up;
     }
 
-    /** Pixel-art triangle made of rectangles. dir: 0 up, 1 right, 2 down, 3 left. */
-    private static void pixelTriangle(Canvas c, Paint p, int x, int y, int size, int dir)
+    /** Sort key matching the PC tools' (r, g, b, a) tuple order. */
+    private static long rgbaKey(int c)
     {
-        for (int i = 0; i < size; i++) {
-            int len = i; // half-width of this row
-            switch (dir) {
-                case 0: c.drawRect(x - len, y - size / 2 + i, x + len + 1, y - size / 2 + i + 1, p); break;
-                case 2: c.drawRect(x - len, y + size / 2 - i, x + len + 1, y + size / 2 - i + 1, p); break;
-                case 3: c.drawRect(x - size / 2 + i, y - len, x - size / 2 + i + 1, y + len + 1, p); break;
-                case 1: default: c.drawRect(x + size / 2 - i, y - len, x + size / 2 - i + 1, y + len + 1, p); break;
-            }
-        }
+        return ((long) Color.red(c) << 24) | (Color.green(c) << 16) | (Color.blue(c) << 8) | Color.alpha(c);
     }
 
     // ---------------------------------------------------------------- drawing

@@ -6,21 +6,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-22
+
 ### Added
-- Every release (stable and dev) now carries everything: the Android APK and the PC / Steam Deck zip.
-- PC patch on the Steam Deck (LCD and OLED): the runtime patch detects the Deck (DMI model, or Steam's
-  `SteamDeck=1`; override with `ASHDROID_DEVICE=pc|deck|lcd|oled`) and, as on Android, names the Deck's
-  buttons instead of keyboard keys, redraws images with them (including the controls screen) and the
-  ☰ button opens the menu like B.
-- Steam Deck / Linux package in the PC zip: native Linux build of mkxp-z (no Proton needed) and
-  "Instalar en Steam Deck.sh", which finds the game (also on the microSD), installs the patch and adds
-  the game to Steam with its artwork.
+- Each release now has three downloads: the Android APK, the Windows patch and the Steam Deck / Linux patch.
+- Steam Deck (LCD and OLED): the patch detects the Deck (DMI model, or Steam's `SteamDeck=1`; override with
+  `ASHDROID_DEVICE=pc|deck|lcd|oled`) and, as on Android, names the Deck's buttons instead of keyboard
+  keys, redraws images with them (including the controls screen) and the ☰ button opens the menu like B.
+- Steam Deck / Linux package: native Linux build of mkxp-z (no Proton needed) and "Instalar en Steam
+  Deck.sh", which finds the game (also on the microSD), installs the patch and adds the game to Steam with
+  its artwork.
 
 ### Changed
-- PC patch: the Spanish lettering is redrawn by the patch itself from the player's copy of the game
-  while it runs (Ruby port of the art engine), so the zip ships no game files and is built by CI.
-- The Windows installer and the Linux engine are built inside the release workflow; the separate
-  "PC installer" and "Linux runtime" build-tool prereleases are gone.
+- Controls screen: new D-pad, drawn in the style of the game's key caps (Android too).
+- PC patches: the Spanish lettering is redrawn by the patch itself from the player's copy of the game
+  while it runs, so the downloads contain no game files.
+- Only versioned releases are published (no more rolling "dev" build or build-tool prereleases).
+
+### Fixed
+- Windows patch: the Spanish images were not found (their index listed bare file names).
 
 ## [0.2.2] - 2026-10-22
 
