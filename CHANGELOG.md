@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [Unreleased]
+### Added
+- "Música en castellano" now includes the Spanish intro theme out of the box; every track (bundled or added) can be switched on or off.
+- Español (España): full-game retranslation in progress (maps, scripts, trainers).
+
 ## [0.2.0] - 2026-10-22
 
 ### Added

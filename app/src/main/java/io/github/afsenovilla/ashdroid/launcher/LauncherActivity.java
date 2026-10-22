@@ -214,8 +214,8 @@ public class LauncherActivity extends Activity
             render();
             focusItem(3);
         });
-        int nTracks = SpanishMusic.tracks(this).length;
-        mUi.item(g1, getString(R.string.tile_music), mUi.value((nTracks == 0 ? getString(R.string.music_add)
+        int nTracks = SpanishMusic.enabledCount(this);
+        mUi.item(g1, getString(R.string.tile_music), mUi.value((nTracks == 0 ? getString(R.string.off)
                 : getResources().getQuantityString(R.plurals.music_tracks, nTracks, nTracks)) + "  ›"), false,
                 v -> musicMenu());
         right.addView(g1);
@@ -369,18 +369,31 @@ public class LauncherActivity extends Activity
 
     private void musicMenu()
     {
-        String[] tracks = SpanishMusic.tracks(this);
-        if (tracks.length == 0) {
+        java.util.List<SpanishMusic.Track> tracks = SpanishMusic.tracks(this);
+        if (tracks.isEmpty()) {
             pickMusic();
             return;
         }
-        new AlertDialog.Builder(this)
+        String[] labels = new String[tracks.size()];
+        boolean[] checked = new boolean[tracks.size()];
+        for (int k = 0; k < labels.length; k++) {
+            SpanishMusic.Track t = tracks.get(k);
+            String base = t.name.replaceFirst("\\.[^.]+$", "");
+            labels[k] = t.bundled ? getString(R.string.music_bundled, base) : base;
+            checked[k] = t.enabled;
+        }
+        AlertDialog.Builder b = new AlertDialog.Builder(this)
                 .setTitle(R.string.tile_music)
-                .setMessage(getString(R.string.music_msg) + "\n\n• " + android.text.TextUtils.join("\n• ", tracks))
-                .setPositiveButton(R.string.music_add, (d, w) -> pickMusic())
-                .setNeutralButton(R.string.music_clear, (d, w) -> { SpanishMusic.clear(this); render(); })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                .setMultiChoiceItems(labels, checked, (d, which, on) ->
+                        SpanishMusic.setEnabled(this, tracks.get(which).name, on))
+                .setPositiveButton(R.string.ok, null)
+                .setNegativeButton(R.string.music_add, (d, w) -> pickMusic());
+        if (SpanishMusic.hasUserTracks(this)) {
+            b.setNeutralButton(R.string.music_clear, (d, w) -> { SpanishMusic.clearUser(this); render(); });
+        }
+        AlertDialog dlg = b.create();
+        dlg.setOnDismissListener(d -> render());
+        dlg.show();
     }
 
     private void pickMusic()

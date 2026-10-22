@@ -141,8 +141,9 @@
     <string name="game_section">Juego</string>
     <string name="tile_music">Música en castellano</string>
     <string name="music_add">Añadir pistas</string>
-    <string name="music_clear">Quitar todas</string>
-    <string name="music_msg">Las canciones que añadas suenan en lugar de la pista del juego con el mismo nombre de archivo (p. ej. Title.ogg) cuando el juego está en español.</string>
+    <string name="music_clear">Quitar añadidas</string>
+    <string name="music_bundled">%1$s · incluida</string>
+    <string name="music_msg">Pistas en castellano que suenan en lugar de la original del juego (mismo nombre de archivo) cuando el juego está en español.</string>
     <plurals name="music_tracks">
         <item quantity="one">%d pista</item>
         <item quantity="other">%d pistas</item>

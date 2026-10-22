@@ -146,8 +146,9 @@
     <string name="game_section">Game</string>
     <string name="tile_music">Spanish music</string>
     <string name="music_add">Add tracks</string>
-    <string name="music_clear">Remove all</string>
-    <string name="music_msg">Songs you added play instead of the game\'s track with the same file name (e.g. Title.ogg) while the game is in Spanish.</string>
+    <string name="music_clear">Remove added</string>
+    <string name="music_bundled">%1$s · bundled</string>
+    <string name="music_msg">Spanish tracks played instead of the game\'s original (same file name) while the game is in Spanish.</string>
     <plurals name="music_tracks">
         <item quantity="one">%d track</item>
         <item quantity="other">%d tracks</item>
