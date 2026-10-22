@@ -286,7 +286,7 @@ public class LauncherActivity extends Activity
         StringBuilder sb = new StringBuilder();
         sb.append("v").append(io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME).append('\n');
         for (String f : new String[] { "mkxp.json", "ashdroid_patches.rb", "ashdroid_es.dat",
-                "ashdroid_es/battle_cursor_command.png" }) {
+                "ashdroid_art/index.txt" }) {
             java.io.File x = new java.io.File(game, f);
             sb.append(f).append(": ").append(x.exists() ? x.length() + " B" : "—").append('\n');
         }

@@ -114,7 +114,6 @@ public final class ConfigWriter
             try {
                 writeTextPatches(ctx, game);
                 writeControlsArt(ctx, game);
-                LocalizedArt.generate(game);
                 writeLocalizedArt(ctx, game);
                 installTranslationPack(ctx, game);
                 org.json.JSONArray pre = o.optJSONArray("preloadScript");

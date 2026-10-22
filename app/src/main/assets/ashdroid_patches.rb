@@ -162,9 +162,7 @@ end
 module AshDroidGfx
   # Images redrawn by the launcher. "es" ones replace the originals only while
   # the game is in Spanish; "any" ones (button names only) are used otherwise.
-  ES = {
-    "graphics/pictures/battle/cursor_command" => "ashdroid_es/battle_cursor_command.png",
-  }
+  ES = {}
   ANY = {}
   LOGGED = {}
   INDEX = "ashdroid_art/index.txt"

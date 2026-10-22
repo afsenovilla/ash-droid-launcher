@@ -33,7 +33,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   pixel font, instead of the long USE/BACK-sized caps.
 
 ### Fixed
-- Battle buttons came out garbled on some devices (letter detection now uses colour saturation).
+- Battle buttons came out garbled on some devices: they now use the same recipe engine as the other images,
+  with the buttons' own 5x9 lettering.
 - Controls screen hint "(Por defecto: X)" now also shows the device button.
 
 ## [0.1.0] - 2026-10-22

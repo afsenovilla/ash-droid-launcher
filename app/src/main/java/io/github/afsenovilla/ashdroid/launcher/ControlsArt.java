@@ -194,7 +194,7 @@ final class ControlsArt
     private static Bitmap relabel(Bitmap full, String label, Typeface font)
     {
         // Work at the art's native pixel size (Essentials art is often drawn with 2x2 pixels)
-        int scale = LocalizedArt.pixelScale(full);
+        int scale = pixelScale(full);
         Bitmap orig = scale == 1 ? full
                 : Bitmap.createScaledBitmap(full, full.getWidth() / scale, full.getHeight() / scale, false);
         int w = orig.getWidth(), h = orig.getHeight();
@@ -470,5 +470,18 @@ final class ControlsArt
         t.close();
         c.drawPath(t, p);
         c.restore();
+    }
+
+    /** 2 if the art is drawn with 2x2 "big pixels" (common in Essentials), else 1. */
+    static int pixelScale(Bitmap b)
+    {
+        int w = b.getWidth(), h = b.getHeight();
+        if (w % 2 != 0 || h % 2 != 0) return 1;
+        for (int y = 0; y < h; y += 2)
+            for (int x = 0; x < w; x += 2) {
+                int c = b.getPixel(x, y);
+                if (b.getPixel(x + 1, y) != c || b.getPixel(x, y + 1) != c || b.getPixel(x + 1, y + 1) != c) return 1;
+            }
+        return 2;
     }
 }

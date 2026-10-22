@@ -1,6 +1,247 @@
 {
  "images": [
   {
+   "path": "Graphics/Pictures/Battle/cursor_command",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      6,
+      6,
+      53,
+      11
+     ],
+     "text": "LUCHAR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      6,
+      53,
+      11
+     ],
+     "text": "LUCHAR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      52,
+      53,
+      11
+     ],
+     "text": "MOCHILA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      52,
+      53,
+      11
+     ],
+     "text": "MOCHILA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      75,
+      53,
+      11
+     ],
+     "text": "HUIR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      75,
+      53,
+      11
+     ],
+     "text": "HUIR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      98,
+      53,
+      11
+     ],
+     "text": "LLAMAR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      98,
+      53,
+      11
+     ],
+     "text": "LLAMAR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      144,
+      53,
+      11
+     ],
+     "text": "ROCA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      144,
+      53,
+      11
+     ],
+     "text": "ROCA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      167,
+      53,
+      11
+     ],
+     "text": "CEBO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      167,
+      53,
+      11
+     ],
+     "text": "CEBO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      213,
+      53,
+      11
+     ],
+     "text": "CANCELAR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      213,
+      53,
+      11
+     ],
+     "text": "CANCELAR",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      236,
+      53,
+      11
+     ],
+     "text": "ÁNIMO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      236,
+      53,
+      11
+     ],
+     "text": "ÁNIMO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      259,
+      53,
+      11
+     ],
+     "text": "CAMPO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      259,
+      53,
+      11
+     ],
+     "text": "CAMPO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    }
+   ]
+  },
+  {
    "path": "Graphics/Pictures/types",
    "lang": "es",
    "grid": 2,
