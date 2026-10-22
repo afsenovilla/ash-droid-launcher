@@ -250,9 +250,10 @@ def apply_region(cv, r, fonts, buttons, game=None):
             continue
         cx = gx0
         for g, gw in zip(glyphs, widths):
-            for ty in range(height):
-                gy = (ty * font["h"] + font["h"] // 2) // height
-                col = fills[ty * len(fills) // height] if fills else fill
+            top = len(g) - font["h"]  # accent rows drawn above the line, unscaled
+            for ty in range(-top, height):
+                gy = top + ty if ty < 0 else top + (ty * font["h"] + font["h"] // 2) // height
+                col = fills[max(0, ty) * len(fills) // height] if fills else fill
                 for gx in range(len(g[gy])):
                     if g[gy][gx] != "#":
                         continue

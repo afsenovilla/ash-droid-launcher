@@ -321,9 +321,10 @@ final class ArtPatcher
             int cx = gx0;
             for (int i = 0; i < text.length(); i++) {
                 String[] g = glyphs[i];
-                for (int ty = 0; ty < height; ty++) {
-                    int gy = (ty * font.h + font.h / 2) / height;
-                    int col = fills.length > 0 ? fills[ty * fills.length / height] : fill;
+                int top = g.length - font.h; // accent rows drawn above the line, unscaled
+                for (int ty = -top; ty < height; ty++) {
+                    int gy = ty < 0 ? top + ty : top + (ty * font.h + font.h / 2) / height;
+                    int col = fills.length > 0 ? fills[Math.max(0, ty) * fills.length / height] : fill;
                     String row = g[gy];
                     for (int gx = 0; gx < row.length(); gx++) {
                         if (row.charAt(gx) != '#') continue;

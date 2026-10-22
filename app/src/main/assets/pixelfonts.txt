@@ -1,5 +1,6 @@
 // Pixel fonts used to redraw lettering in game images (shared by the app and tools).
 // Format: '@font <name> <width> <height>' then per glyph: a line 'char:<c>' followed by <height> rows ('#' = ink).
+// Glyphs taller than <height> (accented capitals) have their extra rows drawn above the line.
 // Glyphs may be narrower than <width> (proportional fonts): a glyph's width is the length of its rows.
 // 'cmd' follows the battle command buttons; 'dot9'/'dot5' follow the slot machine's lamp lettering; 'memo' follows Voltorb Flip's memo button; 'card' follows the trainer card title; 'tiny' follows the naming screen's key labels; 'bold8' follows the Pokédex tabs / SHIFT button lettering; 'type5' (short words) and 'type' (long words), 'status' and 'icon' follow the lettering of Essentials' type, status and battle status icons.
 // Fonts may have lowercase glyphs ('naming'); missing ones fall back to uppercase, then to the plain letter without accent.
@@ -559,6 +560,36 @@ char:-
 ...
 ...
 
+char:É
+....
+..##
+.#..
+####
+#...
+###.
+#...
+#...
+####
+char:Ó
+....
+..##
+.#..
+.##.
+#..#
+#..#
+#..#
+#..#
+.##.
+char:Í
+.#
+#.
+..
+#.
+#.
+#.
+#.
+#.
+#.
 @font type5 5 7
 char:A
 .###.
@@ -705,6 +736,36 @@ char:.
 .
 #
 
+char:É
+.....
+..##.
+.#...
+#####
+#....
+####.
+#....
+#....
+#####
+char:Ó
+.....
+..##.
+.#...
+.###.
+#...#
+#...#
+#...#
+#...#
+.###.
+char:Í
+.#
+#.
+..
+#.
+#.
+#.
+#.
+#.
+#.
 @font bold8 6 8
 char:A
 .####.
