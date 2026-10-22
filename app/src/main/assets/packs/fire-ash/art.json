@@ -1109,7 +1109,7 @@
       10
      ],
      "text": "CAMBIO",
-     "font": "5x7",
+     "font": "bold8",
      "style": "outline",
      "bgx": 6,
      "fills": [
@@ -1138,17 +1138,16 @@
    "regions": [
     {
      "rect": [
-      115,
+      104,
       3,
-      40,
+      54,
       10
      ],
      "text": "FORMAS",
-     "font": "5x7",
+     "font": "bold8",
      "style": "outline",
-     "bgx": 113,
-     "align": "left",
-     "dx": 1,
+     "bgx": 104,
+     "align": "center",
      "fill": "#f898a0",
      "shade": "#901020"
     }
@@ -1161,17 +1160,16 @@
    "regions": [
     {
      "rect": [
-      115,
+      104,
       3,
-      40,
+      54,
       10
      ],
      "text": "FORMAS",
-     "font": "5x7",
+     "font": "bold8",
      "style": "outline",
-     "bgx": 113,
-     "align": "left",
-     "dx": 1,
+     "bgx": 104,
+     "align": "center",
      "fill": "#90d8b8",
      "shade": "#187048"
     }
@@ -1184,17 +1182,16 @@
    "regions": [
     {
      "rect": [
-      115,
+      104,
       3,
-      40,
+      54,
       10
      ],
      "text": "FORMAS",
-     "font": "5x7",
+     "font": "bold8",
      "style": "outline",
-     "bgx": 113,
-     "align": "left",
-     "dx": 1,
+     "bgx": 104,
+     "align": "center",
      "fill": "#f8f8f8",
      "shade": "#000000"
     }

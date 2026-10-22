@@ -228,7 +228,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
         cx = gx0
         for g, gw in zip(glyphs, widths):
             for ty in range(height):
-                gy = ty * font["h"] // height
+                gy = (ty * font["h"] + font["h"] // 2) // height
                 col = fills[ty * len(fills) // height] if fills else fill
                 for gx in range(len(g[gy])):
                     if g[gy][gx] != "#":
