@@ -485,3 +485,31 @@ module AshDroidFixes
   rescue StandardError
   end
 end
+
+# Music substitutions (by file name, any folder/extension): play the track on
+# the right instead of the one on the left.
+module AshDroidAudio
+  ALIASES = { "teamrocket1" => "TeamRocket" }
+
+  def self.map(name)
+    return name unless name.is_a?(String)
+    base = File.basename(name).sub(/\.[^.]+\z/, "")
+    alt = ALIASES[base.downcase]
+    return name unless alt
+    File.join(File.dirname(name), alt)
+  rescue StandardError
+    name
+  end
+end
+
+begin
+  module Audio
+    class << self
+      alias_method :__ashdroid_bgm_play, :bgm_play
+      def bgm_play(name, *args)
+        __ashdroid_bgm_play(AshDroidAudio.map(name), *args)
+      end
+    end
+  end
+rescue StandardError, NameError
+end
