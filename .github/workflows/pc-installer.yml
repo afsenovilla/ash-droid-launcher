@@ -6,6 +6,9 @@ on:
     paths: ['tools/pc/installer/**', '.github/workflows/pc-installer.yml']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -25,3 +28,10 @@ jobs:
         with:
           name: pc-installer
           path: out/
+      - name: Publish to the "pc-installer" prerelease (used to build the PC patch zip)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pc-installer
+          name: PC installer (build tool)
+          prerelease: true
+          files: out/Instalar parche.exe
