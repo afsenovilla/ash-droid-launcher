@@ -1,13 +1,13 @@
+# Windows installer of the PC patch ("Instalar parche.exe", WinForms on .NET Framework 4).
+# Called by build.yml for every build.
 name: PC installer
 
 on:
-  push:
-    branches: [main]
-    paths: ['tools/pc/installer/**', '.github/workflows/pc-installer.yml']
+  workflow_call:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -28,10 +28,3 @@ jobs:
         with:
           name: pc-installer
           path: out/
-      - name: Publish to the "pc-installer" prerelease (used to build the PC patch zip)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: pc-installer
-          name: PC installer (build tool)
-          prerelease: true
-          files: out/Instalar parche.exe

@@ -28,6 +28,9 @@ jobs:
   apk:
     runs-on: ubuntu-22.04
     timeout-minutes: 90
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -54,6 +57,7 @@ jobs:
           echo "$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin" >> "$GITHUB_PATH"
 
       - name: Version
+        id: version
         run: |
           REL="${{ github.event.inputs.release }}"
           if [ -n "$REL" ]; then
@@ -76,6 +80,8 @@ jobs:
             echo "VERSION_NAME=${ma}.${mi}.$((pa+1))-dev.${n}" >> "$GITHUB_ENV"
           fi
           echo "VERSION_CODE=${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+          { echo "version=$(grep '^VERSION_NAME=' "$GITHUB_ENV" | tail -1 | cut -d= -f2)"
+            echo "release=$(grep '^RELEASE=' "$GITHUB_ENV" | tail -1 | cut -d= -f2)"; } >> "$GITHUB_OUTPUT"
 
       # Fails in ~2 min on Java errors, before the long native build
       - name: Java compile check
@@ -178,16 +184,80 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ash-droid-launcher-${{ env.VERSION_NAME }}
-          path: dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
+          name: apk
+          path: dist/*.apk
 
+  # Engine for the Steam Deck / Linux package (cached: only compiled when mkxp-z changes)
+  linux:
+    uses: ./.github/workflows/linux-runtime.yml
+
+  pc-installer:
+    uses: ./.github/workflows/pc-installer.yml
+
+  # PC / Steam Deck patch zip: Windows installer + Linux installer and engine + the patch.
+  # It ships no game files (the images are redrawn by the patch while the game runs).
+  pc-zip:
+    needs: [apk, linux, pc-installer]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: pc-installer
+          path: in
+      - uses: actions/download-artifact@v4
+        with:
+          name: mkxp-z-linux-x86_64
+          path: in
+      - name: Build zip
+        run: |
+          V="${{ needs.apk.outputs.version }}"
+          mkdir -p dist
+          tools/pc/build_pc_patch.sh "dist/FireAsh-Espanol-Espana-PC-SteamDeck-${V}.zip" "$V" \
+            "in/Instalar parche.exe" in/mkxp-z-linux-x86_64.tar.gz
+          cp "dist/FireAsh-Espanol-Espana-PC-SteamDeck-${V}.zip" dist/FireAsh-Espanol-Espana-PC-SteamDeck-dev.zip
+          unzip -l "dist/FireAsh-Espanol-Espana-PC-SteamDeck-${V}.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pc-zip
+          path: dist/*.zip
+
+  # One release per build with everything: Android APK + PC / Steam Deck zip
+  release:
+    needs: [apk, pc-zip]
+    if: github.event_name != 'pull_request' && (needs.apk.outputs.release == 'true' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-24.04
+    env:
+      VERSION_NAME: ${{ needs.apk.outputs.version }}
+      RELEASE: ${{ needs.apk.outputs.release }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: pc-zip
+          path: dist
       - name: Release notes
         run: |
-          if [ "${RELEASE:-}" = "true" ]; then
-            ci/release-notes.sh "${VERSION_NAME}" > dist/notes.md
+          ls -la dist
+          if [ "$RELEASE" = "true" ]; then
+            git rev-parse -q --verify "refs/tags/v$VERSION_NAME" >/dev/null || git tag "v$VERSION_NAME"
+            ci/release-notes.sh "$VERSION_NAME" > dist/notes.md
           else
             ci/release-notes.sh dev > dist/notes.md
           fi
+          cat >> dist/notes.md <<'EOF'
+
+          ## Downloads
+          - **Android** (Retroid, AYN, Anbernic…): the `.apk`.
+          - **PC (Windows) and Steam Deck / Linux**: the `FireAsh-Espanol-Espana-PC-SteamDeck` zip — "Instalar parche.exe" on Windows, "Instalar en Steam Deck.sh" on the Deck (desktop mode). See LEEME.txt inside.
+          EOF
           cat dist/notes.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish stable release
@@ -198,21 +268,34 @@ jobs:
           target_commitish: ${{ github.sha }}
           name: Ash Droid Launcher v${{ env.VERSION_NAME }}
           make_latest: true
-          files: dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
+          files: |
+            dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
+            dist/FireAsh-Espanol-Espana-PC-SteamDeck-${{ env.VERSION_NAME }}.zip
           body_path: dist/notes.md
 
       - name: Move "dev" tag to this commit
-        if: github.ref == 'refs/heads/main' && env.RELEASE != 'true'
+        if: env.RELEASE != 'true'
         run: |
           git tag -f dev
           git push -f origin dev
 
       - name: Publish rolling dev build
-        if: github.ref == 'refs/heads/main' && env.RELEASE != 'true'
+        if: env.RELEASE != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dev
           name: Dev build ${{ env.VERSION_NAME }} (latest commit on main)
           prerelease: true
-          files: dist/ash-droid-launcher-dev.apk
+          files: |
+            dist/ash-droid-launcher-dev.apk
+            dist/FireAsh-Espanol-Espana-PC-SteamDeck-dev.zip
           body_path: dist/notes.md
+
+      # The engine and the Windows installer used to be published as separate "build tool"
+      # prereleases; everything now ships in the release itself.
+      - name: Remove old build-tool prereleases
+        continue-on-error: true
+        run: |
+          for t in pc-installer linux-runtime; do
+            gh release delete "$t" --cleanup-tag --yes 2>/dev/null && echo "removed $t" || true
+          done

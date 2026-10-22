@@ -319,27 +319,29 @@ module AshDroidGfx
   ES = {}
   ANY = {}
   LOGGED = {}
-  # Android writes its own images to ashdroid_art/; the PC patch ships one set with
-  # keyboard keys (ashdroid_art/) and one with the Steam Deck's buttons (ashdroid_art_deck/).
-  DIR = ASHDROID_DECK && File.exist?("ashdroid_art_deck/index.txt") ? "ashdroid_art_deck" : "ashdroid_art"
-  INDEX = "#{DIR}/index.txt"
+  # Android: the launcher writes the images and their index to ashdroid_art/.
+  INDEX = "ashdroid_art/index.txt"
 
   begin
     if File.exist?(INDEX)
       File.read(INDEX).each_line do |line|
         lang, key, file = line.chomp.split("\t")
         next unless file
-        file = "#{DIR}/#{file}" unless file.include?("/") # bare file names are relative to the index
+        file = "ashdroid_art/#{file}" unless file.include?("/") # bare file names are relative to the index
         (lang == "any" ? ANY : ES)[key] = file
       end
     end
-    AshDroidLog.log("art: #{INDEX} es=#{ES.size} any=#{ANY.size}")
+    AshDroidLog.log("art: #{INDEX} es=#{ES.size} any=#{ANY.size}") if File.exist?(INDEX)
   rescue StandardError
+  end
+
+  def self.key_of(path)
+    path.tr("\\", "/").sub(/\A\.\//, "").sub(/\.png\z/i, "").downcase
   end
 
   def self.redirect(path)
     return nil unless path.is_a?(String)
-    key = path.tr("\\", "/").sub(/\A\.\//, "").sub(/\.png\z/i, "").downcase
+    key = key_of(path)
     alt = AshDroidText.spanish? ? (ES[key] || ANY[key]) : ANY[key]
     res = alt && File.exist?(alt) ? alt : nil
     if alt && !LOGGED[key]
@@ -349,6 +351,127 @@ module AshDroidGfx
     res
   rescue StandardError
     nil
+  end
+
+  # PC / Steam Deck: no prebuilt images; the lettering is redrawn on the game's own
+  # images as they load (ashdroid_art.rb + recipes in ashdroid_art.dat).
+  module Live
+    DATA_FILE = "ashdroid_art.dat"
+    CONTROLS = "graphics/pictures/controls help/"
+    @data = nil
+    @cache = {}
+    @busy = false
+
+    def self.enabled?
+      return @enabled unless @enabled.nil?
+      @enabled = begin
+        if AshDroidGfx::ES.empty? && AshDroidGfx::ANY.empty? && File.exist?(DATA_FILE) && File.exist?("ashdroid_art.rb")
+          load File.expand_path("ashdroid_art.rb")
+          @data = AshDroidArt.load_data(DATA_FILE)
+          AshDroidLog.log("art: live, #{@data[:by_path].size} recipes, deck=#{ASHDROID_DECK.inspect}")
+          true
+        else
+          false
+        end
+      rescue StandardError, ScriptError => e
+        AshDroidLog.log("art: live disabled: #{e.class}: #{e.message}")
+        false
+      end
+    end
+
+    # Button names drawn in the art: the Deck's buttons, or the keyboard keys on PC
+    def self.buttons
+      ASHDROID_DECK ? { "USE" => "A", "BACK" => "B", "ACTION" => "X", "SPECIAL" => "R3" } :
+                      { "USE" => "ENTER", "BACK" => "X", "ACTION" => "Z", "SPECIAL" => "D" }
+    end
+
+    # Which variant this image gets now: "es", "any", :controls or nil
+    def self.variant(key)
+      entries = @data[:by_path][key]
+      if entries
+        langs = entries.map { |e| e["lang"] || "es" }
+        return "es" if AshDroidText.spanish? && langs.include?("es")
+        # "any" images only change button names: nothing to do with keyboard keys
+        return "any" if ASHDROID_DECK && langs.include?("any")
+        return nil
+      end
+      return :controls if ASHDROID_DECK && key.start_with?(CONTROLS)
+      nil
+    end
+
+    def self.busy?
+      @busy
+    end
+
+    def self.to_img(bmp)
+      w, h = bmp.width, bmp.height
+      if bmp.respond_to?(:raw_data)
+        AshDroidArt::Img.new(w, h, bmp.raw_data.unpack("N*"))
+      else
+        px = Array.new(w * h)
+        h.times { |y| w.times { |x| c = bmp.get_pixel(x, y); px[y * w + x] = AshDroidArt.rgba(c.red.to_i, c.green.to_i, c.blue.to_i, c.alpha.to_i) } }
+        AshDroidArt::Img.new(w, h, px)
+      end
+    end
+
+    def self.write(bmp, img)
+      if bmp.respond_to?(:raw_data=)
+        bmp.raw_data = img.px.pack("N*")
+      else
+        img.h.times do |y|
+          img.w.times do |x|
+            c = img.px[y * img.w + x]
+            bmp.set_pixel(x, y, Color.new(c >> 24, (c >> 16) & 255, (c >> 8) & 255, c & 255))
+          end
+        end
+      end
+    end
+
+    # The user's own art (e.g. assets_E/Tipo_lucha_E.png), names compared without accents
+    def self.user_image(rel)
+      cur = "."
+      rel.split("/").each do |part|
+        want = AshDroidArt.strip_accents(part).downcase
+        hit = (Dir.children(cur) rescue []).find { |n| AshDroidArt.strip_accents(n.dup.force_encoding("UTF-8")).downcase == want }
+        return nil unless hit
+        cur = File.join(cur, hit)
+      end
+      return nil unless File.file?(cur)
+      @busy = true
+      b = Bitmap.new(cur)
+      img = to_img(b)
+      b.dispose
+      img
+    rescue StandardError
+      nil
+    ensure
+      @busy = false
+    end
+
+    # Called right after the game's image `path` was loaded into `bmp`
+    def self.apply(bmp, path)
+      return unless path.is_a?(String) && !@busy && enabled?
+      key = AshDroidGfx.key_of(path)
+      v = variant(key)
+      return unless v
+      ck = "#{key}|#{v}"
+      img = @cache[ck]
+      if img.nil?
+        t = Time.now
+        src = to_img(bmp)
+        img = if v == :controls
+                AshDroidArt::Controls.generate(File.basename(key), src, buttons, @data[:fonts]["5x7"])
+              else
+                AshDroidArt.relabel(src, @data[:by_path][key], v, @data[:fonts], buttons, method(:user_image))
+              end
+        @cache[ck] = img || false
+        AshDroidLog.log("gfx live #{ck} #{img ? 'ok' : 'skip'} #{((Time.now - t) * 1000).round}ms")
+      end
+      write(bmp, img) if img && img.w == bmp.width && img.h == bmp.height
+    rescue StandardError => e
+      @cache[ck] = false if ck
+      AshDroidLog.log("gfx live error #{path}: #{e.class}: #{e.message}")
+    end
   end
 end
 
@@ -360,6 +483,7 @@ begin
         args = [alt]
       end
       __ashdroid_initialize(*args)
+      AshDroidGfx::Live.apply(self, args[0]) if args.length == 1 && args[0].is_a?(String)
     end
   end
 rescue StandardError, NameError

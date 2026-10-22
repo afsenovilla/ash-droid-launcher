@@ -61,6 +61,8 @@ instale encima de la anterior sin perder datos.
 
 ## Versiones y releases
 
+Cada release trae dos descargas: el **APK** de Android y el **zip para PC / Steam Deck**.
+
 - Las versiones siguen [Semantic Versioning](https://semver.org/); los cambios están en [CHANGELOG.md](CHANGELOG.md).
 - **Versiones estables** (tags `vX.Y.Z`): las notas salen del changelog, más la lista de commits.
 - **Dev build** (prerelease `dev`): se recompila en cada push a `main`, con versión "siguiente parche + nº de commits

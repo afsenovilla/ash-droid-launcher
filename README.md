@@ -60,6 +60,8 @@ over the previous one without losing data.
 
 ## Versions and releases
 
+Each release has two downloads: the Android **APK** and the **PC / Steam Deck zip**.
+
 - Versions follow [Semantic Versioning](https://semver.org/); changes are listed in [CHANGELOG.md](CHANGELOG.md).
 - **Stable releases** (`vX.Y.Z` tags): release notes come from the changelog, plus the list of commits.
 - **Dev build** (`dev` prerelease): rebuilt on every push to `main`, versioned as the next patch plus the number of

@@ -1,23 +1,23 @@
 # Native Linux x86_64 build of mkxp-z (the engine Fire Ash already uses on Windows), for the
 # Steam Deck / Linux package of the PC patch. Same recipe as mkxp-z's own CI: clang against an
 # Ubuntu 16.04 sysroot (old glibc, so it runs on any current SteamOS/Linux), every library
-# vendored and linked in. Published to the "linux-runtime" prerelease, where
-# tools/pc/build_pc_patch.sh picks it up.
+# vendored and linked in. Called by build.yml for every build; the engine is cached by
+# mkxp-z commit (bump ENGINE_CACHE to force a rebuild), so it is only compiled when it
+# changes. The smoke test runs every time, against the current patch.
 name: Linux runtime
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/linux-runtime.yml', 'tools/linux/**', 'app/src/main/assets/ashdroid_patches.rb']
+  workflow_call:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   # mkxp-z 2.4.2 (same engine line as the Android build)
   MKXPZ_REPO: mkxp-z/mkxp-z
   MKXPZ_REF: 37a04d14413454551a7b6aadbb4e93e67168accb
+  ENGINE_CACHE: mkxpz-linux-x86_64-v1
 
 jobs:
   build:
@@ -26,7 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Engine from cache
+        id: engine
+        uses: actions/cache/restore@v4
+        with:
+          path: out/mkxp-z-linux-x86_64.tar.gz
+          key: ${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
+
       - name: Checkout mkxp-z
+        if: steps.engine.outputs.cache-hit != 'true'
         uses: actions/checkout@v5
         with:
           repository: ${{ env.MKXPZ_REPO }}
@@ -34,6 +42,7 @@ jobs:
           path: mkxp-z
 
       - name: Install dependencies
+        if: steps.engine.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq bison ccache cmake diffutils git make ruby clang lld llvm \
@@ -43,6 +52,7 @@ jobs:
           meson --version
 
       - name: Set up sysroot (Ubuntu 16.04)
+        if: steps.engine.outputs.cache-hit != 'true'
         shell: bash tools/linux/ci_step.sh sysroot {0}
         run: |
           keyrings="$(realpath mkxp-z/keyrings)"
@@ -70,6 +80,7 @@ jobs:
           grep "^$fs_spec " /proc/mounts | cut -d ' ' -f 2 | sort -r | tr '\n' '\0' | xargs -0 -n 1 printf '%b\0' | xargs -0 -n 1 sudo umount
 
       - name: Restore ccache
+        if: steps.engine.outputs.cache-hit != 'true'
         uses: actions/cache/restore@v4
         with:
           path: ccache
@@ -77,6 +88,7 @@ jobs:
           restore-keys: linux-x86_64-
 
       - name: Configure
+        if: steps.engine.outputs.cache-hit != 'true'
         shell: bash tools/linux/ci_step.sh configure {0}
         run: |
           cd mkxp-z
@@ -102,6 +114,7 @@ jobs:
             --buildtype release -Dstrip=true -Db_lto=true build
 
       - name: Build
+        if: steps.engine.outputs.cache-hit != 'true'
         id: build
         working-directory: mkxp-z
         run: |
@@ -116,13 +129,14 @@ jobs:
           date -u +time=%Y-%m-%dT%H:%M:%SZ >> "$GITHUB_OUTPUT"
 
       - name: Save ccache
-        if: always()
+        if: always() && steps.engine.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: ccache
           key: linux-x86_64-${{ env.MKXPZ_REF }}-${{ steps.build.outputs.time }}
 
       - name: Package
+        if: steps.engine.outputs.cache-hit != 'true'
         shell: bash tools/linux/ci_step.sh package {0}
         run: |
           [ "${{ steps.build.outputs.code }}" = 0 ] || exit 1
@@ -136,10 +150,23 @@ jobs:
           tar -C "$A" -czf out/mkxp-z-linux-x86_64.tar.gz .
           ls -la out
 
+      - name: Save engine to cache
+        if: steps.engine.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: out/mkxp-z-linux-x86_64.tar.gz
+          key: ${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
+
       - uses: actions/upload-artifact@v4
         with:
           name: mkxp-z-linux-x86_64
-          path: out/
+          path: out/mkxp-z-linux-x86_64.tar.gz
+
+      - name: Smoke test tools
+        if: steps.engine.outputs.cache-hit == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri ruby
 
       - name: Smoke test (stdlib, preload script, Steam Deck detection)
         shell: bash tools/linux/ci_step.sh smoke {0}
@@ -149,7 +176,8 @@ jobs:
           T=$(mktemp -d); mkdir -p "$T/game/ashdroid_linux"
           tar -C "$T/game/ashdroid_linux" -xzf out/mkxp-z-linux-x86_64.tar.gz
           ls "$T/game/ashdroid_linux" "$T/game/ashdroid_linux/stdlib" | head -40
-          cp app/src/main/assets/ashdroid_patches.rb "$T/game/"
+          cp app/src/main/assets/ashdroid_patches.rb app/src/main/assets/ashdroid_art.rb "$T/game/"
+          ruby tools/art/make_art_dat.rb app/src/main/assets/packs/fire-ash/art.json "$T/game/ashdroid_art.dat"
           mkdir -p "$T/game/Data"
           ruby -rzlib -e 'File.binwrite(ARGV[1], Marshal.dump([[0, "Main", Zlib::Deflate.deflate(File.read(ARGV[0]))]]))' \
             tools/linux/smoke_test.rb "$T/game/Data/Scripts.rxdata"
@@ -161,11 +189,3 @@ jobs:
           cat smoke_test.log
           cat ashdroid_patch.log || true
           grep -q '^OK' smoke_test.log
-
-      - name: Publish to the "linux-runtime" prerelease (used to build the PC / Steam Deck zip)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: linux-runtime
-          name: Linux runtime (build tool)
-          prerelease: true
-          files: out/mkxp-z-linux-x86_64.tar.gz
