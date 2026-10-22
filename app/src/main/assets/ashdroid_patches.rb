@@ -68,6 +68,9 @@ module AshDroidText
     s.gsub(/\s+/, " ").strip
   end
 
+  # Messages that only make sense on PC; never shown on the device
+  SKIP_MESSAGES = /Helpful Notes|Helpful\b/i
+
   # "Español (España)": an extra language added to the game's language list. It
   # loads the game's Spanish file for names, but every text in the full
   # retranslation pack replaces the game's own Spanish.
@@ -273,6 +276,22 @@ begin
         end
         return
       end
+      if self == Object && name == :pbMessage && !@__ashdroid_wrapping
+        # Skip PC-only notices (e.g. "...in the Helpful Notes folder": that folder
+        # is part of the PC download, not of the game on this device).
+        @__ashdroid_wrapping = true
+        begin
+          orig = instance_method(name)
+          define_method(name) do |message, *args, &blk|
+            next 0 if message.is_a?(String) && message =~ AshDroidText::SKIP_MESSAGES
+            orig.bind(self).call(message, *args, &blk)
+          end
+          private name
+        ensure
+          @__ashdroid_wrapping = false
+        end
+        return
+      end
       return unless self == Object && ASHDROID_WRAP.include?(name)
       return if @__ashdroid_wrapping
       AshDroidLog.log("wrapping #{name}")
@@ -336,6 +355,17 @@ module AshDroidFixes
     end
   end
 
+  # Options menu: drop "Screen Size" (the game always fills the device screen)
+  module OptionsNoScreenSize
+    def pbAddOnOptions(options)
+      opts = super
+      names = ["Screen Size", (_INTL("Screen Size") rescue "Screen Size")]
+      opts.reject { |o| o.respond_to?(:name) && names.include?(o.name) }
+    rescue StandardError
+      super
+    end
+  end
+
   # Adds "Español (España)" to the game's language list (same Spanish data file)
   def self.add_language(settings)
     langs = settings::LANGUAGES
@@ -357,6 +387,7 @@ module AshDroidFixes
   HOOKS = {
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
+    "PokemonOption_Scene" => OptionsNoScreenSize,
     "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
   }
 

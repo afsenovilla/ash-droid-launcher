@@ -1,2 +1,4 @@
 patch loaded; cwd=/home/claude/ash-droid-launcher ruby=3.3.6
-pbSetResizeFactor forced to fullscreen
+wrapping _INTL
+fix applied: PokemonOption_Scene
+pack: exists=false entries=0
