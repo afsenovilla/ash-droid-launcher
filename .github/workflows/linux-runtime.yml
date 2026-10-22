@@ -48,7 +48,7 @@ jobs:
           keyrings="$(realpath mkxp-z/keyrings)"
           cd ${{ runner.temp }}
           repo=http://archive.ubuntu.com/ubuntu
-          sudo debootstrap --arch=amd64 --variant=minbase --keyring="$keyrings/ubuntu.gpg" --force-check-sig xenial sysroot $repo
+          sudo debootstrap --arch=amd64 --variant=minbase --keyring="$keyrings/ubuntu.gpg" xenial sysroot $repo
           sudo cp "$keyrings/ubuntu-toolchain-r.gpg" sysroot/
           echo "deb $repo xenial-updates main" | sudo tee -a sysroot/etc/apt/sources.list > /dev/null
           echo 'deb [signed-by=/ubuntu-toolchain-r.gpg] http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main' | sudo tee -a sysroot/etc/apt/sources.list > /dev/null
