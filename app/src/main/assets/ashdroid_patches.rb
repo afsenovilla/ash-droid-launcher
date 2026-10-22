@@ -459,7 +459,29 @@ module AshDroidFixes
     AshDroidLog.log("add_language error: #{e.class}: #{e.message}")
   end
 
+  # Game data texts (item/move/ability names and descriptions…) come from the
+  # language file by numeric id; the Spain pack overrides them as "@<type>:<id>".
+  module MessageTypesES
+    def get(type, id)
+      if AshDroidText.spain?
+        r = AshDroidText.spain_pack["@#{type}:#{id}"]
+        return r if r
+      end
+      super
+    end
+  end
+
+  def self.hook_message_types(mod)
+    return if mod.singleton_class.ancestors.include?(MessageTypesES)
+    return unless mod.respond_to?(:get)
+    mod.singleton_class.prepend(MessageTypesES)
+    AshDroidLog.log("fix applied: MessageTypes")
+  rescue StandardError => e
+    AshDroidLog.log("MessageTypes hook error: #{e.class}: #{e.message}")
+  end
+
   HOOKS = {
+    "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
     "PokemonOption_Scene" => OptionsNoScreenSize,
