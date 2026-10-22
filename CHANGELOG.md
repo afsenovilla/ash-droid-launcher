@@ -6,8 +6,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-10-22
-
 ### Added
 - Each release now has three downloads: the Android APK, the Windows patch and the Steam Deck / Linux patch.
 - Steam Deck (LCD and OLED): the patch detects the Deck (DMI model, or Steam's `SteamDeck=1`; override with
