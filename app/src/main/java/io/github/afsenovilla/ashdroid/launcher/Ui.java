@@ -153,6 +153,65 @@ final class Ui
         return b;
     }
 
+    /**
+     * Settings tile: title + current value, rounded translucent card with a
+     * clear focus ring (works with the D-pad). Lays out with weight 1 in a row.
+     */
+    LinearLayout tile(String title, String value, View.OnClickListener l)
+    {
+        LinearLayout t = new LinearLayout(mAct);
+        t.setOrientation(LinearLayout.VERTICAL);
+        t.setPadding(dp(18), dp(12), dp(18), dp(12));
+        t.setFocusable(true);
+        t.setClickable(true);
+        t.setOnClickListener(l);
+        TextView a = text(title, 17, FG, true);
+        a.setPadding(0, 0, 0, dp(2));
+        TextView b = text(value, 13, DIM, false);
+        b.setPadding(0, 0, 0, 0);
+        b.setTag("value");
+        t.addView(a);
+        t.addView(b);
+
+        GradientDrawable normal = new GradientDrawable();
+        normal.setColor(Color.argb(0xD0, 0x22, 0x26, 0x2D));
+        normal.setCornerRadius(dp(12));
+        GradientDrawable focused = new GradientDrawable();
+        focused.setColor(Color.argb(0xF0, 0x2C, 0x31, 0x3A));
+        focused.setCornerRadius(dp(12));
+        focused.setStroke(dp(3), ACCENT);
+        StateListDrawable sl = new StateListDrawable();
+        sl.addState(new int[] { android.R.attr.state_focused }, focused);
+        sl.addState(new int[] { android.R.attr.state_pressed }, focused);
+        sl.addState(new int[] {}, normal);
+        t.setBackground(sl);
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+        lp.setMargins(dp(6), dp(6), dp(6), dp(6));
+        t.setLayoutParams(lp);
+        return t;
+    }
+
+    /** Row of tiles with equal widths. */
+    LinearLayout tileRow(View... tiles)
+    {
+        LinearLayout r = new LinearLayout(mAct);
+        r.setOrientation(LinearLayout.HORIZONTAL);
+        for (View v : tiles) r.addView(v);
+        if (tiles.length == 1) {
+            View filler = new View(mAct);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 1, 1f);
+            lp.setMargins(dp(6), 0, dp(6), 0);
+            filler.setLayoutParams(lp);
+            r.addView(filler);
+        }
+        r.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        return r;
+    }
+
+    TextView caption(String s) { return text(s, 12, DIM, true); }
+
     @SuppressWarnings("deprecation")
     static void immersive(Window w)
     {

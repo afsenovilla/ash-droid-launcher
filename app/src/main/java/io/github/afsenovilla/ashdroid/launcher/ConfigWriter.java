@@ -61,7 +61,7 @@ public final class ConfigWriter
         p.edit().putString(KEY_SCALE, mode.name()).apply();
     }
 
-    public static Result write(Context ctx, DeviceProfile dev) throws IOException
+    public static synchronized Result write(Context ctx, DeviceProfile dev) throws IOException
     {
         File game = GameInstaller.gameDir(ctx);
         File conf = new File(game, "mkxp.json");
@@ -229,7 +229,20 @@ public final class ConfigWriter
             }
             return;
         }
+        // Regenerating every image takes a few seconds: only when the app or the
+        // buttons changed since the last time.
+        File stampFile = new File(game, ArtPatcher.OUT_DIR + "/stamp.txt");
+        String stamp = io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME + "|" + new java.util.TreeMap<>(b);
+        try {
+            if (stampFile.exists() && new File(game, ArtPatcher.INDEX).exists()
+                    && stamp.equals(Util.readText(stampFile))) return;
+        } catch (IOException ignored) {
+        }
         ArtPatcher.generate(ctx, game, id, b);
+        try {
+            Util.writeText(stampFile, stamp);
+        } catch (IOException ignored) {
+        }
     }
 
     /** Button label currently assigned to an RGSS action (e.g. "A", "L1"), or null. */

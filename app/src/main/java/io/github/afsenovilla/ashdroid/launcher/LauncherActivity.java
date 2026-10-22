@@ -31,8 +31,11 @@ public class LauncherActivity extends Activity
     private LinearLayout mRoot;
     private DeviceProfile mDevice;
     private volatile boolean mBusy = false;
-    private Button mScaleButton;
+    private View mScaleButton;
     private Button mPlayButton;
+    private android.widget.FrameLayout mFrame;
+    private android.widget.ImageView mBackdrop;
+    private boolean mStarting = false;
 
     // Auto-start: on a fresh app launch, start the game after a short countdown.
     // Any button press or touch cancels it and stays in the menu.
@@ -64,7 +67,21 @@ public class LauncherActivity extends Activity
         super.onCreate(savedInstanceState);
         mUi = new Ui(this);
         mRoot = mUi.column();
-        setContentView(mUi.scroll(mRoot));
+        mRoot.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        android.widget.ScrollView sv = mUi.scroll(mRoot);
+        sv.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        mFrame = new android.widget.FrameLayout(this);
+        mFrame.setBackgroundColor(Ui.BG);
+        mBackdrop = new android.widget.ImageView(this);
+        mBackdrop.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+        mFrame.addView(mBackdrop, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        View shade = new View(this);
+        shade.setBackground(new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[] { 0xF0121418, 0xC0121418, 0xE0121418 }));
+        mFrame.addView(shade, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        mFrame.addView(sv, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        setContentView(mFrame);
         // Only on a fresh launch from the home screen, not when returning from the game
         mAutostartPending = savedInstanceState == null && autostartEnabled();
     }
@@ -131,8 +148,8 @@ public class LauncherActivity extends Activity
         mScaleButton = null;
         mPlayButton = null;
         mRoot.removeAllViews();
-        mRoot.addView(mUi.title(getString(R.string.launcher_title)));
-        mRoot.addView(mUi.small("v" + io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME));
+        mRoot.setOrientation(LinearLayout.VERTICAL);
+        loadBackdrop();
 
         if (!GameInstaller.isInstalled(this)) {
             renderWelcome();
@@ -141,56 +158,110 @@ public class LauncherActivity extends Activity
         }
     }
 
+    /** The game's own title screen, pixel-sharp and dimmed, as the launcher background. */
+    private void loadBackdrop()
+    {
+        mBackdrop.setImageDrawable(null);
+        if (!GameInstaller.isInstalled(this)) return;
+        java.io.File dir = Util.findChildIgnoreCase(GameInstaller.gameDir(this), "Graphics");
+        dir = dir == null ? null : Util.findChildIgnoreCase(dir, "Titles");
+        java.io.File f = dir == null ? null : Util.findChildIgnoreCase(dir, "title.png");
+        if (f == null) return;
+        android.graphics.Bitmap b = android.graphics.BitmapFactory.decodeFile(f.getAbsolutePath());
+        if (b == null) return;
+        android.graphics.drawable.BitmapDrawable d = new android.graphics.drawable.BitmapDrawable(getResources(), b);
+        d.setFilterBitmap(false);
+        mBackdrop.setImageDrawable(d);
+    }
+
     private void renderWelcome()
     {
+        mRoot.addView(mUi.title(getString(R.string.launcher_title)));
+        mRoot.addView(mUi.small("v" + io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME));
+        mRoot.addView(mUi.spacer(12));
         mRoot.addView(mUi.body(getString(R.string.welcome_body)));
         mRoot.addView(mUi.small(getString(R.string.welcome_hint)));
         mRoot.addView(mUi.spacer(16));
         mRoot.addView(deviceInfo());
         mRoot.addView(mUi.spacer(16));
-        Button imp = mUi.button(getString(R.string.btn_import), v -> pickZip());
+        Button imp = mUi.primaryButton(getString(R.string.btn_import), v -> pickZip());
         mRoot.addView(imp);
         imp.requestFocus();
     }
 
     private void renderMain()
     {
-        mRoot.addView(mUi.big(GameInstaller.gameTitle(this)));
+        mRoot.setOrientation(LinearLayout.HORIZONTAL);
+
+        // ---- left: game + Play
+        LinearLayout left = new LinearLayout(this);
+        left.setOrientation(LinearLayout.VERTICAL);
+        left.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        left.setPadding(0, 0, mUi.dp(24), 0);
+        left.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1f));
+
+        TextView title = mUi.title(GameInstaller.gameTitle(this));
+        title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 32);
+        title.setShadowLayer(8, 0, 2, 0xFF000000);
+        left.addView(title);
+        left.addView(mUi.small(getString(R.string.launcher_title) + "  ·  v"
+                + io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME));
 
         mPlayButton = mUi.primaryButton(getString(R.string.btn_play), v -> { cancelAutostart(); play(); });
-        mRoot.addView(mPlayButton);
+        left.addView(mPlayButton);
+        TextView autoHint = mUi.small(getString(R.string.autostart_hint));
+        autoHint.setVisibility(View.GONE);
+        left.addView(autoHint);
 
-        String scaleInfo;
-        try {
-            ConfigWriter.Result r = ConfigWriter.write(this, mDevice);
-            scaleInfo = getString(R.string.display_info,
-                    r.gameW, r.gameH, mDevice.screenW, mDevice.screenH, r.description);
-        } catch (IOException e) {
-            scaleInfo = getString(R.string.config_failed, e.getMessage());
-        }
+        final TextView status = mUi.small(deviceLine() + "\n" + controlsInfo());
+        left.addView(status);
+        mRoot.addView(left);
 
-        mRoot.addView(deviceInfo());
-        mRoot.addView(mUi.small(scaleInfo));
-        mRoot.addView(mUi.small(controlsInfo()));
-        mRoot.addView(mUi.spacer(16));
+        // ---- right: settings tiles
+        LinearLayout right = new LinearLayout(this);
+        right.setOrientation(LinearLayout.VERTICAL);
+        right.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        right.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1f));
+        TextView cap = mUi.caption(getString(R.string.settings).toUpperCase(java.util.Locale.getDefault()));
+        cap.setPadding(mUi.dp(8), 0, 0, mUi.dp(2));
+        right.addView(cap);
 
-        mRoot.addView(mUi.button(getString(R.string.btn_buttons), v ->
-                startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD)));
-        mScaleButton = mUi.button(getString(R.string.btn_scale_mode, ConfigWriter.scaleMode(this).label(this)), v -> cycleScaleMode());
-        mRoot.addView(mScaleButton);
-        mRoot.addView(mUi.button(getString(autostartEnabled() ? R.string.btn_autostart_on : R.string.btn_autostart_off),
-                v -> toggleAutostart()));
-        mRoot.addView(mUi.button(getString(ButtonMapping.touchControlsEnabled(this)
-                        ? R.string.btn_touch_on : R.string.btn_touch_off), v -> {
+        View buttons = mUi.tile(getString(R.string.tile_buttons), buttonsValue(), v ->
+                startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD));
+        mScaleButton = mUi.tile(getString(R.string.tile_display), ConfigWriter.scaleMode(this).label(this),
+                v -> cycleScaleMode());
+        View auto = mUi.tile(getString(R.string.tile_autostart), getString(autostartEnabled() ? R.string.on : R.string.off),
+                v -> toggleAutostart());
+        View touch = mUi.tile(getString(R.string.tile_touch),
+                getString(ButtonMapping.touchControlsEnabled(this) ? R.string.on : R.string.off), v -> {
             ButtonMapping.setTouchControlsEnabled(this, !ButtonMapping.touchControlsEnabled(this));
             render();
-        }));
-        mRoot.addView(mUi.button(getString(R.string.btn_reimport), v -> pickZip()));
-        mRoot.addView(mUi.button(getString(R.string.btn_delete), v -> confirmDelete()));
-        mRoot.addView(mUi.button(getString(R.string.btn_diagnostics), v -> showDiagnostics()));
-        mRoot.addView(mUi.spacer(12));
-        mRoot.addView(mUi.small(getString(R.string.saves_kept)));
+            focusTile(1, 1);
+        });
+        View reimport = mUi.tile(getString(R.string.tile_reimport), getString(R.string.tile_reimport_value), v -> pickZip());
+        View diag = mUi.tile(getString(R.string.tile_diagnostics), getString(R.string.tile_diagnostics_value),
+                v -> showDiagnostics());
+        View del = mUi.tile(getString(R.string.tile_delete), getString(R.string.tile_delete_value), v -> confirmDelete());
+        right.addView(mUi.tileRow(buttons, mScaleButton));
+        right.addView(mUi.tileRow(auto, touch));
+        right.addView(mUi.tileRow(reimport, diag));
+        right.addView(mUi.tileRow(del));
+        mRoot.addView(right);
+
         mPlayButton.requestFocus();
+
+        // Display details need the generated config: do it off the UI thread
+        new Thread(() -> {
+            String info;
+            try {
+                ConfigWriter.Result r = ConfigWriter.write(this, mDevice);
+                info = getString(R.string.display_info, r.gameW, r.gameH, mDevice.screenW, mDevice.screenH, r.description);
+            } catch (IOException e) {
+                info = getString(R.string.config_failed, e.getMessage());
+            }
+            final String s2 = info;
+            runOnUiThread(() -> status.setText(deviceLine() + "\n" + controlsInfo() + "\n" + s2));
+        }, "config").start();
 
         // Auto-start only when everything is ready (no wizard pending)
         boolean ready = ButtonMapping.isConfigured(this) || !ButtonMapping.hasPhysicalGamepad();
@@ -198,10 +269,36 @@ public class LauncherActivity extends Activity
             mCountdown = AUTOSTART_SECONDS;
             mHandler.removeCallbacks(mTick);
             mHandler.post(mTick);
-            mRoot.addView(mUi.small(getString(R.string.autostart_hint)), mRoot.indexOfChild(mPlayButton) + 1);
+            autoHint.setVisibility(View.VISIBLE);
         } else {
             mAutostartPending = false;
         }
+    }
+
+    /** Puts the focus back on a settings tile after re-rendering (row, column). */
+    private void focusTile(int row, int col)
+    {
+        try {
+            LinearLayout right = (LinearLayout) mRoot.getChildAt(1);
+            ((LinearLayout) right.getChildAt(1 + row)).getChildAt(col).requestFocus();
+        } catch (RuntimeException ignored) {
+        }
+    }
+
+    private String buttonsValue()
+    {
+        ButtonMapping.ensureConfigured(this, mDevice);
+        if (!ButtonMapping.isConfigured(this)) return getString(R.string.tile_buttons_unset);
+        if (ButtonMapping.isAutomatic(this)) return getString(R.string.tile_buttons_auto);
+        return getString(ButtonMapping.load(this).isIdentity() ? R.string.tile_buttons_default : R.string.tile_buttons_custom);
+    }
+
+    private String deviceLine()
+    {
+        String c = mDevice.controllerName != null ? mDevice.controllerName : getString(R.string.controller_none);
+        return mDevice.displayName() + (mDevice.isKnown() ? getString(R.string.known_profile) : "")
+                + "  ·  " + getString(R.string.screen_info, mDevice.screenW, mDevice.screenH, mDevice.refreshRate)
+                + "\n" + getString(R.string.controller_info, c);
     }
 
     private View deviceInfo()
@@ -235,24 +332,45 @@ public class LauncherActivity extends Activity
 
     private void play()
     {
+        if (mStarting) return;
         if (!ButtonMapping.ensureConfigured(this, DeviceProfile.detect(this))
                 && ButtonMapping.hasPhysicalGamepad()) {
             startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD_THEN_PLAY);
             return;
         }
-        try {
-            ConfigWriter.write(this, DeviceProfile.detect(this));
-        } catch (IOException e) {
-            showError(getString(R.string.err_prepare_config), e.getMessage());
-            return;
+        mStarting = true;
+        if (mPlayButton != null) {
+            mPlayButton.setText(R.string.preparing);
+            mPlayButton.setEnabled(false);
         }
-        startActivity(new Intent(this, MainActivity.class));
+        new Thread(() -> {
+            String err = null;
+            try {
+                ConfigWriter.write(this, DeviceProfile.detect(this));
+            } catch (IOException e) {
+                err = e.getMessage();
+            }
+            final String e2 = err;
+            runOnUiThread(() -> {
+                mStarting = false;
+                if (mPlayButton != null) {
+                    mPlayButton.setText(R.string.btn_play);
+                    mPlayButton.setEnabled(true);
+                }
+                if (e2 != null) {
+                    showError(getString(R.string.err_prepare_config), e2);
+                } else {
+                    startActivity(new Intent(this, MainActivity.class));
+                }
+            });
+        }, "prepare").start();
     }
 
     private void toggleAutostart()
     {
         getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_AUTOSTART, !autostartEnabled()).apply();
         render();
+        focusTile(1, 0);
     }
 
     private void cycleScaleMode()
@@ -261,7 +379,7 @@ public class LauncherActivity extends Activity
         ConfigWriter.ScaleMode cur = ConfigWriter.scaleMode(this);
         ConfigWriter.setScaleMode(this, all[(cur.ordinal() + 1) % all.length]);
         render();
-        // keep focus on the same button for quick cycling with the controller
+        // keep focus on the same tile for quick cycling with the controller
         if (mScaleButton != null) mScaleButton.requestFocus();
     }
 

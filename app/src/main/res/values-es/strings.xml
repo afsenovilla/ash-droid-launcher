@@ -119,4 +119,23 @@
     <string name="sug_z_g">el botón de arriba</string>
     <string name="sug_x">L2 (gatillo inferior izquierdo)</string>
     <string name="sug_y">R2 (gatillo inferior derecho)</string>
+    <!-- Inicio del lanzador (fichas) -->
+    <string name="tile_buttons">Botones</string>
+    <string name="tile_buttons_auto">Automático (consola conocida)</string>
+    <string name="tile_buttons_custom">Personalizados</string>
+    <string name="tile_buttons_default">Por defecto</string>
+    <string name="tile_buttons_unset">Sin configurar</string>
+    <string name="tile_display">Imagen</string>
+    <string name="tile_autostart">Arranque automático</string>
+    <string name="tile_touch">Controles táctiles</string>
+    <string name="tile_reimport">Reimportar juego</string>
+    <string name="tile_reimport_value">Se conservan las partidas</string>
+    <string name="tile_diagnostics">Diagnóstico</string>
+    <string name="tile_diagnostics_value">Registro del parche</string>
+    <string name="tile_delete">Borrar juego</string>
+    <string name="tile_delete_value">Conserva tus partidas</string>
+    <string name="on">Sí</string>
+    <string name="off">No</string>
+    <string name="preparing">Preparando…</string>
+    <string name="settings">Ajustes</string>
 </resources>
