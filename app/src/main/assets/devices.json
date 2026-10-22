@@ -1,0 +1,34 @@
+{
+  // Known handhelds. Used only for nicer names and wizard hints:
+  // the screen is always detected live and buttons are always confirmed
+  // by the setup wizard, so unknown devices work too.
+  //
+  // match: case-insensitive regexes (all optional) against
+  //   manufacturer = Build.MANUFACTURER, model = Build.MODEL,
+  //   controller = name of the built-in InputDevice
+  // faceLayout: "nintendo" (A on the right, B at the bottom) or "xbox" (A at the bottom)
+  //
+  // PRs welcome: add your device here.
+  "devices": [
+    { "name": "Retroid Pocket Nova",    "match": { "model": "pocket ?nova" },      "faceLayout": "nintendo",
+      "notes": "Pantalla 4:3 1280x960 AMOLED 120 Hz" },
+    { "name": "Retroid Pocket 5",       "match": { "model": "pocket ?5" },         "faceLayout": "nintendo" },
+    { "name": "Retroid Pocket Mini",    "match": { "model": "pocket ?mini" },      "faceLayout": "nintendo" },
+    { "name": "Retroid Pocket Flip 2",  "match": { "model": "flip ?2" },           "faceLayout": "nintendo" },
+    { "name": "Retroid Pocket Classic", "match": { "model": "pocket ?classic" },   "faceLayout": "nintendo" },
+    { "name": "Retroid Pocket 4 Pro",   "match": { "model": "pocket ?4 ?pro" },    "faceLayout": "nintendo" },
+    { "name": "Retroid Pocket 4",       "match": { "model": "pocket ?4" },         "faceLayout": "nintendo" },
+    { "name": "Retroid Pocket",         "match": { "manufacturer": "retroid|moorechip" }, "faceLayout": "nintendo" },
+
+    { "name": "AYN Odin 2",             "match": { "model": "odin ?2" },           "faceLayout": "xbox" },
+    { "name": "AYN Thor",               "match": { "model": "thor" },              "faceLayout": "xbox" },
+    { "name": "AYN Odin",               "match": { "manufacturer": "ayn" },        "faceLayout": "xbox" },
+
+    { "name": "Anbernic RG556",         "match": { "model": "rg ?556" },           "faceLayout": "nintendo" },
+    { "name": "Anbernic RG406",         "match": { "model": "rg ?406" },           "faceLayout": "nintendo" },
+    { "name": "Anbernic RG Cube",       "match": { "model": "rg ?cube" },          "faceLayout": "nintendo" },
+    { "name": "Anbernic",               "match": { "manufacturer": "anbernic" },   "faceLayout": "nintendo" },
+
+    { "name": "AYANEO Pocket",          "match": { "manufacturer": "ayaneo" },     "faceLayout": "xbox" }
+  ]
+}
