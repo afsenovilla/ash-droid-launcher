@@ -11,8 +11,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   English (NPC dialogue, menus, battle and bag messages), applied at runtime only when the game is set to Spanish.
 - Spanish battle command buttons (LUCHAR / MOCHILA / HUIR…), redrawn on the device from the game's own art and
   font. Original files are untouched; the English images are used when the game is in English.
+- Spanish lettering in the rest of Fire Ash's images with English text: type labels (LUCHA, VOLAD., FUEGO…),
+  status icons (DOR, ENV, QUE, CON, DEB), "Lv." → "Nv." and "HP" → "PS" in battle, party, storage and summary
+  screens, and the Pokédex "FORMS" tab. Redrawn on the device with pixel fonts copied from the game's own icons.
+- Mega Evolution / Z-Move / Ultra Burst / Dynamax buttons show the device button instead of the keyboard
+  "ACTION" key, and the double-battle shift button reads "CAMBIO" plus the device button.
+- Recipe-based art engine (`assets/packs/<game>/art.json`, `assets/pixelfonts.txt`) with a PC preview tool
+  (`tools/art/relabel.py`) to add more images without touching code.
 - Translation tooling (`tools/translation`) to extract missing strings from a new game version.
-
 - Launcher "Diagnostics" screen with the runtime patch log (translation pack, language detection, image swaps).
 
 ### Changed
@@ -21,6 +27,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   pixel font, instead of the long USE/BACK-sized caps.
 
 ### Fixed
+- Battle buttons came out garbled on some devices (letter detection now uses colour saturation).
 - Controls screen hint "(Por defecto: X)" now also shows the device button.
 
 ## [0.1.0] - 2026-10-22

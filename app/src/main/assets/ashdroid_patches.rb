@@ -160,16 +160,36 @@ end
 # launcher into ashdroid_es/ from the game's own art). Used only while the game
 # language is Spanish; the original files are untouched.
 module AshDroidGfx
+  # Images redrawn by the launcher. "es" ones replace the originals only while
+  # the game is in Spanish; "any" ones (button names) always do.
   ES = {
     "graphics/pictures/battle/cursor_command" => "ashdroid_es/battle_cursor_command.png",
   }
+  ANY = {}
+  LOGGED = {}
+  INDEX = "ashdroid_art/index.txt"
+
+  begin
+    if File.exist?(INDEX)
+      File.read(INDEX).each_line do |line|
+        lang, key, file = line.chomp.split("\t")
+        next unless file
+        (lang == "any" ? ANY : ES)[key] = file
+      end
+    end
+  rescue StandardError
+  end
 
   def self.redirect(path)
-    return nil unless path.is_a?(String) && AshDroidText.spanish?
-    key = path.tr("\\", "/").sub(/\.png\z/i, "").downcase
-    alt = ES[key]
+    return nil unless path.is_a?(String)
+    key = path.tr("\\", "/").sub(/\A\.\//, "").sub(/\.png\z/i, "").downcase
+    alt = ANY[key]
+    alt ||= ES[key] if AshDroidText.spanish?
     res = alt && File.exist?(alt) ? alt : nil
-    AshDroidLog.log("gfx #{key} -> #{res.inspect} (exists=#{alt && File.exist?(alt)})") if alt
+    if alt && !LOGGED[key]
+      LOGGED[key] = true
+      AshDroidLog.log("gfx #{key} -> #{res.inspect}")
+    end
     res
   rescue StandardError
     nil

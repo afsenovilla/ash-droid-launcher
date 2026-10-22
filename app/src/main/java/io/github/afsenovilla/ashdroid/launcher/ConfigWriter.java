@@ -115,6 +115,7 @@ public final class ConfigWriter
                 writeTextPatches(ctx, game);
                 writeControlsArt(ctx, game);
                 LocalizedArt.generate(game);
+                writeLocalizedArt(ctx, game);
                 installTranslationPack(ctx, game);
                 org.json.JSONArray pre = o.optJSONArray("preloadScript");
                 org.json.JSONArray merged = new org.json.JSONArray();
@@ -183,8 +184,7 @@ public final class ConfigWriter
      */
     private static void installTranslationPack(Context ctx, File game)
     {
-        String title = GameInstaller.gameTitle(ctx).toLowerCase(java.util.Locale.ROOT);
-        String id = title.contains("fire ash") ? "fire-ash" : null;
+        String id = packId(ctx);
         File dst = new File(game, "ashdroid_es.dat");
         if (id == null) {
             //noinspection ResultOfMethodCallIgnored
@@ -198,6 +198,33 @@ public final class ConfigWriter
             while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
         } catch (IOException ignored) {
         }
+    }
+
+    /** Id of the bundled pack (assets/packs/<id>/) for the imported game, or null. */
+    private static String packId(Context ctx)
+    {
+        String title = GameInstaller.gameTitle(ctx).toLowerCase(java.util.Locale.ROOT);
+        return title.contains("fire ash") ? "fire-ash" : null;
+    }
+
+    /** Redraws English lettering in the game's images (assets/packs/<id>/art.json). */
+    private static void writeLocalizedArt(Context ctx, File game)
+    {
+        String id = packId(ctx);
+        ButtonMapping m = ButtonMapping.load(ctx);
+        java.util.Map<String, String> b = new java.util.HashMap<>();
+        b.put("USE", labelFor(ctx, m, "C"));
+        b.put("BACK", labelFor(ctx, m, "B"));
+        b.put("ACTION", labelFor(ctx, m, "A"));
+        b.put("SPECIAL", labelFor(ctx, m, "Z"));
+        if (id == null) {
+            try {
+                Util.writeText(new File(game, ArtPatcher.INDEX), "");
+            } catch (IOException ignored) {
+            }
+            return;
+        }
+        ArtPatcher.generate(ctx, game, id, b);
     }
 
     /** Button label currently assigned to an RGSS action (e.g. "A", "L1"), or null. */

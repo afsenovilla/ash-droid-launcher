@@ -1,0 +1,960 @@
+{
+ "images": [
+  {
+   "path": "Graphics/Pictures/types",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      15,
+      32,
+      10
+     ],
+     "text": "LUCHA",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      29,
+      32,
+      10
+     ],
+     "text": "VOLAD.",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      43,
+      32,
+      10
+     ],
+     "text": "VENENO",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      57,
+      32,
+      10
+     ],
+     "text": "TIERRA",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      71,
+      32,
+      10
+     ],
+     "text": "ROCA",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      85,
+      32,
+      10
+     ],
+     "text": "BICHO",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      99,
+      32,
+      10
+     ],
+     "text": "FANTAS.",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      113,
+      32,
+      10
+     ],
+     "text": "ACERO",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      141,
+      32,
+      10
+     ],
+     "text": "FUEGO",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      155,
+      32,
+      10
+     ],
+     "text": "AGUA",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      169,
+      32,
+      10
+     ],
+     "text": "PLANTA",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      183,
+      32,
+      10
+     ],
+     "text": "ELECTR.",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      197,
+      32,
+      10
+     ],
+     "text": "PSIQUI.",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      211,
+      32,
+      10
+     ],
+     "text": "HIELO",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      225,
+      32,
+      10
+     ],
+     "text": "DRAGON",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      239,
+      32,
+      10
+     ],
+     "text": "SINIES.",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    },
+    {
+     "rect": [
+      0,
+      253,
+      32,
+      10
+     ],
+     "text": "HADA",
+     "font": "type",
+     "style": "shadow",
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/statuses",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      2,
+      1,
+      18,
+      6
+     ],
+     "text": "DOR",
+     "font": "status",
+     "style": "plain"
+    },
+    {
+     "rect": [
+      2,
+      9,
+      18,
+      6
+     ],
+     "text": "ENV",
+     "font": "status",
+     "style": "plain"
+    },
+    {
+     "rect": [
+      2,
+      17,
+      18,
+      6
+     ],
+     "text": "QUE",
+     "font": "status",
+     "style": "plain"
+    },
+    {
+     "rect": [
+      2,
+      33,
+      18,
+      6
+     ],
+     "text": "CON",
+     "font": "status",
+     "style": "plain"
+    },
+    {
+     "rect": [
+      2,
+      41,
+      18,
+      6
+     ],
+     "text": "DEB",
+     "font": "status",
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/icon_statuses",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      1,
+      1,
+      20,
+      7
+     ],
+     "text": "DOR",
+     "font": "icon",
+     "style": "shadow"
+    },
+    {
+     "rect": [
+      1,
+      9,
+      20,
+      7
+     ],
+     "text": "ENV",
+     "font": "icon",
+     "style": "shadow"
+    },
+    {
+     "rect": [
+      1,
+      17,
+      20,
+      7
+     ],
+     "text": "QUE",
+     "font": "icon",
+     "style": "shadow"
+    },
+    {
+     "rect": [
+      1,
+      33,
+      20,
+      7
+     ],
+     "text": "CON",
+     "font": "icon",
+     "style": "shadow"
+    },
+    {
+     "rect": [
+      1,
+      41,
+      20,
+      7
+     ],
+     "text": "ENV",
+     "font": "icon",
+     "style": "shadow"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/overlay_lv",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s##s#s",
+      "##s.##s#s#s",
+      "##s.##s#s#s",
+      "##s.#s.##ss",
+      ".ss..s..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_lv",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s##s#s",
+      "##s.##s#s#s",
+      "##s.##s#s#s",
+      "##s.#s.##ss",
+      ".ss..s..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Storage/overlay_lv",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s##s#s",
+      "##s.##s#s#s",
+      "##s.##s#s#s",
+      "##s.#s.##ss",
+      ".ss..s..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_1",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.......",
+      "###s#s.......",
+      "##s##s##s#s..",
+      "##s.##s#s#s..",
+      "##s.##s#s#s..",
+      "##s.#s.##ss#.",
+      ".ss..s..ss..s"
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_2",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.......",
+      "###s#s.......",
+      "##s##s##s#s..",
+      "##s.##s#s#s..",
+      "##s.##s#s#s..",
+      "##s.#s.##ss#.",
+      ".ss..s..ss..s"
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.......",
+      "###s#s.......",
+      "##s##s##s#s..",
+      "##s.##s#s#s..",
+      "##s.##s#s#s..",
+      "##s.#s.##ss#.",
+      ".ss..s..ss..s"
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_4",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.......",
+      "###s#s.......",
+      "##s##s##s#s..",
+      "##s.##s#s#s..",
+      "##s.##s#s#s..",
+      "##s.#s.##ss#.",
+      ".ss..s..ss..s"
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_5",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.......",
+      "###s#s.......",
+      "##s##s##s#s..",
+      "##s.##s#s#s..",
+      "##s.##s#s#s..",
+      "##s.#s.##ss#.",
+      ".ss..s..ss..s"
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal_foe",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin_foe",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "es",
+   "grid": 2,
+   "offset": [
+    1,
+    1
+   ],
+   "regions": [
+    {
+     "rect": [
+      155,
+      54,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.####",
+      "##.#.##..",
+      "####...##",
+      "##...####"
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_faint",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.####",
+      "##.#.##..",
+      "####...##",
+      "##...####"
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_swap",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.####",
+      "##.#.##..",
+      "####...##",
+      "##...####"
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_mega",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      28,
+      8,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    },
+    {
+     "rect": [
+      28,
+      31,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_ultra",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      28,
+      8,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    },
+    {
+     "rect": [
+      28,
+      31,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_zmove",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      28,
+      8,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    },
+    {
+     "rect": [
+      28,
+      31,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_dynamax",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      28,
+      8,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    },
+    {
+     "rect": [
+      28,
+      31,
+      40,
+      10
+     ],
+     "text": "{ACTION}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 28
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      8,
+      8,
+      52,
+      10
+     ],
+     "text": "CAMBIO",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 6,
+     "fills": [
+      "#f8c860",
+      "#f8b028"
+     ]
+    },
+    {
+     "rect": [
+      60,
+      8,
+      30,
+      10
+     ],
+     "text": "{SPECIAL}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 6
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_info",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      115,
+      3,
+      40,
+      10
+     ],
+     "text": "FORMAS",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 113,
+     "align": "left",
+     "dx": 1,
+     "fill": "#f898a0",
+     "shade": "#901020"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_area",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      115,
+      3,
+      40,
+      10
+     ],
+     "text": "FORMAS",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 113,
+     "align": "left",
+     "dx": 1,
+     "fill": "#90d8b8",
+     "shade": "#187048"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_forms",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      115,
+      3,
+      40,
+      10
+     ],
+     "text": "FORMAS",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 113,
+     "align": "left",
+     "dx": 1,
+     "fill": "#f8f8f8",
+     "shade": "#000000"
+    }
+   ]
+  }
+ ]
+}

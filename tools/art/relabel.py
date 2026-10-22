@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+"""Reference implementation (and preview tool) of the art relabelling engine.
+
+The Android launcher (launcher/ArtPatcher.java) implements exactly the same
+algorithm; this script exists to author and check recipes on a PC:
+
+  python3 tools/art/relabel.py GAME_DIR app/src/main/assets/packs/fire-ash/art.json OUT_DIR [--buttons A,B,Y,X]
+
+writes OUT_DIR/<name>.png for every recipe and OUT_DIR/_preview_<name>.png
+(original above, result below, zoomed) so they can be inspected.
+
+Recipe format:
+
+{ "images": [ { "path": "Graphics/Pictures/Battle/overlay_lv", "lang": "es" | "any",
+    "grid": 2, "offset": [0, 0],
+    "regions": [ { "rect": [x, y, w, h], "text": "NV" | "bitmap": ["##s", ...],
+                   "font": "5x7" | "3x7", "bold": false, "spacing": 1,
+                   "style": "shadow" | "outline" | "plain", "align": "left" | "center" | "right",
+                   "fill": "#rrggbb", "fills": ["#..", ...], "shade": "#rrggbb", "height": 7,
+                   "erase": "row" | "transparent" | "none", "bgx": x, "bg": "#rrggbb",
+                   "dx": 0, "dy": 0 } ] } ] }
+
+- Coordinates are in "art pixels": Essentials art is usually drawn with 2x2
+  pixels, so with grid 2 every unit is a 2x2 block at offset + 2*(x, y).
+- erase "row": each row of the rect becomes the colour found at column bgx
+  (default: the rect's left column) on that row, or "bg" if given;
+  "transparent": alpha 0.
+- fill/shade default to the two most frequent non-background colours of the
+  old lettering (outline style: the most frequent is the outline). "fills"
+  colours the letters row by row (top to bottom, stretched), for gradients.
+- Text is drawn with the shared pixel fonts (assets/pixelfonts.txt), rows
+  stretched to the old letters' height; bold doubles vertical strokes.
+  "spacing" is the preferred gap between letters, reduced if the text does
+  not fit the rect. {USE} {BACK} {ACTION} {SPECIAL} are replaced by the
+  device's button names.
+- "bitmap" draws hand-made lettering instead: '#' = fill, 's' = shade.
+"""
+import json, os, sys
+from collections import Counter
+from PIL import Image
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+FONTS = os.path.join(HERE, "..", "..", "app", "src", "main", "assets", "pixelfonts.txt")
+
+
+def load_fonts(path=FONTS):
+    fonts, cur, ch, rows = {}, None, None, []
+    for line in open(path, encoding="utf-8"):
+        line = line.rstrip("\n")
+        if line.startswith("//") or not line:
+            continue
+        if line.startswith("@font"):
+            _, name, w, h = line.split()
+            cur = {"w": int(w), "h": int(h), "g": {}}
+            fonts[name] = cur
+        elif line.startswith("char:"):
+            ch = line[5:]
+            cur["g"][ch] = []
+        else:
+            cur["g"][ch].append(line)
+    return fonts
+
+
+ACCENTS = str.maketrans("ÁÉÍÓÚÜÑáéíóúüñ", "AEIOUUNaeiouun")
+
+
+def hexcol(s):
+    s = s.lstrip("#")
+    return (int(s[0:2], 16), int(s[2:4], 16), int(s[4:6], 16), 255)
+
+
+class Canvas:
+    """Image seen in art pixels (grid x grid blocks at an offset)."""
+
+    def __init__(self, im, grid=1, offset=(0, 0)):
+        self.im, self.px, self.g, self.o = im, im.load(), grid, offset
+        self.W = (im.width - offset[0]) // grid
+        self.H = (im.height - offset[1]) // grid
+
+    def get(self, x, y):
+        if 0 <= x < self.W and 0 <= y < self.H:
+            return self.px[self.o[0] + x * self.g, self.o[1] + y * self.g]
+        return (0, 0, 0, 0)
+
+    def put(self, x, y, c):
+        if 0 <= x < self.W and 0 <= y < self.H:
+            for yy in range(self.g):
+                for xx in range(self.g):
+                    self.px[self.o[0] + x * self.g + xx, self.o[1] + y * self.g + yy] = c
+
+
+def apply_region(cv, r, fonts, buttons):
+    x, y, w, h = r["rect"]
+    style = r.get("style", "shadow")
+    erase = r.get("erase", "row")
+    bgx = r.get("bgx", x)
+    rowbg = {}
+    for yy in range(y, y + h):
+        if erase == "transparent":
+            rowbg[yy] = (0, 0, 0, 0)
+        elif r.get("bg"):
+            rowbg[yy] = hexcol(r["bg"])
+        else:
+            rowbg[yy] = cv.get(bgx, yy)
+    cnt = Counter()
+    tx0 = ty0 = 10 ** 9
+    tx1 = ty1 = -1
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            c = cv.get(xx, yy)
+            if c != rowbg[yy] and c[3] > 0:
+                cnt[c] += 1
+                tx0, tx1, ty0, ty1 = min(tx0, xx), max(tx1, xx), min(ty0, yy), max(ty1, yy)
+    common = [c for c, _ in cnt.most_common(2)]
+    if style == "outline":
+        shade = common[0] if common else (64, 64, 64, 255)
+        fill = common[1] if len(common) > 1 else (248, 248, 248, 255)
+    else:
+        fill = common[0] if common else (64, 64, 64, 255)
+        shade = common[1] if len(common) > 1 else None
+    if r.get("fill"):
+        fill = hexcol(r["fill"])
+    if r.get("shade"):
+        shade = hexcol(r["shade"])
+    fills = [hexcol(c) for c in r.get("fills", [])]
+    if ty1 < 0:
+        ty0, ty1, tx0 = y, y + h - 1, x
+    if erase != "none":
+        for yy in range(y, y + h):
+            for xx in range(x, x + w):
+                cv.put(xx, yy, rowbg[yy])
+
+    if "bitmap" in r:
+        ox, oy = x + r.get("dx", 0), y + r.get("dy", 0)
+        for j, row in enumerate(r["bitmap"]):
+            for i, ch in enumerate(row):
+                if ch == "#":
+                    cv.put(ox + i, oy + j, fill)
+                elif ch == "s" and shade:
+                    cv.put(ox + i, oy + j, shade)
+        return
+
+    text = r.get("text", "")
+    for k, v in buttons.items():
+        text = text.replace("{" + k + "}", v)
+    text = text.upper().translate(ACCENTS)
+    font = fonts[r.get("font", "5x7")]
+    bold = 1 if r.get("bold") else 0
+    extra = 1 if style == "shadow" and shade else (2 if style == "outline" else 0)
+    height = r.get("height") or max(1, ty1 - ty0 + 1 - extra)
+    blank = ["." * font["w"]] * font["h"]
+    glyphs = [font["g"].get(ch) or blank for ch in text]
+    widths = [len(g[0]) + bold for g in glyphs]
+    spacing = r.get("spacing", 1)
+    while True:
+        tw = sum(widths) + spacing * (len(text) - 1) + extra
+        if tw <= w or spacing <= 0:
+            break
+        spacing -= 1
+    if spacing < r.get("spacing", 1):
+        print("  note: %r squeezed to spacing %d" % (text, spacing))
+    align = r.get("align", "center")
+    if align == "left":
+        ox = tx0 if tx1 >= 0 else x
+    elif align == "right":
+        ox = x + w - tw
+    else:
+        ox = x + (w - tw) // 2
+    ox += r.get("dx", 0)
+    oy = ty0 + r.get("dy", 0)
+    gx0 = ox + (1 if style == "outline" else 0)
+    gy0 = oy + (1 if style == "outline" else 0)
+
+    for pass_ in (0, 1):
+        if pass_ == 0 and (style == "plain" or not shade):
+            continue
+        cx = gx0
+        for g, gw in zip(glyphs, widths):
+            for ty in range(height):
+                gy = ty * font["h"] // height
+                col = fills[ty * len(fills) // height] if fills else fill
+                for gx in range(len(g[gy])):
+                    if g[gy][gx] != "#":
+                        continue
+                    for b in range(bold + 1):
+                        X, Y = cx + gx + b, gy0 + ty
+                        if pass_ == 1:
+                            cv.put(X, Y, col)
+                        elif style == "shadow":
+                            cv.put(X + 1, Y + 1, shade)
+                        else:
+                            for dy in (-1, 0, 1):
+                                for dx in (-1, 0, 1):
+                                    cv.put(X + dx, Y + dy, shade)
+            cx += gw + spacing
+
+
+def find_image(game, path):
+    cur = game
+    parts = path.split("/")
+    for i, p in enumerate(parts):
+        names = os.listdir(cur)
+        want = (p + ".png").lower() if i == len(parts) - 1 else p.lower()
+        hit = [n for n in names if n.lower() == want]
+        if not hit:
+            return None
+        cur = os.path.join(cur, hit[0])
+    return cur
+
+
+def out_name(path):
+    return path.replace("Graphics/Pictures/", "").replace("/", "_").replace(" ", "_").lower() + ".png"
+
+
+def run(game, recipes, out, buttons):
+    fonts = load_fonts()
+    os.makedirs(out, exist_ok=True)
+    done = {}  # several entries may patch the same image (e.g. different grids)
+    for img in recipes["images"]:
+        src = find_image(game, img["path"])
+        if not src:
+            print("missing", img["path"])
+            continue
+        orig = Image.open(src).convert("RGBA")
+        res = done.get(src) or orig.copy()
+        done[src] = res
+        cv = Canvas(res, img.get("grid", 1), tuple(img.get("offset", (0, 0))))
+        for r in img["regions"]:
+            apply_region(cv, r, fonts, buttons)
+        name = out_name(img["path"])
+        res.save(os.path.join(out, name))
+        z = max(1, min(6, 900 // max(1, orig.width)))
+        prev = Image.new("RGBA", (orig.width, orig.height * 2 + 4), (255, 0, 255, 255))
+        prev.alpha_composite(orig, (0, 0))
+        prev.alpha_composite(res, (0, orig.height + 4))
+        prev.resize((prev.width * z, prev.height * z), Image.NEAREST).save(os.path.join(out, "_preview_" + name))
+        print("ok", img["path"])
+
+
+if __name__ == "__main__":
+    game, rec, out = sys.argv[1:4]
+    buttons = {"USE": "A", "BACK": "B", "ACTION": "Y", "SPECIAL": "X"}
+    if len(sys.argv) > 5 and sys.argv[4] == "--buttons":
+        b = sys.argv[5].split(",")
+        buttons = dict(zip(["USE", "BACK", "ACTION", "SPECIAL"], b))
+    run(game, json.load(open(rec, encoding="utf-8")), out, buttons)
