@@ -57,7 +57,7 @@ jobs:
 
       # Fails in ~2 min on Java errors, before the long native build
       - name: Java compile check
-        run: ci/run.sh java-check ./gradlew --no-daemon --stacktrace compileReleaseJavaWithJavac
+        run: ci/run.sh java-check ./gradlew --no-daemon compileReleaseJavaWithJavac
 
       - name: Cache native dependencies
         uses: actions/cache@v4

@@ -11,9 +11,11 @@ rc=${PIPESTATUS[0]}
 if [ "$rc" -ne 0 ]; then
   # Most useful lines: error lines first, then the raw tail
   errs=$(grep -nE "error:|Error |ERROR|FAILED|What went wrong|undefined reference|No such file|not found|fatal" "$log" | tail -40)
-  tail_=$(tail -60 "$log")
+  wrong=$(grep -A 25 "What went wrong" "$log" | grep -v "^\s*at " | head -40)
+  tail_=$(grep -v "^\s*at " "$log" | tail -60)
   esc() { sed -e 's/%/%25/g' | awk 'BEGIN{ORS="%0A"} {print}'; }
   echo "::error title=$name (errors)::$(printf '%s' "$errs" | cut -c1-300 | esc)"
+  [ -n "$wrong" ] && echo "::error title=$name (what went wrong)::$(printf '%s' "$wrong" | cut -c1-300 | esc)"
   echo "::error title=$name (tail)::$(printf '%s' "$tail_" | cut -c1-300 | esc)"
 fi
 exit "$rc"
