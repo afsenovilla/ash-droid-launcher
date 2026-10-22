@@ -49,7 +49,7 @@ Variations of the motto: adapt in the same spirit.
 Pokémon, Poké Ball, Entrenador/Entrenadora, Centro Pokémon, Tienda Pokémon, Pokédex, Gimnasio, Líder de
 Gimnasio, Medalla, Liga Pokémon / Liga Añil, Alto Mando, Campeón, MO/MT, PS, Nv., movimiento, ataque,
 Equipo (party), Mochila, Caja (PC box), Huevo, variocolor (shiny), debilitado (fainted), "¡Es muy eficaz!",
-"No es muy eficaz…", "¡Un golpe crítico!", "No afecta a {1}…", "¡{1} usó {2}!". Team Rocket = "Team Rocket"
+"No es muy eficaz…", "¡Un golpe crítico!", "No afecta a {1}…", "¡{1} usó {2}!". Team Rocket = "Team Rocket" (never "Equipo Rocket")
 (as in the Spain games and dub). Officer Jenny = Agente Mara; Nurse Joy = Enfermera Joy.
 Pokémon species and the anime characters keep their names (Ash, Misty, Brock, Gary, Jessie, James, Meowth,
 Delia → "la madre de Ash"/"mamá" as in context, Professor Oak = Profesor Oak).

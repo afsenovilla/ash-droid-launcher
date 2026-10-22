@@ -231,7 +231,11 @@ module AshDroidText
     # Text straight on a black screen (e.g. after a defeat) uses white with a pale
     # shadow, which is hard to read: give it a dark shadow instead.
     out = out.gsub("\\c[8]", "<c3=F8F8F8,404048>") if out.include?("\\w[]") && out.include?("\\c[8]")
-    SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
+    if spain?
+      SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) }
+      # "{1}" can be "el Pidgey salvaje": capitalise the first letter of the message
+      out = out.sub(/\A((?:\\[a-zA-Z]+(?:\[[^\]]*\])?|<[^>]+>)*[¡¿]?)([a-záéíóúñ])/) { "#{$1}#{$2.upcase}" }
+    end
     FIXES.each do |re, rep|
       next unless out =~ re
       out = rep.is_a?(Proc) ? out.gsub(re) { rep.call(Regexp.last_match) } : out.gsub(re, rep)
