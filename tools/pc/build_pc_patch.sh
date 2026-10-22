@@ -6,7 +6,7 @@
 set -euo pipefail
 GAME="$1"; EXE="$2"; OUT="$(realpath -m "$3")"; VER="${4:-dev}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-TMP="$(mktemp -d)"; TOP="$TMP/Fire Ash - Español (España)"; P="$TOP/parche"; mkdir -p "$P"
+TMP="$(mktemp -d)"; TOP="$TMP/Fire Ash - Espanol (Espana)"; P="$TOP/parche"; mkdir -p "$P"
 A="$ROOT/app/src/main/assets"
 cp "$A/ashdroid_patches.rb" "$A/packs/fire-ash/ashdroid_es.dat" "$A/packs/fire-ash/ashdroid_es_ES.dat" "$P/"
 mkdir -p "$P/ashdroid_audio_es"; cp "$A/packs/fire-ash/audio_es/"* "$P/ashdroid_audio_es/"
