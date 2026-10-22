@@ -45,6 +45,7 @@ final class ArtPatcher
     {
         final Bitmap b;
         final int g, ox, oy, W, H;
+        int dot; // dot-matrix art: each cell is a dot x dot lamp, the rest is black gap
 
         Canvas(Bitmap b, int g, int ox, int oy)
         {
@@ -62,7 +63,12 @@ final class ArtPatcher
         {
             if (x < 0 || y < 0 || x >= W || y >= H) return;
             for (int yy = 0; yy < g; yy++)
-                for (int xx = 0; xx < g; xx++) b.setPixel(ox + x * g + xx, oy + y * g + yy, c);
+                for (int xx = 0; xx < g; xx++) {
+                    int X = ox + x * g + xx, Y = oy + y * g + yy;
+                    if (X >= b.getWidth() || Y >= b.getHeight()) continue;
+                    boolean lamp = dot == 0 || (xx < dot && yy < dot);
+                    b.setPixel(X, Y, lamp ? c : Color.BLACK);
+                }
         }
     }
 
@@ -104,6 +110,7 @@ final class ArtPatcher
                             JSONArray off = img.optJSONArray("offset");
                             Canvas cv = new Canvas(im, img.optInt("grid", 1),
                                     off == null ? 0 : off.getInt(0), off == null ? 0 : off.getInt(1));
+                            cv.dot = img.optInt("dot", 0);
                             JSONArray regions = img.getJSONArray("regions");
                             for (int r = 0; r < regions.length(); r++) {
                                 applyRegion(cv, regions.getJSONObject(r), fonts, buttons, game);

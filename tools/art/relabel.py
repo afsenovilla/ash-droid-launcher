@@ -12,7 +12,7 @@ writes OUT_DIR/<name>.png for every recipe and OUT_DIR/_preview_<name>.png
 Recipe format:
 
 { "images": [ { "path": "Graphics/Pictures/Battle/overlay_lv", "lang": "es" | "any",
-    "grid": 2, "offset": [0, 0],
+    "grid": 2, "offset": [0, 0], "dot": 0,
     "regions": [ { "rect": [x, y, w, h], "text": "NV" | "bitmap": ["##s", ...],
                    "font": "5x7" | ["type5", "type"], "bold": false, "spacing": 1,
                    "style": "shadow" | "outline" | "plain", "align": "left" | "center" | "right",
@@ -77,8 +77,9 @@ def hexcol(s):
 class Canvas:
     """Image seen in art pixels (grid x grid blocks at an offset)."""
 
-    def __init__(self, im, grid=1, offset=(0, 0)):
+    def __init__(self, im, grid=1, offset=(0, 0), dot=0):
         self.im, self.px, self.g, self.o = im, im.load(), grid, offset
+        self.dot = dot  # dot-matrix art: each cell is a dot x dot lamp, rest is gap
         self.W = (im.width - offset[0]) // grid
         self.H = (im.height - offset[1]) // grid
 
@@ -91,7 +92,12 @@ class Canvas:
         if 0 <= x < self.W and 0 <= y < self.H:
             for yy in range(self.g):
                 for xx in range(self.g):
-                    self.px[self.o[0] + x * self.g + xx, self.o[1] + y * self.g + yy] = c
+                    lamp = not self.dot or (xx < self.dot and yy < self.dot)
+                    X, Y = self.o[0] + x * self.g + xx, self.o[1] + y * self.g + yy
+                    if X < self.im.width and Y < self.im.height:
+                        self.px[X, Y] = c if lamp else self.gap
+
+    gap = (0, 0, 0, 255)
 
 
 def norm(name):
@@ -327,7 +333,7 @@ def run(game, recipes, out, buttons):
         orig = Image.open(src).convert("RGBA")
         res = orig.copy()
         for img in entries:
-            cv = Canvas(res, img.get("grid", 1), tuple(img.get("offset", (0, 0))))
+            cv = Canvas(res, img.get("grid", 1), tuple(img.get("offset", (0, 0))), img.get("dot", 0))
             for r in img["regions"]:
                 apply_region(cv, r, fonts, buttons, game)
         name = out_file(path, lang)
