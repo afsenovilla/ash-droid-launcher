@@ -983,5 +983,8 @@
  "\\rMy Abra can Teleport you.\\ch[1,-1,Pewter, Cerulean,Vermilion,Saffron,Lavender, Cancel]": "\\rMi Abra puede teletransportarte.\\ch[1,-1,Plateada, Celeste,Carmín,Azafrán,Lavanda, Cancelar]",
  "\\rMy Abra can Teleport you.\\ch[1,-1,Pewter, Cerulean,Vermilion,Saffron,Lavender,Celadon, Cancel]": "\\rMi Abra puede teletransportarte.\\ch[1,-1,Plateada, Celeste,Carmín,Azafrán,Lavanda,Azulona, Cancelar]",
  "\\rMy Abra can Teleport you.\\ch[1,-1,Pewter, Cerulean,Vermilion,Saffron,Lavender,Celadon, Fuchsia,Cancel]": "\\rMi Abra puede teletransportarte.\\ch[1,-1,Plateada, Celeste,Carmín,Azafrán,Lavanda,Azulona, Fucsia,Cancelar]",
- "\\rMy Abra can Teleport you.\\ch[1,-1,Pewter, Cerulean,Vermilion,Saffron,Lavender,Celadon, Fuchsia,Cinnabar,Cancel]": "\\rMi Abra puede teletransportarte.\\ch[1,-1,Plateada, Celeste,Carmín,Azafrán,Lavanda,Azulona, Fucsia,Canela,Cancelar]"
+ "\\rMy Abra can Teleport you.\\ch[1,-1,Pewter, Cerulean,Vermilion,Saffron,Lavender,Celadon, Fuchsia,Cinnabar,Cancel]": "\\rMi Abra puede teletransportarte.\\ch[1,-1,Plateada, Celeste,Carmín,Azafrán,Lavanda,Azulona, Fucsia,Canela,Cancelar]",
+ "Load": "Cargar",
+ "Save": "Guardar",
+ "Delete": "Borrar"
 }

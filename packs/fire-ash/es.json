@@ -2272,5 +2272,8 @@
  "{1}Club Completion No.{2}{3}": "{1}Club completado n.º {2}{3}",
  "{1}Practice Completion No.{2}{3}": "{1}Práctica completada n.º {2}{3}",
  "“That was a white-hot match!”": "«¡Ha sido un combate al rojo vivo!»",
- "…I… I can't…": "…No… No puedo…"
+ "…I… I can't…": "…No… No puedo…",
+ "Load": "Cargar",
+ "Save": "Guardar",
+ "Delete": "Borrar"
 }
