@@ -14,7 +14,7 @@ Recipe format:
 { "images": [ { "path": "Graphics/Pictures/Battle/overlay_lv", "lang": "es" | "any",
     "grid": 2, "offset": [0, 0],
     "regions": [ { "rect": [x, y, w, h], "text": "NV" | "bitmap": ["##s", ...],
-                   "font": "5x7" | "3x7", "bold": false, "spacing": 1,
+                   "font": "5x7" | ["type5", "type"], "bold": false, "spacing": 1,
                    "style": "shadow" | "outline" | "plain", "align": "left" | "center" | "right",
                    "fill": "#rrggbb", "fills": ["#..", ...], "shade": "#rrggbb", "height": 7,
                    "erase": "row" | "transparent" | "none", "bgx": x, "bg": "#rrggbb",
@@ -34,8 +34,13 @@ Recipe format:
   not fit the rect. {USE} {BACK} {ACTION} {SPECIAL} are replaced by the
   device's button names.
 - "bitmap" draws hand-made lettering instead: '#' = fill, 's' = shade.
+- "image": a picture the *user* put in the game folder (e.g. official Spanish
+  art, "assets_E/Tipo_lucha_E.png"; matched ignoring case and accents). If it
+  exists it is pasted over "imageRect" (default: rect) and the text is
+  skipped; otherwise the text is drawn as usual ("onlyImage": do nothing).
+  Nothing like this is shipped.
 """
-import json, os, sys
+import json, os, sys, unicodedata
 from collections import Counter
 from PIL import Image
 
@@ -89,7 +94,41 @@ class Canvas:
                     self.px[self.o[0] + x * self.g + xx, self.o[1] + y * self.g + yy] = c
 
 
-def apply_region(cv, r, fonts, buttons):
+def norm(name):
+    return unicodedata.normalize("NFD", name).encode("ascii", "ignore").decode().lower()
+
+
+def find_user_file(game, rel):
+    cur = game
+    for part in rel.split("/"):
+        try:
+            names = os.listdir(cur)
+        except OSError:
+            return None
+        hit = [n for n in names if norm(n) == norm(part)]
+        if not hit:
+            return None
+        cur = os.path.join(cur, hit[0])
+    return cur if os.path.isfile(cur) else None
+
+
+def paste_image(cv, src, rect):
+    x, y, w, h = rect
+    im = Image.open(src).convert("RGBA")
+    p = im.load()
+    for yy in range(h):
+        for xx in range(w):
+            cv.put(x + xx, y + yy, p[xx * im.width // w, yy * im.height // h])
+
+
+def apply_region(cv, r, fonts, buttons, game=None):
+    if r.get("image") and game:
+        src = find_user_file(game, r["image"])
+        if src:
+            paste_image(cv, src, r.get("imageRect", r["rect"]))
+            return
+    if r.get("onlyImage"):
+        return
     x, y, w, h = r["rect"]
     style = r.get("style", "shadow")
     erase = r.get("erase", "row")
@@ -120,6 +159,9 @@ def apply_region(cv, r, fonts, buttons):
         shade = common[1] if len(common) > 1 else None
     if r.get("fill"):
         fill = hexcol(r["fill"])
+        if style != "outline":
+            rest = [c for c, _ in cnt.most_common() if c[:3] != fill[:3]]
+            shade = rest[0] if rest else None
     if r.get("shade"):
         shade = hexcol(r["shade"])
     fills = [hexcol(c) for c in r.get("fills", [])]
@@ -144,14 +186,23 @@ def apply_region(cv, r, fonts, buttons):
     for k, v in buttons.items():
         text = text.replace("{" + k + "}", v)
     text = text.upper().translate(ACCENTS)
-    font = fonts[r.get("font", "5x7")]
+    names = r.get("font", "5x7")
+    names = names if isinstance(names, list) else [names]
     bold = 1 if r.get("bold") else 0
     extra = 1 if style == "shadow" and shade else (2 if style == "outline" else 0)
     height = r.get("height") or max(1, ty1 - ty0 + 1 - extra)
-    blank = ["." * font["w"]] * font["h"]
-    glyphs = [font["g"].get(ch) or blank for ch in text]
-    widths = [len(g[0]) + bold for g in glyphs]
-    spacing = r.get("spacing", 1)
+    # First font (in order) whose glyphs cover the text and fit at the preferred
+    # spacing; the last one is squeezed if nothing fits.
+    for fi, name in enumerate(names):
+        font = fonts[name]
+        blank = ["." * font["w"]] * font["h"]
+        glyphs = [font["g"].get(ch) or blank for ch in text]
+        widths = [len(g[0]) + bold for g in glyphs]
+        spacing = r.get("spacing", 1)
+        tw = sum(widths) + spacing * (len(text) - 1) + extra
+        covered = all(ch in font["g"] or ch == " " for ch in text)
+        if fi == len(names) - 1 or (covered and tw <= w):
+            break
     while True:
         tw = sum(widths) + spacing * (len(text) - 1) + extra
         if tw <= w or spacing <= 0:
@@ -226,7 +277,7 @@ def run(game, recipes, out, buttons):
         done[src] = res
         cv = Canvas(res, img.get("grid", 1), tuple(img.get("offset", (0, 0))))
         for r in img["regions"]:
-            apply_region(cv, r, fonts, buttons)
+            apply_region(cv, r, fonts, buttons, game)
         name = out_name(img["path"])
         res.save(os.path.join(out, name))
         z = max(1, min(6, 900 // max(1, orig.width)))

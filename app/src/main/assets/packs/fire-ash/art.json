@@ -8,206 +8,393 @@
     {
      "rect": [
       0,
-      15,
+      3,
       32,
-      10
+      8
+     ],
+     "image": "assets_E/Tipo_normal_E.png",
+     "imageRect": [
+      0,
+      0,
+      32,
+      14
+     ],
+     "text": "NORMAL",
+     "font": [
+      "type5",
+      "type"
+     ],
+     "style": "shadow",
+     "erase": "none",
+     "onlyImage": true,
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      17,
+      32,
+      8
      ],
      "text": "LUCHA",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_lucha_E.png",
+     "imageRect": [
+      0,
+      14,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      29,
+      31,
       32,
-      10
+      8
      ],
      "text": "VOLAD.",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_volador_E.png",
+     "imageRect": [
+      0,
+      28,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      43,
+      45,
       32,
-      10
+      8
      ],
      "text": "VENENO",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_veneno_E.png",
+     "imageRect": [
+      0,
+      42,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      57,
+      59,
       32,
-      10
+      8
      ],
      "text": "TIERRA",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_tierra_E.png",
+     "imageRect": [
+      0,
+      56,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      71,
+      73,
       32,
-      10
+      8
      ],
      "text": "ROCA",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_roca_E.png",
+     "imageRect": [
+      0,
+      70,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      85,
+      87,
       32,
-      10
+      8
      ],
      "text": "BICHO",
-     "font": "type",
-     "style": "shadow",
-     "spacing": 1
-    },
-    {
-     "rect": [
-      0,
-      99,
-      32,
-      10
+     "font": [
+      "type5",
+      "type"
      ],
-     "text": "FANTAS.",
-     "font": "type",
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_bicho_E.png",
+     "imageRect": [
+      0,
+      84,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      113,
+      101,
       32,
-      10
+      8
+     ],
+     "text": "FANT.",
+     "font": [
+      "type5",
+      "type"
+     ],
+     "style": "shadow",
+     "image": "assets_E/Tipo_fantasma_E.png",
+     "imageRect": [
+      0,
+      98,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      115,
+      32,
+      8
      ],
      "text": "ACERO",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_acero_E.png",
+     "imageRect": [
+      0,
+      112,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      141,
+      143,
       32,
-      10
+      8
      ],
      "text": "FUEGO",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_fuego_E.png",
+     "imageRect": [
+      0,
+      140,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      155,
+      157,
       32,
-      10
+      8
      ],
      "text": "AGUA",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "image": "assets_E/Tipo_agua_E.png",
+     "imageRect": [
+      0,
+      154,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      169,
+      171,
       32,
-      10
+      8
      ],
      "text": "PLANTA",
-     "font": "type",
-     "style": "shadow",
-     "spacing": 1
-    },
-    {
-     "rect": [
-      0,
-      183,
-      32,
-      10
+     "font": [
+      "type5",
+      "type"
      ],
-     "text": "ELECTR.",
-     "font": "type",
      "style": "shadow",
-     "spacing": 1
-    },
-    {
-     "rect": [
+     "image": "assets_E/Tipo_planta_E.png",
+     "imageRect": [
       0,
-      197,
+      168,
       32,
-      10
+      14
      ],
-     "text": "PSIQUI.",
-     "font": "type",
-     "style": "shadow",
-     "spacing": 1
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      211,
+      185,
       32,
-      10
+      8
+     ],
+     "text": "ELÉCT.",
+     "font": [
+      "type5",
+      "type"
+     ],
+     "style": "shadow",
+     "image": "assets_E/Tipo_eléctrico_E.png",
+     "imageRect": [
+      0,
+      182,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      199,
+      32,
+      8
+     ],
+     "text": "PSÍQ.",
+     "font": [
+      "type5",
+      "type"
+     ],
+     "style": "shadow",
+     "image": "assets_E/Tipo_psíquico_E.png",
+     "imageRect": [
+      0,
+      196,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      213,
+      32,
+      8
      ],
      "text": "HIELO",
-     "font": "type",
-     "style": "shadow",
-     "spacing": 1
-    },
-    {
-     "rect": [
-      0,
-      225,
-      32,
-      10
+     "font": [
+      "type5",
+      "type"
      ],
-     "text": "DRAGON",
-     "font": "type",
      "style": "shadow",
-     "spacing": 1
-    },
-    {
-     "rect": [
+     "image": "assets_E/Tipo_hielo_E.png",
+     "imageRect": [
       0,
-      239,
+      210,
       32,
-      10
+      14
      ],
-     "text": "SINIES.",
-     "font": "type",
-     "style": "shadow",
-     "spacing": 1
+     "fill": "#f8f8f8"
     },
     {
      "rect": [
       0,
-      253,
+      227,
       32,
-      10
+      8
+     ],
+     "text": "DRAGÓN",
+     "font": [
+      "type5",
+      "type"
+     ],
+     "style": "shadow",
+     "image": "assets_E/Tipo_dragón_E.png",
+     "imageRect": [
+      0,
+      224,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      241,
+      32,
+      8
+     ],
+     "text": "SINIE.",
+     "font": [
+      "type5",
+      "type"
+     ],
+     "style": "shadow",
+     "image": "assets_E/Tipo_siniestro_E.png",
+     "imageRect": [
+      0,
+      238,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      255,
+      32,
+      8
      ],
      "text": "HADA",
-     "font": "type",
+     "font": [
+      "type5",
+      "type"
+     ],
      "style": "shadow",
-     "spacing": 1
+     "fill": "#f8f8f8"
     }
    ]
   },

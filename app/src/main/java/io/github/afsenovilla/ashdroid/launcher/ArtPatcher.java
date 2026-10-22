@@ -95,7 +95,7 @@ final class ArtPatcher
                             off == null ? 0 : off.getInt(0), off == null ? 0 : off.getInt(1));
                     JSONArray regions = img.getJSONArray("regions");
                     for (int r = 0; r < regions.length(); r++) {
-                        applyRegion(cv, regions.getJSONObject(r), fonts, buttons);
+                        applyRegion(cv, regions.getJSONObject(r), fonts, buttons, game);
                     }
                     done.put(path, im);
                     langs.put(path, img.optString("lang", "es"));
@@ -127,9 +127,25 @@ final class ArtPatcher
 
     // ------------------------------------------------------------------ core
 
-    private static void applyRegion(Canvas cv, JSONObject r, Map<String, Font> fonts, Map<String, String> buttons)
-            throws Exception
+    private static void applyRegion(Canvas cv, JSONObject r, Map<String, Font> fonts, Map<String, String> buttons,
+            File game) throws Exception
     {
+        // Picture supplied by the user in the game folder (e.g. official Spanish art)
+        if (r.has("image")) {
+            File src = findUserFile(game, r.getString("image"));
+            Bitmap pic = src == null ? null : BitmapFactory.decodeFile(src.getAbsolutePath());
+            if (pic != null) {
+                JSONArray ir = r.has("imageRect") ? r.getJSONArray("imageRect") : r.getJSONArray("rect");
+                int x = ir.getInt(0), y = ir.getInt(1), w = ir.getInt(2), h = ir.getInt(3);
+                for (int yy = 0; yy < h; yy++)
+                    for (int xx = 0; xx < w; xx++)
+                        cv.put(x + xx, y + yy, pic.getPixel(xx * pic.getWidth() / w, yy * pic.getHeight() / h));
+                pic.recycle();
+                return;
+            }
+        }
+        if (r.optBoolean("onlyImage", false)) return;
+
         JSONArray rect = r.getJSONArray("rect");
         int x = rect.getInt(0), y = rect.getInt(1), w = rect.getInt(2), h = rect.getInt(3);
         String style = r.optString("style", "shadow");
@@ -174,7 +190,18 @@ final class ArtPatcher
             shade = second;
             hasShade = has2;
         }
-        if (r.has("fill")) fill = parseColor(r.getString("fill"));
+        if (r.has("fill")) {
+            fill = parseColor(r.getString("fill"));
+            if (!"outline".equals(style)) {
+                // shade = most frequent colour that isn't the fill
+                int best = -1;
+                hasShade = false;
+                for (Map.Entry<Integer, Integer> e : cnt.entrySet()) {
+                    if ((e.getKey() & 0xFFFFFF) == (fill & 0xFFFFFF)) continue;
+                    if (e.getValue() > best) { best = e.getValue(); shade = e.getKey(); hasShade = true; }
+                }
+            }
+        }
         if (r.has("shade")) { shade = parseColor(r.getString("shade")); hasShade = true; }
         JSONArray fa = r.optJSONArray("fills");
         int[] fills = new int[fa == null ? 0 : fa.length()];
@@ -204,27 +231,42 @@ final class ArtPatcher
         for (Map.Entry<String, String> b : buttons.entrySet())
             if (b.getValue() != null) text = text.replace("{" + b.getKey() + "}", b.getValue());
         text = stripAccents(text).toUpperCase(Locale.ROOT);
-        Font font = fonts.get(r.optString("font", "5x7"));
-        if (font == null) return;
+        java.util.List<String> names = new java.util.ArrayList<>();
+        JSONArray fl = r.optJSONArray("font");
+        if (fl != null) for (int i = 0; i < fl.length(); i++) names.add(fl.getString(i));
+        else names.add(r.optString("font", "5x7"));
         int bold = r.optBoolean("bold", false) ? 1 : 0;
         int extra = "shadow".equals(style) && hasShade ? 1 : ("outline".equals(style) ? 2 : 0);
         int height = r.has("height") ? r.getInt("height") : Math.max(1, ty1 - ty0 + 1 - extra);
 
-        String[][] glyphs = new String[text.length()][];
-        int[] widths = new int[text.length()];
-        int sum = 0;
-        for (int i = 0; i < text.length(); i++) {
-            String[] g = font.glyphs.get(text.charAt(i));
-            if (g == null) {
-                g = new String[font.h];
-                java.util.Arrays.fill(g, new String(new char[font.w]).replace('\0', '.'));
+        // First font (in order) whose glyphs cover the text and fit at the preferred
+        // spacing; the last one is squeezed if nothing fits.
+        Font font = null;
+        String[][] glyphs = null;
+        int[] widths = null;
+        int sum = 0, spacing = 0, tw;
+        for (int fi = 0; fi < names.size(); fi++) {
+            font = fonts.get(names.get(fi));
+            if (font == null) return;
+            glyphs = new String[text.length()][];
+            widths = new int[text.length()];
+            sum = 0;
+            boolean covered = true;
+            for (int i = 0; i < text.length(); i++) {
+                String[] g = font.glyphs.get(text.charAt(i));
+                if (g == null) {
+                    if (text.charAt(i) != ' ') covered = false;
+                    g = new String[font.h];
+                    java.util.Arrays.fill(g, new String(new char[font.w]).replace('\0', '.'));
+                }
+                glyphs[i] = g;
+                widths[i] = g[0].length() + bold;
+                sum += widths[i];
             }
-            glyphs[i] = g;
-            widths[i] = g[0].length() + bold;
-            sum += widths[i];
+            spacing = r.optInt("spacing", 1);
+            tw = sum + spacing * (text.length() - 1) + extra;
+            if (fi == names.size() - 1 || (covered && tw <= w)) break;
         }
-        int spacing = r.optInt("spacing", 1);
-        int tw;
         while (true) {
             tw = sum + spacing * (text.length() - 1) + extra;
             if (tw <= w || spacing <= 0) break;
@@ -280,6 +322,24 @@ final class ArtPatcher
     {
         return path.replace("Graphics/Pictures/", "").replace('/', '_').replace(' ', '_')
                 .toLowerCase(Locale.ROOT) + ".png";
+    }
+
+    /** Finds a file the user added to the game folder, ignoring case and accents. */
+    private static File findUserFile(File game, String rel)
+    {
+        File cur = game;
+        for (String part : rel.split("/")) {
+            File[] list = cur.listFiles();
+            if (list == null) return null;
+            File hit = null;
+            String want = stripAccents(part).toLowerCase(Locale.ROOT);
+            for (File f : list) {
+                if (stripAccents(f.getName()).toLowerCase(Locale.ROOT).equals(want)) { hit = f; break; }
+            }
+            if (hit == null) return null;
+            cur = hit;
+        }
+        return cur.isFile() ? cur : null;
     }
 
     private static File findImage(File game, String path)
