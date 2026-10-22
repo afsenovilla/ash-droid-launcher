@@ -231,11 +231,7 @@ module AshDroidText
     # Text straight on a black screen (e.g. after a defeat) uses white with a pale
     # shadow, which is hard to read: give it a dark shadow instead.
     out = out.gsub("\\c[8]", "<c3=F8F8F8,404048>") if out.include?("\\w[]") && out.include?("\\c[8]")
-    if spain?
-      SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) }
-      # "{1}" can be "el Pidgey salvaje": capitalise the first letter of the message
-      out = out.sub(/\A((?:\\[a-zA-Z]+(?:\[[^\]]*\])?|<[^>]+>)*[¡¿]?)([a-záéíóúñ])/) { "#{$1}#{$2.upcase}" }
-    end
+    SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
     FIXES.each do |re, rep|
       next unless out =~ re
       out = rep.is_a?(Proc) ? out.gsub(re) { rep.call(Regexp.last_match) } : out.gsub(re, rep)
@@ -345,6 +341,12 @@ begin
         key_index = name.to_s.start_with?("_MAP") ? 1 : 0
         define_method(name) do |*args, &blk|
           es = AshDroidText.spain_lookup(args[key_index], args[key_index + 1])
+          if es && es =~ /\A[¡¿]?\{1\}/ && args[key_index + 1].is_a?(String) &&
+             args[key_index + 1] =~ /\A[a-záéíóúñ]/
+            # "{1}" can be "el Pidgey salvaje": capitalise it at the start of a sentence
+            args = args.dup
+            args[key_index + 1] = args[key_index + 1].sub(/\A./) { |c| c.upcase }
+          end
           es ||= AshDroidText.lookup(args[key_index])
           if es
             args = args.dup
