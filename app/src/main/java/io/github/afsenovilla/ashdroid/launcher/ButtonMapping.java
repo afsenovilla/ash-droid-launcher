@@ -164,7 +164,8 @@ public final class ButtonMapping
      * Converts a standard gamepad keycode to the keyboard key mkxp-z binds by
      * default to the same RGSS input (see gamepad/GamepadConfig):
      *   C=C  B=X  A=Z  X=A  Y=S  Z=D  L=Q  R=W
-     * START opens the menu like B. Returns 0 if the key isn't a game button.
+     * START opens the menu like B; SELECT uses the registered item (as in the
+     * GBA games). Returns 0 if the key isn't a game button.
      */
     public static int toKeyboard(int gamepadKeyCode)
     {
@@ -178,6 +179,7 @@ public final class ButtonMapping
             case KeyEvent.KEYCODE_BUTTON_L1: return KeyEvent.KEYCODE_Q;      // L
             case KeyEvent.KEYCODE_BUTTON_R1: return KeyEvent.KEYCODE_W;      // R
             case KeyEvent.KEYCODE_BUTTON_START: return KeyEvent.KEYCODE_X;   // menu
+            case KeyEvent.KEYCODE_BUTTON_SELECT: return KeyEvent.KEYCODE_D;  // Z: registered item, like SELECT in FireRed
             default: return 0;
         }
     }
