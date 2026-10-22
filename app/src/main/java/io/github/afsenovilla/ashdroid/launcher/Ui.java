@@ -166,18 +166,22 @@ final class Ui
         t.setClickable(true);
         t.setOnClickListener(l);
         TextView a = text(title, 17, FG, true);
+        a.setSingleLine(true);
+        a.setEllipsize(android.text.TextUtils.TruncateAt.END);
         a.setPadding(0, 0, 0, dp(2));
-        TextView b = text(value, 13, DIM, false);
+        TextView b = text(value, 14, ACCENT, false);
+        b.setSingleLine(true);
+        b.setEllipsize(android.text.TextUtils.TruncateAt.END);
         b.setPadding(0, 0, 0, 0);
         b.setTag("value");
         t.addView(a);
         t.addView(b);
 
         GradientDrawable normal = new GradientDrawable();
-        normal.setColor(Color.argb(0xD0, 0x22, 0x26, 0x2D));
+        normal.setColor(SURFACE);
         normal.setCornerRadius(dp(12));
         GradientDrawable focused = new GradientDrawable();
-        focused.setColor(Color.argb(0xF0, 0x2C, 0x31, 0x3A));
+        focused.setColor(SURFACE);
         focused.setCornerRadius(dp(12));
         focused.setStroke(dp(3), ACCENT);
         StateListDrawable sl = new StateListDrawable();

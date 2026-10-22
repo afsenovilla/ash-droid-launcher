@@ -126,19 +126,19 @@
     <string name="sug_y">R2 (right trigger)</string>
     <!-- Launcher home (tiles) -->
     <string name="tile_buttons">Buttons</string>
-    <string name="tile_buttons_auto">Automatic (known device)</string>
+    <string name="tile_buttons_auto">Automatic</string>
     <string name="tile_buttons_custom">Custom</string>
     <string name="tile_buttons_default">Default</string>
     <string name="tile_buttons_unset">Not set yet</string>
     <string name="tile_display">Display</string>
     <string name="tile_autostart">Auto-start</string>
     <string name="tile_touch">Touch controls</string>
-    <string name="tile_reimport">Re-import game</string>
-    <string name="tile_reimport_value">Saves are kept</string>
+    <string name="tile_reimport">Re-import</string>
+    <string name="tile_reimport_value">Keeps saves</string>
     <string name="tile_diagnostics">Diagnostics</string>
     <string name="tile_diagnostics_value">Patch log</string>
     <string name="tile_delete">Delete game</string>
-    <string name="tile_delete_value">Keeps your saves</string>
+    <string name="tile_delete_value">Keeps saves</string>
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="preparing">Preparing…</string>

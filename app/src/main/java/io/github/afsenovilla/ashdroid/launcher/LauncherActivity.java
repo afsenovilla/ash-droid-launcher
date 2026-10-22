@@ -34,7 +34,6 @@ public class LauncherActivity extends Activity
     private View mScaleButton;
     private Button mPlayButton;
     private android.widget.FrameLayout mFrame;
-    private android.widget.ImageView mBackdrop;
     private boolean mStarting = false;
 
     // Auto-start: on a fresh app launch, start the game after a short countdown.
@@ -71,15 +70,9 @@ public class LauncherActivity extends Activity
         android.widget.ScrollView sv = mUi.scroll(mRoot);
         sv.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         mFrame = new android.widget.FrameLayout(this);
-        mFrame.setBackgroundColor(Ui.BG);
-        mBackdrop = new android.widget.ImageView(this);
-        mBackdrop.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-        mFrame.addView(mBackdrop, new android.widget.FrameLayout.LayoutParams(-1, -1));
-        View shade = new View(this);
-        shade.setBackground(new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[] { 0xF0121418, 0xC0121418, 0xE0121418 }));
-        mFrame.addView(shade, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        mFrame.setBackground(new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                new int[] { 0xFF1A1D23, 0xFF101216 }));
         mFrame.addView(sv, new android.widget.FrameLayout.LayoutParams(-1, -1));
         setContentView(mFrame);
         // Only on a fresh launch from the home screen, not when returning from the game
@@ -149,29 +142,12 @@ public class LauncherActivity extends Activity
         mPlayButton = null;
         mRoot.removeAllViews();
         mRoot.setOrientation(LinearLayout.VERTICAL);
-        loadBackdrop();
 
         if (!GameInstaller.isInstalled(this)) {
             renderWelcome();
         } else {
             renderMain();
         }
-    }
-
-    /** The game's own title screen, pixel-sharp and dimmed, as the launcher background. */
-    private void loadBackdrop()
-    {
-        mBackdrop.setImageDrawable(null);
-        if (!GameInstaller.isInstalled(this)) return;
-        java.io.File dir = Util.findChildIgnoreCase(GameInstaller.gameDir(this), "Graphics");
-        dir = dir == null ? null : Util.findChildIgnoreCase(dir, "Titles");
-        java.io.File f = dir == null ? null : Util.findChildIgnoreCase(dir, "title.png");
-        if (f == null) return;
-        android.graphics.Bitmap b = android.graphics.BitmapFactory.decodeFile(f.getAbsolutePath());
-        if (b == null) return;
-        android.graphics.drawable.BitmapDrawable d = new android.graphics.drawable.BitmapDrawable(getResources(), b);
-        d.setFilterBitmap(false);
-        mBackdrop.setImageDrawable(d);
     }
 
     private void renderWelcome()
@@ -244,8 +220,8 @@ public class LauncherActivity extends Activity
         View del = mUi.tile(getString(R.string.tile_delete), getString(R.string.tile_delete_value), v -> confirmDelete());
         right.addView(mUi.tileRow(buttons, mScaleButton));
         right.addView(mUi.tileRow(auto, touch));
-        right.addView(mUi.tileRow(reimport, diag));
-        right.addView(mUi.tileRow(del));
+        right.addView(mUi.tileRow(reimport, del));
+        right.addView(mUi.tileRow(diag));
         mRoot.addView(right);
 
         mPlayButton.requestFocus();
@@ -296,8 +272,8 @@ public class LauncherActivity extends Activity
     private String deviceLine()
     {
         String c = mDevice.controllerName != null ? mDevice.controllerName : getString(R.string.controller_none);
-        return mDevice.displayName() + (mDevice.isKnown() ? getString(R.string.known_profile) : "")
-                + "  ·  " + getString(R.string.screen_info, mDevice.screenW, mDevice.screenH, mDevice.refreshRate)
+        return mDevice.displayName() + "  ·  " + mDevice.screenW + "x" + mDevice.screenH
+                + String.format(java.util.Locale.ROOT, "  ·  %.0f Hz", mDevice.refreshRate)
                 + "\n" + getString(R.string.controller_info, c);
     }
 
