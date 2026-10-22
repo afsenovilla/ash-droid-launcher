@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
+import io.github.afsenovilla.ashdroid.R;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,7 +69,7 @@ public final class GameInstaller
             } catch (IOException ignored) {
             }
         }
-        return "Juego importado";
+        return ctx.getString(R.string.imported_game);
     }
 
     /**
@@ -81,12 +83,12 @@ public final class GameInstaller
 
         File tmp = new File(ctx.getFilesDir(), TMP_DIR);
         Util.deleteRecursive(tmp);
-        if (!tmp.mkdirs()) throw new IOException("No se pudo crear la carpeta temporal");
+        if (!tmp.mkdirs()) throw new IOException(ctx.getString(R.string.err_tmp_dir));
         String tmpCanonical = tmp.getCanonicalPath() + File.separator;
 
         int entries;
         try {
-            entries = extract(cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress);
+            entries = extract(ctx, cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress);
         } catch (IllegalArgumentException ex) {
             // Names aren't valid UTF-8: zip made with an old Windows/OEM encoding. Retry.
             Util.deleteRecursive(tmp);
@@ -98,34 +100,32 @@ public final class GameInstaller
                 legacy = StandardCharsets.ISO_8859_1;
             }
             try {
-                entries = extract(cr, uri, tmp, tmpCanonical, legacy, total, progress);
+                entries = extract(ctx, cr, uri, tmp, tmpCanonical, legacy, total, progress);
             } catch (IllegalArgumentException ex2) {
-                throw new IOException("El zip tiene nombres de archivo con una codificación no compatible. "
-                        + "Vuelve a comprimir la carpeta del juego con 7-Zip.");
+                throw new IOException(ctx.getString(R.string.err_encoding));
             }
         }
 
         if (entries == 0) {
             Util.deleteRecursive(tmp);
-            throw new IOException("El archivo no es un .zip válido o está vacío.");
+            throw new IOException(ctx.getString(R.string.err_empty_zip));
         }
 
         File root = findGameRoot(tmp, 4);
         if (root == null) {
             Util.deleteRecursive(tmp);
-            throw new IOException("No encuentro un juego de RPG Maker XP dentro del zip "
-                    + "(falta Game.ini o la carpeta Data). ¿Es el zip correcto?");
+            throw new IOException(ctx.getString(R.string.err_no_game));
         }
 
         File game = gameDir(ctx);
         Util.deleteRecursive(game);
         if (!root.renameTo(game)) {
-            throw new IOException("No se pudo mover el juego a su carpeta final");
+            throw new IOException(ctx.getString(R.string.err_move));
         }
         Util.deleteRecursive(tmp);
 
         if (!new File(game, MARKER).createNewFile()) {
-            throw new IOException("No se pudo marcar la instalación");
+            throw new IOException(ctx.getString(R.string.err_mark));
         }
     }
 
@@ -134,11 +134,11 @@ public final class GameInstaller
         Util.deleteRecursive(gameDir(ctx));
     }
 
-    private static int extract(ContentResolver cr, Uri uri, File tmp, String tmpCanonical, Charset cs,
+    private static int extract(Context ctx, ContentResolver cr, Uri uri, File tmp, String tmpCanonical, Charset cs,
                                long total, Progress progress) throws IOException
     {
         InputStream raw = cr.openInputStream(uri);
-        if (raw == null) throw new IOException("No se pudo abrir el archivo");
+        if (raw == null) throw new IOException(ctx.getString(R.string.err_open));
 
         CountingInputStream counting = new CountingInputStream(new BufferedInputStream(raw, 1 << 16));
         byte[] buf = new byte[1 << 16];
@@ -149,7 +149,7 @@ public final class GameInstaller
                 File out = new File(tmp, e.getName());
                 // Zip-slip protection
                 if (!out.getCanonicalPath().startsWith(tmpCanonical)) {
-                    throw new IOException("Entrada no válida en el zip: " + e.getName());
+                    throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
                 }
                 if (e.isDirectory()) {
                     out.mkdirs();

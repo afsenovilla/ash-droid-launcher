@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import io.github.afsenovilla.ashdroid.R;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,9 +39,9 @@ public class ButtonWizardActivity extends Activity
         Ui ui = new Ui(this);
         LinearLayout root = ui.column();
 
-        root.addView(ui.title("Configurar botones"));
+        root.addView(ui.title(getString(R.string.wizard_title)));
         String sub = mDevice.displayName();
-        if (mDevice.controllerName != null) sub += "  ·  mando: " + mDevice.controllerName;
+        if (mDevice.controllerName != null) sub += getString(R.string.wizard_controller, mDevice.controllerName);
         root.addView(ui.small(sub));
 
         mStepView = ui.small("");
@@ -55,12 +57,12 @@ public class ButtonWizardActivity extends Activity
         root.addView(mFeedbackView);
         root.addView(mSummaryView);
         root.addView(ui.spacer(24));
-        root.addView(ui.small("START = omitir este paso (deja el valor por defecto)  ·  SELECT = paso anterior"));
+        root.addView(ui.small(getString(R.string.wizard_footer)));
 
         LinearLayout row = ui.row();
-        Button skip = ui.button("Omitir paso", v -> skip());
-        Button defaults = ui.button("Usar mapeo por defecto", v -> useDefaults());
-        Button cancel = ui.button("Cancelar", v -> { setResult(RESULT_CANCELED); finish(); });
+        Button skip = ui.button(getString(R.string.wizard_skip), v -> skip());
+        Button defaults = ui.button(getString(R.string.wizard_defaults), v -> useDefaults());
+        Button cancel = ui.button(getString(R.string.cancel), v -> { setResult(RESULT_CANCELED); finish(); });
         // Touch-only buttons: controller input is captured by the wizard itself
         for (Button b : new Button[] { skip, defaults, cancel }) b.setFocusable(false);
         row.addView(skip);
@@ -75,13 +77,12 @@ public class ButtonWizardActivity extends Activity
     private void showStep()
     {
         ButtonMapping.Action a = ButtonMapping.ACTIONS[mStep];
-        mStepView.setText("Paso " + (mStep + 1) + " de " + ButtonMapping.ACTIONS.length);
-        mTitleView.setText("Pulsa el botón para: " + a.label);
-        String hint = a.hint;
+        mStepView.setText(getString(R.string.wizard_step, mStep + 1, ButtonMapping.ACTIONS.length));
+        mTitleView.setText(getString(R.string.wizard_press, a.label(this)));
+        String hint = a.hint(this);
         if ("C".equals(a.id) && mDevice.faceLayout != null) {
-            hint += "nintendo".equals(mDevice.faceLayout)
-                    ? "\nEn tu consola suele ser el botón A (el de la derecha)."
-                    : "\nEn tu consola suele ser el botón A (el de abajo).";
+            hint += "\n" + getString("nintendo".equals(mDevice.faceLayout)
+                    ? R.string.wizard_hint_nintendo : R.string.wizard_hint_xbox);
         }
         mHintView.setText(hint);
         mSummaryView.setText(summary());
@@ -93,7 +94,7 @@ public class ButtonWizardActivity extends Activity
         for (ButtonMapping.Action a : ButtonMapping.ACTIONS) {
             Integer k = mAssignments.get(a.id);
             if (k == null) continue;
-            sb.append("• ").append(a.label).append(" → ").append(ButtonMapping.keyName(k)).append('\n');
+            sb.append("• ").append(a.label(this)).append(" → ").append(ButtonMapping.keyName(this, k)).append('\n');
         }
         return sb.toString();
     }
@@ -119,20 +120,20 @@ public class ButtonWizardActivity extends Activity
         if (code == KeyEvent.KEYCODE_BUTTON_SELECT) { back(); return true; }
 
         if (isDirection(code)) {
-            mFeedbackView.setText("La cruceta y los sticks ya mueven al personaje: usa otro botón.");
+            mFeedbackView.setText(getString(R.string.wizard_no_dpad));
             return true;
         }
 
         for (Map.Entry<String, Integer> e : mAssignments.entrySet()) {
             if (e.getValue() == code && !e.getKey().equals(ButtonMapping.ACTIONS[mStep].id)) {
-                mFeedbackView.setText(ButtonMapping.keyName(code) + " ya está asignado a "
-                        + labelOf(e.getKey()) + ". Elige otro (o SELECT para volver).");
+                mFeedbackView.setText(getString(R.string.wizard_taken,
+                        ButtonMapping.keyName(this, code), labelOf(e.getKey())));
                 return true;
             }
         }
 
         mAssignments.put(ButtonMapping.ACTIONS[mStep].id, code);
-        mFeedbackView.setText("✓ " + ButtonMapping.keyName(code));
+        mFeedbackView.setText("✓ " + ButtonMapping.keyName(this, code));
         next();
         return true;
     }
@@ -150,7 +151,7 @@ public class ButtonWizardActivity extends Activity
     private void skip()
     {
         mAssignments.remove(ButtonMapping.ACTIONS[mStep].id);
-        mFeedbackView.setText("Paso omitido");
+        mFeedbackView.setText(getString(R.string.wizard_skipped));
         next();
     }
 
@@ -174,8 +175,8 @@ public class ButtonWizardActivity extends Activity
         mDone = true;
         mapping.save(this);
         mStepView.setText("");
-        mTitleView.setText("¡Listo!");
-        mHintView.setText(mapping.isIdentity() ? "Se usará el mapeo por defecto de mkxp-z." : summary());
+        mTitleView.setText(getString(R.string.wizard_done));
+        mHintView.setText(mapping.isIdentity() ? getString(R.string.wizard_done_default) : summary());
         mFeedbackView.setText("");
         mSummaryView.setText("");
         mHandler.postDelayed(() -> { setResult(RESULT_OK); finish(); }, 1500);
@@ -189,9 +190,9 @@ public class ButtonWizardActivity extends Activity
                 || code == KeyEvent.KEYCODE_DPAD_DOWN_LEFT || code == KeyEvent.KEYCODE_DPAD_DOWN_RIGHT;
     }
 
-    private static String labelOf(String id)
+    private String labelOf(String id)
     {
-        for (ButtonMapping.Action a : ButtonMapping.ACTIONS) if (a.id.equals(id)) return a.label;
+        for (ButtonMapping.Action a : ButtonMapping.ACTIONS) if (a.id.equals(id)) return a.label(this);
         return id;
     }
 

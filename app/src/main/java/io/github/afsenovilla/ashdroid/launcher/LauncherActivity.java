@@ -13,9 +13,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import io.github.afsenovilla.ashdroid.MainActivity;
+import io.github.afsenovilla.ashdroid.R;
 
 /**
  * Entry point. First run: import the game's original .zip, detect the device
@@ -31,6 +31,7 @@ public class LauncherActivity extends Activity
     private LinearLayout mRoot;
     private DeviceProfile mDevice;
     private volatile boolean mBusy = false;
+    private Button mScaleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -60,8 +61,9 @@ public class LauncherActivity extends Activity
     private void render()
     {
         mDevice = DeviceProfile.detect(this);
+        mScaleButton = null;
         mRoot.removeAllViews();
-        mRoot.addView(mUi.title("Ash Droid Launcher"));
+        mRoot.addView(mUi.title(getString(R.string.launcher_title)));
 
         if (!GameInstaller.isInstalled(this)) {
             renderWelcome();
@@ -72,14 +74,12 @@ public class LauncherActivity extends Activity
 
     private void renderWelcome()
     {
-        mRoot.addView(mUi.body("Este lanzador no incluye ningún juego. Necesitas el .zip original de "
-                + "Pokémon Fire Ash (u otro fangame de Pokémon Essentials que ya funcione con mkxp-z), "
-                + "descargado de su fuente oficial."));
-        mRoot.addView(mUi.small("Copia el .zip a la consola (por ejemplo a Descargas) y pulsa Importar."));
+        mRoot.addView(mUi.body(getString(R.string.welcome_body)));
+        mRoot.addView(mUi.small(getString(R.string.welcome_hint)));
         mRoot.addView(mUi.spacer(16));
         mRoot.addView(deviceInfo());
         mRoot.addView(mUi.spacer(16));
-        Button imp = mUi.button("Importar juego (.zip)", v -> pickZip());
+        Button imp = mUi.button(getString(R.string.btn_import), v -> pickZip());
         mRoot.addView(imp);
         imp.requestFocus();
     }
@@ -91,10 +91,10 @@ public class LauncherActivity extends Activity
         String scaleInfo;
         try {
             ConfigWriter.Result r = ConfigWriter.write(this, mDevice);
-            scaleInfo = String.format(Locale.ROOT, "Imagen: %dx%d → %dx%d · %s",
+            scaleInfo = getString(R.string.display_info,
                     r.gameW, r.gameH, mDevice.screenW, mDevice.screenH, r.description);
         } catch (IOException e) {
-            scaleInfo = "No se pudo generar la configuración: " + e.getMessage();
+            scaleInfo = getString(R.string.config_failed, e.getMessage());
         }
 
         mRoot.addView(deviceInfo());
@@ -102,37 +102,39 @@ public class LauncherActivity extends Activity
         mRoot.addView(mUi.small(controlsInfo()));
         mRoot.addView(mUi.spacer(16));
 
-        Button play = mUi.button("▶  Jugar", v -> play());
+        Button play = mUi.button(getString(R.string.btn_play), v -> play());
         mRoot.addView(play);
-        mRoot.addView(mUi.button("Configurar botones", v ->
+        mRoot.addView(mUi.button(getString(R.string.btn_buttons), v ->
                 startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD)));
-        mRoot.addView(mUi.button("Modo de imagen: " + ConfigWriter.scaleMode(this).label, v -> cycleScaleMode()));
-        mRoot.addView(mUi.button("Actualizar / reimportar juego (.zip)", v -> pickZip()));
-        mRoot.addView(mUi.button("Borrar juego importado", v -> confirmDelete()));
+        mScaleButton = mUi.button(getString(R.string.btn_scale_mode, ConfigWriter.scaleMode(this).label(this)), v -> cycleScaleMode());
+        mRoot.addView(mScaleButton);
+        mRoot.addView(mUi.button(getString(R.string.btn_reimport), v -> pickZip()));
+        mRoot.addView(mUi.button(getString(R.string.btn_delete), v -> confirmDelete()));
         mRoot.addView(mUi.spacer(12));
-        mRoot.addView(mUi.small("Las partidas guardadas se conservan al reimportar o actualizar el juego."));
+        mRoot.addView(mUi.small(getString(R.string.saves_kept)));
         play.requestFocus();
     }
 
     private View deviceInfo()
     {
-        String s = "Dispositivo: " + mDevice.displayName()
-                + (mDevice.isKnown() ? "  (perfil conocido)" : "")
-                + String.format(Locale.ROOT, "\nPantalla: %dx%d · %.0f Hz", mDevice.screenW, mDevice.screenH, mDevice.refreshRate)
-                + "\nMando: " + (mDevice.controllerName != null ? mDevice.controllerName : "no detectado (se usarán los controles táctiles)");
+        String s = getString(R.string.device_info, mDevice.displayName())
+                + (mDevice.isKnown() ? getString(R.string.known_profile) : "")
+                + "\n" + getString(R.string.screen_info, mDevice.screenW, mDevice.screenH, mDevice.refreshRate)
+                + "\n" + getString(R.string.controller_info, mDevice.controllerName != null
+                        ? mDevice.controllerName : getString(R.string.controller_none));
         if (mDevice.notes != null && !mDevice.notes.isEmpty()) s += "\n" + mDevice.notes;
         return mUi.small(s);
     }
 
     private String controlsInfo()
     {
-        if (!ButtonMapping.isConfigured(this)) return "Botones: sin configurar (se pedirán al pulsar Jugar)";
+        if (!ButtonMapping.isConfigured(this)) return getString(R.string.buttons_unset);
         ButtonMapping m = ButtonMapping.load(this);
-        if (m.isIdentity()) return "Botones: mapeo por defecto";
-        StringBuilder sb = new StringBuilder("Botones:");
+        if (m.isIdentity()) return getString(R.string.buttons_default);
+        StringBuilder sb = new StringBuilder(getString(R.string.buttons_prefix));
         for (ButtonMapping.Action a : ButtonMapping.ACTIONS) {
             Integer k = m.physicalFor(a);
-            if (k != null) sb.append("  ").append(a.label).append("=").append(ButtonMapping.keyName(k)).append(" ·");
+            if (k != null) sb.append("  ").append(a.label(this)).append("=").append(ButtonMapping.keyName(this, k)).append(" ·");
         }
         if (sb.charAt(sb.length() - 1) == '·') sb.setLength(sb.length() - 2);
         return sb.toString();
@@ -149,7 +151,7 @@ public class LauncherActivity extends Activity
         try {
             ConfigWriter.write(this, DeviceProfile.detect(this));
         } catch (IOException e) {
-            showError("No se pudo preparar la configuración", e.getMessage());
+            showError(getString(R.string.err_prepare_config), e.getMessage());
             return;
         }
         startActivity(new Intent(this, MainActivity.class));
@@ -162,12 +164,7 @@ public class LauncherActivity extends Activity
         ConfigWriter.setScaleMode(this, all[(cur.ordinal() + 1) % all.length]);
         render();
         // keep focus on the same button for quick cycling with the controller
-        for (int i = 0; i < mRoot.getChildCount(); i++) {
-            View v = mRoot.getChildAt(i);
-            if (v instanceof Button && ((Button) v).getText().toString().startsWith("Modo de imagen")) {
-                v.requestFocus();
-            }
-        }
+        if (mScaleButton != null) mScaleButton.requestFocus();
     }
 
     private void pickZip()
@@ -180,18 +177,17 @@ public class LauncherActivity extends Activity
         try {
             startActivityForResult(i, REQ_IMPORT);
         } catch (Exception e) {
-            showError("No hay selector de archivos", "Este dispositivo no tiene un selector de documentos disponible.");
+            showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
         }
     }
 
     private void confirmDelete()
     {
         new AlertDialog.Builder(this)
-                .setTitle("¿Borrar el juego importado?")
-                .setMessage("Se borrarán los archivos del juego (no las partidas guardadas). "
-                        + "Tendrás que volver a importar el .zip para jugar.")
-                .setPositiveButton("Borrar", (d, w) -> { GameInstaller.uninstall(this); render(); })
-                .setNegativeButton("Cancelar", null)
+                .setTitle(R.string.delete_title)
+                .setMessage(R.string.delete_msg)
+                .setPositiveButton(R.string.delete, (d, w) -> { GameInstaller.uninstall(this); render(); })
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -212,8 +208,8 @@ public class LauncherActivity extends Activity
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mRoot.removeAllViews();
-        mRoot.addView(mUi.title("Importando juego…"));
-        mRoot.addView(mUi.small("Puede tardar un par de minutos. No cierres la app."));
+        mRoot.addView(mUi.title(getString(R.string.importing_title)));
+        mRoot.addView(mUi.small(getString(R.string.importing_hint)));
         ProgressBar bar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         bar.setMax(1000);
         bar.setIndeterminate(true);
@@ -233,10 +229,10 @@ public class LauncherActivity extends Activity
                         if (total > 0) {
                             bar.setIndeterminate(false);
                             bar.setProgress((int) (done * 1000 / total));
-                            status.setText(String.format(Locale.ROOT, "%d / %d MB · %s",
-                                    done >> 20, total >> 20, file));
+                            status.setText(getString(R.string.import_progress,
+                                    (int) (done >> 20), (int) (total >> 20), file));
                         } else {
-                            status.setText(String.format(Locale.ROOT, "%d MB · %s", done >> 20, file));
+                            status.setText(getString(R.string.import_progress_nototal, (int) (done >> 20), file));
                         }
                     });
                 });
@@ -252,7 +248,7 @@ public class LauncherActivity extends Activity
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 render();
                 if (err != null) {
-                    showError("No se pudo importar el juego", err);
+                    showError(getString(R.string.err_import_title), err);
                 } else if (!ButtonMapping.isConfigured(this) && ButtonMapping.hasPhysicalGamepad()) {
                     startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD);
                 }
@@ -262,6 +258,6 @@ public class LauncherActivity extends Activity
 
     private void showError(String title, String msg)
     {
-        new AlertDialog.Builder(this).setTitle(title).setMessage(msg).setPositiveButton("Vale", null).show();
+        new AlertDialog.Builder(this).setTitle(title).setMessage(msg).setPositiveButton(R.string.ok, null).show();
     }
 }

@@ -3,12 +3,13 @@ package io.github.afsenovilla.ashdroid.launcher;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import io.github.afsenovilla.ashdroid.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 
 /**
  * Generates the game's mkxp.json for the current device, starting from the
@@ -19,14 +20,16 @@ public final class ConfigWriter
 {
     public enum ScaleMode
     {
-        AUTO("Automático"),
-        SHARP("Nítido (solo escalado entero, con bordes)"),
-        SMOOTH("Suave (filtrado)"),
-        STRETCH("Estirar a toda la pantalla");
+        AUTO(R.string.scale_auto),
+        SHARP(R.string.scale_sharp),
+        SMOOTH(R.string.scale_smooth),
+        STRETCH(R.string.scale_stretch);
 
-        public final String label;
+        private final int labelRes;
 
-        ScaleMode(String label) { this.label = label; }
+        ScaleMode(int labelRes) { this.labelRes = labelRes; }
+
+        public String label(Context ctx) { return ctx.getString(labelRes); }
     }
 
     private static final String PREFS = "ashdroid";
@@ -105,17 +108,17 @@ public final class ConfigWriter
 
             if (o.optInt("SESourceCount", 6) < 16) o.put("SESourceCount", 16);
 
-            applyScaling(o, r, dev, scaleMode(ctx));
+            applyScaling(ctx, o, r, dev, scaleMode(ctx));
 
             // org.json escapes '/' as '\/'; keep paths readable for mkxp-z's parser
             Util.writeText(conf, o.toString(2).replace("\\/", "/"));
         } catch (JSONException e) {
-            throw new IOException("No se pudo generar mkxp.json: " + e.getMessage());
+            throw new IOException(ctx.getString(R.string.err_mkxp_json, e.getMessage()));
         }
         return r;
     }
 
-    private static void applyScaling(JSONObject o, Result r, DeviceProfile dev, ScaleMode mode) throws JSONException
+    private static void applyScaling(Context ctx, JSONObject o, Result r, DeviceProfile dev, ScaleMode mode) throws JSONException
     {
         double sx = (double) dev.screenW / r.gameW;
         double sy = (double) dev.screenH / r.gameH;
@@ -124,14 +127,14 @@ public final class ConfigWriter
 
         boolean integer = Math.abs(s - Math.rint(s)) < 0.01;
         boolean sameAspect = Math.abs(sx - sy) < 0.02;
-        String aspect = sameAspect ? "misma proporción, sin bordes" : "con bordes laterales";
+        String aspect = ctx.getString(sameAspect ? R.string.aspect_same : R.string.aspect_borders);
 
         switch (mode) {
             case STRETCH:
                 o.put("fixedAspectRatio", false);
                 o.put("smoothScaling", true);
                 o.put("integerScalingActive", false);
-                r.description = "Estirado a toda la pantalla";
+                r.description = ctx.getString(R.string.desc_stretch);
                 return;
 
             case SHARP:
@@ -139,14 +142,14 @@ public final class ConfigWriter
                 o.put("smoothScaling", false);
                 o.put("integerScalingActive", s >= 1.0);
                 o.put("integerScalingLastMile", false);
-                r.description = String.format(Locale.ROOT, "x%d nítido, con bordes", Math.max(1, (int) Math.floor(s)));
+                r.description = ctx.getString(R.string.desc_sharp, Math.max(1, (int) Math.floor(s)));
                 return;
 
             case SMOOTH:
                 o.put("fixedAspectRatio", true);
                 o.put("smoothScaling", true);
                 o.put("integerScalingActive", false);
-                r.description = String.format(Locale.ROOT, "x%.2f suavizado, %s", s, aspect);
+                r.description = ctx.getString(R.string.desc_smooth, s, aspect);
                 return;
 
             case AUTO:
@@ -156,18 +159,17 @@ public final class ConfigWriter
                     // Perfect integer scale: pixel-perfect nearest neighbour
                     o.put("smoothScaling", false);
                     o.put("integerScalingActive", false);
-                    r.description = String.format(Locale.ROOT, "x%d exacto, píxeles perfectos, %s", (int) Math.rint(s), aspect);
+                    r.description = ctx.getString(R.string.desc_exact, (int) Math.rint(s), aspect);
                 } else if (s >= 2.0) {
                     // e.g. x2.5: scale x2 with nearest, then a short smooth "last mile"
                     o.put("smoothScaling", true);
                     o.put("integerScalingActive", true);
                     o.put("integerScalingLastMile", true);
-                    r.description = String.format(Locale.ROOT, "x%d nítido + ajuste final suave (x%.2f), %s",
-                            (int) Math.floor(s), s, aspect);
+                    r.description = ctx.getString(R.string.desc_sharp_lastmile, (int) Math.floor(s), s, aspect);
                 } else {
                     o.put("smoothScaling", true);
                     o.put("integerScalingActive", false);
-                    r.description = String.format(Locale.ROOT, "x%.2f suavizado, %s", s, aspect);
+                    r.description = ctx.getString(R.string.desc_smooth, s, aspect);
                 }
         }
     }

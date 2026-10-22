@@ -11,7 +11,7 @@
   // PRs welcome: add your device here.
   "devices": [
     { "name": "Retroid Pocket Nova",    "match": { "model": "pocket ?nova" },      "faceLayout": "nintendo",
-      "notes": "Pantalla 4:3 1280x960 AMOLED 120 Hz" },
+      "notes": "4:3 1280x960 AMOLED screen, 120 Hz" },
     { "name": "Retroid Pocket 5",       "match": { "model": "pocket ?5" },         "faceLayout": "nintendo" },
     { "name": "Retroid Pocket Mini",    "match": { "model": "pocket ?mini" },      "faceLayout": "nintendo" },
     { "name": "Retroid Pocket Flip 2",  "match": { "model": "flip ?2" },           "faceLayout": "nintendo" },

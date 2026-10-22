@@ -1,5 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Main application name -->
-    <string name="app_name">Ash Droid</string>
+    <string name="app_name" translatable="false">Ash Droid</string>
+
+    <!-- Launcher -->
+    <string name="launcher_title" translatable="false">Ash Droid Launcher</string>
+    <string name="welcome_body">This launcher doesn\'t include any game. You need the original .zip of Pokémon Fire Ash (or another Pokémon Essentials fangame that already runs on mkxp-z), downloaded from its official source.</string>
+    <string name="welcome_hint">Copy the .zip to the device (for example to Downloads) and press Import.</string>
+    <string name="btn_import">Import game (.zip)</string>
+    <string name="btn_play">▶  Play</string>
+    <string name="btn_buttons">Configure buttons</string>
+    <string name="btn_scale_mode">Display mode: %1$s</string>
+    <string name="btn_reimport">Update / re-import game (.zip)</string>
+    <string name="btn_delete">Delete imported game</string>
+    <string name="saves_kept">Save files are kept when you re-import or update the game.</string>
+    <string name="imported_game">Imported game</string>
+    <string name="display_info">Display: %1$dx%2$d → %3$dx%4$d · %5$s</string>
+    <string name="config_failed">Couldn\'t generate the configuration: %1$s</string>
+    <string name="device_info">Device: %1$s</string>
+    <string name="known_profile">  (known profile)</string>
+    <string name="screen_info">Screen: %1$dx%2$d · %3$.0f Hz</string>
+    <string name="controller_info">Controller: %1$s</string>
+    <string name="controller_none">not detected (touch controls will be used)</string>
+    <string name="buttons_unset">Buttons: not configured (you\'ll be asked when you press Play)</string>
+    <string name="buttons_default">Buttons: default mapping</string>
+    <string name="buttons_prefix">Buttons:</string>
+    <string name="err_prepare_config">Couldn\'t prepare the configuration</string>
+    <string name="err_no_picker_title">No file picker</string>
+    <string name="err_no_picker">This device has no document picker available.</string>
+    <string name="delete_title">Delete the imported game?</string>
+    <string name="delete_msg">The game files will be deleted (not your save files). You\'ll need to import the .zip again to play.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="importing_title">Importing game…</string>
+    <string name="importing_hint">This can take a couple of minutes. Don\'t close the app.</string>
+    <string name="import_progress" translatable="false">%1$d / %2$d MB · %3$s</string>
+    <string name="import_progress_nototal" translatable="false">%1$d MB · %2$s</string>
+    <string name="err_import_title">Couldn\'t import the game</string>
+
+    <!-- Import errors -->
+    <string name="err_tmp_dir">Couldn\'t create the temporary folder</string>
+    <string name="err_encoding">The zip has file names in an unsupported encoding. Re-compress the game folder with 7-Zip.</string>
+    <string name="err_empty_zip">The file isn\'t a valid .zip or it\'s empty.</string>
+    <string name="err_no_game">Couldn\'t find an RPG Maker XP game inside the zip (Game.ini or the Data folder is missing). Is it the right zip?</string>
+    <string name="err_move">Couldn\'t move the game to its final folder</string>
+    <string name="err_mark">Couldn\'t mark the installation as complete</string>
+    <string name="err_open">Couldn\'t open the file</string>
+    <string name="err_bad_entry">Invalid entry in the zip: %1$s</string>
+    <string name="err_mkxp_json">Couldn\'t generate mkxp.json: %1$s</string>
+
+    <!-- Display modes -->
+    <string name="scale_auto">Automatic</string>
+    <string name="scale_sharp">Sharp (integer scaling only, with borders)</string>
+    <string name="scale_smooth">Smooth (filtered)</string>
+    <string name="scale_stretch">Stretch to full screen</string>
+    <string name="aspect_same">same aspect ratio, no borders</string>
+    <string name="aspect_borders">with side borders</string>
+    <string name="desc_stretch">Stretched to full screen</string>
+    <string name="desc_sharp">x%1$d sharp, with borders</string>
+    <string name="desc_smooth">x%1$.2f smooth, %2$s</string>
+    <string name="desc_exact">x%1$d exact, pixel-perfect, %2$s</string>
+    <string name="desc_sharp_lastmile">x%1$d sharp + smooth final step (x%2$.2f), %3$s</string>
+
+    <!-- Button wizard -->
+    <string name="wizard_title">Configure buttons</string>
+    <string name="wizard_controller">  ·  controller: %1$s</string>
+    <string name="wizard_footer">START = skip this step (keeps the default)  ·  SELECT = previous step</string>
+    <string name="wizard_skip">Skip step</string>
+    <string name="wizard_defaults">Use default mapping</string>
+    <string name="wizard_step">Step %1$d of %2$d</string>
+    <string name="wizard_press">Press the button for: %1$s</string>
+    <string name="wizard_hint_nintendo">On your device this is usually the A button (the right one).</string>
+    <string name="wizard_hint_xbox">On your device this is usually the A button (the bottom one).</string>
+    <string name="wizard_no_dpad">The D-pad and sticks already move the character: use another button.</string>
+    <string name="wizard_taken">%1$s is already assigned to %2$s. Choose another one (or SELECT to go back).</string>
+    <string name="wizard_skipped">Step skipped</string>
+    <string name="wizard_done">All set!</string>
+    <string name="wizard_done_default">mkxp-z\'s default mapping will be used.</string>
+
+    <!-- In-game actions (Pokémon Essentials v19) -->
+    <string name="action_c">Confirm / Interact</string>
+    <string name="action_c_hint">Talk, accept, advance text</string>
+    <string name="action_b">Cancel / Menu</string>
+    <string name="action_b_hint">Go back and open the menu</string>
+    <string name="action_a">Run</string>
+    <string name="action_a_hint">Hold to run</string>
+    <string name="action_r">Speed up game</string>
+    <string name="action_r_hint">Fast-forward (Speed Up)</string>
+    <string name="action_l">Save / Sort bag</string>
+    <string name="action_l_hint">Quick save shortcut</string>
+    <string name="action_z">Registered item</string>
+    <string name="action_z_hint">Use the registered item (bike, rod…)</string>
+    <string name="action_x">Scroll up in lists</string>
+    <string name="action_x_hint">Page up in menus</string>
+    <string name="action_y">Scroll down in lists</string>
+    <string name="action_y_hint">Page down in menus</string>
+    <string name="key_l3">L3 (left stick)</string>
+    <string name="key_r3">R3 (right stick)</string>
 </resources>

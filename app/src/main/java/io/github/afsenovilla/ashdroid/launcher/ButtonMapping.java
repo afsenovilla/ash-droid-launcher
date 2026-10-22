@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 
+import io.github.afsenovilla.ashdroid.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,29 +38,33 @@ public final class ButtonMapping
     public static final class Action
     {
         public final String id;
-        public final String label;
-        public final String hint;
+        private final int labelRes;
+        private final int hintRes;
         public final int target;
 
-        Action(String id, String label, String hint, int target)
+        Action(String id, int labelRes, int hintRes, int target)
         {
             this.id = id;
-            this.label = label;
-            this.hint = hint;
+            this.labelRes = labelRes;
+            this.hintRes = hintRes;
             this.target = target;
         }
+
+        public String label(Context ctx) { return ctx.getString(labelRes); }
+
+        public String hint(Context ctx) { return ctx.getString(hintRes); }
     }
 
     /** Actions in the order the wizard asks them. Labels follow Pokémon Essentials v19. */
     public static final Action[] ACTIONS = {
-        new Action("C", "Confirmar / Interactuar", "Hablar, aceptar, avanzar texto", KeyEvent.KEYCODE_BUTTON_A),
-        new Action("B", "Cancelar / Menú", "Volver atrás y abrir el menú", KeyEvent.KEYCODE_BUTTON_B),
-        new Action("A", "Correr", "Mantener para correr", KeyEvent.KEYCODE_BUTTON_X),
-        new Action("R", "Acelerar juego", "Avance rápido (Speed Up)", KeyEvent.KEYCODE_BUTTON_R1),
-        new Action("L", "Guardar / Ordenar mochila", "Atajo de guardado", KeyEvent.KEYCODE_BUTTON_L1),
-        new Action("Z", "Objeto registrado", "Usar el objeto registrado (bici, caña…)", KeyEvent.KEYCODE_BUTTON_THUMBR),
-        new Action("X", "Subir en listas", "Página arriba en menús", KeyEvent.KEYCODE_BUTTON_Y),
-        new Action("Y", "Bajar en listas", "Página abajo en menús", KeyEvent.KEYCODE_BUTTON_THUMBL),
+        new Action("C", R.string.action_c, R.string.action_c_hint, KeyEvent.KEYCODE_BUTTON_A),
+        new Action("B", R.string.action_b, R.string.action_b_hint, KeyEvent.KEYCODE_BUTTON_B),
+        new Action("A", R.string.action_a, R.string.action_a_hint, KeyEvent.KEYCODE_BUTTON_X),
+        new Action("R", R.string.action_r, R.string.action_r_hint, KeyEvent.KEYCODE_BUTTON_R1),
+        new Action("L", R.string.action_l, R.string.action_l_hint, KeyEvent.KEYCODE_BUTTON_L1),
+        new Action("Z", R.string.action_z, R.string.action_z_hint, KeyEvent.KEYCODE_BUTTON_THUMBR),
+        new Action("X", R.string.action_x, R.string.action_x_hint, KeyEvent.KEYCODE_BUTTON_Y),
+        new Action("Y", R.string.action_y, R.string.action_y_hint, KeyEvent.KEYCODE_BUTTON_THUMBL),
     };
 
     private final Map<Integer, Integer> mMap;
@@ -192,14 +198,14 @@ public final class ButtonMapping
     }
 
     /** Human readable name for a keycode, e.g. "BUTTON_L2" -> "L2". */
-    public static String keyName(int keyCode)
+    public static String keyName(Context ctx, int keyCode)
     {
         String s = KeyEvent.keyCodeToString(keyCode);
         if (s.startsWith("KEYCODE_")) s = s.substring(8);
         if (s.startsWith("BUTTON_")) s = s.substring(7);
         switch (s) {
-            case "THUMBL": return "L3 (stick izq.)";
-            case "THUMBR": return "R3 (stick der.)";
+            case "THUMBL": return ctx.getString(R.string.key_l3);
+            case "THUMBR": return ctx.getString(R.string.key_r3);
             case "L1": return "L1";
             case "R1": return "R1";
             default: return s;

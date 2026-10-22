@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Lanzador -->
+    <string name="welcome_body">Este lanzador no incluye ningún juego. Necesitas el .zip original de Pokémon Fire Ash (u otro fangame de Pokémon Essentials que ya funcione con mkxp-z), descargado de su fuente oficial.</string>
+    <string name="welcome_hint">Copia el .zip a la consola (por ejemplo a Descargas) y pulsa Importar.</string>
+    <string name="btn_import">Importar juego (.zip)</string>
+    <string name="btn_play">▶  Jugar</string>
+    <string name="btn_buttons">Configurar botones</string>
+    <string name="btn_scale_mode">Modo de imagen: %1$s</string>
+    <string name="btn_reimport">Actualizar / reimportar juego (.zip)</string>
+    <string name="btn_delete">Borrar juego importado</string>
+    <string name="saves_kept">Las partidas guardadas se conservan al reimportar o actualizar el juego.</string>
+    <string name="imported_game">Juego importado</string>
+    <string name="display_info">Imagen: %1$dx%2$d → %3$dx%4$d · %5$s</string>
+    <string name="config_failed">No se pudo generar la configuración: %1$s</string>
+    <string name="device_info">Dispositivo: %1$s</string>
+    <string name="known_profile">  (perfil conocido)</string>
+    <string name="screen_info">Pantalla: %1$dx%2$d · %3$.0f Hz</string>
+    <string name="controller_info">Mando: %1$s</string>
+    <string name="controller_none">no detectado (se usarán los controles táctiles)</string>
+    <string name="buttons_unset">Botones: sin configurar (se pedirán al pulsar Jugar)</string>
+    <string name="buttons_default">Botones: mapeo por defecto</string>
+    <string name="buttons_prefix">Botones:</string>
+    <string name="err_prepare_config">No se pudo preparar la configuración</string>
+    <string name="err_no_picker_title">No hay selector de archivos</string>
+    <string name="err_no_picker">Este dispositivo no tiene un selector de documentos disponible.</string>
+    <string name="delete_title">¿Borrar el juego importado?</string>
+    <string name="delete_msg">Se borrarán los archivos del juego (no las partidas guardadas). Tendrás que volver a importar el .zip para jugar.</string>
+    <string name="delete">Borrar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">Vale</string>
+    <string name="importing_title">Importando juego…</string>
+    <string name="importing_hint">Puede tardar un par de minutos. No cierres la app.</string>
+    <string name="err_import_title">No se pudo importar el juego</string>
+
+    <!-- Errores de importación -->
+    <string name="err_tmp_dir">No se pudo crear la carpeta temporal</string>
+    <string name="err_encoding">El zip tiene nombres de archivo con una codificación no compatible. Vuelve a comprimir la carpeta del juego con 7-Zip.</string>
+    <string name="err_empty_zip">El archivo no es un .zip válido o está vacío.</string>
+    <string name="err_no_game">No encuentro un juego de RPG Maker XP dentro del zip (falta Game.ini o la carpeta Data). ¿Es el zip correcto?</string>
+    <string name="err_move">No se pudo mover el juego a su carpeta final</string>
+    <string name="err_mark">No se pudo marcar la instalación</string>
+    <string name="err_open">No se pudo abrir el archivo</string>
+    <string name="err_bad_entry">Entrada no válida en el zip: %1$s</string>
+    <string name="err_mkxp_json">No se pudo generar mkxp.json: %1$s</string>
+
+    <!-- Modos de imagen -->
+    <string name="scale_auto">Automático</string>
+    <string name="scale_sharp">Nítido (solo escalado entero, con bordes)</string>
+    <string name="scale_smooth">Suave (filtrado)</string>
+    <string name="scale_stretch">Estirar a toda la pantalla</string>
+    <string name="aspect_same">misma proporción, sin bordes</string>
+    <string name="aspect_borders">con bordes laterales</string>
+    <string name="desc_stretch">Estirado a toda la pantalla</string>
+    <string name="desc_sharp">x%1$d nítido, con bordes</string>
+    <string name="desc_smooth">x%1$.2f suavizado, %2$s</string>
+    <string name="desc_exact">x%1$d exacto, píxeles perfectos, %2$s</string>
+    <string name="desc_sharp_lastmile">x%1$d nítido + ajuste final suave (x%2$.2f), %3$s</string>
+
+    <!-- Asistente de botones -->
+    <string name="wizard_title">Configurar botones</string>
+    <string name="wizard_controller">  ·  mando: %1$s</string>
+    <string name="wizard_footer">START = omitir este paso (deja el valor por defecto)  ·  SELECT = paso anterior</string>
+    <string name="wizard_skip">Omitir paso</string>
+    <string name="wizard_defaults">Usar mapeo por defecto</string>
+    <string name="wizard_step">Paso %1$d de %2$d</string>
+    <string name="wizard_press">Pulsa el botón para: %1$s</string>
+    <string name="wizard_hint_nintendo">En tu consola suele ser el botón A (el de la derecha).</string>
+    <string name="wizard_hint_xbox">En tu consola suele ser el botón A (el de abajo).</string>
+    <string name="wizard_no_dpad">La cruceta y los sticks ya mueven al personaje: usa otro botón.</string>
+    <string name="wizard_taken">%1$s ya está asignado a %2$s. Elige otro (o SELECT para volver).</string>
+    <string name="wizard_skipped">Paso omitido</string>
+    <string name="wizard_done">¡Listo!</string>
+    <string name="wizard_done_default">Se usará el mapeo por defecto de mkxp-z.</string>
+
+    <!-- Acciones del juego (Pokémon Essentials v19) -->
+    <string name="action_c">Confirmar / Interactuar</string>
+    <string name="action_c_hint">Hablar, aceptar, avanzar texto</string>
+    <string name="action_b">Cancelar / Menú</string>
+    <string name="action_b_hint">Volver atrás y abrir el menú</string>
+    <string name="action_a">Correr</string>
+    <string name="action_a_hint">Mantener para correr</string>
+    <string name="action_r">Acelerar juego</string>
+    <string name="action_r_hint">Avance rápido (Speed Up)</string>
+    <string name="action_l">Guardar / Ordenar mochila</string>
+    <string name="action_l_hint">Atajo de guardado</string>
+    <string name="action_z">Objeto registrado</string>
+    <string name="action_z_hint">Usar el objeto registrado (bici, caña…)</string>
+    <string name="action_x">Subir en listas</string>
+    <string name="action_x_hint">Página arriba en menús</string>
+    <string name="action_y">Bajar en listas</string>
+    <string name="action_y_hint">Página abajo en menús</string>
+    <string name="key_l3">L3 (stick izq.)</string>
+    <string name="key_r3">R3 (stick der.)</string>
+</resources>
