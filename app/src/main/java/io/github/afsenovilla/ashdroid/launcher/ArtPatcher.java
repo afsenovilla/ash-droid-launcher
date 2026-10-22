@@ -214,7 +214,28 @@ final class ArtPatcher
         for (int i = 0; i < fills.length; i++) fills[i] = parseColor(fa.getString(i));
         if (ty1 < 0) { ty0 = y; ty1 = y + h - 1; tx0 = x; }
 
-        if (!"none".equals(erase)) {
+        if ("inpaint".equals(erase)) {
+            // Remove only the old lettering ("ink" colours): each such pixel takes the
+            // colour of the nearest non-ink pixel on its row (keeps stripes/circles).
+            java.util.HashSet<Integer> ink = new java.util.HashSet<>();
+            JSONArray il = r.optJSONArray("ink");
+            if (il != null) for (int i = 0; i < il.length(); i++) ink.add(parseColor(il.getString(i)) & 0xFFFFFF);
+            int[] row = new int[3 * w];
+            boolean[] isInk = new boolean[3 * w];
+            for (int yy = y; yy < y + h; yy++) {
+                for (int i = 0; i < 3 * w; i++) {
+                    row[i] = cv.get(x - w + i, yy);
+                    isInk[i] = ink.contains(row[i] & 0xFFFFFF);
+                }
+                for (int i = w; i < 2 * w; i++) {
+                    if (!isInk[i]) continue;
+                    for (int dd = 1; dd <= w; dd++) {
+                        if (i - dd >= 0 && !isInk[i - dd]) { cv.put(x + i - w, yy, row[i - dd]); break; }
+                        if (i + dd < 3 * w && !isInk[i + dd]) { cv.put(x + i - w, yy, row[i + dd]); break; }
+                    }
+                }
+            }
+        } else if (!"none".equals(erase)) {
             for (int yy = y; yy < y + h; yy++)
                 for (int xx = x; xx < x + w; xx++) cv.put(xx, yy, rowbg[yy - y]);
         }

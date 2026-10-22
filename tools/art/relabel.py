@@ -167,7 +167,22 @@ def apply_region(cv, r, fonts, buttons, game=None):
     fills = [hexcol(c) for c in r.get("fills", [])]
     if ty1 < 0:
         ty0, ty1, tx0 = y, y + h - 1, x
-    if erase != "none":
+    if erase == "inpaint":
+        # Remove only the old lettering ("ink" colours): each such pixel takes the
+        # colour of the nearest non-ink pixel on its row (keeps stripes/circles).
+        ink = {hexcol(c)[:3] for c in r.get("ink", [])}
+        for yy in range(y, y + h):
+            row = [cv.get(xx, yy) for xx in range(x - w, x + 2 * w)]
+            is_ink = [c[:3] in ink for c in row]
+            for i in range(w, 2 * w):
+                if not is_ink[i]:
+                    continue
+                for dd in range(1, w + 1):
+                    if i - dd >= 0 and not is_ink[i - dd]:
+                        cv.put(x + i - w, yy, row[i - dd]); break
+                    if i + dd < len(row) and not is_ink[i + dd]:
+                        cv.put(x + i - w, yy, row[i + dd]); break
+    elif erase != "none":
         for yy in range(y, y + h):
             for xx in range(x, x + w):
                 cv.put(xx, yy, rowbg[yy])
