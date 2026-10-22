@@ -110,12 +110,65 @@ public final class ConfigWriter
 
             applyScaling(ctx, o, r, dev, scaleMode(ctx));
 
+            // Runtime text patches (controls screen talks about buttons, not keys)
+            try {
+                writeTextPatches(ctx, game);
+                org.json.JSONArray pre = o.optJSONArray("preloadScript");
+                org.json.JSONArray merged = new org.json.JSONArray();
+                if (pre != null) {
+                    for (int i = 0; i < pre.length(); i++) {
+                        if (!PATCH_FILE.equals(pre.optString(i))) merged.put(pre.optString(i));
+                    }
+                }
+                merged.put(PATCH_FILE);
+                o.put("preloadScript", merged);
+            } catch (IOException e) {
+                // cosmetic: never block the game
+            }
+
             // org.json escapes '/' as '\/'; keep paths readable for mkxp-z's parser
             Util.writeText(conf, o.toString(2).replace("\\/", "/"));
         } catch (JSONException e) {
             throw new IOException(ctx.getString(R.string.err_mkxp_json, e.getMessage()));
         }
         return r;
+    }
+
+    static final String PATCH_FILE = "ashdroid_patches.rb";
+
+    /**
+     * Copies assets/ashdroid_patches.rb into the game folder, filling in which
+     * device button corresponds to each keyboard key the game mentions.
+     * Keyboard key -> RGSS input (mkxp-z defaults): C=C X=B Z=A D=Z A=X S=Y Q=L W=R
+     */
+    private static void writeTextPatches(Context ctx, File game) throws IOException
+    {
+        String tpl;
+        try (java.io.InputStream in = ctx.getAssets().open(PATCH_FILE)) {
+            tpl = Util.readText(in);
+        }
+        ButtonMapping m = ButtonMapping.load(ctx);
+        String[][] keys = {
+            { "C", "C", "" }, { "X", "B", " / START" }, { "Z", "A", "" }, { "D", "Z", " / SELECT" },
+            { "A", "X", "" }, { "S", "Y", "" }, { "Q", "L", "" }, { "W", "R", "" },
+        };
+        StringBuilder rb = new StringBuilder("ASHDROID_KEYS = {");
+        boolean first = true;
+        for (String[] k : keys) {
+            ButtonMapping.Action act = null;
+            for (ButtonMapping.Action a : ButtonMapping.ACTIONS) if (a.id.equals(k[1])) act = a;
+            if (act == null) continue;
+            Integer phys = m.isIdentity() ? Integer.valueOf(act.target) : m.physicalFor(act);
+            if (phys == null) continue;
+            String label = ButtonMapping.keyName(ctx, phys) + k[2];
+            if (!first) rb.append(", ");
+            first = false;
+            rb.append('"').append(k[0]).append("\" => \"")
+              .append(label.replace("\\", "\\\\").replace("\"", "\\\"")).append('"');
+        }
+        rb.append("}");
+        String out = tpl.replace("ASHDROID_KEYS = {} # __ASHDROID_KEYS__", rb.toString());
+        Util.writeText(new File(game, PATCH_FILE), out);
     }
 
     private static void applyScaling(Context ctx, JSONObject o, Result r, DeviceProfile dev, ScaleMode mode) throws JSONException
