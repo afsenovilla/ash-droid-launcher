@@ -1,0 +1,27 @@
+name: PC installer
+
+on:
+  push:
+    branches: [main]
+    paths: ['tools/pc/installer/**', '.github/workflows/pc-installer.yml']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build installer (WinForms, .NET Framework 4)
+        shell: pwsh
+        run: |
+          $csc = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -find "MSBuild\**\Roslyn\csc.exe" | Select-Object -First 1
+          Write-Host "csc: $csc"
+          New-Item -ItemType Directory -Force out | Out-Null
+          & $csc /nologo /target:winexe /optimize+ /langversion:7.3 `
+            /r:System.dll /r:System.Core.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll `
+            "/out:out/Instalar parche.exe" tools/pc/installer/Installer.cs
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pc-installer
+          path: out/
