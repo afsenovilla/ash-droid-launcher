@@ -6,10 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-## [Unreleased]
+## [0.2.1] - 2026-10-22
+
 ### Added
-- "Música en castellano" now includes the Spanish intro theme out of the box; every track (bundled or added) can be switched on or off.
-- Español (España): full-game retranslation in progress (maps, scripts, trainers).
+- "Música en castellano" includes the Spanish intro theme out of the box; every track (bundled or added) can
+  be switched on or off from the launcher.
+- Español (España): the whole game retranslated and reviewed (maps, system/battle texts, trainers, places,
+  phone, ribbons), with names unified against the official Spain games.
+- Español (España) now also replaces game data texts: item, move and ability names and descriptions,
+  trainer classes and Pokédex entries.
+
+### Fixed
+- Item, move and ability descriptions no longer get cut off in the shop, the Bag or the Summary.
+- Wrong official names in the game's data (e.g. Caramelo Raro, Rapid Ball, Viraje, Fuerza Bruta).
 
 ## [0.2.0] - 2026-10-22
 
