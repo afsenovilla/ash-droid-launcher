@@ -392,52 +392,58 @@ module AshDroidArt
       [face, hi, mid, ink]
     end
 
-    # Arrow keys -> a D-pad drawn like the game's key caps (light top-left edge, darker
-    # bottom-right bevel, concave centre, arrows in the arrow colour), at the art's scale
+    # Arrow keys -> a D-pad in the style of the game's key caps (approved design; same
+    # algorithm as tools/art/controls_art.py and ControlsArt.java): light cross with an
+    # outline in the arrow colour, 3px highlight on the upper-left, darker lower-right edge,
+    # 2px of thickness underneath, engraved arrows and a concave ring in the centre.
     def dpad(orig)
       return nil unless orig.px.any? { |c| (c & 255) > 200 }
       sc = pixel_scale(orig)
       small = sc == 1 ? orig : scale(orig, 1.0 / sc)
       face, hi, mid, ink = palette(small)
+      side = AshDroidArt.rgba(((ink >> 24) & 255) * 6 / 7, ((ink >> 16) & 255) * 6 / 7, ((ink >> 8) & 255) * 6 / 7)
       w, h = small.w, small.h
-      s = [w, h].min - 1
+      s = [w, h - 3].min
       s -= 1 - s % 2
       a = s / 3
       a += 1 - a % 2
-      x0, y0, c = (w - s) / 2, (h - s) / 2, s / 2
-      out = lambda do |x, y|
-        u, v = x - x0, y - y0
-        next true unless u >= 0 && u < s && v >= 0 && v < s
-        !((c - a / 2 <= u && u <= c + a / 2) || (c - a / 2 <= v && v <= c + a / 2))
+      c = s / 2
+      cx, cy = w / 2, (h - 3) / 2
+      m = {}
+      (cy - c..cy + c).each do |y|
+        (cx - c..cx + c).each { |x| m[[x, y]] = true if (x - cx).abs <= a / 2 || (y - cy).abs <= a / 2 }
       end
-      img = Img.new(w, h, Array.new(w * h, CLEAR))
-      h.times do |y|
-        w.times do |x|
-          next if out.call(x, y)
-          next if (out.call(x - 1, y) || out.call(x + 1, y)) && (out.call(x, y - 1) || out.call(x, y + 1))
-          col = face
-          col = hi if out.call(x, y - 1) || out.call(x - 1, y)
-          col = mid if out.call(x, y + 1) || out.call(x, y + 2) || out.call(x + 1, y) || out.call(x + 2, y)
-          img.px[y * w + x] = col
+      2.times do
+        m = m.reject do |(x, y), _|
+          (!m[[x - 1, y]] || !m[[x + 1, y]]) && (!m[[x, y - 1]] || !m[[x, y + 1]])
         end
       end
-      cx, cy = x0 + c, y0 + c
-      r = [2, a / 2 - 2].max + 0.5
+      img = Img.new(w, h, Array.new(w * h, CLEAR))
+      put = lambda { |x, y, col| img.px[y * w + x] = col if x >= 0 && x < w && y >= 0 && y < h }
+      m.each_key { |x, y| put.call(x, y + 2, side) }
+      m.each_key do |x, y|
+        o = lambda { |dx, dy| !m[[x + dx, y + dy]] }
+        col = face
+        col = hi if (1..3).any? { |k| o.call(0, -k) || o.call(-k, 0) }
+        col = mid if o.call(0, 1) || o.call(1, 0)
+        col = ink if o.call(1, 0) || o.call(-1, 0) || o.call(0, 1) || o.call(0, -1)
+        put.call(x, y, col)
+      end
+      t, dist = 4, 10
+      4.times do |dn|
+        pts = {}
+        t.times do |i|
+          (-i..i).each do |j|
+            d = t / 2 - i
+            pts[[[cx + j, cy - dist - d], [cx + j, cy + dist + d], [cx - dist - d, cy + j], [cx + dist + d, cy + j]][dn]] = true
+          end
+        end
+        pts.each_key { |x, y| put.call(x, y, !pts[[x, y - 1]] || !pts[[x - 1, y]] ? ink : mid) }
+      end
       (cy - 4..cy + 4).each do |y|
         (cx - 4..cx + 4).each do |x|
           d = (x - cx)**2 + (y - cy)**2
-          img.px[y * w + x] = (x - cx) + (y - cy) < 0 ? mid : hi if (r - 1)**2 < d && d <= r * r
-        end
-      end
-      t = [2, (a - 1) / 2 - 1].max
-      pos = c - (c - a / 2) / 2 - 1
-      4.times do |dn|
-        t.times do |i|
-          o = pos + t / 2 - i
-          (-i..i).each do |j|
-            x, y = [[cx + j, cy - o], [cx + j, cy + o], [cx - o, cy + j], [cx + o, cy + j]][dn]
-            img.px[y * w + x] = ink
-          end
+          put.call(x, y, x + y < cx + cy ? mid : hi) if 2.2**2 < d && d <= 3.2**2
         end
       end
       sc == 1 ? img : scale(img, sc)

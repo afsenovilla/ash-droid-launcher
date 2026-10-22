@@ -284,9 +284,10 @@ final class ControlsArt
     }
 
     /**
-     * Turns the arrow-keys cluster into a D-pad drawn like the game's key caps: light
-     * top-left edge, darker bottom-right bevel, concave centre and arrows in the arrow
-     * colour, all sampled from the original. Drawn at the art's own pixel scale.
+     * Turns the arrow-keys cluster into a D-pad in the style of the game's key caps: light
+     * cross with an outline in the arrow colour, 3px highlight on the upper-left, darker
+     * lower-right edge, 2px of thickness underneath, engraved arrows and a concave ring in
+     * the centre; colours sampled from the original. Drawn at the art's own pixel scale.
      * Same algorithm as tools/art/controls_art.py and ashdroid_art.rb (PC / Steam Deck).
      */
     private static Bitmap restyleAsDpad(Bitmap full)
@@ -326,44 +327,65 @@ final class ControlsArt
         int mid = below.isEmpty() ? face : below.get(below.size() - 1);
         int ink = below.size() > 1 ? below.get(below.size() - 2) : mid;
 
-        int s = Math.min(w, h) - 1;
+        int side = Color.rgb(Color.red(ink) * 6 / 7, Color.green(ink) * 6 / 7, Color.blue(ink) * 6 / 7);
+        int s = Math.min(w, h - 3);
         s -= 1 - s % 2;
         int a = s / 3;
         a += 1 - a % 2;
-        final int x0 = (w - s) / 2, y0 = (h - s) / 2, c = s / 2, S = s, A = a;
-        java.util.function.BiPredicate<Integer, Integer> out = (x, y) -> {
-            int u = x - x0, v = y - y0;
-            if (u < 0 || u >= S || v < 0 || v >= S) return true;
-            return !((c - A / 2 <= u && u <= c + A / 2) || (c - A / 2 <= v && v <= c + A / 2));
-        };
+        int c = s / 2;
+        int cx = w / 2, cy = (h - 3) / 2;
+        // Cross mask with rounded arm ends (two passes removing convex corners)
+        boolean[] m = new boolean[w * h];
+        for (int y = cy - c; y <= cy + c; y++)
+            for (int x = cx - c; x <= cx + c; x++)
+                if (x >= 0 && x < w && y >= 0 && y < h && (Math.abs(x - cx) <= a / 2 || Math.abs(y - cy) <= a / 2))
+                    m[y * w + x] = true;
+        for (int pass = 0; pass < 2; pass++) {
+            boolean[] n = m.clone();
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                    if (m[y * w + x] && (!in(m, w, h, x - 1, y) || !in(m, w, h, x + 1, y))
+                            && (!in(m, w, h, x, y - 1) || !in(m, w, h, x, y + 1)))
+                        n[y * w + x] = false;
+            m = n;
+        }
         int[] px = new int[w * h];
+        for (int y = 0; y < h; y++) // thickness
+            for (int x = 0; x < w; x++)
+                if (m[y * w + x] && y + 2 < h) px[(y + 2) * w + x] = side;
         for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++) {
-                if (out.test(x, y)) continue;
-                if ((out.test(x - 1, y) || out.test(x + 1, y)) && (out.test(x, y - 1) || out.test(x, y + 1)))
-                    continue; // rounded arm ends
+                if (!m[y * w + x]) continue;
                 int col = face;
-                if (out.test(x, y - 1) || out.test(x - 1, y)) col = hi;
-                if (out.test(x, y + 1) || out.test(x, y + 2) || out.test(x + 1, y) || out.test(x + 2, y)) col = mid;
+                for (int k = 1; k <= 3; k++)
+                    if (!in(m, w, h, x, y - k) || !in(m, w, h, x - k, y)) col = hi;
+                if (!in(m, w, h, x, y + 1) || !in(m, w, h, x + 1, y)) col = mid;
+                if (!in(m, w, h, x + 1, y) || !in(m, w, h, x - 1, y) || !in(m, w, h, x, y + 1) || !in(m, w, h, x, y - 1))
+                    col = ink;
                 px[y * w + x] = col;
             }
-        int cx = x0 + c, cy = y0 + c;
-        double r = Math.max(2, a / 2 - 2) + 0.5;
+        int t = 4, dist = 10;
+        for (int dn = 0; dn < 4; dn++) {
+            java.util.HashSet<Long> pts = new java.util.HashSet<>();
+            for (int i = 0; i < t; i++)
+                for (int j = -i; j <= i; j++) {
+                    int d = t / 2 - i;
+                    int x = dn < 2 ? cx + j : (dn == 2 ? cx - dist - d : cx + dist + d);
+                    int y = dn == 0 ? cy - dist - d : (dn == 1 ? cy + dist + d : cy + j);
+                    pts.add(key(x, y));
+                }
+            for (long k : pts) {
+                int x = (int) (k >> 32), y = (int) k;
+                if (x < 0 || x >= w || y < 0 || y >= h) continue;
+                boolean edge = !pts.contains(key(x, y - 1)) || !pts.contains(key(x - 1, y));
+                px[y * w + x] = edge ? ink : mid; // engraved: darker upper-left edge
+            }
+        }
         for (int y = cy - 4; y <= cy + 4; y++)
             for (int x = cx - 4; x <= cx + 4; x++) {
                 int d = (x - cx) * (x - cx) + (y - cy) * (y - cy);
-                if ((r - 1) * (r - 1) < d && d <= r * r) px[y * w + x] = (x - cx) + (y - cy) < 0 ? mid : hi;
-            }
-        int t = Math.max(2, (a - 1) / 2 - 1);
-        int pos = c - (c - a / 2) / 2 - 1;
-        for (int dn = 0; dn < 4; dn++)
-            for (int i = 0; i < t; i++) {
-                int o = pos + t / 2 - i;
-                for (int j = -i; j <= i; j++) {
-                    int x = dn < 2 ? cx + j : (dn == 2 ? cx - o : cx + o);
-                    int y = dn == 0 ? cy - o : (dn == 1 ? cy + o : cy + j);
-                    px[y * w + x] = ink;
-                }
+                if (x >= 0 && x < w && y >= 0 && y < h && 2.2 * 2.2 < d && d <= 3.2 * 3.2)
+                    px[y * w + x] = x + y < cx + cy ? mid : hi;
             }
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         bmp.setPixels(px, 0, w, 0, 0, w, h);
@@ -371,6 +393,16 @@ final class ControlsArt
         Bitmap up = Bitmap.createScaledBitmap(bmp, w * sc, h * sc, false);
         bmp.recycle();
         return up;
+    }
+
+    private static boolean in(boolean[] m, int w, int h, int x, int y)
+    {
+        return x >= 0 && x < w && y >= 0 && y < h && m[y * w + x];
+    }
+
+    private static long key(int x, int y)
+    {
+        return ((long) x << 32) | (y & 0xFFFFFFFFL);
     }
 
     /** Sort key matching the PC tools' (r, g, b, a) tuple order. */

@@ -181,56 +181,62 @@ def palette(im):
 
 
 def dpad(orig):
-    """Arrow keys -> a D-pad drawn like the game's key caps (light top-left edge, darker
-    bottom-right bevel, concave centre, arrows in the arrow colour). Pixel art at the
-    art's own scale, then scaled up."""
+    """Arrow keys -> a D-pad in the style of the game's key caps (approved design): light cross
+    with an outline in the arrow colour, 3px highlight on the upper-left, darker lower-right
+    edge, 2px of thickness underneath, engraved arrows like the keys' ones and a concave
+    ring in the centre. Drawn in art pixels, colours sampled from the original image."""
     if not [c for c in orig.getdata() if c[3] > 200]:
         return None
     sc = pixel_scale(orig)
     small = orig if sc == 1 else orig.resize((orig.width // sc, orig.height // sc), Image.NEAREST)
     face, hi, mid, ink = palette(small)
+    side = tuple(v * 6 // 7 for v in ink[:3]) + (255,)
     w, h = small.size
-    s = min(w, h) - 1
+    s = min(w, h - 3)
     s -= 1 - s % 2
     a = s // 3
     a += 1 - a % 2
-    x0, y0, c = (w - s) // 2, (h - s) // 2, s // 2
-
-    def out(x, y):
-        u, v = x - x0, y - y0
-        if not (0 <= u < s and 0 <= v < s):
-            return True
-        return not (c - a // 2 <= u <= c + a // 2 or c - a // 2 <= v <= c + a // 2)
-
+    c = s // 2
+    cx, cy = w // 2, (h - 3) // 2
+    m = {(x, y) for y in range(cy - c, cy + c + 1) for x in range(cx - c, cx + c + 1)
+         if abs(x - cx) <= a // 2 or abs(y - cy) <= a // 2}
+    for _ in range(2):  # rounded arm ends
+        m = {(x, y) for (x, y) in m
+             if not (((x - 1, y) not in m or (x + 1, y) not in m) and ((x, y - 1) not in m or (x, y + 1) not in m))}
     im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     px = im.load()
-    for y in range(h):
-        for x in range(w):
-            if out(x, y):
-                continue
-            if (out(x - 1, y) or out(x + 1, y)) and (out(x, y - 1) or out(x, y + 1)):
-                continue  # rounded arm ends
-            col = face
-            if out(x, y - 1) or out(x - 1, y):
-                col = hi
-            if out(x, y + 1) or out(x, y + 2) or out(x + 1, y) or out(x + 2, y):
-                col = mid
+
+    def put(x, y, col):
+        if 0 <= x < w and 0 <= y < h:
             px[x, y] = col
-    cx, cy = x0 + c, y0 + c
-    r = max(2, a // 2 - 2) + 0.5
+
+    for (x, y) in m:  # thickness
+        put(x, y + 2, side)
+    for (x, y) in m:
+        o = lambda dx, dy: (x + dx, y + dy) not in m
+        col = face
+        if any(o(0, -k) or o(-k, 0) for k in (1, 2, 3)):
+            col = hi
+        if o(0, 1) or o(1, 0):
+            col = mid
+        if o(1, 0) or o(-1, 0) or o(0, 1) or o(0, -1):
+            col = ink
+        put(x, y, col)
+    t, dist = 4, 10
+    for dn in range(4):
+        pts = set()
+        for i in range(t):
+            for j in range(-i, i + 1):
+                d = t // 2 - i
+                pts.add(((cx + j, cy - dist - d), (cx + j, cy + dist + d),
+                         (cx - dist - d, cy + j), (cx + dist + d, cy + j))[dn])
+        for (x, y) in pts:  # engraved: darker upper-left edge
+            put(x, y, ink if ((x, y - 1) not in pts or (x - 1, y) not in pts) else mid)
     for y in range(cy - 4, cy + 5):
         for x in range(cx - 4, cx + 5):
             d = (x - cx) ** 2 + (y - cy) ** 2
-            if (r - 1) ** 2 < d <= r * r:
-                px[x, y] = mid if (x - cx) + (y - cy) < 0 else hi
-    t = max(2, (a - 1) // 2 - 1)
-    pos = c - (c - a // 2) // 2 - 1
-    for dn in range(4):
-        for i in range(t):
-            o = pos + t // 2 - i  # i = 0: the tip, outermost
-            for j in range(-i, i + 1):
-                x, y = ((cx + j, cy - o), (cx + j, cy + o), (cx - o, cy + j), (cx + o, cy + j))[dn]
-                px[x, y] = ink
+            if 2.2 ** 2 < d <= 3.2 ** 2:
+                put(x, y, mid if x + y < cx + cy else hi)
     return im if sc == 1 else im.resize((w * sc, h * sc), Image.NEAREST)
 
 

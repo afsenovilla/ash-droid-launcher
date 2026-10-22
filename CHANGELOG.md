@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-22
+
 ### Added
 - Each release now has three downloads: the Android APK, the Windows patch and the Steam Deck / Linux patch.
 - Steam Deck (LCD and OLED): the patch detects the Deck (DMI model, or Steam's `SteamDeck=1`; override with
@@ -16,7 +18,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   its artwork.
 
 ### Changed
-- Controls screen: new D-pad, drawn in the style of the game's key caps (Android too).
+- Controls screen: new D-pad in the style of the game's key caps — outline, raised edges, thickness,
+  engraved arrows and a concave centre (Android too).
 - PC patches: the Spanish lettering is redrawn by the patch itself from the player's copy of the game
   while it runs, so the downloads contain no game files.
 - Only versioned releases are published (no more rolling "dev" build or build-tool prereleases).
