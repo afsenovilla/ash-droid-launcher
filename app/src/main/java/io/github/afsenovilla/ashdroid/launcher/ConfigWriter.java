@@ -177,25 +177,31 @@ public final class ConfigWriter
     }
 
     /**
-     * Copies the bundled Spanish translation pack for this game (if there is one)
+     * Copies the bundled Spanish translation packs for this game (if there are any)
      * next to the runtime patch, which uses it while the game language is Spanish.
-     * Packs live in assets/packs/<id>/ashdroid_es.dat, matched by game title.
+     * ashdroid_es.dat fills gaps of the game's Spanish; ashdroid_es_ES.dat is the full
+     * retranslation used by the extra "Español (España)" language. Matched by game title.
      */
     private static void installTranslationPack(Context ctx, File game)
     {
         String id = packId(ctx);
-        File dst = new File(game, "ashdroid_es.dat");
-        if (id == null) {
-            //noinspection ResultOfMethodCallIgnored
-            dst.delete();
-            return;
-        }
-        try (java.io.InputStream in = ctx.getAssets().open("packs/" + id + "/ashdroid_es.dat");
-             java.io.OutputStream os = new java.io.FileOutputStream(dst)) {
-            byte[] buf = new byte[1 << 16];
-            int n;
-            while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
-        } catch (IOException ignored) {
+        String[] files = { "ashdroid_es.dat", "ashdroid_es_ES.dat" };
+        for (String name : files) {
+            File dst = new File(game, name);
+            if (id == null) {
+                //noinspection ResultOfMethodCallIgnored
+                dst.delete();
+                continue;
+            }
+            try (java.io.InputStream in = ctx.getAssets().open("packs/" + id + "/" + name);
+                 java.io.OutputStream os = new java.io.FileOutputStream(dst)) {
+                byte[] buf = new byte[1 << 16];
+                int n;
+                while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
+            } catch (IOException e) {
+                //noinspection ResultOfMethodCallIgnored
+                dst.delete();
+            }
         }
     }
 

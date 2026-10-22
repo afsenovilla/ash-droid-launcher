@@ -68,6 +68,45 @@ module AshDroidText
     s.gsub(/\s+/, " ").strip
   end
 
+  # "Español (España)": an extra language added to the game's language list. It
+  # loads the game's Spanish file for names, but every text in the full
+  # retranslation pack replaces the game's own Spanish.
+  SPAIN_NAME = "Español (España)"
+  SPAIN_PACK_FILE = "ashdroid_es_ES.dat"
+
+  def self.spain_pack
+    return @spain_pack if defined?(@spain_pack)
+    @spain_pack = begin
+      File.exist?(SPAIN_PACK_FILE) ? File.open(SPAIN_PACK_FILE, "rb") { |f| Marshal.load(f) } : {}
+    rescue StandardError => e
+      AshDroidLog.log("es_ES pack load error: #{e.class}: #{e.message}")
+      {}
+    end
+    AshDroidLog.log("es_ES pack: entries=#{@spain_pack.size}")
+    @spain_pack
+  end
+
+  def self.spain?
+    langs = Settings::LANGUAGES
+    idx = $PokemonSystem ? $PokemonSystem.language : nil
+    !!(langs && idx && langs[idx] && langs[idx][0] == SPAIN_NAME)
+  rescue StandardError, NameError
+    false
+  end
+
+  # Spain translation (or its "#plural" form when {1} is two people), else nil
+  def self.spain_lookup(key, first_arg = nil)
+    return nil unless key.is_a?(String) && spain?
+    k = norm(key)
+    if first_arg.is_a?(String) && first_arg =~ / y |&/
+      pl = spain_pack[k + "#plural"]
+      return pl if pl
+    end
+    spain_pack[k]
+  rescue StandardError
+    nil
+  end
+
   # Spanish for an untranslated source string (before {1}-style formatting), or nil
   def self.lookup(key)
     return nil unless key.is_a?(String) && !pack.empty?
@@ -222,7 +261,9 @@ begin
         orig = instance_method(name)
         key_index = name.to_s.start_with?("_MAP") ? 1 : 0
         define_method(name) do |*args, &blk|
-          if (es = AshDroidText.lookup(args[key_index]))
+          es = AshDroidText.spain_lookup(args[key_index], args[key_index + 1])
+          es ||= AshDroidText.lookup(args[key_index])
+          if es
             args = args.dup
             args[key_index] = es
           end
@@ -262,15 +303,53 @@ module AshDroidFixes
     end
   end
 
-  HOOKS = { "AbilitySplashBar" => AbilitySplashBarES }
+  # Trainer names: Spanish puts possessive classes after the name
+  # ("Jessie y James del Team Rocket"), other classes before ("Cazabichos Pedro").
+  module TrainerES
+    def full_name
+      return super unless AshDroidText.spain?
+      type = trainer_type_name.to_s
+      return @name.to_s if type.empty?
+      type =~ /\A(del|de la|de los|de las|de) /i ? "#{@name} #{type}" : "#{type} #{@name}"
+    rescue StandardError
+      super
+    end
+  end
+
+  # Adds "Español (España)" to the game's language list (same Spanish data file)
+  def self.add_language(settings)
+    langs = settings::LANGUAGES
+    return if langs.any? { |l| l[0] == AshDroidText::SPAIN_NAME }
+    spanish = langs.find { |l| l[1].to_s =~ /spanish|espa/i }
+    return unless spanish
+    entry = [AshDroidText::SPAIN_NAME, spanish[1]]
+    if langs.frozen?
+      settings.send(:remove_const, :LANGUAGES)
+      settings.const_set(:LANGUAGES, (langs + [entry]).freeze)
+    else
+      langs.push(entry)
+    end
+    AshDroidLog.log("language added: #{entry.inspect}")
+  rescue StandardError => e
+    AshDroidLog.log("add_language error: #{e.class}: #{e.message}")
+  end
+
+  HOOKS = {
+    "AbilitySplashBar" => AbilitySplashBarES,
+    "Trainer" => TrainerES,
+    "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
+  }
 
   begin
     @tp = TracePoint.new(:end) do |tp|
       begin
-        klass = tp.self
-        if klass.is_a?(Class) && (mod = HOOKS[klass.name]) && !klass.ancestors.include?(mod)
-          klass.prepend(mod)
-          AshDroidLog.log("fix applied: #{klass.name}")
+        mod = tp.self
+        hook = mod.is_a?(Module) ? HOOKS[mod.name] : nil
+        if hook.is_a?(Proc)
+          hook.call(mod)
+        elsif hook && mod.is_a?(Class) && !mod.ancestors.include?(hook)
+          mod.prepend(hook)
+          AshDroidLog.log("fix applied: #{mod.name}")
         end
       rescue StandardError
       end
