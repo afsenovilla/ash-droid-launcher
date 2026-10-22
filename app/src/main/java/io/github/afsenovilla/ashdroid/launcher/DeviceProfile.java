@@ -35,6 +35,8 @@ public final class DeviceProfile
     /** "nintendo" (A on the right) or "xbox" (A at the bottom). */
     public final String faceLayout;
     public final String notes;
+    /** Optional per-device mapping override from the database: action id -> keycode name. */
+    public final JSONObject mapping;
 
     private DeviceProfile(Activity act)
     {
@@ -57,6 +59,7 @@ public final class DeviceProfile
         knownName = entry == null ? null : entry.optString("name", null);
         faceLayout = entry == null ? null : entry.optString("faceLayout", null);
         notes = entry == null ? null : entry.optString("notes", null);
+        mapping = entry == null ? null : entry.optJSONObject("mapping");
     }
 
     public static DeviceProfile detect(Activity act)

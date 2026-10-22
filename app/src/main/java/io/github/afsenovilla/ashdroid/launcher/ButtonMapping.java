@@ -33,6 +33,7 @@ public final class ButtonMapping
 
     private static final String PREFS = "ashdroid";
     private static final String KEY_MAPPING = "button_mapping";
+    private static final String KEY_AUTO = "button_mapping_auto";
 
     /** One in-game action the wizard asks for. */
     public static final class Action
@@ -88,6 +89,39 @@ public final class ButtonMapping
     };
 
     private final Map<Integer, Integer> mMap;
+
+    /**
+     * Mapping for a device in the database, so the wizard isn't needed.
+     * Uses the entry's explicit "mapping" if present; otherwise assumes the
+     * device sends the keycode matching each printed label (true for Retroid,
+     * AYN, Anbernic… in their default controller mode) and assigns the same
+     * buttons the wizard would suggest. Returns null for unknown devices.
+     */
+    public static ButtonMapping forKnownDevice(DeviceProfile dev)
+    {
+        if (!dev.isKnown()) return null;
+        Map<String, Integer> a = new HashMap<>();
+        if (dev.mapping != null) {
+            for (Action act : ACTIONS) {
+                String name = dev.mapping.optString(act.id, null);
+                if (name == null) continue;
+                int code = KeyEvent.keyCodeFromString(name.startsWith("KEYCODE_") ? name : "KEYCODE_" + name);
+                if (code != KeyEvent.KEYCODE_UNKNOWN) a.put(act.id, code);
+            }
+            return fromAssignments(a);
+        }
+        if (dev.faceLayout == null) return null;
+        boolean nintendo = "nintendo".equals(dev.faceLayout);
+        a.put("C", KeyEvent.KEYCODE_BUTTON_A);
+        a.put("B", KeyEvent.KEYCODE_BUTTON_B);
+        a.put("A", nintendo ? KeyEvent.KEYCODE_BUTTON_Y : KeyEvent.KEYCODE_BUTTON_X); // left face button
+        a.put("Z", nintendo ? KeyEvent.KEYCODE_BUTTON_X : KeyEvent.KEYCODE_BUTTON_Y); // top face button
+        a.put("R", KeyEvent.KEYCODE_BUTTON_R1);
+        a.put("L", KeyEvent.KEYCODE_BUTTON_L1);
+        a.put("X", KeyEvent.KEYCODE_BUTTON_L2);
+        a.put("Y", KeyEvent.KEYCODE_BUTTON_R2);
+        return fromAssignments(a);
+    }
 
     private ButtonMapping(Map<Integer, Integer> map)
     {
@@ -150,6 +184,26 @@ public final class ButtonMapping
         return prefs(ctx).contains(KEY_MAPPING);
     }
 
+    /** True if the saved mapping came from the device profile (not the wizard). */
+    public static boolean isAutomatic(Context ctx)
+    {
+        return prefs(ctx).getBoolean(KEY_AUTO, false);
+    }
+
+    /**
+     * If no mapping is saved yet and the device is in the database, saves its
+     * mapping. Returns true if buttons are configured afterwards.
+     */
+    public static boolean ensureConfigured(Context ctx, DeviceProfile dev)
+    {
+        if (isConfigured(ctx)) return true;
+        ButtonMapping m = forKnownDevice(dev);
+        if (m == null) return false;
+        m.save(ctx);
+        prefs(ctx).edit().putBoolean(KEY_AUTO, true).commit();
+        return true;
+    }
+
     public static ButtonMapping load(Context ctx)
     {
         String json = prefs(ctx).getString(KEY_MAPPING, null);
@@ -179,7 +233,7 @@ public final class ButtonMapping
         } catch (JSONException ignored) {
         }
         // commit(): the game runs in a separate process and reads this right away
-        prefs(ctx).edit().putString(KEY_MAPPING, o.toString()).commit();
+        prefs(ctx).edit().putString(KEY_MAPPING, o.toString()).putBoolean(KEY_AUTO, false).commit();
     }
 
     private static SharedPreferences prefs(Context ctx)

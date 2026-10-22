@@ -128,10 +128,12 @@ public class LauncherActivity extends Activity
 
     private String controlsInfo()
     {
+        ButtonMapping.ensureConfigured(this, mDevice);
         if (!ButtonMapping.isConfigured(this)) return getString(R.string.buttons_unset);
         ButtonMapping m = ButtonMapping.load(this);
         if (m.isIdentity()) return getString(R.string.buttons_default);
-        StringBuilder sb = new StringBuilder(getString(R.string.buttons_prefix));
+        StringBuilder sb = new StringBuilder(getString(ButtonMapping.isAutomatic(this)
+                ? R.string.buttons_auto_prefix : R.string.buttons_prefix));
         for (ButtonMapping.Action a : ButtonMapping.ACTIONS) {
             Integer k = m.physicalFor(a);
             if (k != null) sb.append("  ").append(a.label(this)).append("=").append(ButtonMapping.keyName(this, k)).append(" ·");
@@ -144,7 +146,8 @@ public class LauncherActivity extends Activity
 
     private void play()
     {
-        if (!ButtonMapping.isConfigured(this) && ButtonMapping.hasPhysicalGamepad()) {
+        if (!ButtonMapping.ensureConfigured(this, DeviceProfile.detect(this))
+                && ButtonMapping.hasPhysicalGamepad()) {
             startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD_THEN_PLAY);
             return;
         }
@@ -249,7 +252,8 @@ public class LauncherActivity extends Activity
                 render();
                 if (err != null) {
                     showError(getString(R.string.err_import_title), err);
-                } else if (!ButtonMapping.isConfigured(this) && ButtonMapping.hasPhysicalGamepad()) {
+                } else if (!ButtonMapping.ensureConfigured(this, DeviceProfile.detect(this))
+                        && ButtonMapping.hasPhysicalGamepad()) {
                     startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD);
                 }
             });

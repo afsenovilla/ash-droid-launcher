@@ -21,6 +21,7 @@
     <string name="buttons_unset">Botones: sin configurar (se pedirán al pulsar Jugar)</string>
     <string name="buttons_default">Botones: mapeo por defecto</string>
     <string name="buttons_prefix">Botones:</string>
+    <string name="buttons_auto_prefix">Botones (automático, consola conocida):</string>
     <string name="err_prepare_config">No se pudo preparar la configuración</string>
     <string name="err_no_picker_title">No hay selector de archivos</string>
     <string name="err_no_picker">Este dispositivo no tiene un selector de documentos disponible.</string>

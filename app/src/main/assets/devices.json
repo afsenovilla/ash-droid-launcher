@@ -8,6 +8,14 @@
   //   controller = name of the built-in InputDevice
   // faceLayout: "nintendo" (A on the right, B at the bottom) or "xbox" (A at the bottom)
   //
+  // Known devices skip the button wizard: the launcher assumes each button sends
+  // the keycode matching its printed label and assigns Confirm=A, Cancel=B,
+  // Run=left face button, Registered item=top face button, Speed up=R1, Save=L1,
+  // list up/down=L2/R2. If a device sends different keycodes, add an explicit
+  //   "mapping": { "C": "BUTTON_A", "B": "BUTTON_B", "A": "BUTTON_Y", "R": "BUTTON_R1",
+  //                "L": "BUTTON_L1", "Z": "BUTTON_X", "X": "BUTTON_L2", "Y": "BUTTON_R2" }
+  // (RGSS input -> Android keycode). Players can always re-map with "Configure buttons".
+  //
   // PRs welcome: add your device here.
   "devices": [
     { "name": "Retroid Pocket Nova",    "match": { "model": "pocket ?nova" },      "faceLayout": "nintendo",

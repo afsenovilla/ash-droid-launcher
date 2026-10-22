@@ -24,6 +24,7 @@
     <string name="buttons_unset">Buttons: not configured (you\'ll be asked when you press Play)</string>
     <string name="buttons_default">Buttons: default mapping</string>
     <string name="buttons_prefix">Buttons:</string>
+    <string name="buttons_auto_prefix">Buttons (automatic, known device):</string>
     <string name="err_prepare_config">Couldn\'t prepare the configuration</string>
     <string name="err_no_picker_title">No file picker</string>
     <string name="err_no_picker">This device has no document picker available.</string>
