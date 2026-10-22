@@ -6,7 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-22
+
 ### Added
+- "Música en castellano" in the launcher: add songs from the device (e.g. a Spanish Title.ogg); they play
+  instead of the game's track with the same name while the game is in Spanish. TeamRocket1 always plays as
+  TeamRocket.
 - New game language "Español (España)" (added to Fire Ash's language list): a from-scratch Spain Spanish
   retranslation from the English text, with Spain terminology and the Spain anime dub (Team Rocket motto).
   Pilot so far: intro, Pallet Town, Oak's lab, Route 1, Viridian City and the core battle messages; the rest
