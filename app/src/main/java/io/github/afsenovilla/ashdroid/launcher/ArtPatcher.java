@@ -71,49 +71,55 @@ final class ArtPatcher
     {
         File out = new File(game, OUT_DIR);
         StringBuilder index = new StringBuilder();
-        Map<String, Bitmap> done = new java.util.LinkedHashMap<>();
-        Map<String, String> langs = new HashMap<>();
         try {
             Map<String, Font> fonts = loadFonts(ctx);
             JSONObject recipes = new JSONObject(readAsset(ctx, "packs/" + packId + "/art.json"));
             JSONArray images = recipes.getJSONArray("images");
+            // One output per (path, lang): the "es" image gets every entry for its
+            // path in order; the "any" image only the "any" entries (button names),
+            // so it can be used whatever the game language.
+            java.util.LinkedHashMap<String, java.util.Set<String>> paths = new java.util.LinkedHashMap<>();
             for (int i = 0; i < images.length(); i++) {
                 JSONObject img = images.getJSONObject(i);
                 String path = img.getString("path");
-                try {
-                    Bitmap im = done.get(path);
-                    if (im == null) {
+                if (!paths.containsKey(path)) paths.put(path, new java.util.HashSet<>());
+                paths.get(path).add(img.optString("lang", "es"));
+            }
+            out.mkdirs();
+            for (Map.Entry<String, java.util.Set<String>> p : paths.entrySet()) {
+                String path = p.getKey();
+                for (String lang : new String[] { "es", "any" }) {
+                    if (!p.getValue().contains(lang)) continue;
+                    try {
                         File src = findImage(game, path);
                         if (src == null) continue;
                         Bitmap orig = BitmapFactory.decodeFile(src.getAbsolutePath());
                         if (orig == null) continue;
-                        im = orig.copy(Bitmap.Config.ARGB_8888, true);
+                        Bitmap im = orig.copy(Bitmap.Config.ARGB_8888, true);
                         orig.recycle();
+                        for (int i = 0; i < images.length(); i++) {
+                            JSONObject img = images.getJSONObject(i);
+                            if (!path.equals(img.getString("path"))) continue;
+                            if ("any".equals(lang) && !"any".equals(img.optString("lang", "es"))) continue;
+                            JSONArray off = img.optJSONArray("offset");
+                            Canvas cv = new Canvas(im, img.optInt("grid", 1),
+                                    off == null ? 0 : off.getInt(0), off == null ? 0 : off.getInt(1));
+                            JSONArray regions = img.getJSONArray("regions");
+                            for (int r = 0; r < regions.length(); r++) {
+                                applyRegion(cv, regions.getJSONObject(r), fonts, buttons, game);
+                            }
+                        }
+                        String name = ("any".equals(lang) ? "any_" : "") + outName(path);
+                        try (OutputStream os = new FileOutputStream(new File(out, name))) {
+                            im.compress(Bitmap.CompressFormat.PNG, 100, os);
+                        }
+                        im.recycle();
+                        index.append(lang).append('\t').append(path.toLowerCase(Locale.ROOT)).append('\t')
+                                .append(OUT_DIR).append('/').append(name).append('\n');
+                    } catch (Exception ignored) {
+                        // skip this image, keep the rest
                     }
-                    JSONArray off = img.optJSONArray("offset");
-                    Canvas cv = new Canvas(im, img.optInt("grid", 1),
-                            off == null ? 0 : off.getInt(0), off == null ? 0 : off.getInt(1));
-                    JSONArray regions = img.getJSONArray("regions");
-                    for (int r = 0; r < regions.length(); r++) {
-                        applyRegion(cv, regions.getJSONObject(r), fonts, buttons, game);
-                    }
-                    done.put(path, im);
-                    langs.put(path, img.optString("lang", "es"));
-                } catch (Exception ignored) {
-                    // skip this image, keep the rest
                 }
-            }
-            out.mkdirs();
-            for (Map.Entry<String, Bitmap> e : done.entrySet()) {
-                String name = outName(e.getKey());
-                try (OutputStream os = new FileOutputStream(new File(out, name))) {
-                    e.getValue().compress(Bitmap.CompressFormat.PNG, 100, os);
-                    index.append(langs.get(e.getKey())).append('\t')
-                            .append(e.getKey().toLowerCase(Locale.ROOT)).append('\t')
-                            .append(OUT_DIR).append('/').append(name).append('\n');
-                } catch (IOException ignored) {
-                }
-                e.getValue().recycle();
             }
         } catch (Exception ignored) {
             // no recipes for this game

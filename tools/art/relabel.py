@@ -279,29 +279,53 @@ def out_name(path):
     return path.replace("Graphics/Pictures/", "").replace("/", "_").replace(" ", "_").lower() + ".png"
 
 
+def variants(recipes):
+    """(path, lang, entries) per output image. A Spanish ("es") image gets every
+    entry for its path in order; the "any" image (shown in any language) only
+    the "any" entries, so e.g. button names change even when English is used."""
+    paths = []
+    for img in recipes["images"]:
+        if img["path"] not in paths:
+            paths.append(img["path"])
+    for path in paths:
+        entries = [i for i in recipes["images"] if i["path"] == path]
+        langs = {i.get("lang", "es") for i in entries}
+        if "es" in langs:
+            yield path, "es", entries
+        if "any" in langs:
+            yield path, "any", [i for i in entries if i.get("lang", "es") == "any"]
+
+
+def out_file(path, lang):
+    return ("any_" if lang == "any" else "") + out_name(path)
+
+
 def run(game, recipes, out, buttons):
     fonts = load_fonts()
     os.makedirs(out, exist_ok=True)
-    done = {}  # several entries may patch the same image (e.g. different grids)
-    for img in recipes["images"]:
-        src = find_image(game, img["path"])
+    index = []
+    for path, lang, entries in variants(recipes):
+        src = find_image(game, path)
         if not src:
-            print("missing", img["path"])
+            print("missing", path)
             continue
         orig = Image.open(src).convert("RGBA")
-        res = done.get(src) or orig.copy()
-        done[src] = res
-        cv = Canvas(res, img.get("grid", 1), tuple(img.get("offset", (0, 0))))
-        for r in img["regions"]:
-            apply_region(cv, r, fonts, buttons, game)
-        name = out_name(img["path"])
+        res = orig.copy()
+        for img in entries:
+            cv = Canvas(res, img.get("grid", 1), tuple(img.get("offset", (0, 0))))
+            for r in img["regions"]:
+                apply_region(cv, r, fonts, buttons, game)
+        name = out_file(path, lang)
         res.save(os.path.join(out, name))
+        index.append("%s\t%s\t%s" % (lang, path.lower(), name))
         z = max(1, min(6, 900 // max(1, orig.width)))
         prev = Image.new("RGBA", (orig.width, orig.height * 2 + 4), (255, 0, 255, 255))
         prev.alpha_composite(orig, (0, 0))
         prev.alpha_composite(res, (0, orig.height + 4))
         prev.resize((prev.width * z, prev.height * z), Image.NEAREST).save(os.path.join(out, "_preview_" + name))
-        print("ok", img["path"])
+        print("ok", lang, path)
+    with open(os.path.join(out, "index.txt"), "w") as f:
+        f.write("\n".join(index) + "\n")
 
 
 if __name__ == "__main__":

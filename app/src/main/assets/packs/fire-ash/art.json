@@ -1119,6 +1119,25 @@
    "regions": [
     {
      "rect": [
+      44,
+      8,
+      47,
+      10
+     ],
+     "text": "{SPECIAL}",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 6
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
       8,
       8,
       52,
@@ -1132,18 +1151,6 @@
       "#f8c860",
       "#f8b028"
      ]
-    },
-    {
-     "rect": [
-      60,
-      8,
-      30,
-      10
-     ],
-     "text": "{SPECIAL}",
-     "font": "5x7",
-     "style": "outline",
-     "bgx": 6
     }
    ]
   },
@@ -1268,6 +1275,123 @@
       8
      ],
      "text": "Otros"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "any",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f0f0e0",
+     "height": 5,
+     "rect": [
+      60,
+      3,
+      31,
+      5
+     ],
+     "text": "{SPECIAL}"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f0f0e0",
+     "height": 5,
+     "rect": [
+      150,
+      3,
+      36,
+      5
+     ],
+     "text": "{BACK}"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f0f0e0",
+     "height": 5,
+     "rect": [
+      190,
+      3,
+      38,
+      5
+     ],
+     "text": "{ACTION}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      16,
+      19,
+      26,
+      8
+     ],
+     "text": "ABC",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      47,
+      19,
+      26,
+      8
+     ],
+     "text": "abc",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      109,
+      19,
+      26,
+      8
+     ],
+     "text": "Otros",
+     "bg": "#b89028"
+    },
+    {
+     "rect": [
+      153,
+      19,
+      31,
+      9
+     ],
+     "text": "ATRÁS",
+     "font": "5x7",
+     "style": "outline",
+     "fill": "#e0e0e0",
+     "shade": "#7868a0",
+     "corner": "#b080d0",
+     "height": 7,
+     "bgx": 153
     }
    ]
   }

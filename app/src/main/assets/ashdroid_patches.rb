@@ -161,7 +161,7 @@ end
 # language is Spanish; the original files are untouched.
 module AshDroidGfx
   # Images redrawn by the launcher. "es" ones replace the originals only while
-  # the game is in Spanish; "any" ones (button names) always do.
+  # the game is in Spanish; "any" ones (button names only) are used otherwise.
   ES = {
     "graphics/pictures/battle/cursor_command" => "ashdroid_es/battle_cursor_command.png",
   }
@@ -183,8 +183,7 @@ module AshDroidGfx
   def self.redirect(path)
     return nil unless path.is_a?(String)
     key = path.tr("\\", "/").sub(/\A\.\//, "").sub(/\.png\z/i, "").downcase
-    alt = ANY[key]
-    alt ||= ES[key] if AshDroidText.spanish?
+    alt = AshDroidText.spanish? ? (ES[key] || ANY[key]) : ANY[key]
     res = alt && File.exist?(alt) ? alt : nil
     if alt && !LOGGED[key]
       LOGGED[key] = true
