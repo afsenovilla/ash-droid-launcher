@@ -153,4 +153,9 @@
         <item quantity="one">%d track</item>
         <item quantity="other">%d tracks</item>
     </plurals>
+    <string name="update_button">⬇ Update to v%1$s</string>
+    <string name="update_title">Update v%1$s</string>
+    <string name="update_downloading">Downloading… %1$d %%</string>
+    <string name="update_permission">To update, allow Ash Droid Launcher to install apps. Turn the permission on in the next screen, then press Update again. Your saves and settings are kept.</string>
+    <string name="update_failed">The update failed</string>
 </resources>

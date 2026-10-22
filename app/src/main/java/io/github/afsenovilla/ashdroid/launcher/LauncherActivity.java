@@ -78,6 +78,74 @@ public class LauncherActivity extends Activity
         setContentView(mFrame);
         // Only on a fresh launch from the home screen, not when returning from the game
         mAutostartPending = savedInstanceState == null && autostartEnabled();
+        checkForUpdate();
+    }
+
+    // ---- updates (GitHub releases)
+    private Updater.Info mUpdate;
+
+    private void checkForUpdate()
+    {
+        final String cur = io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME;
+        new Thread(() -> {
+            Updater.Info info = Updater.check(cur);
+            if (info == null) return;
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
+                mUpdate = info;
+                // Stay in the menu once per new version so the player sees it
+                android.content.SharedPreferences sp = getSharedPreferences(PREFS, MODE_PRIVATE);
+                if (!info.version.equals(sp.getString("update_seen", ""))) {
+                    sp.edit().putString("update_seen", info.version).apply();
+                    cancelAutostart();
+                }
+                if (!mBusy) render();
+            });
+        }, "update-check").start();
+    }
+
+    private void startUpdate()
+    {
+        final Updater.Info info = mUpdate;
+        if (info == null) return;
+        if (android.os.Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.update_title, info.version))
+                    .setMessage(R.string.update_permission)
+                    .setPositiveButton(R.string.ok, (d, w) -> {
+                        try {
+                            startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                                    Uri.parse("package:" + getPackageName())));
+                        } catch (Exception ignored) {
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+            return;
+        }
+        final AlertDialog dlg = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.update_title, info.version))
+                .setMessage(getString(R.string.update_downloading, 0))
+                .setCancelable(false)
+                .show();
+        new Thread(() -> {
+            try {
+                final int[] last = { -1 };
+                Updater.install(this, info, (done, total) -> {
+                    int pct = total > 0 ? (int) (done * 100 / total) : 0;
+                    if (pct != last[0]) {
+                        last[0] = pct;
+                        runOnUiThread(() -> dlg.setMessage(getString(R.string.update_downloading, pct)));
+                    }
+                });
+                runOnUiThread(dlg::dismiss);
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    dlg.dismiss();
+                    showError(getString(R.string.update_failed), String.valueOf(e.getMessage()));
+                });
+            }
+        }, "update-install").start();
     }
 
     private boolean autostartEnabled()
@@ -184,6 +252,10 @@ public class LauncherActivity extends Activity
         left.addView(mUi.small(getString(R.string.launcher_title) + "  ·  v"
                 + io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME));
 
+        if (mUpdate != null) {
+            Button up = mUi.button(getString(R.string.update_button, mUpdate.version), v -> { cancelAutostart(); startUpdate(); });
+            left.addView(up);
+        }
         mPlayButton = mUi.primaryButton(getString(R.string.btn_play), v -> { cancelAutostart(); play(); });
         left.addView(mPlayButton);
         TextView autoHint = mUi.small(getString(R.string.autostart_hint));

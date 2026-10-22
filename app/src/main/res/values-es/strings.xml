@@ -148,4 +148,9 @@
         <item quantity="one">%d pista</item>
         <item quantity="other">%d pistas</item>
     </plurals>
+    <string name="update_button">⬇ Actualizar a v%1$s</string>
+    <string name="update_title">Actualización v%1$s</string>
+    <string name="update_downloading">Descargando… %1$d %%</string>
+    <string name="update_permission">Para actualizar, permite que Ash Droid Launcher instale aplicaciones. Activa el permiso en la pantalla siguiente y vuelve a pulsar Actualizar. Tus partidas y ajustes se conservan.</string>
+    <string name="update_failed">No se ha podido actualizar</string>
 </resources>
