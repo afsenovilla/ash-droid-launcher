@@ -98,9 +98,13 @@ jobs:
         working-directory: app/jni/ruby
         run: |
           make V=1 -j1 > ../ruby-diag.log 2>&1 || true
-          esc() { sed -e 's/%/%25/g' | cut -c1-500 | awk 'BEGIN{ORS="%0A"} {print}'; }
-          echo "::error title=ruby diag (tail)::$(tail -70 ../ruby-diag.log | esc)"
-          echo "::error title=ruby diag (errors)::$(grep -nE 'error|Error|undefined|cannot|No such' ../ruby-diag.log | tail -40 | esc)"
+          # One annotation per line (annotations are truncated around 4 KB)
+          n=0
+          tail -9 ../ruby-diag.log | while IFS= read -r line; do
+            n=$((n+1))
+            msg=$(printf '%s' "$line" | sed -e 's/%/%25/g' | rev | cut -c1-3500 | rev)
+            echo "::error title=ruby diag line $n::$msg"
+          done
 
       # Saved even if the build fails, so finished libraries (OpenSSL, iconv…) aren't rebuilt
       - name: Save native dependencies
