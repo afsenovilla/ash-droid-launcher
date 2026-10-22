@@ -179,6 +179,11 @@ public class LauncherActivity extends Activity
         mRoot.addView(mScaleButton);
         mRoot.addView(mUi.button(getString(autostartEnabled() ? R.string.btn_autostart_on : R.string.btn_autostart_off),
                 v -> toggleAutostart()));
+        mRoot.addView(mUi.button(getString(ButtonMapping.touchControlsEnabled(this)
+                        ? R.string.btn_touch_on : R.string.btn_touch_off), v -> {
+            ButtonMapping.setTouchControlsEnabled(this, !ButtonMapping.touchControlsEnabled(this));
+            render();
+        }));
         mRoot.addView(mUi.button(getString(R.string.btn_reimport), v -> pickZip()));
         mRoot.addView(mUi.button(getString(R.string.btn_delete), v -> confirmDelete()));
         mRoot.addView(mUi.spacer(12));

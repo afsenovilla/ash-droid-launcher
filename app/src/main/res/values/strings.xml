@@ -12,6 +12,8 @@
     <string name="autostart_hint">Starting automatically… press any button to stay in the menu.</string>
     <string name="btn_autostart_on">Auto-start on launch: ON</string>
     <string name="btn_autostart_off">Auto-start on launch: OFF</string>
+    <string name="btn_touch_on">On-screen touch controls: ON</string>
+    <string name="btn_touch_off">On-screen touch controls: OFF</string>
     <string name="btn_buttons">Configure buttons</string>
     <string name="btn_scale_mode">Display mode: %1$s</string>
     <string name="btn_reimport">Update / re-import game (.zip)</string>

@@ -34,6 +34,7 @@ public final class ButtonMapping
     private static final String PREFS = "ashdroid";
     private static final String KEY_MAPPING = "button_mapping";
     private static final String KEY_AUTO = "button_mapping_auto";
+    private static final String KEY_TOUCH = "touch_controls";
 
     /** One in-game action the wizard asks for. */
     public static final class Action
@@ -206,6 +207,20 @@ public final class ButtonMapping
     public static boolean isConfigured(Context ctx)
     {
         return prefs(ctx).contains(KEY_MAPPING);
+    }
+
+    /**
+     * On-screen touch controls. Default: hidden when the device has physical
+     * controls, shown otherwise. The player can change it in the launcher.
+     */
+    public static boolean touchControlsEnabled(Context ctx)
+    {
+        return prefs(ctx).getBoolean(KEY_TOUCH, !hasPhysicalGamepad());
+    }
+
+    public static void setTouchControlsEnabled(Context ctx, boolean on)
+    {
+        prefs(ctx).edit().putBoolean(KEY_TOUCH, on).commit();
     }
 
     /** True if the saved mapping came from the device profile (not the wizard). */

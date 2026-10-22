@@ -9,6 +9,8 @@
     <string name="autostart_hint">Arrancando automáticamente… pulsa cualquier botón para quedarte en el menú.</string>
     <string name="btn_autostart_on">Arrancar el juego al abrir: SÍ</string>
     <string name="btn_autostart_off">Arrancar el juego al abrir: NO</string>
+    <string name="btn_touch_on">Controles táctiles en pantalla: SÍ</string>
+    <string name="btn_touch_off">Controles táctiles en pantalla: NO</string>
     <string name="btn_buttons">Configurar botones</string>
     <string name="btn_scale_mode">Modo de imagen: %1$s</string>
     <string name="btn_reimport">Actualizar / reimportar juego (.zip)</string>

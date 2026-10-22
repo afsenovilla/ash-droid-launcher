@@ -52,6 +52,7 @@ public class MainActivity extends SDLActivity
     // On-screen touch gamepad (hidden while a physical controller is used)
     private final Gamepad mGamepad = new Gamepad();
     private boolean mGamepadInvisible = false;
+    private boolean mTouchControls = true;
 
     // Physical button -> standard button remapping from the setup wizard
     private ButtonMapping mMapping;
@@ -86,8 +87,9 @@ public class MainActivity extends SDLActivity
             Log.w(TAG, "Failed to read debug flag: " + e);
         }
 
-        // Hide the touch gamepad from the start on devices with physical controls
-        mGamepadInvisible = isAndroidTV() || isChromebook() || ButtonMapping.hasPhysicalGamepad();
+        // Touch overlay: off by default on devices with physical controls (launcher option)
+        mTouchControls = ButtonMapping.touchControlsEnabled(this) && !isAndroidTV();
+        mGamepadInvisible = !mTouchControls || isChromebook() || ButtonMapping.hasPhysicalGamepad();
         GamepadConfig gpadConfig = new GamepadConfig();
         mGamepad.init(gpadConfig, mGamepadInvisible);
         mGamepad.setOnKeyDownListener(SDLActivity::onNativeKeyDown);
@@ -173,7 +175,7 @@ public class MainActivity extends SDLActivity
     @Override
     public boolean dispatchTouchEvent(MotionEvent evt)
     {
-        if (mGamepadInvisible) {
+        if (mTouchControls && mGamepadInvisible) {
             mGamepad.showView();
             mGamepadInvisible = false;
         }
