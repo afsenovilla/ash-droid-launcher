@@ -26,6 +26,7 @@ public class LauncherActivity extends Activity
     private static final int REQ_IMPORT = 1;
     private static final int REQ_WIZARD = 2;
     private static final int REQ_WIZARD_THEN_PLAY = 3;
+    private static final int REQ_MUSIC = 4;
 
     private Ui mUi;
     private LinearLayout mRoot;
@@ -213,6 +214,10 @@ public class LauncherActivity extends Activity
             render();
             focusItem(3);
         });
+        int nTracks = SpanishMusic.tracks(this).length;
+        mUi.item(g1, getString(R.string.tile_music), mUi.value((nTracks == 0 ? getString(R.string.music_add)
+                : getResources().getQuantityString(R.plurals.music_tracks, nTracks, nTracks)) + "  ›"), false,
+                v -> musicMenu());
         right.addView(g1);
 
         TextView cap2 = mUi.caption(getString(R.string.game_section).toUpperCase(java.util.Locale.getDefault()));
@@ -362,6 +367,36 @@ public class LauncherActivity extends Activity
         if (mScaleButton != null) mScaleButton.requestFocus();
     }
 
+    private void musicMenu()
+    {
+        String[] tracks = SpanishMusic.tracks(this);
+        if (tracks.length == 0) {
+            pickMusic();
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.tile_music)
+                .setMessage(getString(R.string.music_msg) + "\n\n• " + android.text.TextUtils.join("\n• ", tracks))
+                .setPositiveButton(R.string.music_add, (d, w) -> pickMusic())
+                .setNeutralButton(R.string.music_clear, (d, w) -> { SpanishMusic.clear(this); render(); })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void pickMusic()
+    {
+        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("*/*");
+        i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] { "audio/*", "application/ogg", "application/octet-stream" });
+        i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        try {
+            startActivityForResult(i, REQ_MUSIC);
+        } catch (Exception e) {
+            showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
+        }
+    }
+
     private void pickZip()
     {
         Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -417,6 +452,25 @@ public class LauncherActivity extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_MUSIC && resultCode == RESULT_OK && data != null) {
+            java.util.List<Uri> uris = new java.util.ArrayList<>();
+            if (data.getClipData() != null) {
+                for (int k = 0; k < data.getClipData().getItemCount(); k++) uris.add(data.getClipData().getItemAt(k).getUri());
+            } else if (data.getData() != null) {
+                uris.add(data.getData());
+            }
+            StringBuilder err = new StringBuilder();
+            for (Uri u : uris) {
+                try {
+                    SpanishMusic.add(this, u);
+                } catch (IOException | RuntimeException e) {
+                    err.append(u.getLastPathSegment()).append(": ").append(e.getMessage()).append('\n');
+                }
+            }
+            render();
+            if (err.length() > 0) showError(getString(R.string.tile_music), err.toString());
+            return;
+        }
         if (requestCode == REQ_IMPORT && resultCode == RESULT_OK && data != null && data.getData() != null) {
             startImport(data.getData());
         } else if (requestCode == REQ_WIZARD_THEN_PLAY && resultCode == RESULT_OK) {

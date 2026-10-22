@@ -116,6 +116,7 @@ public final class ConfigWriter
                 writeControlsArt(ctx, game);
                 writeLocalizedArt(ctx, game);
                 installTranslationPack(ctx, game);
+                SpanishMusic.sync(ctx, game);
                 org.json.JSONArray pre = o.optJSONArray("preloadScript");
                 org.json.JSONArray merged = new org.json.JSONArray();
                 if (pre != null) {

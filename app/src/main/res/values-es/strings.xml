@@ -139,4 +139,12 @@
     <string name="preparing">Preparando…</string>
     <string name="settings">Ajustes</string>
     <string name="game_section">Juego</string>
+    <string name="tile_music">Música en castellano</string>
+    <string name="music_add">Añadir pistas</string>
+    <string name="music_clear">Quitar todas</string>
+    <string name="music_msg">Las canciones que añadas suenan en lugar de la pista del juego con el mismo nombre de archivo (p. ej. Title.ogg) cuando el juego está en español.</string>
+    <plurals name="music_tracks">
+        <item quantity="one">%d pista</item>
+        <item quantity="other">%d pistas</item>
+    </plurals>
 </resources>

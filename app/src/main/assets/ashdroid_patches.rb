@@ -491,12 +491,27 @@ end
 module AshDroidAudio
   ALIASES = { "teamrocket1" => "TeamRocket" }
 
+  # Spanish versions of songs the player added from the launcher
+  # ("Música en castellano"): ashdroid_audio_es/<same file name>, used while
+  # the game is in Spanish.
+  ES_DIR = "ashdroid_audio_es"
+
   def self.map(name)
     return name unless name.is_a?(String)
     base = File.basename(name).sub(/\.[^.]+\z/, "")
     alt = ALIASES[base.downcase]
-    return name unless alt
-    File.join(File.dirname(name), alt)
+    if alt
+      name = File.join(File.dirname(name), alt)
+      base = alt
+    end
+    if AshDroidText.spanish? && File.directory?(ES_DIR)
+      hit = Dir.children(ES_DIR).find { |f| f.sub(/\.[^.]+\z/, "").casecmp?(base) }
+      if hit
+        AshDroidLog.log("audio es: #{base} -> #{hit}")
+        return File.join(ES_DIR, hit)
+      end
+    end
+    name
   rescue StandardError
     name
   end
