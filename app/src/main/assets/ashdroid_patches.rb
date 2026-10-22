@@ -257,6 +257,22 @@ begin
 
     def self.method_added(name)
       super
+      if self == Object && name == :pbSetResizeFactor && !@__ashdroid_wrapping
+        # Window sizes make no sense on a handheld: always fill the screen
+        # (the game's "screen size" option would otherwise shrink it to a window).
+        @__ashdroid_wrapping = true
+        begin
+          orig = instance_method(name)
+          define_method(name) do |factor|
+            orig.bind(self).call(-1)
+          end
+          private name
+          AshDroidLog.log("pbSetResizeFactor forced to fullscreen")
+        ensure
+          @__ashdroid_wrapping = false
+        end
+        return
+      end
       return unless self == Object && ASHDROID_WRAP.include?(name)
       return if @__ashdroid_wrapping
       AshDroidLog.log("wrapping #{name}")
