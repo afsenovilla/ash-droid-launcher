@@ -11,6 +11,11 @@ rc=${PIPESTATUS[0]}
 if [ "$rc" -ne 0 ]; then
   # Most useful lines: error lines first, then the raw tail
   errs=$(grep -nE "error:|Error |ERROR|FAILED|What went wrong|undefined reference|No such file|not found|fatal" "$log" | tail -40)
+  first=$(grep -nE '\*\*\* \[' "$log" | head -1 | cut -d: -f1)
+  if [ -n "$first" ]; then
+    ctx=$(sed -n "$((first>50 ? first-50 : 1)),$((first))p" "$log" | grep -vE "^(make|  CC|compiling|installing)" | tail -35)
+    echo "::error title=$name (context before first make error)::$(printf '%s' "$ctx" | cut -c1-400 | esc)"
+  fi
   wrong=$(grep -A 25 "What went wrong" "$log" | grep -v "^\s*at " | head -40)
   tail_=$(grep -v "^\s*at " "$log" | tail -60)
   esc() { sed -e 's/%/%25/g' | awk 'BEGIN{ORS="%0A"} {print}'; }

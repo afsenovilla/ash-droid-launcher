@@ -59,8 +59,9 @@ jobs:
       - name: Java compile check
         run: ci/run.sh java-check ./gradlew --no-daemon compileReleaseJavaWithJavac
 
-      - name: Cache native dependencies
-        uses: actions/cache@v4
+      - name: Restore native dependencies
+        id: native-cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             app/jni/build-arm64-v8a
@@ -78,7 +79,9 @@ jobs:
             app/jni/SDL2_sound
             app/jni/openssl
             app/jni/ruby
-          key: native-v1-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}
+          key: native-v1-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
+          restore-keys: |
+            native-v1-${{ env.NDK_VERSION }}-${{ env.ABI }}-
 
       - name: Fetch native sources
         working-directory: app/jni
@@ -89,6 +92,29 @@ jobs:
         run: |
           $GITHUB_WORKSPACE/ci/run.sh native-deps make ARCH=linux-x86_64 API=${API} ABI=${ABI} \
                HOST=aarch64-linux-android TARGET=aarch64-linux-android
+
+      # Saved even if the build fails, so finished libraries (OpenSSL, iconv…) aren't rebuilt
+      - name: Save native dependencies
+        if: always() && steps.native-cache.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            app/jni/build-arm64-v8a
+            app/jni/libogg
+            app/jni/libvorbis
+            app/jni/libtheora
+            app/jni/libiconv
+            app/jni/uchardet
+            app/jni/pixman
+            app/jni/physfs
+            app/jni/openal
+            app/jni/SDL2
+            app/jni/SDL2_image
+            app/jni/SDL2_ttf
+            app/jni/SDL2_sound
+            app/jni/openssl
+            app/jni/ruby
+          key: native-v1-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
 
       - name: Generate embedded mkxp-z assets
         working-directory: app/jni/mkxp-z
