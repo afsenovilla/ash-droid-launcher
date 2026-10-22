@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tarfile
 import time
+import zipfile
 
 TITLE = "Fire Ash · Español (España)"
 APP_NAME = "Pokémon Fire Ash"
@@ -52,6 +53,17 @@ def info(msg, error=False):
         subprocess.call(["kdialog", "--title", TITLE, "--error" if error else "--msgbox", msg])
     elif _has("zenity"):
         subprocess.call(["zenity", "--title", TITLE, "--error" if error else "--info", "--no-wrap", "--text", msg])
+
+
+def popup(msg):
+    """Non-blocking notice (e.g. while extracting)."""
+    print(msg)
+    if ASSUME_YES:
+        return
+    if _has("kdialog"):
+        subprocess.Popen(["kdialog", "--title", TITLE, "--passivepopup", msg, "60"])
+    elif _has("notify-send"):
+        subprocess.Popen(["notify-send", TITLE, msg])
 
 
 def ask(msg):
@@ -113,16 +125,20 @@ def is_game(d):
     return bool(d) and os.path.isfile(os.path.join(d, "mkxp.json"))
 
 
-def detect_game():
-    for d in (TOP, os.path.dirname(TOP)):
-        if is_game(d):
-            return d
+def search_roots():
     home = os.path.expanduser("~")
     roots = [os.path.join(home, n) for n in ("Downloads", "Descargas", "Desktop", "Escritorio",
                                              "Documents", "Documentos", "Games", "Juegos")]
-    roots += [home] + sorted(glob.glob("/run/media/*")) + sorted(glob.glob("/run/media/*/*"))
+    return roots + [home] + sorted(glob.glob("/run/media/*")) + sorted(glob.glob("/run/media/*/*"))
+
+
+def detect_game():
+    """Folders with the game already extracted."""
+    for d in (TOP, os.path.dirname(TOP)):
+        if is_game(d):
+            return [d]
     found = []
-    for r in roots:
+    for r in search_roots():
         if not os.path.isdir(r):
             continue
         try:
@@ -136,8 +152,85 @@ def detect_game():
                         found.append(d2)
         except OSError:
             pass
-    found = [f for i, f in enumerate(found) if f not in found[:i] and os.path.realpath(f) != os.path.realpath(TOP)]
+    return [f for i, f in enumerate(found) if f not in found[:i] and os.path.realpath(f) != os.path.realpath(TOP)]
+
+
+# ------------------------------------------------------------- game in a zip
+
+def zip_game_root(path):
+    """Folder inside the zip that holds mkxp.json ("" = the zip's root), or None if it isn't the game."""
+    try:
+        with zipfile.ZipFile(path) as z:
+            hits = [n for n in z.namelist() if n.replace("\\", "/").split("/")[-1].lower() == "mkxp.json"]
+    except (OSError, zipfile.BadZipFile):
+        return None
+    if not hits:
+        return None
+    h = min(hits, key=lambda n: n.count("/"))
+    return h.replace("\\", "/").rsplit("/", 1)[0] if "/" in h.replace("\\", "/") else ""
+
+
+def detect_zips():
+    """The game's .zip as downloaded (names like "Pokemon Fire Ash 3.7.zip")."""
+    found = []
+    for r in search_roots():
+        try:
+            for f in sorted(glob.glob(os.path.join(r, "*.zip"))):
+                if re.search(r"fire.?ash", os.path.basename(f), re.I) and os.path.realpath(f) not in found \
+                        and zip_game_root(f) is not None:
+                    found.append(os.path.realpath(f))
+        except OSError:
+            pass
     return found
+
+
+def extract_dest(zpath):
+    """Where to extract: next to the zip if it is on the microSD, else ~/Games."""
+    if os.path.realpath(zpath).startswith("/run/media/"):
+        return os.path.dirname(os.path.realpath(zpath))
+    return os.path.expanduser("~/Games")
+
+
+def extract_game(zpath):
+    """Extracts the game's zip and returns the folder with mkxp.json."""
+    root = zip_game_root(zpath)
+    base = extract_dest(zpath)
+    stem = os.path.splitext(os.path.basename(zpath))[0]
+    # Zip with the files at its root: extract into a folder named after the zip
+    dest = base if root else os.path.join(base, stem)
+    os.makedirs(dest, exist_ok=True)
+    popup("Descomprimiendo el juego en %s…\nPuede tardar un minuto." % dest)
+    with zipfile.ZipFile(zpath) as z:
+        for info_ in z.infolist():
+            name = info_.filename.replace("\\", "/")
+            if name.startswith("/") or ".." in name.split("/"):
+                raise RuntimeError("Archivo no válido en el zip: " + name)
+            target = os.path.join(dest, name)
+            if name.endswith("/"):
+                os.makedirs(target, exist_ok=True)
+                continue
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            with z.open(info_) as src, open(target, "wb") as out:
+                shutil.copyfileobj(src, out, 1 << 20)
+    game = os.path.join(dest, root) if root else dest
+    if not is_game(game):
+        raise RuntimeError("El zip no tiene el juego (falta mkxp.json).")
+    return game
+
+
+def pick_zip():
+    start = os.path.expanduser("~/Downloads")
+    if _has("kdialog"):
+        r = subprocess.run(["kdialog", "--title", "Elige el zip de Pokémon Fire Ash", "--getopenfilename", start,
+                            "*.zip"], stdout=subprocess.PIPE, text=True)
+        return r.stdout.strip() or None
+    if _has("zenity"):
+        r = subprocess.run(["zenity", "--title", "Elige el zip de Pokémon Fire Ash", "--file-selection",
+                            "--file-filter=*.zip", "--filename", start + "/"], stdout=subprocess.PIPE, text=True)
+        return r.stdout.strip() or None
+    if sys.stdin.isatty():
+        return input("Zip del juego: ").strip() or None
+    return None
 
 
 # ------------------------------------------------------------- patch install
@@ -407,17 +500,40 @@ def main():
         return 1
 
     game = a.game
-    if not game:
-        found = detect_game()
-        if len(found) == 1 and ask("He encontrado el juego en:\n%s\n\n¿Es esta carpeta?" % found[0]):
-            game = found[0]
-        elif len(found) > 1:
-            game = choose("¿En qué carpeta está Pokémon Fire Ash?", [(f, f) for f in found] +
-                          [("__other__", "Otra carpeta…")])
-            if game == "__other__":
-                game = None
-        if not game:
-            game = pick_folder()
+    try:
+        if game and game.lower().endswith(".zip"):
+            game = extract_game(game)
+        elif not game:
+            folders, zips = detect_game(), detect_zips()
+            options = [(f, f) for f in folders] + \
+                      [("zip:" + z, "%s  (comprimido: lo descomprimo en %s)" % (z, extract_dest(z))) for z in zips]
+            if len(options) == 1:
+                k, label = options[0]
+                q = ("He encontrado el juego en:\n%s\n\n¿Uso ese?" % label) if not k.startswith("zip:") else \
+                    ("He encontrado el juego comprimido:\n%s\n\n¿Lo descomprimo en %s y lo uso?" % (k[4:], extract_dest(k[4:])))
+                choice = k if ask(q) else None
+            elif options:
+                choice = choose("¿Dónde está Pokémon Fire Ash?", options +
+                                [("__dir__", "Otra carpeta…"), ("__zip__", "Otro zip…")])
+            else:
+                choice = choose("No encuentro Pokémon Fire Ash. ¿Dónde está?",
+                                [("__zip__", "Elegir el zip del juego (tal cual se descarga)"),
+                                 ("__dir__", "Elegir la carpeta del juego ya descomprimido")])
+            if choice == "__zip__":
+                z = pick_zip()
+                choice = "zip:" + z if z else None
+            elif choice == "__dir__":
+                choice = pick_folder()
+            if choice and choice.startswith("zip:"):
+                if zip_game_root(choice[4:]) is None:
+                    info("Ese zip no es Pokémon Fire Ash (no tiene mkxp.json).", True)
+                    return 1
+                game = extract_game(choice[4:])
+            else:
+                game = choice
+    except Exception as e:  # noqa: BLE001
+        info("Error al descomprimir el juego: %s" % e, True)
+        return 1
     if not game:
         return 1
     if not is_game(game):

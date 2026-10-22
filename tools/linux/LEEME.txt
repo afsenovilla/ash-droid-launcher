@@ -11,11 +11,14 @@ una copia en mkxp.json.bak). Tus partidas no se tocan.
 
 CÓMO INSTALARLO (Steam Deck LCD y OLED, o cualquier Linux)
 No hace falta Proton: este zip trae el motor del juego (mkxp-z) para Linux.
-1. En el modo escritorio, copia la carpeta del juego (la versión de Windows, con
-   Game.exe) donde quieras y descomprime este zip entero.
-2. Abre "Instalar en Steam Deck.sh" (doble clic > Ejecutar). Busca el juego solo
-   (también en la microSD), instala el parche y añade "Pokémon Fire Ash" a Steam.
-   Cierra Steam un momento para eso; se vuelve a abrir solo.
+1. En el modo escritorio, descarga el juego (la versión de Windows, desde su Discord) y
+   este zip. El juego puede quedarse comprimido tal cual se descarga.
+2. Descomprime este zip y abre "Instalar en Steam Deck.sh" (doble clic > Ejecutar). Busca
+   el juego solo, en carpeta o en zip (también en la microSD); si está comprimido lo
+   descomprime en ~/Games (o junto al zip si está en la microSD). Luego instala el parche
+   y añade "Pokémon Fire Ash" a Steam (cierra Steam un momento; se vuelve a abrir solo).
+   Si al hacer doble clic se abre como texto: clic derecho > Propiedades > Permisos >
+   "Es ejecutable".
 3. Vuelve al modo juego y ábrelo desde la biblioteca (pestaña "No-Steam").
 El parche detecta la Steam Deck: los textos y los gráficos muestran sus botones
 (A, B, X, Y, L1, R1, R3…) en lugar de las teclas, y el botón ☰ abre el menú.

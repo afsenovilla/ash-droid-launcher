@@ -14,8 +14,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   `ASHDROID_DEVICE=pc|deck|lcd|oled`) and, as on Android, names the Deck's buttons instead of keyboard
   keys, redraws images with them (including the controls screen) and the ☰ button opens the menu like B.
 - Steam Deck / Linux package: native Linux build of mkxp-z (no Proton needed) and "Instalar en Steam
-  Deck.sh", which finds the game (also on the microSD), installs the patch and adds the game to Steam with
-  its artwork.
+  Deck.sh", which finds the game (also on the microSD) — extracted or still in the .zip as downloaded,
+  which it extracts itself — installs the patch and adds the game to Steam with its artwork.
 
 ### Changed
 - Controls screen: new D-pad in the style of the game's key caps — outline, raised edges, thickness,
