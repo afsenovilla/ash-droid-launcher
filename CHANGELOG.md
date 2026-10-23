@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-23
+
 ### Added
 - Full French and German retranslations, like the Spanish one: all dialogue, menus and battle texts
   rewritten in natural language, official names restored (the game's German data had many names shifted
