@@ -522,6 +522,25 @@ module AshDroidGfx
   end
 end
 
+# Credit line added to the start-up splash (the Pokémon Essentials one), in the game's language
+module AshDroidCredits
+  LINES = [[/spanish/i, "Parche Ash Droid: Alberto (afsenovilla)"],
+           [/french/i, "Patch Ash Droid : Alberto (afsenovilla)"],
+           [/german/i, "Ash-Droid-Patch: Alberto (afsenovilla)"]]
+  DEFAULT = "Ash Droid patch: Alberto (afsenovilla)"
+
+  def self.stamp(bmp, path)
+    return unless path =~ /Titles[\/\\]splash1(\.\w+)?\z/i
+    f = AshDroidText.lang_file.to_s
+    text = (LINES.find { |re, _| f =~ re } || [nil, DEFAULT])[1]
+    bmp.font.size = 24
+    bmp.font.color = Color.new(255, 255, 255)
+    bmp.draw_text(0, bmp.height - 52, bmp.width, 30, text, 1)
+  rescue StandardError => e
+    AshDroidLog.log("credits stamp error: #{e.class}: #{e.message}")
+  end
+end
+
 begin
   class Bitmap
     alias_method :__ashdroid_initialize, :initialize
@@ -530,7 +549,10 @@ begin
         args = [alt]
       end
       __ashdroid_initialize(*args)
-      AshDroidGfx::Live.apply(self, args[0]) if args.length == 1 && args[0].is_a?(String)
+      if args.length == 1 && args[0].is_a?(String)
+        AshDroidGfx::Live.apply(self, args[0])
+        AshDroidCredits.stamp(self, args[0])
+      end
     end
 
     # The native Linux engine (Steam Deck) reports a text height of about 40% of the
