@@ -1,4 +1,4 @@
-// Instalador del parche "Español (España)" para Pokémon Fire Ash (PC).
+// Instalador del parche Ash Droid para Pokémon Fire Ash (PC).
 // WinForms sobre .NET Framework 4 (incluido en Windows 10/11): un solo .exe, sin dependencias.
 // Los archivos del parche van en la carpeta "parche" junto al .exe.
 using System;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-[assembly: System.Reflection.AssemblyTitle("Fire Ash - Español (España)")]
+[assembly: System.Reflection.AssemblyTitle("Fire Ash - Parche Ash Droid")]
 [assembly: System.Reflection.AssemblyProduct("Ash Droid Launcher - parche PC")]
 
 static class Program
@@ -41,7 +41,7 @@ class InstallerForm : Form
     public InstallerForm()
     {
         try { version = File.ReadAllText(Path.Combine(payload, "VERSION.txt")).Trim(); } catch { }
-        Text = "Fire Ash · Español (España)";
+        Text = "Fire Ash · Parche Ash Droid";
         try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -53,10 +53,10 @@ class InstallerForm : Form
 
         var title = new Label { Text = "Pokémon Fire Ash", Font = new Font("Segoe UI", 20f, FontStyle.Bold),
             AutoSize = true, Location = new Point(24, 18) };
-        var sub = new Label { Text = "Parche Español (España) · v" + version, ForeColor = ORANGE,
+        var sub = new Label { Text = "Parche Ash Droid · v" + version, ForeColor = ORANGE,
             Font = new Font("Segoe UI", 11f, FontStyle.Bold), AutoSize = true, Location = new Point(27, 60) };
-        var desc = new Label { Text = "Retraducción completa al castellano de España, con los nombres oficiales, gráficos en español " +
-            "y la intro en castellano. No modifica los archivos del juego ni tus partidas.",
+        var desc = new Label { Text = "Retraducción completa al castellano de España, francés y alemán (nombres oficiales, intro en cada " +
+            "idioma) y arreglos en inglés. No modifica los archivos del juego ni tus partidas.",
             ForeColor = DIM, Location = new Point(27, 88), Size = new Size(570, 40) };
 
         var lf = new Label { Text = "CARPETA DEL JUEGO", ForeColor = DIM, Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
@@ -203,7 +203,7 @@ class InstallerForm : Form
         }
         File.WriteAllText(Path.Combine(d, MARK), version);
         MessageBox.Show(this, "¡Parche instalado!\n\nSi juegas en español, ya lo tienes: el idioma \"Spanish\" pasa a ser \"Spanish (Spain)\". Si no, elígelo en la pantalla de carga (opción Language).",
-            "Fire Ash · Español (España)", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            "Fire Ash · Parche Ash Droid", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     void Uninstall(string d)
@@ -216,7 +216,7 @@ class InstallerForm : Form
         File.WriteAllText(conf, t, new UTF8Encoding(false));
         foreach (var f in Directory.GetFiles(d, "ashdroid_*")) File.Delete(f);
         foreach (var f in Directory.GetDirectories(d, "ashdroid_*")) Directory.Delete(f, true);
-        MessageBox.Show(this, "Parche desinstalado. El juego vuelve a estar como antes.", "Fire Ash · Español (España)",
+        MessageBox.Show(this, "Parche desinstalado. El juego vuelve a estar como antes.", "Fire Ash · Parche Ash Droid",
             MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 

@@ -222,8 +222,8 @@ jobs:
         run: |
           V="${{ needs.apk.outputs.version }}"
           mkdir -p dist
-          tools/pc/build_pc_patch.sh windows "dist/FireAsh-Espanol-Espana-Windows-${V}.zip" "$V" "in/Instalar parche.exe"
-          tools/pc/build_pc_patch.sh linux "dist/FireAsh-Espanol-Espana-SteamDeck-Linux-${V}.zip" "$V" in/mkxp-z-linux-x86_64.tar.gz
+          tools/pc/build_pc_patch.sh windows "dist/FireAsh-Patch-Windows-${V}.zip" "$V" "in/Instalar parche.exe"
+          tools/pc/build_pc_patch.sh linux "dist/FireAsh-Patch-SteamDeck-Linux-${V}.zip" "$V" in/mkxp-z-linux-x86_64.tar.gz
           for z in dist/*.zip; do echo "== $z"; unzip -l "$z" | tail -n +4 | head -n -2; done
       - uses: actions/upload-artifact@v4
         with:
@@ -261,8 +261,8 @@ jobs:
           | | |
           |---|---|
           | **Android** (Retroid, AYN, Anbernic…) | `ash-droid-launcher-*.apk` |
-          | **Windows** | `FireAsh-Espanol-Espana-Windows-*.zip` → "Instalar parche.exe" |
-          | **Steam Deck / Linux** | `FireAsh-Espanol-Espana-SteamDeck-Linux-*.zip` → "Instalar en Steam Deck.sh" (desktop mode) |
+          | **Windows** | `FireAsh-Patch-Windows-*.zip` → "Instalar parche.exe" |
+          | **Steam Deck / Linux** | `FireAsh-Patch-SteamDeck-Linux-*.zip` → "Instalar en Steam Deck.sh" (desktop mode) |
           EOF
           cat dist/notes.md >> "$GITHUB_STEP_SUMMARY"
 
@@ -275,8 +275,8 @@ jobs:
           make_latest: true
           files: |
             dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
-            dist/FireAsh-Espanol-Espana-Windows-${{ env.VERSION_NAME }}.zip
-            dist/FireAsh-Espanol-Espana-SteamDeck-Linux-${{ env.VERSION_NAME }}.zip
+            dist/FireAsh-Patch-Windows-${{ env.VERSION_NAME }}.zip
+            dist/FireAsh-Patch-SteamDeck-Linux-${{ env.VERSION_NAME }}.zip
           body_path: dist/notes.md
 
       # Only versioned releases from now on: remove the old rolling "dev" build and the
@@ -286,4 +286,23 @@ jobs:
         run: |
           for t in dev pc-installer linux-runtime; do
             gh release delete "$t" --cleanup-tag --yes 2>/dev/null && echo "removed $t" || true
+          done
+
+      # The PC packages were called "FireAsh-Espanol-Espana-*" while they only had Spanish; the 0.4.x
+      # releases (Spanish, French, German) get the new names too. Idempotent; "SteamDeck-Linux" stays
+      # in the name because the Steam Deck updater looks for it.
+      - name: Rename PC packages of earlier releases
+        continue-on-error: true
+        run: |
+          R="repos/${GITHUB_REPOSITORY}/releases"
+          for id in $(gh api "$R?per_page=100" -q '.[] | select(.tag_name | startswith("v0.4.")) | .id'); do
+            gh api "$R/$id/assets" -q '.[] | select(.name | startswith("FireAsh-Espanol-Espana-")) | "\(.id) \(.name)"' |
+              while read -r aid name; do
+                gh api -X PATCH "$R/assets/$aid" -f name="${name/FireAsh-Espanol-Espana-/FireAsh-Patch-}" -q .name
+              done
+            body=$(gh api "$R/$id" -q .body)
+            case "$body" in *FireAsh-Espanol-Espana-*)
+              printf '%s' "${body//FireAsh-Espanol-Espana-/FireAsh-Patch-}" > body.md
+              gh api -X PATCH "$R/$id" -F body=@body.md -q .tag_name ;;
+            esac
           done

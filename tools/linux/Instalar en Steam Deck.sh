@@ -1,5 +1,5 @@
 #!/bin/sh
-# Parche "Español (España)" de Pokémon Fire Ash para Steam Deck / Linux (modo escritorio).
+# Parche Ash Droid de Pokémon Fire Ash para Steam Deck / Linux (modo escritorio).
 # Doble clic (o "Ejecutar"). Busca el juego, instala el parche y el motor nativo y lo añade a Steam.
 cd "$(dirname "$0")" || exit 1
 if ! command -v python3 >/dev/null 2>&1; then

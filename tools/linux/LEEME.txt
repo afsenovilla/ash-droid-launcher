@@ -1,10 +1,11 @@
-PARCHE "ESPAÑOL (ESPAÑA)" PARA POKÉMON FIRE ASH (STEAM DECK Y LINUX)
-====================================================================
+PARCHE ASH DROID PARA POKÉMON FIRE ASH (STEAM DECK Y LINUX)
+===========================================================
 
-Retraducción completa del juego al castellano de España (diálogos, menús, combates,
-objetos, movimientos, habilidades, Pokédex), con los nombres oficiales de los juegos
-y el doblaje de España, gráficos con texto redibujados en español y la intro en
-castellano. Es el mismo parche que usa Ash Droid Launcher en Android.
+Retraducción completa del juego (diálogos, menús, combates, objetos, movimientos,
+habilidades, Pokédex) al castellano de España, al francés y al alemán, con los nombres
+oficiales de los juegos y la intro cantada en cada idioma; en español, además, los
+términos del doblaje de España y los gráficos con texto redibujados. En inglés corrige
+las descripciones que no caben. Es el mismo parche que usa Ash Droid Launcher en Android.
 
 No modifica los archivos del juego (solo añade una línea a mkxp.json, del que guarda
 una copia en mkxp.json.bak). Tus partidas no se tocan.

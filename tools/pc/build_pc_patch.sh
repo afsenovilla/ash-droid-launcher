@@ -11,8 +11,8 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 TMP="$(mktemp -d)"
 A="$ROOT/app/src/main/assets"
 case "$TARGET" in
-  windows) TOP="$TMP/Fire Ash - Espanol (Espana) - Windows" ;;
-  linux)   TOP="$TMP/Fire Ash - Espanol (Espana) - Steam Deck" ;;
+  windows) TOP="$TMP/Fire Ash - Parche Ash Droid - Windows" ;;
+  linux)   TOP="$TMP/Fire Ash - Parche Ash Droid - Steam Deck" ;;
   *) echo "target: windows | linux" >&2; exit 1 ;;
 esac
 P="$TOP/parche"; mkdir -p "$P"

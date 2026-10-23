@@ -92,8 +92,8 @@ Cada release (tag `vX.Y.Z`) trae tres descargas:
 | Plataforma | Archivo |
 |---|---|
 | Android | `ash-droid-launcher-X.Y.Z.apk` |
-| Windows | `FireAsh-Espanol-Espana-Windows-X.Y.Z.zip` |
-| Steam Deck / Linux | `FireAsh-Espanol-Espana-SteamDeck-Linux-X.Y.Z.zip` |
+| Windows | `FireAsh-Patch-Windows-X.Y.Z.zip` |
+| Steam Deck / Linux | `FireAsh-Patch-SteamDeck-Linux-X.Y.Z.zip` |
 
 Para publicar: añade una sección `## [X.Y.Z]` arriba del changelog y súbelo a `main`; el workflow crea el
 tag `vX.Y.Z` y publica la release. El resto de push a `main` solo se compilan, no se publican.

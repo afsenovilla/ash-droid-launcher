@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+- PC and Steam Deck packages renamed "FireAsh-Patch-*" (they're no longer Spanish only), with installers and
+  LEEME describing all the languages; the 0.4.x releases get the new names too.
+
 ## [0.4.3] - 2026-10-23
 
 ### Fixed

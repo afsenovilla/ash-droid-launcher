@@ -92,8 +92,8 @@ Les versions suivent [Semantic Versioning](https://semver.org/) ; les changement
 | Plateforme | Fichier |
 |---|---|
 | Android | `ash-droid-launcher-X.Y.Z.apk` |
-| Windows | `FireAsh-Espanol-Espana-Windows-X.Y.Z.zip` |
-| Steam Deck / Linux | `FireAsh-Espanol-Espana-SteamDeck-Linux-X.Y.Z.zip` |
+| Windows | `FireAsh-Patch-Windows-X.Y.Z.zip` |
+| Steam Deck / Linux | `FireAsh-Patch-SteamDeck-Linux-X.Y.Z.zip` |
 
 Pour publier : ajoutez une section `## [X.Y.Z]` en haut du changelog et poussez-la sur `main` ; le workflow crée le
 tag `vX.Y.Z` et publie la version. Tout autre push sur `main` est seulement compilé, jamais publié.

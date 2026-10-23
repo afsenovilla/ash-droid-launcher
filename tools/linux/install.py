@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Instalador del parche "Español (España)" de Pokémon Fire Ash para Steam Deck / Linux.
+"""Instalador del parche Ash Droid de Pokémon Fire Ash para Steam Deck / Linux.
 
 Lo lanza "Instalar en Steam Deck.sh" (junto a las carpetas "parche" y "steamdeck").
 - Busca la carpeta del juego (la versión de Windows: Game.exe + mkxp.json).
@@ -26,7 +26,7 @@ import time
 import zipfile
 import zlib
 
-TITLE = "Fire Ash · Español (España)"
+TITLE = "Fire Ash · Parche Ash Droid"
 APP_NAME = "Pokémon Fire Ash"
 PATCH = "ashdroid_patches.rb"
 MARK = "ashdroid_pc_version.txt"
