@@ -172,8 +172,9 @@ openssl/Makefile: openssl/Configure
 ruby: init openssl $(LIBDIR)/libruby.so.3.1.0
 
 $(LIBDIR)/libruby.so.3.1.0: ruby/Makefile
-	# Ruby 3.1 cross builds race under parallel make on the final link: retry serially
-	cd ruby; make -j$(NPROC) || make -j1; make install
+	# Ruby 3.1 cross builds race under parallel make (extension makefiles end up with the wrong
+	# target name, e.g. no ext/bigdecimal/bigdecimal.a): build serially. Only on a cache miss.
+	cd ruby; make -j1 && make install
 
 ruby/Makefile: ruby/configure
 	cd ruby; DLDFLAGS="-Wl,-soname,libruby.so" \
