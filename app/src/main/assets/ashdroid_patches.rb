@@ -484,6 +484,32 @@ begin
       __ashdroid_initialize(*args)
       AshDroidGfx::Live.apply(self, args[0]) if args.length == 1 && args[0].is_a?(String)
     end
+
+    # Accented capitals (Á É Í Ó Ú Ñ Ü) rise above the font's ascent; the text
+    # surface grows at the top and mkxp centres it vertically, so those letters
+    # (or the whole line containing them) end up a couple of pixels too low.
+    # Move them back up by half the extra height.
+    ASHDROID_TALL = /[ÁÉÍÓÚÑÜÀÈÌÒÙÂÊÎÔÛÄËÏÖ]/
+    alias_method :__ashdroid_draw_text, :draw_text
+    def draw_text(*args)
+      begin
+        text = args.length >= 5 ? args[4] : args[1]
+        if text.is_a?(String) && text =~ ASHDROID_TALL
+          d = AshDroidFixes.tall_shift(self, text)
+          if d != 0
+            if args.length >= 5
+              args = args.dup
+              args[1] -= d
+            elsif args[0].is_a?(Rect)
+              r = args[0]
+              args = [r.x, r.y - d, r.width, r.height] + args[1..-1]
+            end
+          end
+        end
+      rescue StandardError
+      end
+      __ashdroid_draw_text(*args)
+    end
   end
 rescue StandardError, NameError
 end
@@ -698,6 +724,22 @@ module AshDroidFixes
     @spain_index
   end
 
+  # Half of the extra height that accented capitals add to a text surface
+  def self.tall_shift(bitmap, text)
+    f = bitmap.font
+    key = [f.name.to_s, f.size, f.bold]
+    @tall ||= {}
+    return @tall[key] if @tall.key?(key)
+    tall = bitmap.text_size("ÁÉÍÓÚ").height
+    base = bitmap.text_size("AEIOU").height
+    d = tall > base ? (tall - base) / 2 : 0
+    @tall[key] = d
+    AshDroidLog.log("tall text #{key.inspect}: base=#{base} tall=#{tall} shift=#{d}")
+    d
+  rescue StandardError
+    0
+  end
+
   # Saves made with earlier versions of the patch may point to the old extra
   # "Español (España)" entry (after the last language): use Spanish (Spain).
   module PokemonSystemLang
@@ -720,6 +762,15 @@ module AshDroidFixes
     def get(type, id)
       if AshDroidText.spain?
         r = AshDroidText.spain_pack["@#{type}:#{id}"]
+        return r if r
+      end
+      super
+    end
+
+    # Texts looked up by their English (e.g. trainer names): "@<type>:<English>"
+    def getFromHash(type, key)
+      if AshDroidText.spain? && key.is_a?(String)
+        r = AshDroidText.spain_pack["@#{type}:#{AshDroidText.norm(key)}"]
         return r if r
       end
       super

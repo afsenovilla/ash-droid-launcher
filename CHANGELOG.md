@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Spanish (Spain): 44 map texts that were still in English (Professor Oak's Pokédex rating, tournament
+  results…) and the trainer names shown in battle (Teniente Surge, Vito y Leti, Recluta…).
+- Accented capitals (Ú, É, Á…) no longer sit lower than the rest of the text.
+
 ### Changed
 - The Spain Spanish retranslation now replaces the game's Spanish: the language "Spanish" is renamed
   "Spanish (Spain)" instead of adding a separate "Español (España)". Saves that used "Español (España)"
