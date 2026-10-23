@@ -202,9 +202,7 @@ class InstallerForm : Form
             File.WriteAllText(conf, t, new UTF8Encoding(false));
         }
         File.WriteAllText(Path.Combine(d, MARK), version);
-        MessageBox.Show(this, "¡Parche instalado!
-
-Si juegas en español, ya lo tienes: el idioma \"Spanish\" pasa a ser \"Spanish (Spain)\". Si no, elígelo en la pantalla de carga (opción Language).",
+        MessageBox.Show(this, "¡Parche instalado!\n\nSi juegas en español, ya lo tienes: el idioma \"Spanish\" pasa a ser \"Spanish (Spain)\". Si no, elígelo en la pantalla de carga (opción Language).",
             "Fire Ash · Español (España)", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
