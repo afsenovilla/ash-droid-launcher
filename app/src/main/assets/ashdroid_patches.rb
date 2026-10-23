@@ -147,6 +147,27 @@ module AshDroidText
     @spain_pack
   end
 
+  # Fixes for the game's own English (descriptions too long for their boxes),
+  # applied only while the game is in English: "@<type>:<id>" like the Spain pack.
+  EN_PACK_FILE = "ashdroid_en.dat"
+
+  def self.en_pack
+    return @en_pack if defined?(@en_pack)
+    @en_pack = begin
+      File.exist?(EN_PACK_FILE) ? File.open(EN_PACK_FILE, "rb") { |f| Marshal.load(f) } : {}
+    rescue StandardError
+      {}
+    end
+  end
+
+  def self.english?
+    langs = Settings::LANGUAGES
+    idx = $PokemonSystem ? $PokemonSystem.language : nil
+    !!(langs && idx && langs[idx] && langs[idx][1].to_s =~ /english/i)
+  rescue StandardError, NameError
+    false
+  end
+
   def self.spain?
     langs = Settings::LANGUAGES
     idx = $PokemonSystem ? $PokemonSystem.language : nil
@@ -248,8 +269,8 @@ module AshDroidText
         es ? "En la Steam Deck los botones se cambian en la configuración del mando de Steam (botón STEAM > Configuración del mando)." :
              "On the Steam Deck, change the buttons in Steam's controller settings (STEAM button > Controller settings)."
       else
-        es ? "En esta consola los botones se configuran desde Ash Droid Launcher (\"Configurar botones\")." :
-             "On this device, buttons are configured in Ash Droid Launcher (\"Configure buttons\")."
+        es ? "En esta consola los botones se configuran desde Ash Droid Launcher (\"Botones\")." :
+             "On this device, buttons are configured in Ash Droid Launcher (\"Buttons\")."
       end
     }],
     # F8 screenshot: use the device's own screenshot instead
@@ -762,6 +783,9 @@ module AshDroidFixes
     def get(type, id)
       if AshDroidText.spain?
         r = AshDroidText.spain_pack["@#{type}:#{id}"]
+        return r if r
+      elsif AshDroidText.english?
+        r = AshDroidText.en_pack["@#{type}:#{id}"]
         return r if r
       end
       super

@@ -16,7 +16,7 @@ case "$TARGET" in
   *) echo "target: windows | linux" >&2; exit 1 ;;
 esac
 P="$TOP/parche"; mkdir -p "$P"
-cp "$A/ashdroid_patches.rb" "$A/ashdroid_art.rb" "$A/packs/fire-ash/ashdroid_es.dat" "$A/packs/fire-ash/ashdroid_es_ES.dat" "$P/"
+cp "$A/ashdroid_patches.rb" "$A/ashdroid_art.rb" "$A/packs/fire-ash/ashdroid_es.dat" "$A/packs/fire-ash/ashdroid_es_ES.dat" "$A/packs/fire-ash/ashdroid_en.dat" "$P/"
 ruby "$ROOT/tools/art/make_art_dat.rb" "$A/packs/fire-ash/art.json" "$P/ashdroid_art.dat" >/dev/null
 mkdir -p "$P/ashdroid_audio_es"; cp "$A/packs/fire-ash/audio_es/"* "$P/ashdroid_audio_es/"
 printf '%s' "$VER" > "$P/VERSION.txt"

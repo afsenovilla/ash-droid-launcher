@@ -186,7 +186,7 @@ public final class ConfigWriter
     private static void installTranslationPack(Context ctx, File game)
     {
         String id = packId(ctx);
-        String[] files = { "ashdroid_es.dat", "ashdroid_es_ES.dat" };
+        String[] files = { "ashdroid_es.dat", "ashdroid_es_ES.dat", "ashdroid_en.dat" };
         for (String name : files) {
             File dst = new File(game, name);
             if (id == null) {
