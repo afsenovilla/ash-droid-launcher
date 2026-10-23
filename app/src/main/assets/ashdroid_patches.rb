@@ -533,9 +533,15 @@ module AshDroidCredits
     return unless path =~ /Titles[\/\\]splash1(\.\w+)?\z/i
     f = AshDroidText.lang_file.to_s
     text = (LINES.find { |re, _| f =~ re } || [nil, DEFAULT])[1]
-    bmp.font.size = 24
+    # The game's own pixel font (the default bitmap font isn't set up yet at this point)
+    begin
+      pbSetSystemFont(bmp)
+    rescue StandardError, NameError
+      bmp.font.name = ["Power Green", "Power Clear"]
+      bmp.font.size = 29
+    end
     bmp.font.color = Color.new(255, 255, 255)
-    bmp.draw_text(0, bmp.height - 52, bmp.width, 30, text, 1)
+    bmp.draw_text(0, bmp.height - 56, bmp.width, 32, text, 1)
   rescue StandardError => e
     AshDroidLog.log("credits stamp error: #{e.class}: #{e.message}")
   end
