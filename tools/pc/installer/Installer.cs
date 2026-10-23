@@ -69,7 +69,7 @@ class InstallerForm : Form
 
         status.Location = new Point(27, 198); status.Size = new Size(570, 44); status.ForeColor = DIM;
 
-        var hint = new Label { Text = "La intro en castellano se activa dentro del juego: Opciones → \"Música en castellano\" (con el idioma en español).",
+        var hint = new Label { Text = "La intro suena en el idioma del juego (español, francés o alemán). Se puede quitar en Opciones del juego.",
             ForeColor = DIM, Location = new Point(27, 246), Size = new Size(570, 40) };
 
         install.Text = "Instalar"; Style(install, GREEN, new Point(27, 292), new Size(180, 44));

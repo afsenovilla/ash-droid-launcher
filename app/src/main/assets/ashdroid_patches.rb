@@ -876,7 +876,7 @@ module AshDroidAudio
   ALIASES = { "teamrocket1" => "TeamRocket" }
 
   # Songs in the game's language (Spanish, French, German intro…), bundled with the
-  # patch in ashdroid_audio_<code>/<same file name>. Off by default; switched from the
+  # patch in ashdroid_audio_<code>/<same file name>. On by default; switched from the
   # game's Options ("Música en castellano" / "Musique en français" / "Musik auf Deutsch")
   # while the game is in that language.
   LANGS = [[/spanish/i, "es", "Música en castellano", ["No", "Sí"]],
@@ -909,7 +909,7 @@ module AshDroidAudio
 
   def self.enabled?
     l = lang
-    !!(l && settings["music_#{l[1]}"] == "1")
+    !!(l && settings["music_#{l[1]}"] != "0")
   end
 
   def self.enabled=(on)
