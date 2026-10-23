@@ -599,6 +599,31 @@ begin
         end
         return
       end
+      if self == Object && name == :pbDrawTextPositions && !@__ashdroid_wrapping
+        @__ashdroid_wrapping = true
+        begin
+          orig = instance_method(name)
+          define_method(name) do |bitmap, textpos, *args, &blk|
+            tp, narrow = AshDroidFixes.fit_textpos(bitmap, textpos)
+            r = orig.bind(self).call(bitmap, tp, *args, &blk)
+            narrow.each do |text, x, y, w, base, shadow, outline|
+              h = bitmap.text_size(text).height
+              if (outline == true || outline == 1) && respond_to?(:pbDrawOutlineText, true)
+                pbDrawOutlineText(bitmap, x, y + 6, w, h, text, base, shadow)
+              elsif respond_to?(:pbDrawShadowText, true)
+                pbDrawShadowText(bitmap, x, y + 6, w, h, text, base, shadow)
+              else
+                bitmap.draw_text(x, y + 6, w, h, text)
+              end
+            end
+            r
+          end
+          private name
+        ensure
+          @__ashdroid_wrapping = false
+        end
+        return
+      end
       if self == Object && name == :pbConfirmMessage && !@__ashdroid_wrapping
         # Remember when the player confirmed "Quit Game": the save menu shown next
         # then says "Exit" instead of "Cancel" (cancelling there quits the game).
@@ -784,6 +809,42 @@ module AshDroidFixes
 
   def self.spain_index
     @spain_index
+  end
+
+  # Two texts on the same line, one left-aligned and one right-aligned (e.g. "Continuar" and the
+  # map name on the load screen): if a translation makes them overlap, the right one is made to
+  # fit: without the word "Pokémon", else slightly narrowed (draw_text squeezes a text into a
+  # narrower box), else cut with "...". Returns [textpos, narrowed texts to draw afterwards].
+  def self.fit_textpos(bitmap, textpos)
+    return [textpos, []] unless bitmap && textpos.is_a?(Array) && textpos.length > 1
+    out = textpos.map { |t| t.is_a?(Array) ? t.dup : t }
+    rows = out.select { |t| t.is_a?(Array) && t[0].is_a?(String) && t[1].is_a?(Numeric) && t[2].is_a?(Numeric) }
+    narrow = []
+    rows.each do |r|
+      next unless r[3] == 1 || r[3] == true
+      rows.each do |l|
+        next if l.equal?(r) || !(l[3].nil? || l[3] == 0 || l[3] == false)
+        next unless (l[2] - r[2]).abs < 8 && l[1] < r[1]
+        room = r[1] - (l[1] + bitmap.text_size(l[0]).width) - 12
+        s = r[0]
+        next if room <= 0 || bitmap.text_size(s).width <= room
+        t = s.gsub(/\s*Pok[ée]mon\b/i, "").strip  # "Campeonato Pokémon de Ciudad Carmín" -> "Campeonato de Ciudad Carmín"
+        s = t if !t.empty?
+        w = bitmap.text_size(s).width
+        if w <= room
+          r[0] = s
+        elsif room >= w * 0.8
+          narrow << [s, r[1] - room, r[2], room, r[4], r[5], r[6]]
+          r[0] = ""
+        else
+          s = s[0...-1].rstrip while s.length > 1 && bitmap.text_size(s + "...").width > room
+          r[0] = s + "..."
+        end
+      end
+    end
+    [out, narrow]
+  rescue StandardError
+    [textpos, []]
   end
 
   # Half of the extra height that accented capitals add to a text surface

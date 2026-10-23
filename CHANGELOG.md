@@ -7,6 +7,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Fixed
+- Load screen: a long location name no longer runs over "Continuar" (e.g. "Campeonato Pokémon de Ciudad
+  Carmín"); texts that would overlap on the same line are shortened to fit.
 - Steam Deck: the game had no cover in the Steam library (game mode uses a vertical cover). The installer
   now makes the cover, the wide capsule and the banner from the game's title screen; updates add them too.
 
