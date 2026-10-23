@@ -12,6 +12,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Full French and German retranslations, like the Spanish one: all dialogue, menus and battle texts
   rewritten in natural language, official names restored (the game's German data had many names shifted
   onto the wrong Pokémon, moves, items and trainers), and every description fits its box.
+- Steam Deck / Linux: the patch updates itself. When the game is opened from Steam it checks for a new
+  version and offers to install it (from this version on; 0.3.x needs one last manual install).
 
 ### Fixed
 - Steam Deck / Linux: menu texts were cut in half ("Nueva partida" showed as "Nuaua nartida").

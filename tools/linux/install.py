@@ -299,13 +299,26 @@ def install_engine(game):
             tf.extractall(dst)
     exe = os.path.join(dst, "mkxp-z.x86_64")
     os.chmod(exe, 0o755)
+    # Update checker run by the launcher before the game starts
+    upd = os.path.join(HERE, "update.py")
+    if os.path.isfile(upd):
+        shutil.copyfile(upd, os.path.join(dst, "update.py"))
     launcher = os.path.join(game, LAUNCHER)
+    # Everything inside a function: an update rewrites this file while it runs, and sh reads
+    # scripts as it goes, so it must have parsed the whole body before that.
     with open(launcher, "w", newline="\n") as f:
         f.write('#!/bin/sh\n'
                 '# Pokémon Fire Ash con el motor nativo de Linux (mkxp-z), sin Proton.\n'
-                'cd "$(dirname "$0")" || exit 1\n'
-                'export SRCDIR="$PWD"\n'
-                'exec "./%s/mkxp-z.x86_64" "$@"\n' % ENGINE_DIR)
+                '# Antes de abrir el juego mira si hay una versión nueva del parche (ASHDROID_NO_UPDATE=1 lo evita).\n'
+                'main() {\n'
+                '  cd "$(dirname "$0")" || exit 1\n'
+                '  if command -v python3 >/dev/null 2>&1 && [ -f "./%s/update.py" ]; then\n'
+                '    python3 "./%s/update.py" "$PWD" || true\n'
+                '  fi\n'
+                '  export SRCDIR="$PWD"\n'
+                '  exec "./%s/mkxp-z.x86_64" "$@"\n'
+                '}\n'
+                'main "$@"; exit\n' % (ENGINE_DIR, ENGINE_DIR, ENGINE_DIR))
     os.chmod(launcher, 0o755)
     return launcher
 

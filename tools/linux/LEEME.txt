@@ -24,6 +24,10 @@ El parche detecta la Steam Deck: los textos y los gráficos muestran sus botones
 (A, B, X, Y, L1, R1, R3…) en lugar de las teclas, y el botón ☰ abre el menú.
 En la OLED (90 Hz), pon la frecuencia de actualización a 60 Hz para este juego
 (botón ··· > Rendimiento) para que el movimiento vaya más fino.
+ACTUALIZACIONES
+Al abrir el juego mira si hay una versión nueva del parche y, si la hay, pregunta si
+actualizar: descarga e instala sola y luego se abre el juego. Sin conexión arranca normal.
+
 Para quitarlo, vuelve a abrir "Instalar en Steam Deck.sh" y elige "Desinstalar".
 
 Proyecto: https://github.com/afsenovilla/ash-droid-launcher
