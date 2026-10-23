@@ -1,6 +1,6 @@
 # Ash Droid Launcher
 
-[English](README.md) · **Español**
+[English](README.md) · **Español** · [Français](README.fr.md) · [Deutsch](README.de.md)
 
 Lanzador Android para **Pokémon Fire Ash** (y en principio otros fangames de Pokémon Essentials que ya funcionen
 con [mkxp-z](https://github.com/mkxp-z/mkxp-z)), pensado para **consolas portátiles Android con botones físicos**
