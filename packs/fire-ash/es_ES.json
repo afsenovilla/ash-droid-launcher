@@ -7178,7 +7178,7 @@
  "Which PC should be accessed?": "¿A qué PC quieres acceder?",
  "Quit shopping.": "Dejar de comprar.",
  "Money:\n<r>{1}": "Dinero:\n<r>{1}",
- "In Bag:<r>{1}": "En la Mochila:<r>{1}",
+ "In Bag:<r>{1}": "Mochila:<r>{1}",
  "You don't have enough money.": "No tienes suficiente dinero.",
  "Certainly. You want {1}. That will be ${2}. OK?": "Muy bien, {1}. Serán {2} $. ¿De acuerdo?",
  "{1}? Certainly. How many would you like?": "¿{1}? Muy bien. ¿Cuántas unidades quieres?",
