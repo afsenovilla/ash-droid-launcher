@@ -619,12 +619,23 @@ module AshDroidFixes
   end
 
   # Options menu: drop "Screen Size" (the game always fills the device screen)
-  module OptionsNoScreenSize
+  # Options screen: drop "Screen Size" on the device (it only makes a window
+  # smaller) and, while the game is in Spanish, offer the Spanish music.
+  module OptionsAshDroid
     def pbAddOnOptions(options)
       opts = super
-      names = ["Screen Size", (_INTL("Screen Size") rescue "Screen Size")]
-      opts.reject { |o| o.respond_to?(:name) && names.include?(o.name) }
-    rescue StandardError
+      unless ASHDROID_PC
+        names = ["Screen Size", (_INTL("Screen Size") rescue "Screen Size")]
+        opts = opts.reject { |o| o.respond_to?(:name) && names.include?(o.name) }
+      end
+      if AshDroidText.spanish? && AshDroidAudio.available? && defined?(EnumOption)
+        opts = opts + [EnumOption.new("Música en castellano", ["No", "Sí"],
+          proc { AshDroidAudio.enabled? ? 1 : 0 },
+          proc { |v| AshDroidAudio.enabled = (v == 1) })]
+      end
+      opts
+    rescue StandardError => e
+      AshDroidLog.log("options hook error: #{e.class}: #{e.message}")
       super
     end
   end
@@ -705,7 +716,7 @@ module AshDroidFixes
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
-    "PokemonOption_Scene" => (ASHDROID_PC ? nil : OptionsNoScreenSize),
+    "PokemonOption_Scene" => OptionsAshDroid,
     "PokemonSaveScreen" => SaveScreenQuit,
     "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
     "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
@@ -740,6 +751,27 @@ module AshDroidAudio
   # ("Música en castellano"): ashdroid_audio_es/<same file name>, used while
   # the game is in Spanish.
   ES_DIR = "ashdroid_audio_es"
+  SETTINGS = "ashdroid_settings.txt"
+
+  # Off by default; switched from the game's Options while it is in Spanish.
+  def self.available?
+    File.directory?(ES_DIR) && !Dir.children(ES_DIR).empty?
+  rescue StandardError
+    false
+  end
+
+  def self.enabled?
+    return @enabled unless @enabled.nil?
+    @enabled = File.exist?(SETTINGS) && File.read(SETTINGS) =~ /^music_es=1$/ ? true : false
+  rescue StandardError
+    @enabled = false
+  end
+
+  def self.enabled=(on)
+    @enabled = on ? true : false
+    File.write(SETTINGS, "music_es=#{on ? 1 : 0}\n")
+  rescue StandardError
+  end
 
   def self.map(name)
     return name unless name.is_a?(String)
@@ -749,7 +781,7 @@ module AshDroidAudio
       name = File.join(File.dirname(name), alt)
       base = alt
     end
-    if AshDroidText.spanish? && File.directory?(ES_DIR)
+    if AshDroidText.spanish? && enabled? && File.directory?(ES_DIR)
       hit = Dir.children(ES_DIR).find { |f| f.sub(/\.[^.]+\z/, "").casecmp?(base) }
       if hit
         AshDroidLog.log("audio es: #{base} -> #{hit}")

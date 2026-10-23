@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+- The Spanish intro is off by default and is now switched from inside the game (Options → "Música en
+  castellano", only shown while the game is in Spanish). The launcher no longer has a music section.
+
 ## [0.3.1] - 2026-10-23
 
 ### Changed

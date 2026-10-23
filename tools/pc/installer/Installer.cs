@@ -35,7 +35,6 @@ class InstallerForm : Form
     readonly string payload = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "parche");
     readonly TextBox folder = new TextBox();
     readonly Label status = new Label();
-    readonly CheckBox music = new CheckBox();
     readonly Button install = new Button(), uninstall = new Button(), play = new Button();
     string version = "?";
 
@@ -70,8 +69,8 @@ class InstallerForm : Form
 
         status.Location = new Point(27, 198); status.Size = new Size(570, 44); status.ForeColor = DIM;
 
-        music.Text = "Intro en castellano (tema de la Liga Añil)"; music.Checked = true; music.AutoSize = true;
-        music.Location = new Point(27, 246); music.ForeColor = FG;
+        var hint = new Label { Text = "La intro en castellano se activa dentro del juego: Opciones → \"Música en castellano\" (con el idioma en español).",
+            ForeColor = DIM, Location = new Point(27, 246), Size = new Size(570, 40) };
 
         install.Text = "Instalar"; Style(install, GREEN, new Point(27, 292), new Size(180, 44));
         install.Font = new Font("Segoe UI", 12f, FontStyle.Bold);
@@ -81,7 +80,7 @@ class InstallerForm : Form
         play.Text = "▶ Jugar"; Style(play, PANEL, new Point(453, 292), new Size(140, 44));
         play.Click += (s, e) => Play();
 
-        Controls.AddRange(new Control[] { title, sub, desc, lf, folder, browse, status, music, install, uninstall, play });
+        Controls.AddRange(new Control[] { title, sub, desc, lf, folder, browse, status, hint, install, uninstall, play });
         folder.Text = Detect() ?? "";
         Refresh2();
     }
@@ -143,7 +142,6 @@ class InstallerForm : Form
         {
             string v = "";
             try { v = File.ReadAllText(Path.Combine(d, MARK)).Trim(); } catch { }
-            music.Checked = Directory.Exists(Path.Combine(d, "ashdroid_audio_es"));
             Status("Parche instalado" + (v.Length > 0 ? " (v" + v + ")" : "") +
                 ". En el juego, elige el idioma \"Español (España)\" en la pantalla de carga.", GREEN);
         }
@@ -182,13 +180,10 @@ class InstallerForm : Form
         {
             var rel = src.Substring(payload.Length).TrimStart('\\', '/');
             if (rel == "VERSION.txt") continue;
-            if (!music.Checked && rel.StartsWith("ashdroid_audio_es", StringComparison.OrdinalIgnoreCase)) continue;
             var dst = Path.Combine(d, rel);
             Directory.CreateDirectory(Path.GetDirectoryName(dst));
             File.Copy(src, dst, true);
         }
-        var audio = Path.Combine(d, "ashdroid_audio_es");
-        if (!music.Checked && Directory.Exists(audio)) Directory.Delete(audio, true);
 
         var conf = Path.Combine(d, "mkxp.json");
         var t = File.ReadAllText(conf);

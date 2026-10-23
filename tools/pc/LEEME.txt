@@ -15,6 +15,8 @@ CÓMO INSTALARLO
    "Examinar…" y elige la carpeta donde está Game.exe.
 3. Pulsa "Instalar" y luego "Jugar".
 4. En la pantalla de carga del juego, elige el idioma "Español (España)" (Language).
+5. Opcional: la intro en castellano viene desactivada. Actívala en el juego, en
+   Opciones → "Música en castellano" (solo aparece con el idioma en español).
 
 Si Windows muestra "Windows protegió tu PC", pulsa "Más información" > "Ejecutar de
 todas formas" (el programa no está firmado).

@@ -26,7 +26,6 @@ public class LauncherActivity extends Activity
     private static final int REQ_IMPORT = 1;
     private static final int REQ_WIZARD = 2;
     private static final int REQ_WIZARD_THEN_PLAY = 3;
-    private static final int REQ_MUSIC = 4;
 
     private Ui mUi;
     private LinearLayout mRoot;
@@ -286,10 +285,6 @@ public class LauncherActivity extends Activity
             render();
             focusItem(3);
         });
-        int nTracks = SpanishMusic.enabledCount(this);
-        mUi.item(g1, getString(R.string.tile_music), mUi.value((nTracks == 0 ? getString(R.string.off)
-                : getResources().getQuantityString(R.plurals.music_tracks, nTracks, nTracks)) + "  ›"), false,
-                v -> musicMenu());
         right.addView(g1);
 
         TextView cap2 = mUi.caption(getString(R.string.game_section).toUpperCase(java.util.Locale.getDefault()));
@@ -439,49 +434,6 @@ public class LauncherActivity extends Activity
         if (mScaleButton != null) mScaleButton.requestFocus();
     }
 
-    private void musicMenu()
-    {
-        java.util.List<SpanishMusic.Track> tracks = SpanishMusic.tracks(this);
-        if (tracks.isEmpty()) {
-            pickMusic();
-            return;
-        }
-        String[] labels = new String[tracks.size()];
-        boolean[] checked = new boolean[tracks.size()];
-        for (int k = 0; k < labels.length; k++) {
-            SpanishMusic.Track t = tracks.get(k);
-            String base = t.name.replaceFirst("\\.[^.]+$", "");
-            labels[k] = t.bundled ? getString(R.string.music_bundled, base) : base;
-            checked[k] = t.enabled;
-        }
-        AlertDialog.Builder b = new AlertDialog.Builder(this)
-                .setTitle(R.string.tile_music)
-                .setMultiChoiceItems(labels, checked, (d, which, on) ->
-                        SpanishMusic.setEnabled(this, tracks.get(which).name, on))
-                .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.music_add, (d, w) -> pickMusic());
-        if (SpanishMusic.hasUserTracks(this)) {
-            b.setNeutralButton(R.string.music_clear, (d, w) -> { SpanishMusic.clearUser(this); render(); });
-        }
-        AlertDialog dlg = b.create();
-        dlg.setOnDismissListener(d -> render());
-        dlg.show();
-    }
-
-    private void pickMusic()
-    {
-        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        i.addCategory(Intent.CATEGORY_OPENABLE);
-        i.setType("*/*");
-        i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] { "audio/*", "application/ogg", "application/octet-stream" });
-        i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        try {
-            startActivityForResult(i, REQ_MUSIC);
-        } catch (Exception e) {
-            showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
-        }
-    }
-
     private void pickZip()
     {
         Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -537,25 +489,6 @@ public class LauncherActivity extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_MUSIC && resultCode == RESULT_OK && data != null) {
-            java.util.List<Uri> uris = new java.util.ArrayList<>();
-            if (data.getClipData() != null) {
-                for (int k = 0; k < data.getClipData().getItemCount(); k++) uris.add(data.getClipData().getItemAt(k).getUri());
-            } else if (data.getData() != null) {
-                uris.add(data.getData());
-            }
-            StringBuilder err = new StringBuilder();
-            for (Uri u : uris) {
-                try {
-                    SpanishMusic.add(this, u);
-                } catch (IOException | RuntimeException e) {
-                    err.append(u.getLastPathSegment()).append(": ").append(e.getMessage()).append('\n');
-                }
-            }
-            render();
-            if (err.length() > 0) showError(getString(R.string.tile_music), err.toString());
-            return;
-        }
         if (requestCode == REQ_IMPORT && resultCode == RESULT_OK && data != null && data.getData() != null) {
             startImport(data.getData());
         } else if (requestCode == REQ_WIZARD_THEN_PLAY && resultCode == RESULT_OK) {
