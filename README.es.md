@@ -38,13 +38,38 @@ Las partidas guardadas se conservan al actualizar la app o reimportar una versi�
 Edita [`devices.json`](app/src/main/assets/devices.json) y abre un PR. La pantalla siempre se detecta en vivo y los
 botones siempre se confirman con el asistente, así que la base de datos solo aporta nombre y pistas.
 
+## Traducciones
+
+El launcher aplica al juego un parche en tiempo de ejecución (`ashdroid_patches.rb`, no modifica archivos del juego)
+con retraducciones completas, hechas desde el inglés al estilo de los juegos oficiales:
+
+| Idioma | En el juego | Qué incluye |
+|---|---|---|
+| Español (España) | sustituye a "Spanish" como **Spanish (Spain)** | diálogos, menús, combates, objetos, movimientos, habilidades, Pokédex, nombres oficiales y términos del doblaje de España, imágenes con texto redibujadas en español, intro en castellano |
+| Francés | French | diálogos, menús, combates, descripciones y nombres oficiales corregidos, intro en francés |
+| Alemán | German | diálogos, menús, combates, descripciones y nombres oficiales (los datos alemanes del juego tenían muchos nombres asignados al Pokémon, movimiento, objeto o entrenador equivocado), intro en alemán |
+| Inglés | English | solo arreglos: descripciones que no cabían en su caja |
+
+Todas las descripciones se miden con la fuente del juego para que quepan. La intro suena en el idioma del juego y
+se puede quitar en las Opciones del juego.
+
 ## PC y Steam Deck
 
-El mismo parche en castellano existe para la versión de Windows del juego (`tools/pc/`): un zip con un
-instalador gráfico (`Instalar parche.exe`). Para la **Steam Deck** (LCD y OLED) y otros Linux hay otro zip
+El mismo parche (con todos los idiomas de arriba) existe para la versión de Windows del juego (`tools/pc/`): un zip
+con un instalador gráfico (`Instalar parche.exe`). Para la **Steam Deck** (LCD y OLED) y otros Linux hay otro zip
 con el motor mkxp-z compilado para Linux, así que no hace falta Proton: `Instalar en Steam Deck.sh`
 (modo escritorio) busca el juego, instala el parche y lo añade a Steam. El parche detecta la Deck y
 muestra sus botones (A, B, X, Y, L1, R1, R3…) en textos e imágenes; ☰ abre el menú.
+
+Actualizaciones: la app de Android busca versiones nuevas y las instala encima; en la Steam Deck el juego lo
+comprueba al abrirse y ofrece actualizar el parche. En Windows, descarga el zip nuevo y vuelve a ejecutar el instalador.
+
+## Pendiente
+
+- Imágenes con texto (títulos, menús, medallas…) redibujadas en francés y alemán, como ya está hecho en español.
+- Revisión de las traducciones al francés y al alemán por nativos (algunos personajes secundarios no tienen
+  nombre oficial confirmado).
+- Actualizaciones automáticas del parche de Windows.
 
 ## Compilación
 

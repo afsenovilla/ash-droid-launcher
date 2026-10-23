@@ -37,12 +37,38 @@ Save files are kept when you update the app or re-import a new version of the ga
 Edit [`devices.json`](app/src/main/assets/devices.json) and open a PR. The screen is always detected live and buttons
 are always confirmed in the wizard, so the database only provides a friendly name and hints.
 
+## Translations
+
+The launcher applies a runtime patch to the game (`ashdroid_patches.rb`, no game files are modified) with full
+retranslations, written from the English source in the style of the official games:
+
+| Language | In game | What it includes |
+|---|---|---|
+| Spanish (Spain) | replaces "Spanish" as **Spanish (Spain)** | dialogue, menus, battles, items, moves, abilities, Pokédex, official names and the Spanish dub's terms, images with text redrawn in Spanish, intro song in Spanish |
+| French | French | dialogue, menus, battles, descriptions and official names fixed, intro song in French |
+| German | German | dialogue, menus, battles, descriptions, and official names (the game's German data had many names shifted onto the wrong Pokémon, moves, items and trainers), intro song in German |
+| English | English | only fixes: descriptions that didn't fit their boxes |
+
+Every description is measured with the game's font so it fits its box. The intro song plays in the game's
+language and can be switched off from the game's Options.
+
 ## PC and Steam Deck
 
-The same Spanish patch exists for the Windows version of the game (`tools/pc/`): a zip with a graphical
-installer (`Instalar parche.exe`). For the **Steam Deck** (LCD and OLED) and other Linux machines there is a separate zip with a native Linux build of mkxp-z, so no Proton is needed: `Instalar en Steam Deck.sh` (desktop
+The same patch (all the languages above) exists for the Windows version of the game (`tools/pc/`): a zip with a
+graphical installer (`Instalar parche.exe`). For the **Steam Deck** (LCD and OLED) and other Linux machines there is
+a separate zip with a native Linux build of mkxp-z, so no Proton is needed: `Instalar en Steam Deck.sh` (desktop
 mode) finds the game, installs the patch and adds it to Steam. The patch detects the Deck and shows its
 buttons (A, B, X, Y, L1, R1, R3…) in texts and images; ☰ opens the menu.
+
+Updates: the Android app checks for new releases and installs them in place; on the Steam Deck the game checks
+when it starts and offers to update the patch. On Windows, download the new zip and run the installer again.
+
+## To do
+
+- Images with text (titles, menus, badges…) redrawn in French and German, as already done for Spanish.
+- Review pass of the French and German translations by native speakers (some minor characters have no
+  confirmed official name).
+- Automatic updates for the Windows patch.
 
 ## Building
 
