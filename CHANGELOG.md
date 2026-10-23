@@ -6,7 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+- Full French and German retranslations, like the Spanish one: all dialogue, menus and battle texts
+  rewritten in natural language, official names restored (the game's German data had many names shifted
+  onto the wrong Pokémon, moves, items and trainers), and every description fits its box.
+
 ### Fixed
+- Steam Deck / Linux: menu texts were cut in half ("Nueva partida" showed as "Nuaua nartida").
 - Spanish (Spain): 44 map texts that were still in English (Professor Oak's Pokédex rating, tournament
   results…) and the trainer names shown in battle (Teniente Surge, Vito y Leti, Recluta…).
 - Accented capitals (Ú, É, Á…) no longer sit lower than the rest of the text.
