@@ -175,8 +175,9 @@ $(LIBDIR)/libruby.so.3.1.0: ruby/Makefile
 	# Run Ruby's make without our command-line variables: make passes them down through MAKEFLAGS
 	# and our TARGET=aarch64-linux-android overrides the TARGET of every extension makefile
 	# ("linking static-library aarch64-linux-android.a", then no ext/bigdecimal/bigdecimal.a).
-	# Parallel cross builds also race on the final link: retry serially.
-	cd ruby; env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES sh -c 'make -j$(NPROC) || make -j1' && env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES make install
+	# Parallel cross builds also race on the final link: retry serially. Gems aren't installed: the
+	# host's RubyGems would put them in /var/lib/gems (not writable), and the game doesn't use them.
+	cd ruby; env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES sh -c 'make -j$(NPROC) || make -j1' && env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES make install INSTRUBY_OPTS=--exclude=gem
 
 ruby/Makefile: ruby/configure
 	cd ruby; DLDFLAGS="-Wl,-soname,libruby.so" \
