@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-10-23
+
 ### Added
 - Start-up splash: a credit line for the patch ("Parche Ash Droid: Alberto (afsenovilla)"), in the game's
   language.
