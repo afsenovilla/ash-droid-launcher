@@ -638,6 +638,30 @@ module AshDroidFixes
     end
   end
 
+  # Battle menu: after a switch (chosen, forced, or after a faint) the new Pokémon's
+  # command menu opens on FIGHT instead of staying on the POKéMON button.
+  # The scene remembers the last command per battler slot (@lastCmd); the game
+  # already resets the move cursor when a Pokémon comes in, so reset this one too.
+  module BattleFightAfterSwitch
+    def pbResetMoveIndex(idxBattler)
+      super if defined?(super)
+    ensure
+      AshDroidFixes.reset_command(self, idxBattler)
+    end
+
+    def pbSendOutBattlers(sendOuts, *args)
+      super
+    ensure
+      (sendOuts || []).each { |s| AshDroidFixes.reset_command(self, s[0]) rescue nil }
+    end
+  end
+
+  def self.reset_command(scene, idxBattler)
+    cmds = scene.instance_variable_get(:@lastCmd)
+    cmds[idxBattler] = 0 if cmds.is_a?(Array) && idxBattler.is_a?(Integer)
+  rescue StandardError
+  end
+
   # Adds "Español (España)" to the game's language list (same Spanish data file)
   def self.add_language(settings)
     langs = settings::LANGUAGES
@@ -683,6 +707,8 @@ module AshDroidFixes
     "Trainer" => TrainerES,
     "PokemonOption_Scene" => (ASHDROID_PC ? nil : OptionsNoScreenSize),
     "PokemonSaveScreen" => SaveScreenQuit,
+    "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
+    "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
     "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
   }
 
