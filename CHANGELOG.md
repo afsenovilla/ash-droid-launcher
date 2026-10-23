@@ -7,6 +7,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Changed
+- The Spain Spanish retranslation now replaces the game's Spanish: the language "Spanish" is renamed
+  "Spanish (Spain)" instead of adding a separate "Español (España)". Saves that used "Español (España)"
+  switch to it automatically.
 - The Spanish intro is off by default and is now switched from inside the game (Options → "Música en
   castellano", only shown while the game is in Spanish). The launcher no longer has a music section.
 

@@ -130,10 +130,9 @@ module AshDroidText
   # Messages that only make sense on PC; never shown on the device
   SKIP_MESSAGES = /Helpful Notes|Helpful\b/i
 
-  # "Español (España)": an extra language added to the game's language list. It
-  # loads the game's Spanish file for names, but every text in the full
-  # retranslation pack replaces the game's own Spanish.
-  SPAIN_NAME = "Español (España)"
+  # The game's "Spanish" becomes "Spanish (Spain)": it still loads the game's
+  # Spanish file, but every text in the full retranslation pack replaces it.
+  SPAIN_NAME = "Spanish (Spain)"
   SPAIN_PACK_FILE = "ashdroid_es_ES.dat"
 
   def self.spain_pack
@@ -673,22 +672,46 @@ module AshDroidFixes
   rescue StandardError
   end
 
-  # Adds "Español (España)" to the game's language list (same Spanish data file)
+  # The game's "Spanish" entry becomes "Spanish (Spain)" (same data file), so the
+  # Spain retranslation replaces the old Spanish instead of being an extra language.
   def self.add_language(settings)
     langs = settings::LANGUAGES
     return if langs.any? { |l| l[0] == AshDroidText::SPAIN_NAME }
-    spanish = langs.find { |l| l[1].to_s =~ /spanish|espa/i }
-    return unless spanish
-    entry = [AshDroidText::SPAIN_NAME, spanish[1]]
-    if langs.frozen?
+    idx = langs.index { |l| l[1].to_s =~ /spanish|espa/i }
+    return unless idx
+    entry = [AshDroidText::SPAIN_NAME, langs[idx][1]]
+    if langs.frozen? || langs[idx].frozen?
+      list = langs.map(&:dup)
+      list[idx] = entry
       settings.send(:remove_const, :LANGUAGES)
-      settings.const_set(:LANGUAGES, (langs + [entry]).freeze)
+      settings.const_set(:LANGUAGES, list.freeze)
     else
-      langs.push(entry)
+      langs[idx] = entry
     end
-    AshDroidLog.log("language added: #{entry.inspect}")
+    @spain_index = idx
+    AshDroidLog.log("language replaced: #{entry.inspect} at #{idx}")
   rescue StandardError => e
     AshDroidLog.log("add_language error: #{e.class}: #{e.message}")
+  end
+
+  def self.spain_index
+    @spain_index
+  end
+
+  # Saves made with earlier versions of the patch may point to the old extra
+  # "Español (España)" entry (after the last language): use Spanish (Spain).
+  module PokemonSystemLang
+    def language
+      v = super
+      n = (Settings::LANGUAGES.size rescue nil)
+      if v.is_a?(Integer) && n && v >= n && AshDroidFixes.spain_index
+        v = AshDroidFixes.spain_index
+        @language = v
+      end
+      v
+    rescue StandardError
+      super
+    end
   end
 
   # Game data texts (item/move/ability names and descriptions…) come from the
@@ -720,6 +743,7 @@ module AshDroidFixes
     "PokemonSaveScreen" => SaveScreenQuit,
     "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
     "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
+    "PokemonSystem" => PokemonSystemLang,
     "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
   }
 

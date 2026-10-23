@@ -181,7 +181,7 @@ public final class ConfigWriter
      * Copies the bundled Spanish translation packs for this game (if there are any)
      * next to the runtime patch, which uses it while the game language is Spanish.
      * ashdroid_es.dat fills gaps of the game's Spanish; ashdroid_es_ES.dat is the full
-     * retranslation used by the extra "Español (España)" language. Matched by game title.
+     * retranslation used by the "Spanish (Spain)" language (replaces the game's Spanish). Matched by game title.
      */
     private static void installTranslationPack(Context ctx, File game)
     {

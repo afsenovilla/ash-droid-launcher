@@ -14,7 +14,8 @@ CÓMO INSTALARLO
 2. Abre "Instalar parche.exe". Busca el juego solo; si no lo encuentra, pulsa
    "Examinar…" y elige la carpeta donde está Game.exe.
 3. Pulsa "Instalar" y luego "Jugar".
-4. En la pantalla de carga del juego, elige el idioma "Español (España)" (Language).
+4. Si juegas en español, ya lo tienes: el idioma "Spanish" del juego pasa a ser
+   "Spanish (Spain)". Si no, elígelo en la pantalla de carga (opción Language).
 5. Opcional: la intro en castellano viene desactivada. Actívala en el juego, en
    Opciones → "Música en castellano" (solo aparece con el idioma en español).
 

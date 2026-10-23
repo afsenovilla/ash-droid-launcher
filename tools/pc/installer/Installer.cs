@@ -143,7 +143,7 @@ class InstallerForm : Form
             string v = "";
             try { v = File.ReadAllText(Path.Combine(d, MARK)).Trim(); } catch { }
             Status("Parche instalado" + (v.Length > 0 ? " (v" + v + ")" : "") +
-                ". En el juego, elige el idioma \"Español (España)\" en la pantalla de carga.", GREEN);
+                ". Con el juego en español (\"Spanish (Spain)\") ya se ve la nueva traducción.", GREEN);
         }
         else Status("Juego encontrado. El parche aún no está instalado.", FG);
     }
@@ -202,7 +202,9 @@ class InstallerForm : Form
             File.WriteAllText(conf, t, new UTF8Encoding(false));
         }
         File.WriteAllText(Path.Combine(d, MARK), version);
-        MessageBox.Show(this, "¡Parche instalado!\n\nAbre el juego y, en la pantalla de carga, elige el idioma \"Español (España)\" (opción Language).",
+        MessageBox.Show(this, "¡Parche instalado!
+
+Si juegas en español, ya lo tienes: el idioma \"Spanish\" pasa a ser \"Spanish (Spain)\". Si no, elígelo en la pantalla de carga (opción Language).",
             "Fire Ash · Español (España)", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 

@@ -584,7 +584,7 @@ def main():
             else:
                 msg += ('Para jugar, abre "%s" en la carpeta del juego, o añádelo a Steam como '
                         "juego no-Steam (sin Proton).\n\n" % LAUNCHER)
-            msg += 'En la pantalla de carga elige el idioma "Español (España)" (opción Language).'
+            msg += 'Si juegas en español ya lo tienes: el idioma "Spanish" pasa a ser "Spanish (Spain)". Si no, elígelo en la pantalla de carga (opción Language).'
     except Exception as e:  # noqa: BLE001
         info("Error: %s" % e, True)
         return 1
