@@ -533,6 +533,19 @@ begin
       AshDroidGfx::Live.apply(self, args[0]) if args.length == 1 && args[0].is_a?(String)
     end
 
+    # The native Linux engine (Steam Deck) reports a text height of about 40% of the
+    # font size; Essentials then draws the text in a box that short and its lower half
+    # is cut off ("Nueva partida" -> "Nuaua nartida"). Report the font size instead.
+    alias_method :__ashdroid_text_size, :text_size
+    def text_size(str)
+      r = __ashdroid_text_size(str)
+      fs = font.size.to_i
+      r.height = fs if fs > 0 && r.height < fs * 0.6
+      r
+    rescue StandardError
+      __ashdroid_text_size(str)
+    end
+
     # Accented capitals (Á É Í Ó Ú Ñ Ü) rise above the font's ascent; the text
     # surface grows at the top and mkxp centres it vertically, so those letters
     # (or the whole line containing them) end up a couple of pixels too low.
