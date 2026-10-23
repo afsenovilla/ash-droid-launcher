@@ -172,9 +172,11 @@ openssl/Makefile: openssl/Configure
 ruby: init openssl $(LIBDIR)/libruby.so.3.1.0
 
 $(LIBDIR)/libruby.so.3.1.0: ruby/Makefile
-	# Ruby 3.1 cross builds race under parallel make (extension makefiles end up with the wrong
-	# target name, e.g. no ext/bigdecimal/bigdecimal.a): build serially. Only on a cache miss.
-	cd ruby; make -j1 && make install
+	# Run Ruby's make without our command-line variables: make passes them down through MAKEFLAGS
+	# and our TARGET=aarch64-linux-android overrides the TARGET of every extension makefile
+	# ("linking static-library aarch64-linux-android.a", then no ext/bigdecimal/bigdecimal.a).
+	# Parallel cross builds also race on the final link: retry serially.
+	cd ruby; env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES sh -c 'make -j$(NPROC) || make -j1' && env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES make install
 
 ruby/Makefile: ruby/configure
 	cd ruby; DLDFLAGS="-Wl,-soname,libruby.so" \
