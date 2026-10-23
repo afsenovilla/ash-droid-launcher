@@ -573,8 +573,8 @@ def main():
             uninstall(game)
             msg = "Parche desinstalado. El juego vuelve a estar como antes."
         else:
-            music = not a.no_music and ask("¿Poner la intro en castellano?")
-            install_patch(game, music)
+            # The Spanish intro is switched in the game (Options -> "Música en castellano", off by default)
+            install_patch(game, not a.no_music)
             install_engine(game)
             n = add_to_steam(root, game, launcher) if root else 0
             msg = "¡Listo!\n\n"
