@@ -36,6 +36,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TOP = os.path.dirname(HERE)
 PAYLOAD = os.path.join(TOP, "parche")
 ENGINE_TGZ = os.path.join(HERE, "mkxp-z-linux-x86_64.tar.gz")
+COVER = os.path.join(HERE, "cover.png")  # vertical cover for the Steam library
 
 ASSUME_YES = False
 
@@ -574,9 +575,12 @@ def write_art(grid, appid, art):
     try:
         for suffix, (cw, ch, rows) in _images(_png_read(art)).items():
             _png_write(os.path.join(grid, "%d%s.png" % (appid, suffix)), cw, ch, rows)
+        if os.path.isfile(COVER):  # the patch's own vertical cover
+            shutil.copyfile(COVER, os.path.join(grid, "%dp.png" % appid))
     except Exception:  # noqa: BLE001  (unexpected PNG: use it as is)
         for suffix in ("p", "", "_hero"):
-            shutil.copyfile(art, os.path.join(grid, "%d%s.png" % (appid, suffix)))
+            src = COVER if suffix == "p" and os.path.isfile(COVER) else art
+            shutil.copyfile(src, os.path.join(grid, "%d%s.png" % (appid, suffix)))
 
 
 def update_art(root, game, launcher):

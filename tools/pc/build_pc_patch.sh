@@ -26,7 +26,7 @@ if [ "$TARGET" = windows ]; then
   sed "s/\r\?$/\r/" "$ROOT/tools/pc/LEEME.txt" > "$TOP/LEEME.txt"
 else
   mkdir -p "$TOP/steamdeck"
-  cp "$ROOT/tools/linux/install.py" "$ROOT/tools/linux/update.py" "$TOP/steamdeck/"
+  cp "$ROOT/tools/linux/install.py" "$ROOT/tools/linux/update.py" "$ROOT/tools/linux/cover.png" "$TOP/steamdeck/"
   cp "$EXTRA" "$TOP/steamdeck/mkxp-z-linux-x86_64.tar.gz"
   cp "$ROOT/tools/linux/Instalar en Steam Deck.sh" "$ROOT/tools/linux/LEEME.txt" "$TOP/"
   chmod 755 "$TOP/Instalar en Steam Deck.sh" "$TOP/steamdeck/install.py"

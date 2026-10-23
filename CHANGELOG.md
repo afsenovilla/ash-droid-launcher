@@ -10,7 +10,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Load screen: a long location name ("Centro Pokémon de Ciudad Carmín") no longer runs over "Continuar":
   when two texts on the same line would overlap, the label on the left is left out.
 - Steam Deck: the game had no cover in the Steam library (game mode uses a vertical cover). The installer
-  now makes the cover, the wide capsule and the banner from the game's title screen; updates add them too.
+  now adds a Fire Ash cover, plus a wide capsule and a banner made from the game's title screen; updates
+  add them too.
 
 ## [0.4.0] - 2026-10-23
 
