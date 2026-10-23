@@ -135,16 +135,35 @@ module AshDroidText
   SPAIN_NAME = "Spanish (Spain)"
   SPAIN_PACK_FILE = "ashdroid_es_ES.dat"
 
-  def self.spain_pack
-    return @spain_pack if defined?(@spain_pack)
-    @spain_pack = begin
-      File.exist?(SPAIN_PACK_FILE) ? File.open(SPAIN_PACK_FILE, "rb") { |f| Marshal.load(f) } : {}
+  # Full retranslations, one pack per language file of the game
+  RETRANS = [[/spanish/i, SPAIN_PACK_FILE], [/french/i, "ashdroid_fr.dat"], [/german/i, "ashdroid_de.dat"]]
+
+  def self.lang_file
+    langs = Settings::LANGUAGES
+    idx = $PokemonSystem ? $PokemonSystem.language : nil
+    langs && idx && langs[idx] ? langs[idx][1].to_s : nil
+  rescue StandardError, NameError
+    nil
+  end
+
+  # Pack of the current language ({} if it has none)
+  def self.retrans_pack
+    f = lang_file
+    hit = f && RETRANS.find { |re, _| f =~ re }
+    return {} unless hit
+    @packs ||= {}
+    @packs[hit[1]] ||= begin
+      pk = File.exist?(hit[1]) ? File.open(hit[1], "rb") { |io| Marshal.load(io) } : {}
+      AshDroidLog.log("#{hit[1]}: entries=#{pk.size}")
+      pk
     rescue StandardError => e
-      AshDroidLog.log("es_ES pack load error: #{e.class}: #{e.message}")
+      AshDroidLog.log("#{hit[1]} load error: #{e.class}: #{e.message}")
       {}
     end
-    AshDroidLog.log("es_ES pack: entries=#{@spain_pack.size}")
-    @spain_pack
+  end
+
+  def self.spain_pack
+    retrans_pack
   end
 
   # Fixes for the game's own English (descriptions too long for their boxes),
@@ -176,15 +195,18 @@ module AshDroidText
     false
   end
 
-  # Spain translation (or its "#plural" form when {1} is two people), else nil
+  # Retranslation of the current language (or its "#plural" form when {1} is two
+  # people), else nil
   def self.spain_lookup(key, first_arg = nil)
-    return nil unless key.is_a?(String) && spain?
+    return nil unless key.is_a?(String)
+    pk = retrans_pack
+    return nil if pk.empty?
     k = norm(key)
-    if first_arg.is_a?(String) && first_arg =~ / y |&/
-      pl = spain_pack[k + "#plural"]
+    if first_arg.is_a?(String) && first_arg =~ / (y|et|und) |&/
+      pl = pk[k + "#plural"]
       return pl if pl
     end
-    spain_pack[k]
+    pk[k]
   rescue StandardError
     nil
   end
@@ -286,6 +308,10 @@ module AshDroidText
   ]
 
   # Spanish contractions broken by placeholders: "de el Pidgey salvaje" -> "del ..."
+  # French contractions broken by placeholders: "de le Rattata" -> "du Rattata"
+  FRENCH_FIXES = [[/(?<![[:alpha:]])([Dd])e le /, '\1u '], [/(?<![[:alpha:]])([Dd])e les /, '\1es '],
+                  [/(?<![[:alpha:]])à le /, 'au '], [/(?<![[:alpha:]])à les /, 'aux '],
+                  [/(?<![[:alpha:]])([Dd])e ([aeiouéèêAEIOUÉ])/, "\\1'\\2"]]
   SPAIN_FIXES = [[/(?<![[:alpha:]])([Dd])e el /, '\1el '], [/(?<![[:alpha:]])([Aa]) el /, '\1l ']]
 
   # The game's Spanish writes "un/a <item>"; pick the article from the item name.
@@ -320,6 +346,7 @@ module AshDroidText
     # shadow, which is hard to read: give it a dark shadow instead.
     out = out.gsub("\\c[8]", "<c3=F8F8F8,404048>") if out.include?("\\w[]") && out.include?("\\c[8]")
     SPAIN_FIXES.each { |re, rep| out = out.gsub(re, rep) } if spain?
+    FRENCH_FIXES.each { |re, rep| out = out.gsub(re, rep) } if lang_file.to_s =~ /french/i
     (ASHDROID_PC ? [] : FIXES).each do |re, rep|
       next unless out =~ re
       out = rep.is_a?(Proc) ? out.gsub(re) { rep.call(Regexp.last_match) } : out.gsub(re, rep)
@@ -601,7 +628,8 @@ begin
         key_index = name.to_s.start_with?("_MAP") ? 1 : 0
         define_method(name) do |*args, &blk|
           if $ashdroid_quitting && name == :_INTL && args[0] == "Cancel"
-            next AshDroidText.spanish? ? "Salir" : "Quit"
+            f = AshDroidText.lang_file.to_s
+            next(f =~ /spanish/i ? "Salir" : f =~ /french/i ? "Quitter" : f =~ /german/i ? "Beenden" : "Quit")
           end
           es = AshDroidText.spain_lookup(args[key_index], args[key_index + 1])
           if es && es =~ /\A[¡¿]?\{1\}/ && args[key_index + 1].is_a?(String) &&
@@ -655,10 +683,10 @@ module AshDroidFixes
   # ("Jessie y James del Team Rocket"), other classes before ("Cazabichos Pedro").
   module TrainerES
     def full_name
-      return super unless AshDroidText.spain?
+      return super unless AshDroidText.spain? || AshDroidText.lang_file.to_s =~ /french/i
       type = trainer_type_name.to_s
       return @name.to_s if type.empty?
-      type =~ /\A(del|de la|de los|de las|de) /i ? "#{@name} #{type}" : "#{type} #{@name}"
+      type =~ /\A(del |de la |de los |de las |de |du |des |de l'|d')/i ? "#{@name} #{type}" : "#{type} #{@name}"
     rescue StandardError
       super
     end
@@ -674,8 +702,8 @@ module AshDroidFixes
         names = ["Screen Size", (_INTL("Screen Size") rescue "Screen Size")]
         opts = opts.reject { |o| o.respond_to?(:name) && names.include?(o.name) }
       end
-      if AshDroidText.spanish? && AshDroidAudio.available? && defined?(EnumOption)
-        opts = opts + [EnumOption.new("Música en castellano", ["No", "Sí"],
+      if AshDroidAudio.available? && defined?(EnumOption) && (l = AshDroidAudio.lang)
+        opts = opts + [EnumOption.new(l[2], l[3],
           proc { AshDroidAudio.enabled? ? 1 : 0 },
           proc { |v| AshDroidAudio.enabled = (v == 1) })]
       end
@@ -781,8 +809,9 @@ module AshDroidFixes
   # language file by numeric id; the Spain pack overrides them as "@<type>:<id>".
   module MessageTypesES
     def get(type, id)
-      if AshDroidText.spain?
-        r = AshDroidText.spain_pack["@#{type}:#{id}"]
+      pk = AshDroidText.retrans_pack
+      if !pk.empty?
+        r = pk["@#{type}:#{id}"]
         return r if r
       elsif AshDroidText.english?
         r = AshDroidText.en_pack["@#{type}:#{id}"]
@@ -793,8 +822,8 @@ module AshDroidFixes
 
     # Texts looked up by their English (e.g. trainer names): "@<type>:<English>"
     def getFromHash(type, key)
-      if AshDroidText.spain? && key.is_a?(String)
-        r = AshDroidText.spain_pack["@#{type}:#{AshDroidText.norm(key)}"]
+      if key.is_a?(String) && !(pk = AshDroidText.retrans_pack).empty?
+        r = pk["@#{type}:#{AshDroidText.norm(key)}"]
         return r if r
       end
       super
@@ -846,29 +875,48 @@ end
 module AshDroidAudio
   ALIASES = { "teamrocket1" => "TeamRocket" }
 
-  # Spanish versions of songs the player added from the launcher
-  # ("Música en castellano"): ashdroid_audio_es/<same file name>, used while
-  # the game is in Spanish.
-  ES_DIR = "ashdroid_audio_es"
+  # Songs in the game's language (Spanish, French, German intro…), bundled with the
+  # patch in ashdroid_audio_<code>/<same file name>. Off by default; switched from the
+  # game's Options ("Música en castellano" / "Musique en français" / "Musik auf Deutsch")
+  # while the game is in that language.
+  LANGS = [[/spanish/i, "es", "Música en castellano", ["No", "Sí"]],
+           [/french/i, "fr", "Musique en français", ["Non", "Oui"]],
+           [/german/i, "de", "Musik auf Deutsch", ["Aus", "An"]]]
   SETTINGS = "ashdroid_settings.txt"
 
-  # Off by default; switched from the game's Options while it is in Spanish.
+  def self.lang
+    f = AshDroidText.lang_file.to_s
+    LANGS.find { |re, *| f =~ re }
+  end
+
+  def self.dir
+    l = lang
+    l ? "ashdroid_audio_#{l[1]}" : nil
+  end
+
   def self.available?
-    File.directory?(ES_DIR) && !Dir.children(ES_DIR).empty?
+    d = dir
+    d && File.directory?(d) && !Dir.children(d).empty?
   rescue StandardError
     false
   end
 
-  def self.enabled?
-    return @enabled unless @enabled.nil?
-    @enabled = File.exist?(SETTINGS) && File.read(SETTINGS) =~ /^music_es=1$/ ? true : false
+  def self.settings
+    @settings ||= (File.exist?(SETTINGS) ? File.read(SETTINGS).scan(/^(\w+)=(\d)$/).to_h : {})
   rescue StandardError
-    @enabled = false
+    @settings = {}
+  end
+
+  def self.enabled?
+    l = lang
+    !!(l && settings["music_#{l[1]}"] == "1")
   end
 
   def self.enabled=(on)
-    @enabled = on ? true : false
-    File.write(SETTINGS, "music_es=#{on ? 1 : 0}\n")
+    l = lang
+    return unless l
+    settings["music_#{l[1]}"] = on ? "1" : "0"
+    File.write(SETTINGS, settings.map { |k, v| "#{k}=#{v}\n" }.join)
   rescue StandardError
   end
 
@@ -880,11 +928,12 @@ module AshDroidAudio
       name = File.join(File.dirname(name), alt)
       base = alt
     end
-    if AshDroidText.spanish? && enabled? && File.directory?(ES_DIR)
-      hit = Dir.children(ES_DIR).find { |f| f.sub(/\.[^.]+\z/, "").casecmp?(base) }
+    d = dir
+    if d && enabled? && File.directory?(d)
+      hit = Dir.children(d).find { |f| f.sub(/\.[^.]+\z/, "").casecmp?(base) }
       if hit
-        AshDroidLog.log("audio es: #{base} -> #{hit}")
-        return File.join(ES_DIR, hit)
+        AshDroidLog.log("audio #{d}: #{base} -> #{hit}")
+        return File.join(d, hit)
       end
     end
     name

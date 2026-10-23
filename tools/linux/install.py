@@ -267,13 +267,14 @@ def install_patch(game, music):
             rel = os.path.relpath(src, PAYLOAD)
             if rel == "VERSION.txt":
                 continue
-            if not music and rel.lower().startswith("ashdroid_audio_es"):
+            if not music and rel.lower().startswith("ashdroid_audio_"):
                 continue
             dst = os.path.join(game, rel)
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             shutil.copyfile(src, dst)
     if not music:
-        shutil.rmtree(os.path.join(game, "ashdroid_audio_es"), ignore_errors=True)
+        for l in ("es", "fr", "de"):
+            shutil.rmtree(os.path.join(game, "ashdroid_audio_" + l), ignore_errors=True)
     edit_conf(game, True)
     try:
         with open(os.path.join(PAYLOAD, "VERSION.txt")) as f:
