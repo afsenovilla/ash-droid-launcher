@@ -24,6 +24,7 @@ import sys
 import tarfile
 import time
 import zipfile
+import zlib
 
 TITLE = "Fire Ash · Español (España)"
 APP_NAME = "Pokémon Fire Ash"
@@ -444,6 +445,152 @@ def find_art(game):
     return None
 
 
+# ------------------------------------------------------------ library art
+# Steam's library (game mode) shows a vertical cover (<appid>p.png, 600x900); a wide image alone
+# leaves a blank capsule. Built from the game's own title screen with a tiny PNG reader/writer
+# (standard library only), so no game files are shipped.
+
+def _png_read(path):
+    with open(path, "rb") as f:
+        data = f.read()
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError("not a PNG")
+    i, idat, plte, trns = 8, b"", None, None
+    while i < len(data):
+        n, t = struct.unpack(">I4s", data[i:i + 8])
+        c = data[i + 8:i + 8 + n]
+        if t == b"IHDR":
+            w, h, depth, ctype, _, _, interlace = struct.unpack(">IIBBBBB", c)
+        elif t == b"PLTE":
+            plte = c
+        elif t == b"tRNS":
+            trns = c
+        elif t == b"IDAT":
+            idat += c
+        i += 12 + n
+    if depth != 8 or interlace or ctype not in (0, 2, 3, 4, 6):
+        raise ValueError("unsupported PNG")
+    bpp = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}[ctype]
+    raw = zlib.decompress(idat)
+    stride = w * bpp
+    rows, prev, o = [], bytearray(stride), 0
+    for _ in range(h):
+        ft = raw[o]; line = bytearray(raw[o + 1:o + 1 + stride]); o += 1 + stride
+        for x in range(stride):
+            a = line[x - bpp] if x >= bpp else 0
+            b = prev[x]
+            cc = prev[x - bpp] if x >= bpp else 0
+            if ft == 1:
+                line[x] = (line[x] + a) & 255
+            elif ft == 2:
+                line[x] = (line[x] + b) & 255
+            elif ft == 3:
+                line[x] = (line[x] + ((a + b) >> 1)) & 255
+            elif ft == 4:
+                pa, pb, pc = abs(b - cc), abs(a - cc), abs(a + b - 2 * cc)
+                line[x] = (line[x] + (a if pa <= pb and pa <= pc else b if pb <= pc else cc)) & 255
+        rows.append(line); prev = line
+    px = []  # RGB rows
+    for line in rows:
+        out = bytearray()
+        for x in range(w):
+            if ctype == 2:
+                out += line[3 * x:3 * x + 3]
+            elif ctype == 6:
+                r, g, b, al = line[4 * x:4 * x + 4]
+                out += bytes((r * al // 255, g * al // 255, b * al // 255))
+            elif ctype == 3:
+                k = line[x]
+                r, g, b = plte[3 * k:3 * k + 3]
+                al = trns[k] if trns and k < len(trns) else 255
+                out += bytes((r * al // 255, g * al // 255, b * al // 255))
+            else:
+                v = line[x * bpp]
+                out += bytes((v, v, v))
+        px.append(out)
+    return w, h, px
+
+
+def _png_write(path, w, h, rows):
+    raw = b"".join(b"\x00" + bytes(r) for r in rows)
+    def chunk(t, c):
+        return struct.pack(">I", len(c)) + t + c + struct.pack(">I", binascii.crc32(t + c) & 0xFFFFFFFF)
+    with open(path, "wb") as f:
+        f.write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0)) +
+                chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+
+
+def _crop(src, box):
+    w, h, px = src
+    x0, y0, x1, y1 = box
+    return x1 - x0, y1 - y0, [r[3 * x0:3 * x1] for r in px[y0:y1]]
+
+
+def _canvas(src, cw, ch, cover=False, bg=(16, 16, 16)):
+    """Scales the image into cw x ch, centred, nearest-neighbour: whole image (borders) or cover (cropped)."""
+    w, h, px = src
+    k = (max if cover else min)(cw / w, ch / h)
+    nw, nh = max(1, int(round(w * k))), max(1, int(round(h * k)))
+    ox, oy = (cw - nw) // 2, (ch - nh) // 2
+    cols = [(x, min(w - 1, int((x - ox) / k))) for x in range(max(0, ox), min(cw, ox + nw))]
+    blank = bytes(bg) * cw
+    rows = []
+    for y in range(ch):
+        if y < oy or y >= oy + nh:
+            rows.append(bytearray(blank)); continue
+        line = px[min(h - 1, int((y - oy) / k))]
+        r = bytearray(blank)
+        for x, sx in cols:
+            r[3 * x:3 * x + 3] = line[3 * sx:3 * sx + 3]
+        rows.append(r)
+    return rows
+
+
+def _paste(rows, img, x0, y0):
+    w, h, px = img
+    for y in range(h):
+        rows[y0 + y][3 * x0:3 * (x0 + w)] = px[y]
+
+
+def _images(src):
+    """{suffix: (w, h, rows)} for the library: vertical cover, wide capsule and banner."""
+    w, h, _ = src
+    if (w, h) == (512, 384):
+        # Fire Ash's title screen: picture between two bars (y 48-310), logo top right
+        cover = _canvas(_crop(src, (95, 48, 270, 310)), 600, 900, cover=True)
+        logo = _crop(src, (282, 14, 512, 122))  # with the black bar above it, as a header
+        lw, lh = 600, int(600 * 108 / 230)
+        _paste(cover, (lw, lh, _canvas(logo, lw, lh, cover=True)), 0, 0)
+        return {"p": (600, 900, cover),
+                "": (920, 430, _canvas(_crop(src, (0, 48, 512, 288)), 920, 430, cover=True)),
+                "_hero": (1920, 620, _canvas(_crop(src, (0, 48, 512, 213)), 1920, 620, cover=True))}
+    return {sfx: (cw, ch, _canvas(src, cw, ch)) for sfx, cw, ch in
+            (("p", 600, 900), ("", 920, 430), ("_hero", 1920, 620))}
+
+
+def write_art(grid, appid, art):
+    """Vertical cover, wide capsule and banner for the Steam library."""
+    os.makedirs(grid, exist_ok=True)
+    try:
+        for suffix, (cw, ch, rows) in _images(_png_read(art)).items():
+            _png_write(os.path.join(grid, "%d%s.png" % (appid, suffix)), cw, ch, rows)
+    except Exception:  # noqa: BLE001  (unexpected PNG: use it as is)
+        for suffix in ("p", "", "_hero"):
+            shutil.copyfile(art, os.path.join(grid, "%d%s.png" % (appid, suffix)))
+
+
+def update_art(root, game, launcher):
+    """Library images only (used by updates, which don't touch shortcuts.vdf)."""
+    art = find_art(game)
+    if not art:
+        return
+    appid = shortcut_appid('"%s"' % launcher, APP_NAME)
+    for user in steam_users(root):
+        grid = os.path.join(user, "config", "grid")
+        if os.path.isdir(os.path.dirname(grid)):
+            write_art(grid, appid, art)
+
+
 def add_to_steam(root, game, launcher):
     exe = '"%s"' % launcher
     appid = shortcut_appid(exe, APP_NAME)
@@ -469,10 +616,7 @@ def add_to_steam(root, game, launcher):
             shutil.copy2(path, path + ".ashdroid.bak")
         vdf_save(path, data)
         if art:
-            grid = os.path.join(user, "config", "grid")
-            os.makedirs(grid, exist_ok=True)
-            for suffix in ("", "_hero"):  # horizontal capsule and banner
-                shutil.copyfile(art, os.path.join(grid, "%d%s.png" % (appid, suffix)))
+            write_art(os.path.join(user, "config", "grid"), appid, art)
     return len(users)
 
 
@@ -489,7 +633,7 @@ def remove_from_steam(root, launcher):
             data["shortcuts"] = {str(i): v for i, v in enumerate(keep)}
             vdf_save(path, data)
         appid = shortcut_appid(exe, APP_NAME)
-        for suffix in ("", "_hero"):
+        for suffix in ("", "p", "_hero"):
             img = os.path.join(user, "config", "grid", "%d%s.png" % (appid, suffix))
             if os.path.exists(img):
                 os.remove(img)
@@ -591,6 +735,14 @@ def main():
             install_patch(game, not a.no_music)
             install_engine(game)
             n = add_to_steam(root, game, launcher) if root else 0
+            if not root and a.no_steam:
+                # Update from the game: the shortcut is already there; just (re)make its library images
+                try:
+                    sr = steam_root(a.steam_root)
+                    if sr:
+                        update_art(sr, game, launcher)
+                except Exception:  # noqa: BLE001
+                    pass
             msg = "¡Listo!\n\n"
             if n:
                 msg += ('"%s" ya está en tu biblioteca de Steam (en "No-Steam").\n'
