@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-10-26
+
+### Fixed
+- Steam Deck: in-game text no longer sits too low or gets cut off at the bottom.
+- Spanish: the “You haven't found any Coins! Are you sure you want to quit?” confirmation is now translated.
+
 ## [0.4.4] - 2026-10-23
 
 ### Changed
