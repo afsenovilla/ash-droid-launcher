@@ -90,6 +90,8 @@ module AshDroidText
   # Only applied when the game is set to Spanish. The "(Default: X)" part is kept
   # and then turned into the device's button by FIXES below.
   ES = [
+    [/\AYou haven't found any Coins! Are you sure you want to quit\?\z/,
+      "No has encontrado ninguna ficha. ¿Seguro que quieres salir?"],
     [/\AUsed to open the Pause Menu\..*?(\(Default:[^)]*\))?\s*\z/m,
      "Se usa para abrir el Menú de Pausa. También sirve para salir, cancelar una elección y cancelar un modo."],
     [/\AUsed to exit, cancel a choice or mode, and open the pause menu\..*?(\(Default:[^)]*\))?\s*\z/m,
@@ -647,6 +649,7 @@ begin
         begin
           orig = instance_method(name)
           define_method(name) do |message, *args, &blk|
+            message = AshDroidText.translate(message) if message.is_a?(String)
             r = orig.bind(self).call(message, *args, &blk)
             $ashdroid_quitting = true if r && message.to_s =~ /quit the game|salir del juego/i
             r
