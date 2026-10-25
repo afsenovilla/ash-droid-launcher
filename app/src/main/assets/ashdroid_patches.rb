@@ -585,8 +585,14 @@ begin
     def draw_text(*args)
       begin
         text = args.length >= 5 ? args[4] : args[1]
-        if text.is_a?(String) && text =~ ASHDROID_TALL
-          d = AshDroidFixes.tall_shift(self, text)
+        if text.is_a?(String)
+          d = if ASHDROID_DECK
+          4
+        elsif text =~ ASHDROID_TALL
+          AshDroidFixes.tall_shift(self, text)
+        else
+          0
+        end
           if d != 0
             if args.length >= 5
               args = args.dup
