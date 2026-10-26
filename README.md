@@ -63,6 +63,16 @@ buttons (A, B, X, Y, L1, R1, R3…) in texts and images; ☰ opens the menu.
 Updates: the Android app checks for new releases and installs them in place; on the Steam Deck the game checks
 when it starts and offers to update the patch. On Windows, download the new zip and run the installer again.
 
+## Anbernic H700 consoles (RG34XX, RG35XX…)
+
+A fourth zip, `FireAsh-Patch-Handheld-H700-X.Y.Z.zip`, is for Linux handhelds with an Allwinner H700 (tested
+target: RG34XX with [Knulli](https://knulli.org)). It carries a native **ARM64** build of mkxp-z and the same
+patch. Copy the zip's contents and the game's `.zip` into the console's `ports` folder and run
+"Fire Ash - Instalar" from the Ports menu: it unpacks the game, installs the patch and engine, and adds a
+"Fire Ash" entry. No Python or PC needed. The consoles have no stick clicks, so L2 / R2 do what L3 / R3 do on
+the Deck, and the texts show the console's buttons. See the `LEEME.txt` inside the zip.
+Other low-end Linux handhelds (e.g. Miyoo Mini, 128 MB RAM, no usable GPU driver) can't run mkxp-z.
+
 ## To do
 
 - Images with text (titles, menus, badges…) redrawn in French and German, as already done for Spanish.
@@ -86,13 +96,14 @@ over the previous one without losing data.
 ## Versions and releases
 
 Versions follow [Semantic Versioning](https://semver.org/); changes are listed in [CHANGELOG.md](CHANGELOG.md).
-Each release (`vX.Y.Z` tag) has three downloads:
+Each release (`vX.Y.Z` tag) has four downloads:
 
 | Platform | File |
 |---|---|
 | Android | `ash-droid-launcher-X.Y.Z.apk` |
 | Windows | `FireAsh-Patch-Windows-X.Y.Z.zip` |
 | Steam Deck / Linux | `FireAsh-Patch-SteamDeck-Linux-X.Y.Z.zip` |
+| Anbernic H700 consoles (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-X.Y.Z.zip` |
 
 To release: add a `## [X.Y.Z]` section at the top of the changelog and push it to `main`; the workflow
 tags `vX.Y.Z` and publishes the release. Any other push to `main` is only built, never published.

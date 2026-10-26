@@ -6,6 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.9] - 2026-10-26
+
+### Added
+- Anbernic H700 consoles (RG34XX, RG35XX…, running Knulli): a fourth package in every release,
+  `FireAsh-Patch-Handheld-H700-X.Y.Z.zip`, with a native ARM64 build of mkxp-z and the same patch.
+  "Fire Ash - Instalar" (run from the Ports menu, no Python or PC needed) unpacks the game, installs the
+  patch and engine and adds a "Fire Ash" entry. L2 / R2 do what L3 / R3 do on the Steam Deck (these
+  consoles have no stick clicks) and the texts and images show the console's buttons.
+
 ## [0.4.8] - 2026-10-26
 
 ### Fixed

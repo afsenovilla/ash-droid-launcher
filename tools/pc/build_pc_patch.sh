@@ -2,7 +2,10 @@
 # Builds the PC patch packages attached to each release:
 #   tools/pc/build_pc_patch.sh windows OUT.zip VERSION "Instalar parche.exe"
 #   tools/pc/build_pc_patch.sh linux   OUT.zip VERSION mkxp-z-linux-x86_64.tar.gz
-# The .exe comes from the "PC installer" workflow, the Linux engine from "Linux runtime".
+#   tools/pc/build_pc_patch.sh handheld OUT.zip VERSION mkxp-z-linux-aarch64.tar.gz
+# The .exe comes from the "PC installer" workflow, the Linux engines from "Linux runtime".
+# The handheld zip (Anbernic H700 consoles) has no wrapper folder: its contents are copied
+# straight into the console's ports folder.
 # No game files are shipped: the images with Spanish lettering / Steam Deck buttons are
 # redrawn by the patch itself, from the player's own copy of the game, while it runs.
 set -euo pipefail
@@ -13,9 +16,11 @@ A="$ROOT/app/src/main/assets"
 case "$TARGET" in
   windows) TOP="$TMP/Fire Ash - Parche Ash Droid - Windows" ;;
   linux)   TOP="$TMP/Fire Ash - Parche Ash Droid - Steam Deck" ;;
-  *) echo "target: windows | linux" >&2; exit 1 ;;
+  handheld) TOP="$TMP/zip" ;;
+  *) echo "target: windows | linux | handheld" >&2; exit 1 ;;
 esac
-P="$TOP/parche"; mkdir -p "$P"
+if [ "$TARGET" = handheld ]; then P="$TOP/FireAsh-Patch/parche"; else P="$TOP/parche"; fi
+mkdir -p "$P"
 cp "$A/ashdroid_patches.rb" "$A/ashdroid_art.rb" "$A/packs/fire-ash/ashdroid_es.dat" "$A/packs/fire-ash/ashdroid_es_ES.dat" "$A/packs/fire-ash/ashdroid_en.dat" "$A/packs/fire-ash/ashdroid_fr.dat" "$A/packs/fire-ash/ashdroid_de.dat" "$P/"
 ruby "$ROOT/tools/art/make_art_dat.rb" "$A/packs/fire-ash/art.json" "$P/ashdroid_art.dat" >/dev/null
 for l in es fr de; do mkdir -p "$P/ashdroid_audio_$l"; cp "$A/packs/fire-ash/audio_$l/"* "$P/ashdroid_audio_$l/"; done
@@ -24,6 +29,11 @@ printf '%s' "$VER" > "$P/VERSION.txt"
 if [ "$TARGET" = windows ]; then
   cp "$EXTRA" "$TOP/Instalar parche.exe"
   sed "s/\r\?$/\r/" "$ROOT/tools/pc/LEEME.txt" > "$TOP/LEEME.txt"
+elif [ "$TARGET" = handheld ]; then
+  cp "$EXTRA" "$TOP/FireAsh-Patch/mkxp-z-linux-aarch64.tar.gz"
+  cp "$ROOT/tools/handheld/Fire Ash - Instalar.sh" "$ROOT/tools/handheld/Fire Ash - Desinstalar.sh" "$TOP/"
+  cp "$ROOT/tools/handheld/LEEME.txt" "$TOP/LEEME.txt"
+  chmod 755 "$TOP/Fire Ash - Instalar.sh" "$TOP/Fire Ash - Desinstalar.sh"
 else
   mkdir -p "$TOP/steamdeck"
   cp "$ROOT/tools/linux/install.py" "$ROOT/tools/linux/update.py" "$ROOT/tools/linux/cover.png" "$TOP/steamdeck/"
@@ -32,5 +42,6 @@ else
   chmod 755 "$TOP/Instalar en Steam Deck.sh" "$TOP/steamdeck/install.py"
 fi
 
-rm -f "$OUT"; (cd "$TMP" && zip -qr "$OUT" "$(basename "$TOP")")
+rm -f "$OUT"
+if [ "$TARGET" = handheld ]; then (cd "$TOP" && zip -qr "$OUT" .); else (cd "$TMP" && zip -qr "$OUT" "$(basename "$TOP")"); fi
 rm -rf "$TMP"; echo "$OUT"

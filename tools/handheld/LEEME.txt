@@ -1,0 +1,36 @@
+PARCHE ASH DROID PARA POKÉMON FIRE ASH (CONSOLAS ANBERNIC H700: RG34XX, RG35XX..., CON KNULLI)
+==============================================================================================
+
+El mismo parche que usa Ash Droid Launcher en Android: retraducción completa del juego al castellano
+de España, al francés y al alemán, con los nombres oficiales y la intro cantada en cada idioma (en
+inglés solo corrige descripciones que no caben). Aquí va con el motor nativo de Linux (mkxp-z) para
+ARM64, sin emuladores ni Proton. No modifica los archivos del juego (solo una copia de seguridad,
+mkxp.json.bak, y unas líneas en mkxp.json). Tus partidas no se tocan.
+
+CÓMO INSTALARLO
+1. Descarga el juego (la versión de Windows, desde su Discord) y este zip.
+2. Descomprime ESTE zip y copia TODO su contenido (los dos .sh, FireAsh-Patch y LEEME) a la carpeta
+   "ports" de la consola (en Knulli: share/roms/ports, por red o con la SD en el PC).
+   Copia también ahí el zip del juego tal cual se descarga (o la carpeta ya descomprimida).
+3. En la consola, abre Ports > "Fire Ash - Instalar". Descomprime el juego (unos minutos), instala el
+   parche y el motor y crea "Fire Ash".
+4. Actualiza las listas de juegos (START > Opciones de juego > Actualizar listas de juegos) y abre
+   "Fire Ash" desde Ports. La primera vez tarda un poco en arrancar.
+Si algo falla, mira "Fire Ash - instalacion.log" (junto al instalador) y "FireAsh/ashdroid_run.log".
+
+BOTONES
+Los textos del juego muestran los botones de la consola. No hay clic de palancas en estas consolas:
+L2 hace lo que L3 en la Steam Deck (velocidad/atajos) y R2 lo que R3. START también abre el menú
+(como B). Si los nombres A/B/X/Y no coinciden con lo que ves impreso en tu consola (por ejemplo,
+confirmar es el botón "B"), edita FireAsh/ashdroid_handheld.txt y pon: layout=swap
+
+SI NO ARRANCA O VA MAL
+Crea un archivo FireAsh/ashdroid_env.sh con líneas como estas y vuelve a abrir el juego:
+  export SDL_VIDEODRIVER=kmsdrm      (o x11 / wayland, según el firmware)
+  export SDL_AUDIODRIVER=alsa
+y pásame FireAsh/ashdroid_run.log y ashdroid_patch.log.
+
+PARA QUITARLO
+Abre Ports > "Fire Ash - Desinstalar": quita el parche y el motor (el juego y las partidas se quedan).
+
+Proyecto: https://github.com/afsenovilla/ash-droid-launcher
