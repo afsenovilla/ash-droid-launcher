@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.13] - 2026-10-27
+
 ### Fixed
 - Accented capitals sat lower than their neighbours wherever the fix didn't know them (Ã and Õ on the
   naming keyboard): every non-ASCII capital is now measured on its own, in any language, and a line is
