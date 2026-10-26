@@ -125,6 +125,34 @@ module AshDroidText
     @pack
   end
 
+  # Messages the game's scripts write in English without _INTL, so no language file has them.
+  # Their translations are in the retranslation packs; they're swapped in when the message
+  # window gets the text.
+  HARDCODED = [
+    "The harsh sunlight faded!",
+    "The heavy rain has lifted!",
+    "The mysterious air current has dissipated!",
+    "The thunderstorm cleared up.",
+    "The tides subsided.",
+    "The earthquakes ended.",
+    "The heat wave ended.",
+    "Select an effect to use.",
+    "Can't place that there.",
+    "Please remove the mail.",
+    "All boxes are full.",
+    "You're holding a Pokémon!",
+    "You haven't found any Coins! Are you sure you want to quit?"
+  ].freeze
+
+  def self.hardcoded(v)
+    return v unless v.is_a?(String) && HARDCODED.include?(v)
+    t = translate(v)
+    return t unless t == v
+    retrans_pack[norm(v)] || v
+  rescue StandardError
+    v
+  end
+
   def self.norm(s)
     s.gsub(/\s+/, " ").strip
   end
@@ -586,13 +614,10 @@ begin
       begin
         text = args.length >= 5 ? args[4] : args[1]
         if text.is_a?(String)
-          d = if ASHDROID_DECK
-          4
-        elsif text =~ ASHDROID_TALL
-          AshDroidFixes.tall_shift(self, text)
-        else
-          0
-        end
+          # Steam Deck with the game's own fonts (installed before the fixed copies existed):
+          # the engine centres the text on a line height that is far too short, so it sits low.
+          d = ASHDROID_DECK ? AshDroidFixes.deck_shift(self) : 0
+          d += AshDroidFixes.tall_shift(self, text) if text =~ ASHDROID_TALL
           if d != 0
             if args.length >= 5
               args = args.dup
@@ -778,6 +803,12 @@ module AshDroidFixes
   end
 
   # Leaving the save screen ends the "quitting" context
+  module HardcodedTextWindow
+    def text=(value)
+      super(AshDroidText.hardcoded(value))
+    end
+  end
+
   module SaveScreenQuit
     def pbSaveScreen
       super
@@ -856,18 +887,48 @@ module AshDroidFixes
     textpos
   end
 
-  # Half of the extra height that accented capitals add to a text surface
+  # Accented capitals (É, Ú…) rise above the font's ascent. Engines that size the text
+  # surface to its contents make it taller and centre it, so the line holding one sinks a
+  # little (and a lone "É" in a message, drawn letter by letter, sits lower than "ter").
+  # Measured once per font by drawing "E" and "É" and comparing where their ink ends:
+  # 0 where the engine doesn't do that.
   def self.tall_shift(bitmap, text)
     f = bitmap.font
     key = [f.name.to_s, f.size, f.bold]
     @tall ||= {}
     return @tall[key] if @tall.key?(key)
-    tall = bitmap.text_size("ÁÉÍÓÚ").height
-    base = bitmap.text_size("AEIOU").height
-    d = tall > base ? (tall - base) / 2 : 0
+    @tall[key] = 0
+    h = f.size.to_i + 3
+    w = f.size.to_i * 2
+    bottoms = ["E", "É"].map do |ch|
+      b = Bitmap.new(w, h)
+      b.font.name = f.name
+      b.font.size = f.size
+      b.font.bold = f.bold
+      b.font.color = Color.new(255, 255, 255)
+      b.__ashdroid_draw_text(0, 0, w, h, ch)
+      y = (h - 1).downto(0).find { |yy| (0...w).any? { |x| b.get_pixel(x, yy).alpha > 0 } }
+      b.dispose
+      y
+    end
+    d = bottoms.all? ? bottoms[1] - bottoms[0] : 0
+    d = 0 if d < 0 || d > h / 3
+    AshDroidLog.log("tall text #{key.inspect}: E=#{bottoms[0].inspect} É=#{bottoms[1].inspect} shift=#{d}")
     @tall[key] = d
-    AshDroidLog.log("tall text #{key.inspect}: base=#{base} tall=#{tall} shift=#{d}")
-    d
+  rescue StandardError
+    0
+  end
+
+  # Upward shift for the Steam Deck when its engine still reports a line height of ~40% of the
+  # font size (game's own fonts, see tools/linux/install.py): half the missing height.
+  def self.deck_shift(bitmap)
+    f = bitmap.font
+    key = [f.name.to_s, f.size]
+    @deck ||= {}
+    return @deck[key] if @deck.key?(key)
+    fs = f.size.to_i
+    h = bitmap.__ashdroid_text_size("A").height
+    @deck[key] = h > 0 && h < fs * 0.6 ? [(fs - h) / 4, 4].min : 0
   rescue StandardError
     0
   end
@@ -928,6 +989,7 @@ module AshDroidFixes
     "Trainer" => TrainerES,
     "PokemonOption_Scene" => OptionsAshDroid,
     "PokemonSaveScreen" => SaveScreenQuit,
+    "Window_AdvancedTextPokemon" => HardcodedTextWindow,
     "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
     "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
     "PokemonSystem" => PokemonSystemLang,

@@ -25632,5 +25632,15 @@
  "@3:1100": "Con un grito de guerra espeluznante, este enorme y feroz Pokémon pájaro sale de caza. Sacude los lagos con ondas de choque y recoge las presas que flotan.",
  "@3:1174": "El aire del raquis de las plumas de Decidueye lo aísla del frío extremo de Hisui. Es una prueba clara de que el entorno puede influir en la evolución.",
  "@3:1216": "Absorbe la fuerza vital de quien lo bebe. Espera con paciencia, pero las ocasiones son efímeras: sabe tan horrible que lo escupen enseguida.",
- "@3:1289": "Cuando vuela hasta esta tierra desde allende el mar, el duro invierno termina. Según la leyenda, su amor hace brotar nueva vida por todo Hisui."
+ "@3:1289": "Cuando vuela hasta esta tierra desde allende el mar, el duro invierno termina. Según la leyenda, su amor hace brotar nueva vida por todo Hisui.",
+ "The harsh sunlight faded!": "¡El sol ha dejado de brillar con fuerza!",
+ "The heavy rain has lifted!": "¡Ha dejado de llover a cántaros!",
+ "The mysterious air current has dissipated!": "¡Las misteriosas turbulencias han amainado!",
+ "The thunderstorm cleared up.": "La tormenta eléctrica ha amainado.",
+ "The tides subsided.": "La marea ha bajado.",
+ "The earthquakes ended.": "Los terremotos han cesado.",
+ "The heat wave ended.": "La ola de calor ha terminado.",
+ "Select an effect to use.": "Elige el efecto que quieres usar.",
+ "Can't place that there.": "No se puede dejar ahí.",
+ "You haven't found any Coins! Are you sure you want to quit?": "No has encontrado ninguna ficha. ¿Seguro que quieres salir?"
 }

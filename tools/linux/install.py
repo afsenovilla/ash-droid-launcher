@@ -262,6 +262,90 @@ def edit_conf(game, add):
         f.write(t)
 
 
+# ------------------------------------------------------------------- fonts
+# The game's Power Green / Power Clear fonts store their descent as a positive number. Windows
+# and the Android engine read other fields, but the native Linux engine (SDL_ttf + FreeType)
+# takes it literally: a line is then only ~40% of the font size tall and the text is drawn low
+# with the bottom of p, g, y… cut off. Copies with sane metrics (the font's own Windows ascent
+# and descent) are added to Fonts/ under another family name, and mkxp.json substitutes them.
+# The game's own font files are not touched.
+FONT_FIXES = [("power green.ttf", "AshDroid Power Green"), ("power clear.ttf", "AshDroid Power Clear")]
+FONT_MARK = '"fontSub": ["power green>ashdroid power green", "power clear>ashdroid power clear"],'
+
+
+def _table_checksum(b):
+    b = bytes(b) + b"\0" * (-len(b) % 4)
+    return sum(struct.unpack(">%dI" % (len(b) // 4), b)) & 0xFFFFFFFF
+
+
+def fixed_font(src, family):
+    data = bytearray(open(src, "rb").read())
+    n = struct.unpack(">H", data[4:6])[0]
+    recs = {}
+    for i in range(n):
+        o = 12 + 16 * i
+        recs[bytes(data[o:o + 4])] = (o,) + struct.unpack(">III", data[o + 4:o + 16])
+    _, _, off, _ = recs[b"OS/2"]
+    win_asc, win_desc = struct.unpack(">HH", data[off + 74:off + 78])
+    _, _, off, _ = recs[b"hhea"]
+    data[off + 4:off + 10] = struct.pack(">hhh", win_asc, -win_desc, 0)  # ascender, descender, lineGap
+    _, _, off, _ = recs[b"OS/2"]
+    data[off + 68:off + 74] = struct.pack(">hhh", win_asc, -win_desc, 0)  # sTypoAscender/Descender/LineGap
+    names = [(1, family), (2, "Regular"), (4, family), (6, family.replace(" ", "-"))]
+    entries, strs = [], b""
+    for pid, eid, lid, enc in ((1, 0, 0, "latin-1"), (3, 1, 0x409, "utf-16-be")):
+        for nid, text in names:
+            b = text.encode(enc)
+            entries.append(struct.pack(">HHHHHH", pid, eid, lid, nid, len(b), len(strs)))
+            strs += b
+    table = struct.pack(">HHH", 0, len(entries), 6 + 12 * len(entries)) + b"".join(entries) + strs
+    data += b"\0" * (-len(data) % 4)
+    new_off = len(data)
+    data += table + b"\0" * (-len(table) % 4)
+    o = recs[b"name"][0]
+    data[o + 4:o + 16] = struct.pack(">III", _table_checksum(table), new_off, len(table))
+    for tag in (b"hhea", b"OS/2"):
+        o, _, off, ln = recs[tag]
+        data[o + 4:o + 8] = struct.pack(">I", _table_checksum(data[off:off + ln]))
+    return bytes(data)
+
+
+def install_fonts(game):
+    fonts = os.path.join(game, "Fonts")
+    done = 0
+    for name, family in FONT_FIXES:
+        src = next((os.path.join(fonts, f) for f in (os.listdir(fonts) if os.path.isdir(fonts) else [])
+                    if f.lower() == name), None)
+        if not src:
+            continue
+        try:
+            with open(os.path.join(fonts, "ashdroid_" + name.replace(" ", "_")), "wb") as f:
+                f.write(fixed_font(src, family))
+            done += 1
+        except Exception as e:  # noqa: BLE001
+            print("font %s: %s" % (name, e))
+    conf = os.path.join(game, "mkxp.json")
+    with open(conf, encoding="utf-8-sig") as f:
+        t = f.read()
+    if done and FONT_MARK not in t and not re.search(r'(?m)^\s*"fontSub"', t):
+        i = t.find("{")
+        t = t[:i + 1] + "\n  " + FONT_MARK + t[i + 1:]
+        with open(conf, "w", encoding="utf-8") as f:
+            f.write(t)
+
+
+def uninstall_fonts(game):
+    for p in glob.glob(os.path.join(game, "Fonts", "ashdroid_*")):
+        os.remove(p)
+    conf = os.path.join(game, "mkxp.json")
+    with open(conf, encoding="utf-8-sig") as f:
+        t = f.read()
+    if FONT_MARK in t:
+        t = re.sub(r"\n?[ \t]*" + re.escape(FONT_MARK), "", t)
+        with open(conf, "w", encoding="utf-8") as f:
+            f.write(t)
+
+
 def install_patch(game, music):
     for root, _, files in os.walk(PAYLOAD):
         for fn in files:
@@ -327,6 +411,7 @@ def install_engine(game):
 
 def uninstall(game):
     edit_conf(game, False)
+    uninstall_fonts(game)
     for p in glob.glob(os.path.join(game, "ashdroid_*")):
         if os.path.isdir(p):
             shutil.rmtree(p, ignore_errors=True)
@@ -738,6 +823,7 @@ def main():
             # The Spanish intro is switched in the game (Options -> "Música en castellano", off by default)
             install_patch(game, not a.no_music)
             install_engine(game)
+            install_fonts(game)
             n = add_to_steam(root, game, launcher) if root else 0
             if not root and a.no_steam:
                 # Update from the game: the shortcut is already there; just (re)make its library images

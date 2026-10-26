@@ -6,6 +6,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Steam Deck: text sat low and the bottom of p, g, y… was cut off. The cause is in the game's fonts (their
+  descent is stored as a positive number, which the Linux engine takes literally, so a line was only
+  ~40% of the font size tall). The installer and updates now add corrected copies of the fonts and
+  use them; the game's own files aren't touched. The 4-pixel shift is only kept for installs that
+  don't have them yet.
+- Accented capitals (Éter, Último…) no longer sit lower than the rest of the word: the offset is now
+  measured from the rendered letters (the earlier fix measured text heights, which don't change).
+- Messages the game writes in English in every language (weather ending in battle, Box and Purify
+  Chamber notices, Voltorb Flip's quit question…) are translated in Spanish, French and German.
+
 ## [0.4.5] - 2026-10-26
 
 ### Fixed
