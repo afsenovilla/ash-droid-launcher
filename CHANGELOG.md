@@ -6,15 +6,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.9] - 2026-10-26
+
 ### Fixed
 - H700 consoles: the installer stopped at "No he podido instalar el motor". The ports folder is on the card's
   exFAT/FAT partition, which can't keep file owners, and tar gave up trying to restore them; it no longer
   tries. tar's own messages now go to the install log.
 
 ### Changed
-- H700 consoles: the installer shows its progress on screen (unzipping percentage, each step, and the
-  result for a few seconds) instead of leaving it black, and "Fire Ash" shows "Cargando Fire Ash..."
-  while the engine starts.
+- H700 consoles: the installer draws its own screen instead of leaving it black: a title, each step
+  with [ OK ] / [FALLO], a progress bar while it unzips the game, and at the end either what to do next
+  or the error in red with what to try and the last lines the tools wrote (it stays on screen for 30
+  seconds). "Fire Ash" shows "Cargando Fire Ash..." while the engine starts.
 
 ## [0.4.8] - 2026-10-26
 
