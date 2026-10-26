@@ -16,6 +16,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   measured from the rendered letters (the earlier fix measured text heights, which don't change).
 - Messages the game writes in English in every language (weather ending in battle, Box and Purify
   Chamber notices, Voltorb Flip's quit question…) are translated in Spanish, French and German.
+- Spanish (Spain): prize menus showed "No" and "gracias" as two options (the comma split them); now
+  "No gracias".
+- Spanish (Spain): Copycat is "la Copiona", her official name (was "Imitadora").
 
 ## [0.4.5] - 2026-10-26
 
