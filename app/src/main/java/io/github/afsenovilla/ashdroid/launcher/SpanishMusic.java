@@ -16,7 +16,7 @@ import java.util.Set;
  * e.g. the Spanish, French and German intro). They are copied to
  * <game>/ashdroid_audio_<lang>/; the runtime patch plays them instead of the track
  * with the same file name only while the game is in that language and its in-game
- * option ("Música en castellano"…) is on (off by default).
+ * option ("Intro en español"…) is on (off by default).
  */
 final class SpanishMusic
 {

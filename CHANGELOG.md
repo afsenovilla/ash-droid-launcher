@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Options: the longer option names ran into their values ("Animaciones de combateSí"). They're shortened
+  to fit with room to spare in Spanish ("Volumen música", "Velocidad texto", "Animaciones", "Desplazamiento"…),
+  French and German; the intro option is now "Intro en español" / "Intro en français" / "Intro (Deutsch)".
+
 ## [0.4.12] - 2026-10-26
 
 ### Fixed

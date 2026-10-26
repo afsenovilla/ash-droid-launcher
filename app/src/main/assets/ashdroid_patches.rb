@@ -1201,11 +1201,11 @@ module AshDroidAudio
 
   # Songs in the game's language (Spanish, French, German intro…), bundled with the
   # patch in ashdroid_audio_<code>/<same file name>. On by default; switched from the
-  # game's Options ("Música en castellano" / "Musique en français" / "Musik auf Deutsch")
+  # game's Options ("Intro en español" / "Intro en français" / "Intro (Deutsch)")
   # while the game is in that language.
-  LANGS = [[/spanish/i, "es", "Música en castellano", ["No", "Sí"]],
-           [/french/i, "fr", "Musique en français", ["Non", "Oui"]],
-           [/german/i, "de", "Musik auf Deutsch", ["Aus", "An"]]]
+  LANGS = [[/spanish/i, "es", "Intro en español", ["No", "Sí"]],
+           [/french/i, "fr", "Intro en français", ["Non", "Oui"]],
+           [/german/i, "de", "Intro (Deutsch)", ["Aus", "An"]]]
   SETTINGS = "ashdroid_settings.txt"
 
   def self.lang

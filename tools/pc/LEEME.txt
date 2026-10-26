@@ -18,7 +18,7 @@ CÓMO INSTALARLO
 4. Si juegas en español, ya lo tienes: el idioma "Spanish" del juego pasa a ser
    "Spanish (Spain)". Si no, elígelo en la pantalla de carga (opción Language).
 5. La intro suena en el idioma del juego (español, francés o alemán). Si prefieres
-   la original, quítala en Opciones del juego ("Música en castellano"…).
+   la original, quítala en Opciones del juego ("Intro en español"…).
 
 Si Windows muestra "Windows protegió tu PC", pulsa "Más información" > "Ejecutar de
 todas formas" (el programa no está firmado).

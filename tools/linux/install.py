@@ -820,7 +820,7 @@ def main():
             uninstall(game)
             msg = "Parche desinstalado. El juego vuelve a estar como antes."
         else:
-            # The Spanish intro is switched in the game (Options -> "Música en castellano", off by default)
+            # The Spanish intro is switched in the game (Options -> "Intro en español")
             install_patch(game, not a.no_music)
             install_engine(game)
             install_fonts(game)
