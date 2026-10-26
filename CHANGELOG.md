@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Naming screen: the narrowed nickname slots ran together into one line; they have gaps again.
+- Android: the naming screen tabs read "ABC" and "O RO" instead of "abc" and "Otros" (the app drew
+  the lettering in capitals only, and the tab font has no capital T or S). Lowercase is now kept,
+  as on PC and Steam Deck; this also affects Voltorb Flip's memo button.
+
 ## [0.4.7] - 2026-10-26
 
 ### Fixed

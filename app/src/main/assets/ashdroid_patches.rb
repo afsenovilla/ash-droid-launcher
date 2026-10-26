@@ -818,8 +818,9 @@ module AshDroidFixes
       st = ashdroid_step
       if st != 24
         line = Bitmap.new(st, 6)
-        line.fill_rect(2, 2, st - 2, 4, Color.new(168, 184, 184))
-        line.fill_rect(0, 0, st - 2, 4, Color.new(16, 24, 32))
+        # The game's slot is a 22-pixel line plus its shadow in 24: keep a visible gap
+        line.fill_rect(2, 2, st - 6, 4, Color.new(168, 184, 184))
+        line.fill_rect(0, 0, st - 6, 4, Color.new(16, 24, 32))
         @ashdroid_line = line
         @maxlength.times do |i|
           s = @sprites["blank#{i}"]
@@ -846,7 +847,7 @@ module AshDroidFixes
       tp = [[@helptext, 160, 6, false, base, shadow]]
       @helper.textChars.each_with_index do |ch, i|
         w = bgoverlay.text_size(ch).width
-        tp.push([ch, 160 + st * i + [(st - 2 - w) / 2, 0].max, 42, false, base, shadow])
+        tp.push([ch, 160 + st * i + [(st - 6 - w) / 2, 0].max, 42, false, base, shadow])
       end
       pbDrawTextPositions(bgoverlay, tp)
     end

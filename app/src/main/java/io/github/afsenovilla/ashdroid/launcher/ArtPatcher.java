@@ -264,7 +264,6 @@ final class ArtPatcher
         String text = r.optString("text", "");
         for (Map.Entry<String, String> b : buttons.entrySet())
             if (b.getValue() != null) text = text.replace("{" + b.getKey() + "}", b.getValue());
-        text = stripAccents(text).toUpperCase(Locale.ROOT);
         java.util.List<String> names = new java.util.ArrayList<>();
         JSONArray fl = r.optJSONArray("font");
         if (fl != null) for (int i = 0; i < fl.length(); i++) names.add(fl.getString(i));
@@ -287,7 +286,7 @@ final class ArtPatcher
             sum = 0;
             boolean covered = true;
             for (int i = 0; i < text.length(); i++) {
-                String[] g = font.glyphs.get(text.charAt(i));
+                String[] g = pickGlyph(font, text.charAt(i));
                 if (g == null) {
                     if (text.charAt(i) != ' ') covered = false;
                     g = new String[font.h];
@@ -387,6 +386,20 @@ final class ArtPatcher
             if (cur == null) return null;
         }
         return cur.isFile() ? cur : null;
+    }
+
+    /** Same order as ashdroid_art.rb: the character as is (fonts with lowercase, such as "naming"),
+     *  then uppercase, then without its accent. */
+    private static String[] pickGlyph(Font font, char ch)
+    {
+        String s = String.valueOf(ch);
+        String[] tries = { s, s.toUpperCase(Locale.ROOT), stripAccents(s), stripAccents(s).toUpperCase(Locale.ROOT) };
+        for (String t : tries) {
+            if (t.length() != 1) continue;
+            String[] g = font.glyphs.get(t.charAt(0));
+            if (g != null) return g;
+        }
+        return null;
     }
 
     // ------------------------------------------------------------------ fonts
