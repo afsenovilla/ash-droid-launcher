@@ -191,18 +191,21 @@ jobs:
           set -x
           T=$(mktemp -d); tar -C "$T" -xzf out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
           B="$T/mkxp-z.aarch64"
+          # llvm-readelf only exists when the engine was just built (its toolchain is installed then);
+          # with the engine from cache, binutils' readelf (always on the runner) reads aarch64 too
+          RE=$(command -v llvm-readelf || command -v readelf)
           ls -la "$T" | head -30
-          llvm-readelf -h "$B" | grep -E 'Class|Machine|Type'
-          llvm-readelf -h "$B" | grep -q 'AArch64'
+          $RE -h "$B" | grep -E 'Class|Machine|Type'
+          $RE -h "$B" | grep -q 'AArch64'
           # Libraries the console must provide (everything else is linked in)
-          llvm-readelf -d "$B" | grep NEEDED
+          $RE -d "$B" | grep NEEDED
           # Highest glibc symbol version the binary asks for: it must run on old firmware
-          llvm-readelf -V "$B" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -n 3
-          max=$(llvm-readelf -V "$B" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -n 1)
+          $RE -V "$B" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -n 3
+          max=$($RE -V "$B" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -n 1)
           echo "highest glibc: $max"
           printf '%s\n' "highest glibc: $max" >> "$GITHUB_STEP_SUMMARY"
           # Dynamic GLES/EGL must be loaded at run time from the console's own driver, not linked in
-          llvm-readelf -d "$B" | grep NEEDED | grep -E 'libGLESv2|libEGL' && echo "note: links GLES/EGL directly" || true
+          $RE -d "$B" | grep NEEDED | grep -E 'libGLESv2|libEGL' && echo "note: links GLES/EGL directly" || true
 
       - name: Smoke test tools
         if: matrix.arch == 'x86_64' && steps.engine.outputs.cache-hit == 'true'
