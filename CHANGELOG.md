@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.11] - 2026-10-26
+
 ### Fixed
 - H700 consoles: the game now starts. mkxp-z asks SDL for KMSDRM when no video driver is named, and
   Knulli on the H700 only has its Mali driver: "Fire Ash" now names it (mali, then the others).
