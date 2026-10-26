@@ -24,6 +24,17 @@ TITLE = "Pokémon Fire Ash"
 MARK = "ashdroid_pc_version.txt"
 SKIP = "ashdroid_update_skip.txt"
 UA = {"User-Agent": "ash-droid-launcher-linux", "Accept": "application/vnd.github+json"}
+LOG = "ashdroid_update.log"
+_log_dir = "."
+
+
+def log(msg):
+    """What the check did, in <game>/ashdroid_update.log (one run per file)."""
+    try:
+        with open(os.path.join(_log_dir, LOG), "a", encoding="utf-8") as f:
+            f.write(msg + "\n")
+    except OSError:
+        pass
 
 
 def has(cmd):
@@ -31,13 +42,26 @@ def has(cmd):
 
 
 def ask(msg):
-    if has("zenity"):
-        return subprocess.call(["zenity", "--question", "--title", TITLE, "--no-wrap", "--text", msg,
-                                "--ok-label", "Actualizar", "--cancel-label", "Ahora no"]) == 0
-    if has("kdialog"):
-        return subprocess.call(["kdialog", "--title", TITLE, "--yes-label", "Actualizar",
-                                "--no-label", "Ahora no", "--yesno", msg]) == 0
-    return False
+    """True = update, False = the player said "Ahora no", None = no dialog could be shown
+    (then nothing is remembered and it asks again next time)."""
+    for cmd in (["zenity", "--question", "--title", TITLE, "--no-wrap", "--text", msg,
+                 "--ok-label", "Actualizar", "--cancel-label", "Ahora no"],
+                ["kdialog", "--title", TITLE, "--yes-label", "Actualizar", "--no-label", "Ahora no",
+                 "--yesno", msg]):
+        if not has(cmd[0]):
+            continue
+        try:
+            r = subprocess.call(cmd, stderr=subprocess.DEVNULL)
+        except OSError as e:
+            log("%s failed: %s" % (cmd[0], e))
+            continue
+        log("%s answered %d" % (cmd[0], r))
+        if r == 0:
+            return True
+        if r == 1:
+            return False
+        # any other code: the dialog itself failed (no display…), try the next one
+    return None
 
 
 def tell(msg, error=False):
@@ -116,23 +140,44 @@ def download(url, size, dst):
 
 
 def main():
+    global _log_dir
     game = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else os.getcwd())
+    _log_dir = game
+    try:
+        open(os.path.join(game, LOG), "w").close()
+    except OSError:
+        pass
+    log("update check: game=%s display=%s wayland=%s zenity=%s kdialog=%s" % (
+        game, os.environ.get("DISPLAY"), os.environ.get("WAYLAND_DISPLAY"),
+        shutil.which("zenity"), shutil.which("kdialog")))
     if os.environ.get("ASHDROID_NO_UPDATE"):
+        log("ASHDROID_NO_UPDATE set: skipped")
         return 0
     current = read(os.path.join(game, MARK))
+    log("installed: %r" % current)
     if not current or current == "?":
         return 0
     try:
         info = latest()
-    except Exception:  # noqa: BLE001  (offline, rate limit…: just play)
+    except Exception as e:  # noqa: BLE001  (offline, rate limit…: just play)
+        log("GitHub check failed: %s: %s" % (type(e).__name__, e))
         return 0
+    log("latest: %r" % (info,))
     if not info:
         return 0
     new, url, size = info
-    if version_key(new) <= version_key(current) or read(os.path.join(game, SKIP)) == new:
+    skipped = read(os.path.join(game, SKIP))
+    if version_key(new) <= version_key(current) or skipped == new:
+        log("nothing to do (up to date, or %s was declined)" % skipped if skipped else "up to date")
         return 0
-    if not ask("Hay una versión nueva del parche: %s (tienes la %s).\n\n¿Actualizar ahora? Tarda un momento;\n"
-               "tus partidas no se tocan." % (new, current)):
+    log("asking to update %s -> %s" % (current, new))
+    answer = ask("Hay una versión nueva del parche: %s (tienes la %s).\n\n¿Actualizar ahora? Tarda un momento;\n"
+                 "tus partidas no se tocan." % (new, current))
+    if answer is None:
+        log("no dialog could be shown: asking again next time")
+        return 0
+    if not answer:
+        log("declined")
         with open(os.path.join(game, SKIP), "w") as f:
             f.write(new)
         return 0
@@ -153,8 +198,10 @@ def main():
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         if r.returncode != 0:
             raise RuntimeError((r.stdout or "").strip().splitlines()[-1:] or "error del instalador")
+        log("updated to %s" % new)
         tell("Parche actualizado a la versión %s." % new)
     except Exception as e:  # noqa: BLE001
+        log("update failed: %s: %s" % (type(e).__name__, e))
         tell("No se pudo actualizar (%s).\nEl juego se abre con la versión que ya tenías." % e, True)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

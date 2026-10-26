@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Steam Deck: the update check never asked. When its window couldn't be shown (it happens in Game Mode)
+  the version counted as declined ("Ahora no"), so it wasn't offered again. Now only a real "Ahora no"
+  is remembered, and every check writes what it did to ashdroid_update.log in the game folder.
+
 ## [0.4.13] - 2026-10-27
 
 ### Fixed
