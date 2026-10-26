@@ -7,6 +7,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Fixed
+- Accented capitals sat lower than their neighbours wherever the fix didn't know them (Ã and Õ on the
+  naming keyboard): every non-ASCII capital is now measured on its own, in any language, and a line is
+  raised by the largest shift among the capitals it holds.
 - Options: the longer option names ran into their values ("Animaciones de combateSí"). They're shortened
   to fit with room to spare in Spanish ("Volumen música", "Velocidad texto", "Animaciones", "Desplazamiento"…),
   French and German; the intro option is now "Intro en español" / "Intro en français" / "Intro (Deutsch)".

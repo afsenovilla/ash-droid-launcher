@@ -709,7 +709,8 @@ begin
     # surface grows at the top and mkxp centres it vertically, so those letters
     # (or the whole line containing them) end up a couple of pixels too low.
     # Move them back up by half the extra height.
-    ASHDROID_TALL = /[ÁÉÍÓÚÑÜÀÈÌÒÙÂÊÎÔÛÄËÏÖ]/
+    # Any non-ASCII text may hold an accented capital (Á, Ã, Ö, Ñ…): tall_shift checks the letters
+    ASHDROID_TALL = /[^\x00-\x7F]/
     alias_method :__ashdroid_draw_text, :draw_text
     def draw_text(*args)
       begin
@@ -1056,33 +1057,43 @@ module AshDroidFixes
     textpos
   end
 
-  # Accented capitals (É, Ú…) rise above the font's ascent. Engines that size the text
-  # surface to its contents make it taller and centre it, so the line holding one sinks a
-  # little (and a lone "É" in a message, drawn letter by letter, sits lower than "ter").
-  # Measured once per font by drawing "E" and "É" and comparing where their ink ends:
-  # 0 where the engine doesn't do that.
+  # Accented capitals (É, Ã, Ú…) rise above the font's ascent. Engines that size the text surface
+  # to its contents make it taller and centre it, so a line holding one sinks a little (and a
+  # lone "Ã" on the naming keyboard, or "É" in a message drawn letter by letter, sits lower than
+  # its neighbours). Measured per font and per letter, from the rendered pixels: "E" + letter is
+  # drawn and the bottom of its "E" compared with an "E" on its own. 0 where the engine doesn't
+  # move anything. A line gets the largest shift of the capitals it holds.
   def self.tall_shift(bitmap, text)
-    f = bitmap.font
-    key = [f.name.to_s, f.size, f.bold]
+    caps = text.each_char.select { |c| c.ord > 127 && c =~ /\p{Upper}/ }.uniq
+    return 0 if caps.empty?
+    caps.map { |c| tall_char(bitmap.font, c) }.max
+  rescue StandardError
+    0
+  end
+
+  def self.tall_char(f, ch)
+    key = [f.name.to_s, f.size, f.bold, ch]
     @tall ||= {}
     return @tall[key] if @tall.key?(key)
     @tall[key] = 0
     h = f.size.to_i + 3
-    w = f.size.to_i * 2
-    bottoms = ["E", "É"].map do |ch|
+    w = f.size.to_i * 3
+    ew = nil
+    bottoms = ["E", "E" + ch].map do |s|
       b = Bitmap.new(w, h)
       b.font.name = f.name
       b.font.size = f.size
       b.font.bold = f.bold
       b.font.color = Color.new(255, 255, 255)
-      b.__ashdroid_draw_text(0, 0, w, h, ch)
-      y = (h - 1).downto(0).find { |yy| (0...w).any? { |x| b.get_pixel(x, yy).alpha > 0 } }
+      ew ||= b.__ashdroid_text_size("E").width
+      b.__ashdroid_draw_text(0, 0, w, h, s)
+      y = (h - 1).downto(0).find { |yy| (0...ew).any? { |x| b.get_pixel(x, yy).alpha > 0 } }
       b.dispose
       y
     end
     d = bottoms.all? ? bottoms[1] - bottoms[0] : 0
     d = 0 if d < 0 || d > h / 3
-    AshDroidLog.log("tall text #{key.inspect}: E=#{bottoms[0].inspect} É=#{bottoms[1].inspect} shift=#{d}")
+    AshDroidLog.log("tall text #{key.inspect}: E=#{bottoms[0].inspect} E#{ch}=#{bottoms[1].inspect} shift=#{d}") if d != 0
     @tall[key] = d
   rescue StandardError
     0
