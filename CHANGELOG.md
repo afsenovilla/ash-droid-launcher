@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- H700 consoles: menus and the map were very slow. "Fire Ash" now runs the CPU at full speed while playing
+  (and puts the previous setting back afterwards), and the installer turns off the game's "subImageFix"
+  (a workaround for Windows drivers that made the Mali re-upload whole images for every small change).
+
 ## [0.4.13] - 2026-10-27
 
 ### Fixed

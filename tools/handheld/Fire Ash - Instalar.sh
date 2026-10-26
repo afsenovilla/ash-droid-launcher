@@ -263,7 +263,9 @@ install_patch() {
   # Pantalla de la consola: pantalla completa, sin deformar, sin suavizado (el juego es 640x480).
   # Si la clave ya está en el archivo se cambia su valor en su sitio; si no, se añade al principio.
   missing=""
-  for kv in fullscreen=true fixedAspectRatio=true smoothScaling=0; do
+  # subImageFix: the game turns it on for buggy Windows drivers; on the Mali it re-uploads whole images
+  # for every small change and made menus and the map crawl
+  for kv in fullscreen=true fixedAspectRatio=true smoothScaling=0 subImageFix=false; do
     k="${kv%%=*}"; v="${kv#*=}"
     if grep -q "^[[:space:]]*\"$k\"[[:space:]]*:" "$conf"; then
       sed -i -E "s|^([[:space:]]*\"$k\"[[:space:]]*:[[:space:]]*)[^,/[:space:]]+|\\1$v|" "$conf"
@@ -323,6 +325,14 @@ main() {
   for t in /dev/tty0 /dev/tty1; do
     if [ -w "\$t" ]; then printf '\\033c\\n  Cargando Fire Ash...\\n' > "\$t" 2>/dev/null; break; fi
   done
+  # CPU at full speed while playing (the firmware may leave ports on a power-saving governor);
+  # the previous setting is put back afterwards
+  govs=""
+  for c in /sys/devices/system/cpu/cpu[0-9]*/cpufreq; do
+    [ -w "\$c/scaling_governor" ] || continue
+    govs="\$govs \$c=\$(cat "\$c/scaling_governor" 2>/dev/null)"
+    echo performance > "\$c/scaling_governor" 2>/dev/null
+  done
   # First start: the patch writes corrected copies of the game's fonts and asks for a restart so the
   # engine picks them up
   rm -f ./ashdroid_restart
@@ -331,6 +341,9 @@ main() {
     rm -f ./ashdroid_restart
     "./$ENGINE/mkxp-z.aarch64" >> ./ashdroid_run.log 2>&1
   fi
+  for g in \$govs; do
+    [ -n "\${g#*=}" ] && echo "\${g#*=}" > "\${g%%=*}/scaling_governor" 2>/dev/null
+  done
 }
 main "\$@"; exit
 LAUNCH
