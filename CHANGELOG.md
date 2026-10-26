@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.7] - 2026-10-26
+
 ### Fixed
 - Naming screen: the 16 letter slots of a nickname ran off the box and the screen; they're narrowed
   to fit.
