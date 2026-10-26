@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-10-26
+
 ### Fixed
 - Nicknames are limited to 12 characters, as in the official games (the game allowed 16, more slots
   than its naming box has room for). The 12 slots keep the game's own size and fit in the box.
