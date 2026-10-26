@@ -87,13 +87,14 @@ s'installe par-dessus la précédente sans perte de données.
 ## Versions et publications
 
 Les versions suivent [Semantic Versioning](https://semver.org/) ; les changements sont listés dans
-[CHANGELOG.md](CHANGELOG.md). Chaque version (tag `vX.Y.Z`) propose trois téléchargements :
+[CHANGELOG.md](CHANGELOG.md). Chaque version (tag `vX.Y.Z`) propose quatre téléchargements :
 
 | Plateforme | Fichier |
 |---|---|
 | Android | `ash-droid-launcher-X.Y.Z.apk` |
 | Windows | `FireAsh-Patch-Windows-X.Y.Z.zip` |
 | Steam Deck / Linux | `FireAsh-Patch-SteamDeck-Linux-X.Y.Z.zip` |
+| Consoles Anbernic H700 (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-X.Y.Z.zip` |
 
 Pour publier : ajoutez une section `## [X.Y.Z]` en haut du changelog et poussez-la sur `main` ; le workflow crée le
 tag `vX.Y.Z` et publie la version. Tout autre push sur `main` est seulement compilé, jamais publié.

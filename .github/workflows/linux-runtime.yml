@@ -1,9 +1,12 @@
-# Native Linux x86_64 build of mkxp-z (the engine Fire Ash already uses on Windows), for the
-# Steam Deck / Linux package of the PC patch. Same recipe as mkxp-z's own CI: clang against an
-# Ubuntu 16.04 sysroot (old glibc, so it runs on any current SteamOS/Linux), every library
-# vendored and linked in. Called by build.yml for every build; the engine is cached by
-# mkxp-z commit (bump ENGINE_CACHE to force a rebuild), so it is only compiled when it
-# changes. The smoke test runs every time, against the current patch.
+# Native Linux builds of mkxp-z (the engine Fire Ash already uses on Windows):
+#   x86_64   Steam Deck / Linux package of the PC patch
+#   aarch64  handheld package (Anbernic H700 consoles: RG34XX, RG35XX..., running Knulli etc.)
+# Same recipe as mkxp-z's own CI: clang against an Ubuntu 16.04 sysroot (old glibc, so it runs on
+# any current firmware), every library vendored and linked in. Called by build.yml for every
+# build; each engine is cached by mkxp-z commit (bump ENGINE_CACHE to force a rebuild), so it is
+# only compiled when it changes. The x86_64 smoke test runs every time, against the current patch;
+# the aarch64 engine can't run on the CI machine, so it is inspected instead (ELF type, libraries,
+# glibc version) and tested on the consoles themselves.
 name: Linux runtime
 
 on:
@@ -17,12 +20,27 @@ env:
   # mkxp-z 2.4.2 (same engine line as the Android build)
   MKXPZ_REPO: mkxp-z/mkxp-z
   MKXPZ_REF: 37a04d14413454551a7b6aadbb4e93e67168accb
-  ENGINE_CACHE: mkxpz-linux-x86_64-v1
+  ENGINE_CACHE: v1
 
 jobs:
   build:
+    name: ${{ matrix.arch }}
     runs-on: ubuntu-24.04
     timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            debian: amd64
+            repo: http://archive.ubuntu.com/ubuntu
+            target: x86_64-linux-gnu
+            cpu_family: x86_64
+          - arch: aarch64
+            debian: arm64
+            repo: http://ports.ubuntu.com/ubuntu-ports
+            target: aarch64-linux-gnu
+            cpu_family: aarch64
     steps:
       - uses: actions/checkout@v5
 
@@ -30,8 +48,8 @@ jobs:
         id: engine
         uses: actions/cache/restore@v4
         with:
-          path: out/mkxp-z-linux-x86_64.tar.gz
-          key: ${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
+          path: out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
+          key: mkxpz-linux-${{ matrix.arch }}-${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
 
       - name: Checkout mkxp-z
         if: steps.engine.outputs.cache-hit != 'true'
@@ -57,8 +75,8 @@ jobs:
         run: |
           keyrings="$(realpath mkxp-z/keyrings)"
           cd ${{ runner.temp }}
-          repo=http://archive.ubuntu.com/ubuntu
-          sudo debootstrap --arch=amd64 --variant=minbase --keyring="$keyrings/ubuntu.gpg" xenial sysroot $repo
+          repo=${{ matrix.repo }}
+          sudo debootstrap --arch=${{ matrix.debian }} --variant=minbase --keyring="$keyrings/ubuntu.gpg" xenial sysroot $repo
           sudo cp "$keyrings/ubuntu-toolchain-r.gpg" sysroot/
           echo "deb $repo xenial-updates main" | sudo tee -a sysroot/etc/apt/sources.list > /dev/null
           echo 'deb [signed-by=/ubuntu-toolchain-r.gpg] http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main' | sudo tee -a sysroot/etc/apt/sources.list > /dev/null
@@ -84,8 +102,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ccache
-          key: linux-x86_64-${{ env.MKXPZ_REF }}-
-          restore-keys: linux-x86_64-
+          key: linux-${{ matrix.arch }}-${{ env.MKXPZ_REF }}-
+          restore-keys: linux-${{ matrix.arch }}-
 
       - name: Configure
         if: steps.engine.outputs.cache-hit != 'true'
@@ -97,17 +115,17 @@ jobs:
           ccache --set-config=max_size=1280MiB
           cat > ${{ runner.temp }}/cross.toml << EOF
           [binaries]
-          c = ['ccache', 'clang', '--sysroot=${{ runner.temp }}/sysroot', '--target=x86_64-linux-gnu']
+          c = ['ccache', 'clang', '--sysroot=${{ runner.temp }}/sysroot', '--target=${{ matrix.target }}']
           c_ld = 'lld'
-          cpp = ['ccache', 'clang++', '--sysroot=${{ runner.temp }}/sysroot', '--target=x86_64-linux-gnu']
+          cpp = ['ccache', 'clang++', '--sysroot=${{ runner.temp }}/sysroot', '--target=${{ matrix.target }}']
           cpp_ld = 'lld'
           ar = 'llvm-ar'
           strip = 'llvm-strip'
           cmake = 'cmake'
           [host_machine]
           system = 'linux'
-          cpu_family = 'x86_64'
-          cpu = 'x86_64'
+          cpu_family = '${{ matrix.cpu_family }}'
+          cpu = '${{ matrix.arch }}'
           endian = 'little'
           EOF
           meson setup --prefix "$(pwd)/build/artifact" --cross-file ${{ runner.temp }}/cross.toml \
@@ -133,7 +151,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ccache
-          key: linux-x86_64-${{ env.MKXPZ_REF }}-${{ steps.build.outputs.time }}
+          key: linux-${{ matrix.arch }}-${{ env.MKXPZ_REF }}-${{ steps.build.outputs.time }}
 
       - name: Package
         if: steps.engine.outputs.cache-hit != 'true'
@@ -147,34 +165,54 @@ jobs:
           rm -f "$A/mkxp.json"
           printf '%s\n' "${{ env.MKXPZ_REPO }}@${{ env.MKXPZ_REF }}" > "$A/MKXPZ_VERSION.txt"
           mkdir -p out
-          tar -C "$A" -czf out/mkxp-z-linux-x86_64.tar.gz .
+          tar -C "$A" -czf out/mkxp-z-linux-${{ matrix.arch }}.tar.gz .
           ls -la out
 
       - name: Save engine to cache
         if: steps.engine.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: out/mkxp-z-linux-x86_64.tar.gz
-          key: ${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
+          path: out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
+          key: mkxpz-linux-${{ matrix.arch }}-${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: mkxp-z-linux-x86_64
-          path: out/mkxp-z-linux-x86_64.tar.gz
+          name: mkxp-z-linux-${{ matrix.arch }}
+          path: out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
+
+      - name: Inspect engine (aarch64 can't run on this machine)
+        if: matrix.arch == 'aarch64'
+        run: |
+          set -x
+          T=$(mktemp -d); tar -C "$T" -xzf out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
+          B="$T/mkxp-z.aarch64"
+          ls -la "$T" | head -30
+          llvm-readelf -h "$B" | grep -E 'Class|Machine|Type'
+          llvm-readelf -h "$B" | grep -q 'AArch64'
+          # Libraries the console must provide (everything else is linked in)
+          llvm-readelf -d "$B" | grep NEEDED
+          # Highest glibc symbol version the binary asks for: it must run on old firmware
+          llvm-readelf -V "$B" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -n 3
+          max=$(llvm-readelf -V "$B" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -n 1)
+          echo "highest glibc: $max"
+          printf '%s\n' "highest glibc: $max" >> "$GITHUB_STEP_SUMMARY"
+          # Dynamic GLES/EGL must be loaded at run time from the console's own driver, not linked in
+          llvm-readelf -d "$B" | grep NEEDED | grep -E 'libGLESv2|libEGL' && echo "note: links GLES/EGL directly" || true
 
       - name: Smoke test tools
-        if: steps.engine.outputs.cache-hit == 'true'
+        if: matrix.arch == 'x86_64' && steps.engine.outputs.cache-hit == 'true'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri ruby
 
       - name: Smoke test (stdlib, preload script, Steam Deck detection)
+        if: matrix.arch == 'x86_64'
         shell: bash tools/linux/ci_step.sh smoke {0}
         run: |
           set -x
           # Same layout as the installer: engine in <game>/ashdroid_linux, started with SRCDIR=<game>
           T=$(mktemp -d); mkdir -p "$T/game/ashdroid_linux"
-          tar -C "$T/game/ashdroid_linux" -xzf out/mkxp-z-linux-x86_64.tar.gz
+          tar -C "$T/game/ashdroid_linux" -xzf out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
           ls "$T/game/ashdroid_linux" "$T/game/ashdroid_linux/stdlib" | head -40
           cp app/src/main/assets/ashdroid_patches.rb app/src/main/assets/ashdroid_art.rb "$T/game/"
           ruby tools/art/make_art_dat.rb app/src/main/assets/packs/fire-ash/art.json "$T/game/ashdroid_art.dat"
@@ -185,7 +223,7 @@ jobs:
           printf '{ "preloadScript": ["ashdroid_patches.rb"], "rgssVersion": 1 }\n' > "$T/game/mkxp.json"
           cd "$T/game"
           SteamDeck=1 SRCDIR="$T/game" LIBGL_ALWAYS_SOFTWARE=1 SDL_AUDIODRIVER=dummy ALSOFT_DRIVERS=null \
-            timeout 120 xvfb-run -a -s '-screen 0 1280x800x24' "$T/game/ashdroid_linux/mkxp-z.x86_64" || true
+            timeout 120 xvfb-run -a -s '-screen 0 1280x800x24' "$T/game/ashdroid_linux/mkxp-z.${{ matrix.arch }}" || true
           cat smoke_test.log
           cat ashdroid_patch.log || true
           grep -q '^OK' smoke_test.log

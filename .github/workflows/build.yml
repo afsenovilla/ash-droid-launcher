@@ -195,7 +195,8 @@ jobs:
           name: apk
           path: dist/*.apk
 
-  # Engine for the Steam Deck / Linux package (cached: only compiled when mkxp-z changes)
+  # Native engines for the Steam Deck / Linux package (x86_64) and the H700 handheld package
+  # (aarch64). Cached: only compiled when mkxp-z changes.
   linux:
     uses: ./.github/workflows/linux-runtime.yml
 
@@ -205,6 +206,7 @@ jobs:
   # PC patch packages (no game files: the images are redrawn by the patch while the game runs)
   #   Windows:           "Instalar parche.exe" + the patch
   #   Steam Deck / Linux: "Instalar en Steam Deck.sh" + native Linux engine + the patch
+  #   H700 handhelds:     "Fire Ash - Instalar.sh" + native ARM64 engine + the patch
   pc-packages:
     needs: [apk, linux, pc-installer]
     runs-on: ubuntu-24.04
@@ -218,19 +220,24 @@ jobs:
         with:
           name: mkxp-z-linux-x86_64
           path: in
+      - uses: actions/download-artifact@v4
+        with:
+          name: mkxp-z-linux-aarch64
+          path: in
       - name: Build packages
         run: |
           V="${{ needs.apk.outputs.version }}"
           mkdir -p dist
           tools/pc/build_pc_patch.sh windows "dist/FireAsh-Patch-Windows-${V}.zip" "$V" "in/Instalar parche.exe"
           tools/pc/build_pc_patch.sh linux "dist/FireAsh-Patch-SteamDeck-Linux-${V}.zip" "$V" in/mkxp-z-linux-x86_64.tar.gz
+          tools/pc/build_pc_patch.sh handheld "dist/FireAsh-Patch-Handheld-H700-${V}.zip" "$V" in/mkxp-z-linux-aarch64.tar.gz
           for z in dist/*.zip; do echo "== $z"; unzip -l "$z" | tail -n +4 | head -n -2; done
       - uses: actions/upload-artifact@v4
         with:
           name: pc-packages
           path: dist/*.zip
 
-  # Stable release (tag vX.Y.Z, or "Run workflow" with a version): APK + Windows + Steam Deck/Linux
+  # Stable release (tag vX.Y.Z, or "Run workflow" with a version): APK + Windows + Steam Deck/Linux + H700 handhelds
   release:
     needs: [apk, pc-packages]
     if: needs.apk.outputs.release == 'true'
@@ -263,6 +270,7 @@ jobs:
           | **Android** (Retroid, AYN, Anbernic…) | `ash-droid-launcher-*.apk` |
           | **Windows** | `FireAsh-Patch-Windows-*.zip` → "Instalar parche.exe" |
           | **Steam Deck / Linux** | `FireAsh-Patch-SteamDeck-Linux-*.zip` → "Instalar en Steam Deck.sh" (desktop mode) |
+          | **Anbernic H700 consoles** (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-*.zip` → copy its contents to the console's `ports` folder, then run "Fire Ash - Instalar" |
           EOF
           cat dist/notes.md >> "$GITHUB_STEP_SUMMARY"
 
@@ -277,6 +285,7 @@ jobs:
             dist/ash-droid-launcher-${{ env.VERSION_NAME }}.apk
             dist/FireAsh-Patch-Windows-${{ env.VERSION_NAME }}.zip
             dist/FireAsh-Patch-SteamDeck-Linux-${{ env.VERSION_NAME }}.zip
+            dist/FireAsh-Patch-Handheld-H700-${{ env.VERSION_NAME }}.zip
           body_path: dist/notes.md
 
       # Only versioned releases from now on: remove the old rolling "dev" build and the

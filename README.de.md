@@ -89,13 +89,14 @@ sich jede Version ohne Datenverlust über die vorherige installieren lässt.
 ## Versionen und Releases
 
 Die Versionen folgen [Semantic Versioning](https://semver.org/); Änderungen stehen in [CHANGELOG.md](CHANGELOG.md).
-Jedes Release (Tag `vX.Y.Z`) hat drei Downloads:
+Jedes Release (Tag `vX.Y.Z`) hat vier Downloads:
 
 | Plattform | Datei |
 |---|---|
 | Android | `ash-droid-launcher-X.Y.Z.apk` |
 | Windows | `FireAsh-Patch-Windows-X.Y.Z.zip` |
 | Steam Deck / Linux | `FireAsh-Patch-SteamDeck-Linux-X.Y.Z.zip` |
+| Anbernic-H700-Konsolen (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-X.Y.Z.zip` |
 
 Zum Veröffentlichen: Füge oben im Changelog einen Abschnitt `## [X.Y.Z]` hinzu und pushe ihn nach `main`; der
 Workflow setzt den Tag `vX.Y.Z` und veröffentlicht das Release. Jeder andere Push nach `main` wird nur gebaut, nie

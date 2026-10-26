@@ -10,7 +10,10 @@ ASHDROID_LANG = "en" # __ASHDROID_LANG__
 # PC patch on a Steam Deck (the Windows game through Proton, or the native Linux
 # engine): detected here, it gets the Deck's buttons like a handheld does on Android.
 # Returns "lcd" (Jupiter), "oled" (Galileo), "deck" (Steam says so, model unknown) or nil.
-# ASHDROID_DEVICE=pc|deck|lcd|oled in the launch options overrides the detection.
+# ASHDROID_DEVICE=pc|deck|lcd|oled|handheld in the launch options overrides the detection.
+# "handheld" = Anbernic H700 consoles and similar (Knulli...) running the native Linux engine of the
+# handheld package: it is started with that value, or recognised by the ashdroid_handheld.txt marker
+# the installer leaves in the game folder.
 module AshDroidDeck
   DMI = ["/sys/devices/virtual/dmi/id", "Z:/sys/devices/virtual/dmi/id"] # Linux, Wine/Proton
 
@@ -30,6 +33,8 @@ module AshDroidDeck
     return nil if forced == "pc"
     return forced if %w[lcd oled].include?(forced)
     return "deck" if forced == "deck"
+    return "handheld" if forced == "handheld"
+    return "handheld" if forced.empty? && File.exist?("ashdroid_handheld.txt")
     product = read("product_name").to_s
     return "oled" if product =~ /galileo/i
     return "lcd" if product =~ /jupiter/i
@@ -49,6 +54,35 @@ ASHDROID_DECK = ASHDROID_KEYS.empty? ? AshDroidDeck.detect : nil
 if ASHDROID_DECK
   ASHDROID_KEYS.merge!("C" => "A", "X" => "B / START", "Z" => "X", "D" => "R3",
                        "A" => "Y", "S" => "L3", "Q" => "L1", "W" => "R1")
+end
+
+# Handheld consoles (H700): same actions as the Deck, but without stick clicks: the L2 / R2 triggers
+# do what L3 / R3 do (see the hook at the end). The names of A/B/X/Y depend on how the firmware maps
+# the console's pad: ashdroid_handheld.txt has "layout=swap" when the labels printed on the console
+# are the other way round (confirm = the button labelled B), and nothing or "layout=same" otherwise.
+module AshDroidHandheld
+  SWAP = { "A" => "B", "B" => "A", "X" => "Y", "Y" => "X" }
+  def self.config
+    @config ||= begin
+      File.read("ashdroid_handheld.txt").to_s
+    rescue StandardError
+      ""
+    end
+  end
+
+  def self.swap?
+    config =~ /layout\s*=\s*swap/i ? true : false
+  end
+
+  # "B / START" -> "A / START" when the console's labels are swapped
+  def self.label(s)
+    swap? ? s.gsub(/\b[ABXY]\b/) { |b| SWAP[b] } : s
+  end
+end
+ASHDROID_HANDHELD = ASHDROID_DECK == "handheld"
+if ASHDROID_HANDHELD
+  ASHDROID_KEYS.merge!("D" => "R2", "S" => "L2")
+  ASHDROID_KEYS.each_key { |k| ASHDROID_KEYS[k] = AshDroidHandheld.label(ASHDROID_KEYS[k]) }
 end
 
 # Native Linux engine of the Steam Deck package (ashdroid_linux/): put its Ruby standard
@@ -317,7 +351,10 @@ module AshDroidText
     # F1 (mkxp key bindings window) doesn't exist on the device
     [/\A.*(Key Bindings window|ventana de asignación de teclas).*\z/m, lambda { |m|
       es = m[0] =~ /asignaci/
-      if ASHDROID_DECK
+      if ASHDROID_HANDHELD
+        es ? "Los botones de esta consola se cambian en el menú de mandos de su sistema." :
+             "On this console, change the buttons in its system's controller settings."
+      elsif ASHDROID_DECK
         es ? "En la Steam Deck los botones se cambian en la configuración del mando de Steam (botón STEAM > Configuración del mando)." :
              "On the Steam Deck, change the buttons in Steam's controller settings (STEAM button > Controller settings)."
       else
@@ -328,7 +365,10 @@ module AshDroidText
     # F8 screenshot: use the device's own screenshot instead
     [/\A.*(captura de pantalla\. Se guarda|Takes? a screenshot).*\z/m, lambda { |m|
       es = m[0] =~ /captura/
-      if ASHDROID_DECK
+      if ASHDROID_HANDHELD
+        es ? "Para hacer capturas usa el atajo de captura de pantalla de la consola." :
+             "To take screenshots, use your console's screenshot shortcut."
+      elsif ASHDROID_DECK
         es ? "Para hacer capturas pulsa STEAM + R1." : "To take screenshots, press STEAM + R1."
       else
         es ? "Para hacer capturas usa la función de captura de pantalla de la consola." :
@@ -458,6 +498,8 @@ module AshDroidGfx
 
     # Button names drawn in the art: the Deck's buttons, or the keyboard keys on PC
     def self.buttons
+      ASHDROID_HANDHELD ? { "USE" => AshDroidHandheld.label("A"), "BACK" => AshDroidHandheld.label("B"),
+                            "ACTION" => AshDroidHandheld.label("X"), "SPECIAL" => "R2" } :
       ASHDROID_DECK ? { "USE" => "A", "BACK" => "B", "ACTION" => "X", "SPECIAL" => "R3" } :
                       { "USE" => "ENTER", "BACK" => "X", "ACTION" => "Z", "SPECIAL" => "D" }
     end
@@ -1188,4 +1230,145 @@ if ASHDROID_DECK
   rescue StandardError, NameError => e
     AshDroidLog.log("deck: START hook failed: #{e.class}: #{e.message}")
   end
+end
+
+# Handheld consoles (H700): the console has no stick clicks, so the L2 / R2 triggers do what L3 / R3
+# do on the Deck (Input::Y and Input::Z in the game). The triggers are read as axes (some firmware
+# reports them as buttons: SDL turns them into axes either way) and given edge detection here.
+if ASHDROID_HANDHELD
+  module AshDroidHandheld
+    TRIGGER = { "Y" => 0, "Z" => 1 } # Input::Y <- left trigger (L2), Input::Z <- right trigger (R2)
+    @now = [false, false]
+    @prev = [false, false]
+    @held = [0, 0]
+
+    def self.sample
+      axes = Input::Controller.respond_to?(:axes_trigger) ? Input::Controller.axes_trigger : nil
+      @prev = @now
+      @now = axes.is_a?(Array) && axes.size >= 2 ? [axes[0].to_f > 0.5, axes[1].to_f > 0.5] : [false, false]
+      2.times { |i| @held[i] = @now[i] ? @held[i] + 1 : 0 }
+    rescue StandardError
+      @now = [false, false]
+    end
+
+    def self.index(b)
+      return nil unless defined?(Input::Y) && defined?(Input::Z)
+      return 0 if b == Input::Y
+      return 1 if b == Input::Z
+      nil
+    end
+
+    def self.press?(b)
+      i = index(b)
+      i ? @now[i] : false
+    end
+
+    def self.trigger?(b)
+      i = index(b)
+      i ? (@now[i] && !@prev[i]) : false
+    end
+
+    def self.repeat?(b)
+      i = index(b)
+      return false unless i
+      @held[i] == 1 || (@held[i] > 20 && (@held[i] - 20) % 6 == 0)
+    end
+  end
+
+  begin
+    module Input
+      class << self
+        alias_method :__ashdroid_update_hh, :update
+        alias_method :__ashdroid_trigger_hh, :trigger?
+        alias_method :__ashdroid_press_hh, :press?
+        alias_method :__ashdroid_repeat_hh, :repeat?
+        def update(*a)
+          r = __ashdroid_update_hh(*a)
+          AshDroidHandheld.sample
+          r
+        end
+        def trigger?(b)
+          __ashdroid_trigger_hh(b) || AshDroidHandheld.trigger?(b)
+        end
+        def press?(b)
+          __ashdroid_press_hh(b) || AshDroidHandheld.press?(b)
+        end
+        def repeat?(b)
+          __ashdroid_repeat_hh(b) || AshDroidHandheld.repeat?(b)
+        end
+      end
+    end
+    AshDroidLog.log("handheld: L2/R2 work as L3/R3; layout=#{AshDroidHandheld.swap? ? 'swap' : 'same'}")
+  rescue StandardError, NameError => e
+    AshDroidLog.log("handheld: trigger hook failed: #{e.class}: #{e.message}")
+  end
+
+  # The game's Power Green / Power Clear fonts store their descent as a positive number, which the
+  # native Linux engine takes literally (text drawn low, bottoms of p, g, y... cut off). Same fix as
+  # the Steam Deck installer (tools/linux/install.py), done here so the console needs no Python:
+  # copies with sane metrics are written to Fonts/ under another family name (mkxp.json maps
+  # the originals to them with "fontSub"). The game's own files are not touched.
+  module AshDroidFonts
+    FIXES = [["power green.ttf", "AshDroid Power Green"], ["power clear.ttf", "AshDroid Power Clear"]]
+
+    def self.checksum(b)
+      b = b.b + "\0".b * ((-b.bytesize) % 4)
+      b.unpack("N*").sum & 0xFFFFFFFF
+    end
+
+    def self.fixed_font(src, family)
+      data = File.binread(src).b
+      n = data[4, 2].unpack1("n")
+      recs = {}
+      n.times do |i|
+        o = 12 + 16 * i
+        cs, off, len = data[o + 4, 12].unpack("NNN")
+        recs[data[o, 4]] = [o, cs, off, len]
+      end
+      os2 = recs["OS/2"][2]
+      win_asc, win_desc = data[os2 + 74, 4].unpack("nn")
+      hhea = recs["hhea"][2]
+      metrics = [win_asc, -win_desc, 0].pack("s>s>s>")
+      data[hhea + 4, 6] = metrics # ascender, descender, lineGap
+      data[os2 + 68, 6] = metrics # sTypoAscender / Descender / LineGap
+      names = [[1, family], [2, "Regular"], [4, family], [6, family.tr(" ", "-")]]
+      entries = "".b
+      strs = "".b
+      [[1, 0, 0, "ISO-8859-1"], [3, 1, 0x409, "UTF-16BE"]].each do |pid, eid, lid, enc|
+        names.each do |nid, text|
+          b = text.encode(enc).b
+          entries << [pid, eid, lid, nid, b.bytesize, strs.bytesize].pack("nnnnnn")
+          strs << b
+        end
+      end
+      count = entries.bytesize / 12
+      table = [0, count, 6 + 12 * count].pack("nnn") + entries + strs
+      data << "\0".b * ((-data.bytesize) % 4)
+      new_off = data.bytesize
+      data << table << "\0".b * ((-table.bytesize) % 4)
+      o = recs["name"][0]
+      data[o + 4, 12] = [checksum(table), new_off, table.bytesize].pack("NNN")
+      ["hhea", "OS/2"].each do |tag|
+        o, _, off, ln = recs[tag]
+        data[o + 4, 4] = [checksum(data[off, ln])].pack("N")
+      end
+      data
+    end
+
+    def self.install
+      dir = "Fonts"
+      return unless File.directory?(dir)
+      FIXES.each do |name, family|
+        src = Dir.children(dir).find { |f| f.downcase == name }
+        next unless src
+        dst = File.join(dir, "ashdroid_" + name.tr(" ", "_"))
+        next if File.exist?(dst)
+        File.binwrite(dst, fixed_font(File.join(dir, src), family))
+        AshDroidLog.log("fonts: wrote #{dst}")
+      end
+    rescue StandardError => e
+      AshDroidLog.log("fonts: #{e.class}: #{e.message}")
+    end
+  end
+  AshDroidFonts.install
 end

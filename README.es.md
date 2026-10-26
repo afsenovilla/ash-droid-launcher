@@ -64,6 +64,17 @@ muestra sus botones (A, B, X, Y, L1, R1, R3…) en textos e imágenes; ☰ abre 
 Actualizaciones: la app de Android busca versiones nuevas y las instala encima; en la Steam Deck el juego lo
 comprueba al abrirse y ofrece actualizar el parche. En Windows, descarga el zip nuevo y vuelve a ejecutar el instalador.
 
+## Consolas Anbernic H700 (RG34XX, RG35XX…)
+
+Un cuarto zip, `FireAsh-Patch-Handheld-H700-X.Y.Z.zip`, es para consolas Linux con Allwinner H700 (objetivo
+probado: RG34XX con [Knulli](https://knulli.org)). Lleva una versión **ARM64** nativa de mkxp-z y el mismo
+parche. Copia el contenido del zip y el `.zip` del juego a la carpeta `ports` de la consola y abre
+"Fire Ash - Instalar" desde el menú Ports: descomprime el juego, instala el parche y el motor y añade la
+entrada "Fire Ash". No hace falta Python ni PC. Estas consolas no tienen clic de palancas, así que L2 / R2
+hacen lo de L3 / R3 en la Deck, y los textos muestran los botones de la consola. Mira el `LEEME.txt` del zip.
+Otras consolas Linux más modestas (p. ej. Miyoo Mini, 128 MB de RAM y sin driver de GPU utilizable) no pueden
+ejecutar mkxp-z.
+
 ## Pendiente
 
 - Imágenes con texto (títulos, menús, medallas…) redibujadas en francés y alemán, como ya está hecho en español.
@@ -87,13 +98,14 @@ instale encima de la anterior sin perder datos.
 ## Versiones y releases
 
 Las versiones siguen [Semantic Versioning](https://semver.org/); los cambios están en [CHANGELOG.md](CHANGELOG.md).
-Cada release (tag `vX.Y.Z`) trae tres descargas:
+Cada release (tag `vX.Y.Z`) trae cuatro descargas:
 
 | Plataforma | Archivo |
 |---|---|
 | Android | `ash-droid-launcher-X.Y.Z.apk` |
 | Windows | `FireAsh-Patch-Windows-X.Y.Z.zip` |
 | Steam Deck / Linux | `FireAsh-Patch-SteamDeck-Linux-X.Y.Z.zip` |
+| Consolas Anbernic H700 (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-X.Y.Z.zip` |
 
 Para publicar: añade una sección `## [X.Y.Z]` arriba del changelog y súbelo a `main`; el workflow crea el
 tag `vX.Y.Z` y publica la release. El resto de push a `main` solo se compilan, no se publican.
