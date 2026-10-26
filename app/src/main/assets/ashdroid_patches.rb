@@ -803,6 +803,61 @@ module AshDroidFixes
   end
 
   # Leaving the save screen ends the "quitting" context
+  # Naming screen: one 24-pixel slot per letter from x=160 runs off the box (and the screen)
+  # with the game's 16-letter nicknames. Narrow the slots so they all fit in the box.
+  module NameEntryFit
+    NAME_AREA = 322
+
+    def ashdroid_step
+      n = @maxlength.to_i
+      n > 0 && n * 24 > NAME_AREA ? NAME_AREA / n : 24
+    end
+
+    def pbStartScene(*args)
+      r = super
+      st = ashdroid_step
+      if st != 24
+        line = Bitmap.new(st, 6)
+        line.fill_rect(2, 2, st - 2, 4, Color.new(168, 184, 184))
+        line.fill_rect(0, 0, st - 2, 4, Color.new(16, 24, 32))
+        @ashdroid_line = line
+        @maxlength.times do |i|
+          s = @sprites["blank#{i}"]
+          next unless s
+          s.x = 160 + st * i
+          s.bitmap = line
+        end
+        @refreshOverlay = true
+        pbDoUpdateOverlay
+      end
+      r
+    end
+
+    def pbDoUpdateOverlay
+      st = ashdroid_step
+      return super if st == 24
+      return unless @refreshOverlay
+      @refreshOverlay = false
+      bgoverlay = @sprites["bgoverlay"].bitmap
+      bgoverlay.clear
+      pbSetSystemFont(bgoverlay)
+      base = Color.new(16, 24, 32)
+      shadow = Color.new(168, 184, 184)
+      tp = [[@helptext, 160, 6, false, base, shadow]]
+      @helper.textChars.each_with_index do |ch, i|
+        w = bgoverlay.text_size(ch).width
+        tp.push([ch, 160 + st * i + [(st - 2 - w) / 2, 0].max, 42, false, base, shadow])
+      end
+      pbDrawTextPositions(bgoverlay, tp)
+    end
+
+    def pbEndScene(*args)
+      r = super
+      @ashdroid_line.dispose if @ashdroid_line && !@ashdroid_line.disposed?
+      r
+    end
+  end
+
   module HardcodedTextWindow
     def text=(value)
       super(AshDroidText.hardcoded(value))
@@ -990,6 +1045,7 @@ module AshDroidFixes
     "PokemonOption_Scene" => OptionsAshDroid,
     "PokemonSaveScreen" => SaveScreenQuit,
     "Window_AdvancedTextPokemon" => HardcodedTextWindow,
+    "PokemonEntryScene2" => NameEntryFit,
     "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
     "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
     "PokemonSystem" => PokemonSystemLang,
