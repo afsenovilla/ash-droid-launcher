@@ -28,10 +28,10 @@ CÓMO INSTALARLO
 Si algo falla, mira "Fire Ash - instalacion.log" (junto al instalador) y "FireAsh/ashdroid_run.log".
 
 BOTONES
-Los textos del juego muestran los botones de la consola. No hay clic de palancas en estas consolas:
-L2 hace lo que L3 en la Steam Deck (velocidad/atajos) y R2 lo que R3. START también abre el menú
-(como B). Si los nombres A/B/X/Y no coinciden con lo que ves impreso en tu consola (por ejemplo,
-confirmar es el botón "B"), edita FireAsh/ashdroid_handheld.txt y pon: layout=swap
+A confirma y B cancela, como en los juegos oficiales, y los textos del juego muestran los botones de la
+consola. No hay clic de palancas en estas consolas: L2 hace lo que L3 en la Steam Deck (velocidad/atajos)
+y R2 lo que R3. START también abre el menú (como B). Si prefieres los botones como los mapea Knulli (por
+posición), pon en FireAsh/ashdroid_handheld.txt la línea: buttons=position
 
 SI NO ARRANCA O VA MAL
 Crea un archivo FireAsh/ashdroid_env.sh con líneas como estas y vuelve a abrir el juego:

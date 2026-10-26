@@ -1367,7 +1367,8 @@ if ASHDROID_HANDHELD
 
     def self.install
       dir = "Fonts"
-      return unless File.directory?(dir)
+      return false unless File.directory?(dir)
+      wrote = false
       FIXES.each do |name, family|
         src = Dir.children(dir).find { |f| f.downcase == name }
         next unless src
@@ -1375,10 +1376,22 @@ if ASHDROID_HANDHELD
         next if File.exist?(dst)
         File.binwrite(dst, fixed_font(File.join(dir, src), family))
         AshDroidLog.log("fonts: wrote #{dst}")
+        wrote = true
       end
+      wrote
     rescue StandardError => e
       AshDroidLog.log("fonts: #{e.class}: #{e.message}")
+      false
     end
   end
-  AshDroidFonts.install
+  # The engine lists the fonts before this script runs, so copies written now would only be used
+  # from the next start: on the first start, ask "Fire Ash.sh" to start the engine again at once.
+  if AshDroidFonts.install
+    begin
+      File.write("ashdroid_restart", "fonts\n")
+      AshDroidLog.log("fonts: first start, restarting so the engine loads them")
+      exit
+    rescue StandardError
+    end
+  end
 end

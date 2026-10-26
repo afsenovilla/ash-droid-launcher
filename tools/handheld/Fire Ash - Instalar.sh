@@ -311,11 +311,26 @@ main() {
   # Video: Knulli on the H700 has no KMS, only the Mali driver of its own SDL2. mkxp-z forces
   # KMSDRM when nothing is set, so name the drivers to try (ashdroid_env.sh can still override it).
   export SDL_VIDEODRIVER="\${SDL_VIDEODRIVER:-mali,kmsdrm,wayland,x11}"
+  # Buttons: Knulli maps the pad by position (SDL's A = the bottom button, labelled B on these
+  # consoles). Swap A/B and X/Y in its mapping so the button labelled A confirms, as in the official
+  # games. "buttons=position" in ashdroid_handheld.txt keeps the firmware's mapping.
+  if [ -n "\$SDL_GAMECONTROLLERCONFIG" ] && ! grep -qi 'buttons *= *position' ashdroid_handheld.txt 2>/dev/null; then
+    SDL_GAMECONTROLLERCONFIG="\$(printf '%s' "\$SDL_GAMECONTROLLERCONFIG" | sed -e 's/,a:/,@a:/g; s/,b:/,a:/g; s/,@a:/,b:/g' \\
+      -e 's/,x:/,@x:/g; s/,y:/,x:/g; s/,@x:/,y:/g')"
+    export SDL_GAMECONTROLLERCONFIG
+  fi
   [ -f ./ashdroid_env.sh ] && . ./ashdroid_env.sh
   for t in /dev/tty0 /dev/tty1; do
     if [ -w "\$t" ]; then printf '\\033c\\n  Cargando Fire Ash...\\n' > "\$t" 2>/dev/null; break; fi
   done
-  exec "./$ENGINE/mkxp-z.aarch64" > ./ashdroid_run.log 2>&1
+  # First start: the patch writes corrected copies of the game's fonts and asks for a restart so the
+  # engine picks them up
+  rm -f ./ashdroid_restart
+  "./$ENGINE/mkxp-z.aarch64" > ./ashdroid_run.log 2>&1
+  if [ -f ./ashdroid_restart ]; then
+    rm -f ./ashdroid_restart
+    "./$ENGINE/mkxp-z.aarch64" >> ./ashdroid_run.log 2>&1
+  fi
 }
 main "\$@"; exit
 LAUNCH

@@ -9,6 +9,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ### Fixed
 - H700 consoles: the game now starts. mkxp-z asks SDL for KMSDRM when no video driver is named, and
   Knulli on the H700 only has its Mali driver: "Fire Ash" now names it (mali, then the others).
+- H700 consoles: A/B and X/Y were swapped (Knulli maps the pad by position). "Fire Ash" swaps them back so
+  the button labelled A confirms; "buttons=position" in FireAsh/ashdroid_handheld.txt keeps Knulli's mapping.
+- H700 consoles: the first start used a plain font: the corrected copies of the game's fonts are written
+  at that start, after the engine has already listed the fonts. The engine now restarts once right away.
 
 ## [0.4.10] - 2026-10-26
 
