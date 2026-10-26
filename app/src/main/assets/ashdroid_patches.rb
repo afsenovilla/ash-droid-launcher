@@ -1047,6 +1047,15 @@ module AshDroidFixes
     "PokemonSaveScreen" => SaveScreenQuit,
     "Window_AdvancedTextPokemon" => HardcodedTextWindow,
     "PokemonEntryScene2" => NameEntryFit,
+    # Nicknames: 12 characters, as in the official games (the game's own setting is 16, more
+    # slots than its naming box has room for)
+    "Pokemon" => ->(m) {
+      if m.const_defined?(:MAX_NAME_SIZE, false) && m.const_get(:MAX_NAME_SIZE) > 12
+        m.send(:remove_const, :MAX_NAME_SIZE)
+        m.const_set(:MAX_NAME_SIZE, 12)
+        AshDroidLog.log("fix applied: Pokemon::MAX_NAME_SIZE = 12")
+      end
+    },
     "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
     "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
     "PokemonSystem" => PokemonSystemLang,

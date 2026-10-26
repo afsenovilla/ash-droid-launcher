@@ -7,7 +7,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Fixed
-- Naming screen: the narrowed nickname slots ran together into one line; they have gaps again.
+- Nicknames are limited to 12 characters, as in the official games (the game allowed 16, more slots
+  than its naming box has room for). The 12 slots keep the game's own size and fit in the box.
 - Android: the naming screen tabs read "ABC" and "O RO" instead of "abc" and "Otros" (the app drew
   the lettering in capitals only, and the tab font has no capital T or S). Lowercase is now kept,
   as on PC and Steam Deck; this also affects Voltorb Flip's memo button.
