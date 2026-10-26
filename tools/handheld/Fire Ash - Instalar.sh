@@ -308,6 +308,9 @@ main() {
   export SRCDIR="\$PWD"
   export ASHDROID_DEVICE=handheld
   export HOME="\${HOME:-/userdata/system}"
+  # Video: Knulli on the H700 has no KMS, only the Mali driver of its own SDL2. mkxp-z forces
+  # KMSDRM when nothing is set, so name the drivers to try (ashdroid_env.sh can still override it).
+  export SDL_VIDEODRIVER="\${SDL_VIDEODRIVER:-mali,kmsdrm,wayland,x11}"
   [ -f ./ashdroid_env.sh ] && . ./ashdroid_env.sh
   for t in /dev/tty0 /dev/tty1; do
     if [ -w "\$t" ]; then printf '\\033c\\n  Cargando Fire Ash...\\n' > "\$t" 2>/dev/null; break; fi
