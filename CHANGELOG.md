@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+- PC, Steam Deck and H700 consoles: the images with Spanish lettering or console buttons are redrawn
+  only once; the result is kept in ashdroid_artcache/ and reused, also in later sessions. Menus opened
+  slowly on the H700 consoles, where each redraw took a while.
+
 ## [0.4.11] - 2026-10-26
 
 ### Fixed

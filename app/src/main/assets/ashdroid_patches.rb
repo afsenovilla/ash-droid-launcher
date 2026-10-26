@@ -567,6 +567,58 @@ module AshDroidGfx
       @busy = false
     end
 
+    # Redrawing an image takes a while on a slow CPU (seconds on the H700 consoles), so each result is
+    # kept as a PNG in ashdroid_artcache/ and reused from then on, also in later sessions. The file
+    # name carries the recipes' version and the button names, so a new patch or another layout
+    # makes new ones.
+    CACHE_DIR = "ashdroid_artcache"
+
+    def self.disk_name(ck)
+      @stamp ||= begin
+        st = File.exist?(DATA_FILE) ? "#{File.size(DATA_FILE)}-#{File.mtime(DATA_FILE).to_i}" : "0"
+        (st + "|" + buttons.sort.join(",")).unpack("C*").each_with_index.inject(7) { |h, (c, i)| (h * 31 + c + i) % 2_147_483_647 }.to_s(36)
+      end
+      File.join(CACHE_DIR, ck.gsub(/[^a-z0-9._-]+/i, "_") + "-" + @stamp)
+    end
+
+    def self.from_disk(bmp, ck)
+      f = disk_name(ck)
+      if File.exist?(f + ".skip")
+        @cache[ck] = false
+        return true
+      end
+      return false unless File.exist?(f + ".png")
+      @busy = true
+      b = Bitmap.new(f + ".png")
+      ok = b.width == bmp.width && b.height == bmp.height
+      if ok
+        if bmp.respond_to?(:raw_data=) && b.respond_to?(:raw_data)
+          bmp.raw_data = b.raw_data
+        else
+          bmp.clear
+          bmp.blt(0, 0, b, b.rect)
+        end
+      end
+      b.dispose
+      ok
+    rescue StandardError
+      false
+    ensure
+      @busy = false
+    end
+
+    def self.to_disk(bmp, ck)
+      Dir.mkdir(CACHE_DIR) unless File.directory?(CACHE_DIR)
+      f = disk_name(ck)
+      if bmp
+        bmp.to_file(f + ".png") if bmp.respond_to?(:to_file)
+      else
+        File.write(f + ".skip", "")
+      end
+    rescue StandardError => e
+      AshDroidLog.log("gfx cache: #{e.class}: #{e.message}")
+    end
+
     # Called right after the game's image `path` was loaded into `bmp`
     def self.apply(bmp, path)
       return unless path.is_a?(String) && !@busy && enabled?
@@ -575,6 +627,7 @@ module AshDroidGfx
       return unless v
       ck = "#{key}|#{v}"
       img = @cache[ck]
+      return if img.nil? && from_disk(bmp, ck)
       if img.nil?
         t = Time.now
         src = to_img(bmp)
@@ -585,6 +638,12 @@ module AshDroidGfx
               end
         @cache[ck] = img || false
         AshDroidLog.log("gfx live #{ck} #{img ? 'ok' : 'skip'} #{((Time.now - t) * 1000).round}ms")
+        if img && img.w == bmp.width && img.h == bmp.height
+          write(bmp, img)
+          to_disk(bmp, ck)
+          return
+        end
+        to_disk(nil, ck) unless img
       end
       write(bmp, img) if img && img.w == bmp.width && img.h == bmp.height
     rescue StandardError => e
