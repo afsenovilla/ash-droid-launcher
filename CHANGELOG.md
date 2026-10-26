@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- H700 consoles: the installer stopped at "No he podido instalar el motor". The ports folder is on the card's
+  exFAT/FAT partition, which can't keep file owners, and tar gave up trying to restore them; it no longer
+  tries. tar's own messages now go to the install log.
+
 ### Changed
 - H700 consoles: the installer shows its progress on screen (unzipping percentage, each step, and the
   result for a few seconds) instead of leaving it black, and "Fire Ash" shows "Cargando Fire Ash..."

@@ -160,7 +160,7 @@ install_patch() {
   conf="$GAME/mkxp.json"
   [ -f "$conf.bak" ] || cp "$conf" "$conf.bak"
   # parche + traducciones + audio de la intro (sin VERSION.txt)
-  ( cd "$PAYLOAD/parche" && tar cf - . ) | ( cd "$GAME" && tar xf - ) || die "No he podido copiar el parche."
+  ( cd "$PAYLOAD/parche" && tar cf - . ) | ( cd "$GAME" && tar -xof - ) 2>> "$LOG" || die "No he podido copiar el parche."
   cp "$PAYLOAD/parche/VERSION.txt" "$GAME/$MARK"
 
   if ! grep -q "$PATCH" "$conf"; then
@@ -195,7 +195,11 @@ install_patch() {
 install_engine() {
   say "Instalando el motor..."
   rm -rf "$GAME/$ENGINE"; mkdir -p "$GAME/$ENGINE"
-  tar xzf "$PAYLOAD/mkxp-z-linux-aarch64.tar.gz" -C "$GAME/$ENGINE" || die "No he podido instalar el motor."
+  # -o: don't try to give the files the owner they had on the build machine. The ports folder is
+  # usually on the card's exFAT/FAT partition, which has no owners, and tar fails on it otherwise.
+  tar -xzof "$PAYLOAD/mkxp-z-linux-aarch64.tar.gz" -C "$GAME/$ENGINE" 2>> "$LOG" \
+    || die "No he podido instalar el motor (el detalle está en el log)."
+  [ -f "$GAME/$ENGINE/mkxp-z.aarch64" ] || die "El motor no se ha descomprimido entero (¿falta espacio en la tarjeta?)."
   chmod 755 "$GAME/$ENGINE/mkxp-z.aarch64"
   say "Motor instalado."
 }
