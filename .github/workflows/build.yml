@@ -270,7 +270,7 @@ jobs:
           | **Android** (Retroid, AYN, Anbernic…) | `ash-droid-launcher-*.apk` |
           | **Windows** | `FireAsh-Patch-Windows-*.zip` → "Instalar parche.exe" |
           | **Steam Deck / Linux** | `FireAsh-Patch-SteamDeck-Linux-*.zip` → "Instalar en Steam Deck.sh" (desktop mode) |
-          | **Anbernic H700 consoles** (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-*.zip` → copy its contents to the console's `ports` folder, then run "Fire Ash - Instalar" |
+          | **Anbernic H700 consoles** (RG34XX, RG35XX…, Knulli) | `FireAsh-Patch-Handheld-H700-*.zip` → unzip it and copy its contents **plus the game's zip, still zipped,** to the console's `roms/ports` folder, then run "Fire Ash - Instalar" from Ports |
           EOF
           cat dist/notes.md >> "$GITHUB_STEP_SUMMARY"
 

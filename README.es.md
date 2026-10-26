@@ -66,14 +66,35 @@ comprueba al abrirse y ofrece actualizar el parche. En Windows, descarga el zip 
 
 ## Consolas Anbernic H700 (RG34XX, RG35XX…)
 
-Un cuarto zip, `FireAsh-Patch-Handheld-H700-X.Y.Z.zip`, es para consolas Linux con Allwinner H700 (objetivo
-probado: RG34XX con [Knulli](https://knulli.org)). Lleva una versión **ARM64** nativa de mkxp-z y el mismo
-parche. Copia el contenido del zip y el `.zip` del juego a la carpeta `ports` de la consola y abre
-"Fire Ash - Instalar" desde el menú Ports: descomprime el juego, instala el parche y el motor y añade la
-entrada "Fire Ash". No hace falta Python ni PC. Estas consolas no tienen clic de palancas, así que L2 / R2
-hacen lo de L3 / R3 en la Deck, y los textos muestran los botones de la consola. Mira el `LEEME.txt` del zip.
-Otras consolas Linux más modestas (p. ej. Miyoo Mini, 128 MB de RAM y sin driver de GPU utilizable) no pueden
-ejecutar mkxp-z.
+Un cuarto zip, `FireAsh-Patch-Handheld-H700-X.Y.Z.zip`, es para consolas Linux con Allwinner H700 (pensado
+para la RG34XX con [Knulli](https://knulli.org); aún sin probar en la consola). Lleva una versión **ARM64**
+nativa de mkxp-z y el mismo parche. No hace falta Python ni PC para instalarlo.
+
+1. Descarga el juego (la versión de Windows, del Discord de Fire Ash) y este zip.
+2. Descomprime **solo este zip** y copia todo su contenido a la carpeta `ports` de la consola
+   (en Knulli: `roms/ports` de la tarjeta, o `share/roms/ports` por red).
+3. Copia también a esa misma carpeta `ports` **el zip del juego tal cual se descarga, sin descomprimir**
+   (si ya lo tienes descomprimido, vale la carpeta del juego, con un nombre que contenga "Fire Ash").
+   Tiene que quedar así:
+
+   ```
+   roms/ports/
+   ├── Fire Ash - Instalar.sh
+   ├── Fire Ash - Desinstalar.sh
+   ├── FireAsh-Patch/
+   ├── LEEME.txt
+   └── Pokemon Fire Ash 3.7.1.zip      ← el juego, comprimido
+   ```
+4. En la consola, abre **Ports → "Fire Ash - Instalar"**. Descomprime el juego en `ports/FireAsh`
+   (tarda unos minutos), instala el parche y el motor y crea la entrada "Fire Ash". Después puedes borrar
+   el zip del juego.
+5. Actualiza las listas de juegos (START → Opciones de juego → Actualizar listas) y abre **"Fire Ash"**
+   desde Ports.
+
+Estas consolas no tienen clic de palancas, así que L2 / R2 hacen lo de L3 / R3 en la Deck, y los textos
+muestran los botones de la consola. Si algo falla: `Fire Ash - instalacion.log` (junto al instalador) y
+`FireAsh/ashdroid_run.log`. Más detalles en el `LEEME.txt` del zip. Otras consolas Linux más modestas
+(p. ej. Miyoo Mini, 128 MB de RAM y sin driver de GPU utilizable) no pueden ejecutar mkxp-z.
 
 ## Pendiente
 

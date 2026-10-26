@@ -9,12 +9,21 @@ mkxp.json.bak, y unas líneas en mkxp.json). Tus partidas no se tocan.
 
 CÓMO INSTALARLO
 1. Descarga el juego (la versión de Windows, desde su Discord) y este zip.
-2. Descomprime ESTE zip y copia TODO su contenido (los dos .sh, FireAsh-Patch y LEEME) a la carpeta
-   "ports" de la consola (en Knulli: share/roms/ports, por red o con la SD en el PC).
-   Copia también ahí el zip del juego tal cual se descarga (o la carpeta ya descomprimida).
-3. En la consola, abre Ports > "Fire Ash - Instalar". Descomprime el juego (unos minutos), instala el
-   parche y el motor y crea "Fire Ash".
-4. Actualiza las listas de juegos (START > Opciones de juego > Actualizar listas de juegos) y abre
+2. Descomprime SOLO ESTE zip y copia TODO su contenido (los dos .sh, la carpeta FireAsh-Patch y este
+   LEEME) a la carpeta "ports" de la consola: en Knulli, roms/ports de la tarjeta (o share/roms/ports
+   por red).
+3. Copia también a esa misma carpeta "ports" el zip del juego TAL CUAL SE DESCARGA, SIN DESCOMPRIMIR.
+   (Si ya lo tienes descomprimido, vale la carpeta del juego, con un nombre que contenga "Fire Ash".)
+   Tiene que quedar así:
+     roms/ports/
+       Fire Ash - Instalar.sh
+       Fire Ash - Desinstalar.sh
+       FireAsh-Patch/
+       LEEME.txt
+       Pokemon Fire Ash 3.7.1.zip     <- el juego, comprimido
+4. En la consola, abre Ports > "Fire Ash - Instalar". Descomprime el juego en ports/FireAsh (unos
+   minutos), instala el parche y el motor y crea "Fire Ash". Después puedes borrar el zip del juego.
+5. Actualiza las listas de juegos (START > Opciones de juego > Actualizar listas de juegos) y abre
    "Fire Ash" desde Ports. La primera vez tarda un poco en arrancar.
 Si algo falla, mira "Fire Ash - instalacion.log" (junto al instalador) y "FireAsh/ashdroid_run.log".
 
