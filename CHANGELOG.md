@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+- H700 consoles: the installer shows its progress on screen (unzipping percentage, each step, and the
+  result for a few seconds) instead of leaving it black, and "Fire Ash" shows "Cargando Fire Ash..."
+  while the engine starts.
+
 ## [0.4.8] - 2026-10-26
 
 ### Added

@@ -19,15 +19,16 @@ main() {
   FONT_MARK='"fontSub": ["power green>ashdroid power green", "power clear>ashdroid power clear"],'
 
   : > "$LOG"
-  say() { echo "$*"; echo "$*" >> "$LOG"; }
-  die() { say "ERROR: $*"; say "Mira el log: $LOG"; exit 1; }
+  screen_init
+  say() { echo "$*"; echo "$*" >> "$LOG"; show "$*"; }
+  die() { say ""; say "ERROR: $*"; say "Mira el log: $LOG"; hold 15; exit 1; }
 
   [ -d "$PAYLOAD/parche" ] || die "Falta la carpeta FireAsh-Patch junto a este script: copia TODO el contenido del zip a la carpeta ports."
   [ -f "$PAYLOAD/mkxp-z-linux-aarch64.tar.gz" ] || die "Falta el motor (mkxp-z-linux-aarch64.tar.gz) en FireAsh-Patch."
 
   if [ "$1" = "--uninstall" ]; then uninstall; return; fi
 
-  say "== Parche Ash Droid de Fire Ash (consolas H700) =="
+  echo "== Parche Ash Droid de Fire Ash (consolas H700) ==" >> "$LOG"
   find_game || die "No encuentro el juego. Copia el zip de Pokémon Fire Ash (versión de Windows, del Discord del juego) a la carpeta ports junto a este script y vuelve a lanzarlo."
   say "Juego: $GAME"
 
@@ -36,9 +37,41 @@ main() {
   write_launcher
 
   say ""
-  say "LISTO. En el menú Ports, actualiza las listas de juegos (START > Opciones de juego > Actualizar listas)"
+  say "LISTO. En el menu Ports, actualiza las listas de juegos"
+  say "(START > Opciones de juego > Actualizar listas)"
   say "y abre \"Fire Ash\"."
+  hold 10
 }
+
+# ---------------------------------------------------------------- screen
+# The Ports menu shows nothing while a script runs: write the progress on the console
+# (text terminal) so the screen isn't just black. Same trick PortMaster ports use.
+
+screen_init() {
+  TTY=""
+  for t in /dev/tty0 /dev/tty1; do
+    if [ -w "$t" ]; then TTY="$t"; break; fi
+  done
+  [ -n "$TTY" ] || return 0
+  export TERM=linux
+  # A bigger console font if the firmware has one (the default is tiny on 640x480)
+  if command -v setfont >/dev/null 2>&1; then
+    for f in /usr/share/consolefonts/Lat7-Terminus24x12.psf.gz /usr/share/consolefonts/ter-v24n.psf.gz \
+             /usr/share/consolefonts/Lat7-Terminus20x10.psf.gz /usr/share/consolefonts/Lat7-Terminus16.psf.gz; do
+      if [ -f "$f" ]; then setfont "$f" -C "$TTY" 2>/dev/null || setfont "$f" 2>/dev/null; break; fi
+    done
+  fi
+  printf '\033c\033[?25l' > "$TTY" 2>/dev/null   # clear the screen, hide the cursor
+  # Show the console in front of the menu while the script runs
+  command -v chvt >/dev/null 2>&1 && [ "$TTY" = /dev/tty1 ] && chvt 1 2>/dev/null
+  show "== Parche Ash Droid de Fire Ash =="
+  show ""
+}
+
+show() { [ -n "$TTY" ] && printf '%s\n' "$*" > "$TTY" 2>/dev/null; return 0; }
+
+# Leave the last lines on screen for a few seconds before going back to the menu
+hold() { [ -n "$TTY" ] && sleep "$1"; printf '\033c\033[?25h' > "$TTY" 2>/dev/null; return 0; }
 
 # ----------------------------------------------------------------- game
 
@@ -95,7 +128,18 @@ find_game() {
       say "Descomprimiendo $(basename "$z") (puede tardar un par de minutos)..."
       tmp="$PORTS/.fireash-extract"
       rm -rf "$tmp"; mkdir -p "$tmp"
-      zip_extract "$z" "$tmp" >> "$LOG" 2>&1 || { rm -rf "$tmp"; die "No he podido descomprimir el zip (¿falta unzip?)."; }
+      total="$(zip_list "$z" | grep -c .)"
+      zip_extract "$z" "$tmp" >> "$LOG" 2>&1 &
+      pid=$!
+      # Progress: files written so far against the files in the zip
+      while kill -0 "$pid" 2>/dev/null; do
+        done_n="$(find "$tmp" 2>/dev/null | wc -l)"
+        pct=$(( total > 0 ? done_n * 100 / total : 0 )); [ "$pct" -gt 99 ] && pct=99
+        [ -n "$TTY" ] && printf '\r  %3d %%  (%s / %s archivos)   ' "$pct" "$done_n" "$total" > "$TTY" 2>/dev/null
+        sleep 2
+      done
+      wait "$pid" || { rm -rf "$tmp"; die "No he podido descomprimir el zip (¿falta unzip?)."; }
+      [ -n "$TTY" ] && printf '\r  100 %%                                  \n' > "$TTY" 2>/dev/null
       rm -rf "$GAME"
       if [ "$root" = "." ]; then mv "$tmp" "$GAME"; else mv "$tmp/$root" "$GAME"; rm -rf "$tmp"; fi
       is_game "$GAME" && return 0
@@ -112,6 +156,7 @@ insert_after_brace() { # file, text (no backslashes)
 }
 
 install_patch() {
+  say "Instalando el parche..."
   conf="$GAME/mkxp.json"
   [ -f "$conf.bak" ] || cp "$conf" "$conf.bak"
   # parche + traducciones + audio de la intro (sin VERSION.txt)
@@ -148,6 +193,7 @@ install_patch() {
 }
 
 install_engine() {
+  say "Instalando el motor..."
   rm -rf "$GAME/$ENGINE"; mkdir -p "$GAME/$ENGINE"
   tar xzf "$PAYLOAD/mkxp-z-linux-aarch64.tar.gz" -C "$GAME/$ENGINE" || die "No he podido instalar el motor."
   chmod 755 "$GAME/$ENGINE/mkxp-z.aarch64"
@@ -167,6 +213,9 @@ main() {
   export ASHDROID_DEVICE=handheld
   export HOME="\${HOME:-/userdata/system}"
   [ -f ./ashdroid_env.sh ] && . ./ashdroid_env.sh
+  for t in /dev/tty0 /dev/tty1; do
+    if [ -w "\$t" ]; then printf '\\033c\\n  Cargando Fire Ash...\\n' > "\$t" 2>/dev/null; break; fi
+  done
   exec "./$ENGINE/mkxp-z.aarch64" > ./ashdroid_run.log 2>&1
 }
 main "\$@"; exit
@@ -182,6 +231,7 @@ uninstall() {
   rm -rf "$GAME/$ENGINE" "$GAME"/ashdroid_* "$GAME"/Fonts/ashdroid_* "$GAME/ashdroid_pc_version.txt" 2>/dev/null
   rm -f "$PORTS/Fire Ash.sh"
   say "Parche y motor quitados. El juego y tus partidas no se han tocado."
+  hold 6
 }
 
 main "$@"; exit
