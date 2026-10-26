@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-10-26
+
 ### Fixed
 - Steam Deck: text sat low and the bottom of p, g, y… was cut off. The cause is in the game's fonts (their
   descent is stored as a positive number, which the Linux engine takes literally, so a line was only
