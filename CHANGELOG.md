@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Naming screen: the Pokémon's ♂/♀ sat on the last of the 12 letter slots; it now follows the question
+  ("¿Mote para Doduo? ♀").
+
 ## [0.4.12] - 2026-10-26
 
 ### Changed

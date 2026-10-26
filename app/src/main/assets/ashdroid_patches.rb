@@ -916,6 +916,7 @@ module AshDroidFixes
 
     def pbStartScene(*args)
       r = super
+      ashdroid_move_gender
       st = ashdroid_step
       if st != 24
         line = Bitmap.new(st, 6)
@@ -933,6 +934,17 @@ module AshDroidFixes
         pbDoUpdateOverlay
       end
       r
+    end
+
+    # The ♂/♀ of a Pokémon sits at x=430, where the game's default 10 slots end; with 12 slots it
+    # lands on the last one. Put it after the question instead ("¿Mote para Doduo? ♀").
+    def ashdroid_move_gender
+      g = @sprites && @sprites["gender"]
+      return unless g && 160 + 24 * @maxlength.to_i > g.x
+      b = @sprites["bgoverlay"].bitmap
+      g.x = [160 + b.text_size(@helptext.to_s).width + 10, 480].min
+      g.y = 12
+    rescue StandardError
     end
 
     def pbDoUpdateOverlay
