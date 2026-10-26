@@ -6,14 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.13] - 2026-10-27
+
 ### Fixed
 - Steam Deck: the update check never asked. When its window couldn't be shown (it happens in Game Mode)
   the version counted as declined ("Ahora no"), so it wasn't offered again. Now only a real "Ahora no"
   is remembered, and every check writes what it did to ashdroid_update.log in the game folder.
-
-## [0.4.13] - 2026-10-27
-
-### Fixed
 - Accented capitals sat lower than their neighbours wherever the fix didn't know them (Ã and Õ on the
   naming keyboard): every non-ASCII capital is now measured on its own, in any language, and a line is
   raised by the largest shift among the capitals it holds.
