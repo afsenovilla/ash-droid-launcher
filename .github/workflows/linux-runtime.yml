@@ -38,6 +38,8 @@ jobs:
             repo: http://archive.ubuntu.com/ubuntu
             target: x86_64-linux-gnu
             cpu_family: x86_64
+            cache_suffix: ''
+            meson_extra: ''
           - arch: aarch64
             # Like mkxp-z's own arm64 job: its qemu-user-binfmt lets debootstrap run the arm64 chroot
             # (on ubuntu-24.04 the chroot test /bin/true failed)
@@ -46,6 +48,11 @@ jobs:
             repo: http://ports.ubuntu.com/ubuntu-ports
             target: aarch64-linux-gnu
             cpu_family: aarch64
+            # The H700 consoles (Knulli) have no DRM/KMS: only the Mali blob on /dev/fb0, which the
+            # firmware's own SDL2 drives. So this engine uses the console's SDL2 (linked against a
+            # stub built here) instead of mkxp-z's vendored one, and OpenGL ES (no ANGLE).
+            cache_suffix: '-systemsdl'
+            meson_extra: '-Dsdl_system=enabled -Dgfx_backend=gles'
     steps:
       - uses: actions/checkout@v5
 
@@ -54,7 +61,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
-          key: mkxpz-linux-${{ matrix.arch }}-${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
+          key: mkxpz-linux-${{ matrix.arch }}-${{ env.ENGINE_CACHE }}${{ matrix.cache_suffix }}-${{ env.MKXPZ_REF }}
 
       - name: Checkout mkxp-z
         if: steps.engine.outputs.cache-hit != 'true'
@@ -69,7 +76,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq bison ccache cmake diffutils git make ruby clang lld llvm \
-            debootstrap gpg qemu-user-binfmt xvfb mesa-utils libgl1-mesa-dri python3-pip
+            debootstrap gpg qemu-user-binfmt xvfb mesa-utils libgl1-mesa-dri python3-pip pkg-config curl
           # mkxp-z needs Meson >= 1.4
           pip3 install --break-system-packages 'meson>=1.4,<2' ninja
           meson --version
@@ -102,6 +109,27 @@ jobs:
           EOF
           grep "^$fs_spec " /proc/mounts | cut -d ' ' -f 2 | sort -r | tr '\n' '\0' | xargs -0 -n 1 printf '%b\0' | xargs -0 -n 1 sudo umount
 
+      - name: SDL2 to link against (aarch64; the console's own SDL2 is used at run time)
+        if: steps.engine.outputs.cache-hit != 'true' && matrix.arch == 'aarch64'
+        shell: bash tools/linux/ci_step.sh sdl2 {0}
+        run: |
+          S=${{ runner.temp }}/sysroot
+          cd ${{ runner.temp }}
+          curl -fsSL -o sdl2.tar.gz https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-2.28.5.tar.gz
+          tar xzf sdl2.tar.gz
+          cd SDL2-2.28.5
+          # Only the library's interface matters (same soname, libSDL2-2.0.so.0, as Knulli's SDL 2.30+)
+          ./configure --host=aarch64-linux-gnu --prefix=/usr/local --enable-shared --disable-static \
+            CC="clang --target=aarch64-linux-gnu --sysroot=$S -fuse-ld=lld" \
+            --disable-audio --disable-video-x11 --disable-video-wayland --disable-video-kmsdrm \
+            --disable-video-vulkan --disable-video-opengl --disable-haptic --disable-sensor \
+            --disable-hidapi --disable-libudev --disable-dbus --disable-ime --disable-ibus > ../sdl2-configure.log 2>&1 \
+            || { tail -n 40 ../sdl2-configure.log; exit 1; }
+          make -j"$(nproc)" > ../sdl2-make.log 2>&1 || { tail -n 40 ../sdl2-make.log; exit 1; }
+          sudo make DESTDIR="$S" install > /dev/null
+          ls -la "$S/usr/local/lib" | grep -i sdl
+          cat "$S/usr/local/lib/pkgconfig/sdl2.pc"
+
       - name: Restore ccache
         if: steps.engine.outputs.cache-hit != 'true'
         uses: actions/cache/restore@v4
@@ -127,6 +155,10 @@ jobs:
           ar = 'llvm-ar'
           strip = 'llvm-strip'
           cmake = 'cmake'
+          pkg-config = 'pkg-config'
+          [properties]
+          sys_root = '${{ runner.temp }}/sysroot'
+          pkg_config_libdir = '${{ runner.temp }}/sysroot/usr/local/lib/pkgconfig'
           [host_machine]
           system = 'linux'
           cpu_family = '${{ matrix.cpu_family }}'
@@ -134,7 +166,7 @@ jobs:
           endian = 'little'
           EOF
           meson setup --prefix "$(pwd)/build/artifact" --cross-file ${{ runner.temp }}/cross.toml \
-            --buildtype release -Dstrip=true -Db_lto=true build
+            --buildtype release -Dstrip=true -Db_lto=true ${{ matrix.meson_extra }} build
 
       - name: Build
         if: steps.engine.outputs.cache-hit != 'true'
@@ -178,7 +210,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: out/mkxp-z-linux-${{ matrix.arch }}.tar.gz
-          key: mkxpz-linux-${{ matrix.arch }}-${{ env.ENGINE_CACHE }}-${{ env.MKXPZ_REF }}
+          key: mkxpz-linux-${{ matrix.arch }}-${{ env.ENGINE_CACHE }}${{ matrix.cache_suffix }}-${{ env.MKXPZ_REF }}
 
       - uses: actions/upload-artifact@v4
         with:

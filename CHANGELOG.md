@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.10] - 2026-10-26
+
+### Fixed
+- H700 consoles: the game didn't start ("Error creating window: kmsdrm not available"). Knulli on these
+  consoles has no DRM/KMS, only the Mali driver on the framebuffer, which its own SDL2 handles. The ARM64
+  engine now uses the console's SDL2 and OpenGL ES instead of carrying its own.
+
 ## [0.4.9] - 2026-10-26
 
 ### Fixed
