@@ -6,7 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
-## [0.4.9] - 2026-10-26
+## [0.4.8] - 2026-10-26
 
 ### Added
 - Anbernic H700 consoles (RG34XX, RG35XX…, running Knulli): a fourth package in every release,
@@ -14,8 +14,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   "Fire Ash - Instalar" (run from the Ports menu, no Python or PC needed) unpacks the game, installs the
   patch and engine and adds a "Fire Ash" entry. L2 / R2 do what L3 / R3 do on the Steam Deck (these
   consoles have no stick clicks) and the texts and images show the console's buttons.
-
-## [0.4.8] - 2026-10-26
 
 ### Fixed
 - Nicknames are limited to 12 characters, as in the official games (the game allowed 16, more slots
