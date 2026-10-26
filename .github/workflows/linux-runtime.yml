@@ -25,18 +25,23 @@ env:
 jobs:
   build:
     name: ${{ matrix.arch }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:
         include:
           - arch: x86_64
+            # The runner image stays as it was, so the cached engine keeps being valid
+            runner: ubuntu-24.04
             debian: amd64
             repo: http://archive.ubuntu.com/ubuntu
             target: x86_64-linux-gnu
             cpu_family: x86_64
           - arch: aarch64
+            # Like mkxp-z's own arm64 job: its qemu-user-binfmt lets debootstrap run the arm64 chroot
+            # (on ubuntu-24.04 the chroot test /bin/true failed)
+            runner: ubuntu-26.04
             debian: arm64
             repo: http://ports.ubuntu.com/ubuntu-ports
             target: aarch64-linux-gnu
