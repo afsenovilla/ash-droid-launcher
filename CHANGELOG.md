@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- Android, Mali GPUs (e.g. Samsung Galaxy A53): maps drawn black with vertical stripes. The launcher now
+  turns off the game's "subImageFix" (a workaround for Windows drivers, already off on the H700) and, on
+  Mali, keeps textures at 4096 px or less so the game splits its very tall tilesets into columns.
+  The Diagnostics log now shows the GPU's maximum texture size.
+
 ### Changed
 - The launcher now targets Android 16 (API 36), so Google Play Protect keeps accepting it on newer phones.
 

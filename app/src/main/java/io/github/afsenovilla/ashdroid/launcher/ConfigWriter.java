@@ -108,6 +108,18 @@ public final class ConfigWriter
 
             if (o.optInt("SESourceCount", 6) < 16) o.put("SESourceCount", 16);
 
+            // The game turns subImageFix on for buggy Windows drivers. On phones it sends the
+            // game's huge tilesets (Outside is 256x20032) through a shared scratch texture, and
+            // Mali drivers draw the map as black with vertical stripes. Off, like on the H700.
+            o.put("subImageFix", false);
+            // Mali: keep every texture at 4096 or less. Tilesets taller than that are split
+            // into columns by the game itself (TileWrap), which works at 4096 for all of them.
+            if (GpuInfo.isMali(ctx)) {
+                o.put("maxTextureSize", 4096);
+            } else {
+                o.remove("maxTextureSize");
+            }
+
             applyScaling(ctx, o, r, dev, scaleMode(ctx));
 
             // Runtime text patches (controls screen talks about buttons, not keys)

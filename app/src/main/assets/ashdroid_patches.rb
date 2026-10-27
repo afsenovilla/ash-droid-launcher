@@ -113,6 +113,7 @@ module AshDroidLog
   end
 end
 AshDroidLog.log("patch loaded; cwd=#{Dir.pwd rescue '?'} ruby=#{RUBY_VERSION} deck=#{ASHDROID_DECK.inspect}")
+AshDroidLog.log("max texture size=#{(Bitmap.max_size rescue '?')}")
 
 module AshDroidText
   BUTTON_WORD = { "Default" => "Button", "default" => "button",
