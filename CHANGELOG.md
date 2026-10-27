@@ -6,6 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Changed
+- The launcher now targets Android 16 (API 36), so Google Play Protect keeps accepting it on newer phones.
+
 ## [0.4.15] - 2026-10-28
 
 ### Fixed
