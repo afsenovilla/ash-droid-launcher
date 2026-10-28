@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.16] - 2026-10-28
+
 ### Fixed
 - Android, Mali GPUs (e.g. Samsung Galaxy A53): maps drawn black with vertical stripes. The launcher now
   turns off the game's "subImageFix" (a workaround for Windows drivers, already off on the H700) and, on
