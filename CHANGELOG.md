@@ -6,6 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.17] - 2026-11-06
+
+### Fixed
+- Re-importing the game zip or using "Delete game" no longer deletes your saves. Saves are moved aside
+  before the game files are touched and put back afterwards.
+- An interrupted import (app closed, low storage) no longer leaves the game broken: the previous
+  installation is restored on next launch.
+- Play, re-import and Delete game can no longer run at the same time.
+
+### Added
+- "Export saves" and "Import saves" in the Game section: save all your saves to a .zip and restore them
+  on this or another device. Use it before moving to the next version, which changes the signing key.
+
 ## [0.4.16] - 2026-10-28
 
 ### Fixed
