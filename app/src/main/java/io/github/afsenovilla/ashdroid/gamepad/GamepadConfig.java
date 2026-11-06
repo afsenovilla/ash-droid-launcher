@@ -15,6 +15,9 @@ public class GamepadConfig
     // Whether use diagonal (8-way) movement on D-Pad (default: false)
     public Boolean diagonalMovement = false;
 
+    // Optional per-button action overrides set in the launcher (null = defaults)
+    public TouchMapping touchMapping = null;
+
     /** Key bindings for each RGSS input **/
     public final Integer keycodeA = KeyEvent.KEYCODE_Z;
     public final Integer keycodeB = KeyEvent.KEYCODE_X;

@@ -97,20 +97,35 @@ public class Gamepad
         gpadDPad.isDiagonal = mGamepadConfig.diagonalMovement;
 
         // Setup buttons for gamepad
-        initGamepadButtons();
+        initGamepadButtons(context);
+        if (mGamepadConfig.touchMapping != null) mGamepadConfig.touchMapping.applyPositions(mGamepadLayout);
 
         // Apply scale and opacity from gamepad config
         ViewUtils.resize(mGamepadLayout, mGamepadConfig.scale);
         ViewUtils.changeOpacity(mGamepadLayout, mGamepadConfig.opacity);
     }
 
-    private void setGamepadButtonKey(GamepadButton gpadBtn, Integer keycode)
+    private void setGamepadButtonKey(Context ctx, String slot, GamepadButton gpadBtn, Integer keycode)
     {
-        // Prepare label for gamepad button
-        String btnLabel = KeyEvent.keyCodeToString(keycode)
-            .replace("KEYCODE_", "")
-            .replace("_LEFT", "")
-            .replace("_RIGHT", "");
+        String btnLabel = null;
+        TouchMapping tm = mGamepadConfig.touchMapping;
+        TouchMapping.Option opt = tm != null ? tm.get(slot) : null;
+        if (opt != null) {
+            if (opt.keycode == 0) {
+                // Unassigned: hide the button entirely
+                gpadBtn.setVisibility(android.view.View.GONE);
+                return;
+            }
+            keycode = opt.keycode;
+            btnLabel = opt.shortLabel(ctx);
+        }
+        if (btnLabel == null) {
+            // Prepare label for gamepad button
+            btnLabel = KeyEvent.keyCodeToString(keycode)
+                .replace("KEYCODE_", "")
+                .replace("_LEFT", "")
+                .replace("_RIGHT", "");
+        }
 
         // Set gamepad button
         gpadBtn.setForegroundText(btnLabel);
@@ -142,19 +157,19 @@ public class Gamepad
         }
     }
 
-    private void initGamepadButtons()
+    private void initGamepadButtons(Context ctx)
     {
-        setGamepadButtonKey(gpadBtnA, mGamepadConfig.keycodeA);
-        setGamepadButtonKey(gpadBtnB, mGamepadConfig.keycodeB);
-        setGamepadButtonKey(gpadBtnC, mGamepadConfig.keycodeC);
-        setGamepadButtonKey(gpadBtnX, mGamepadConfig.keycodeX);
-        setGamepadButtonKey(gpadBtnY, mGamepadConfig.keycodeY);
-        setGamepadButtonKey(gpadBtnZ, mGamepadConfig.keycodeZ);
-        setGamepadButtonKey(gpadBtnL, mGamepadConfig.keycodeL);
-        setGamepadButtonKey(gpadBtnR, mGamepadConfig.keycodeR);
-        setGamepadButtonKey(gpadBtnCTRL, mGamepadConfig.keycodeCTRL);
-        setGamepadButtonKey(gpadBtnALT, mGamepadConfig.keycodeALT);
-        setGamepadButtonKey(gpadBtnSHIFT, mGamepadConfig.keycodeSHIFT);
+        setGamepadButtonKey(ctx, "A", gpadBtnA, mGamepadConfig.keycodeA);
+        setGamepadButtonKey(ctx, "B", gpadBtnB, mGamepadConfig.keycodeB);
+        setGamepadButtonKey(ctx, "C", gpadBtnC, mGamepadConfig.keycodeC);
+        setGamepadButtonKey(ctx, "X", gpadBtnX, mGamepadConfig.keycodeX);
+        setGamepadButtonKey(ctx, "Y", gpadBtnY, mGamepadConfig.keycodeY);
+        setGamepadButtonKey(ctx, "Z", gpadBtnZ, mGamepadConfig.keycodeZ);
+        setGamepadButtonKey(ctx, "L", gpadBtnL, mGamepadConfig.keycodeL);
+        setGamepadButtonKey(ctx, "R", gpadBtnR, mGamepadConfig.keycodeR);
+        setGamepadButtonKey(ctx, "CTRL", gpadBtnCTRL, mGamepadConfig.keycodeCTRL);
+        setGamepadButtonKey(ctx, "ALT", gpadBtnALT, mGamepadConfig.keycodeALT);
+        setGamepadButtonKey(ctx, "SHIFT", gpadBtnSHIFT, mGamepadConfig.keycodeSHIFT);
     }
 
     public boolean processGamepadEvent(KeyEvent evt)

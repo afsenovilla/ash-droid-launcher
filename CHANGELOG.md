@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.4.18] - 2026-11-07
+
+### Added
+- **Touch buttons** (Settings): choose what each on-screen button does, hide the ones you don't use, and
+  **move** any button or the D-pad by dragging it. "Reset to default" restores both.
+- The next version (0.5.0) changes the signing key. Instead of a failing update, the launcher now explains
+  the steps and offers "Export saves" and the release page.
+
 ## [0.4.17] - 2026-11-06
 
 ### Fixed
