@@ -26,6 +26,8 @@ public class LauncherActivity extends Activity
     private static final int REQ_IMPORT = 1;
     private static final int REQ_WIZARD = 2;
     private static final int REQ_WIZARD_THEN_PLAY = 3;
+    private static final int REQ_EXPORT_SAVES = 4;
+    private static final int REQ_IMPORT_SAVES = 5;
 
     private Ui mUi;
     private LinearLayout mRoot;
@@ -293,6 +295,8 @@ public class LauncherActivity extends Activity
         LinearLayout g2 = mUi.group();
         mUi.item(g2, getString(R.string.tile_reimport), mUi.value(getString(R.string.tile_reimport_value) + "  ›"),
                 false, v -> pickZip());
+        mUi.item(g2, getString(R.string.tile_export_saves), mUi.value("›"), false, v -> pickExportSaves());
+        mUi.item(g2, getString(R.string.tile_import_saves), mUi.value("›"), false, v -> pickImportSaves());
         mUi.item(g2, getString(R.string.tile_delete), mUi.value(getString(R.string.tile_delete_value)), true,
                 v -> confirmDelete());
         right.addView(g2);
@@ -381,9 +385,15 @@ public class LauncherActivity extends Activity
 
     // ---------------------------------------------------------------- actions
 
+    /** True while Play preparation, import or deletion is running. */
+    private boolean operationRunning()
+    {
+        return mStarting || mBusy;
+    }
+
     private void play()
     {
-        if (mStarting) return;
+        if (operationRunning()) return;
         if (!ButtonMapping.ensureConfigured(this, DeviceProfile.detect(this))
                 && ButtonMapping.hasPhysicalGamepad()) {
             startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD_THEN_PLAY);
@@ -397,7 +407,10 @@ public class LauncherActivity extends Activity
         new Thread(() -> {
             String err = null;
             try {
-                ConfigWriter.write(this, DeviceProfile.detect(this));
+                synchronized (GameInstaller.lock()) {
+                    if (!GameInstaller.isInstalled(this)) throw new IOException(getString(R.string.err_no_game));
+                    ConfigWriter.write(this, DeviceProfile.detect(this));
+                }
             } catch (IOException e) {
                 err = e.getMessage();
             }
@@ -436,6 +449,7 @@ public class LauncherActivity extends Activity
 
     private void pickZip()
     {
+        if (operationRunning()) return;
         Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("*/*");
@@ -446,6 +460,65 @@ public class LauncherActivity extends Activity
         } catch (Exception e) {
             showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
         }
+    }
+
+    private void pickExportSaves()
+    {
+        if (operationRunning()) return;
+        String stamp = new java.text.SimpleDateFormat("yyyyMMdd-HHmm", java.util.Locale.ROOT).format(new java.util.Date());
+        Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("application/zip");
+        i.putExtra(Intent.EXTRA_TITLE, "fire-ash-saves-" + stamp + ".zip");
+        try {
+            startActivityForResult(i, REQ_EXPORT_SAVES);
+        } catch (Exception e) {
+            showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
+        }
+    }
+
+    private void pickImportSaves()
+    {
+        if (operationRunning()) return;
+        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("*/*");
+        i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
+                "application/zip", "application/x-zip-compressed", "application/octet-stream" });
+        try {
+            startActivityForResult(i, REQ_IMPORT_SAVES);
+        } catch (Exception e) {
+            showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
+        }
+    }
+
+    /** Runs a save export/import off the UI thread under the shared operation guard. */
+    private void runSaveTransfer(Uri uri, boolean export)
+    {
+        if (operationRunning()) return;
+        mBusy = true;
+        new Thread(() -> {
+            String err = null;
+            int n = 0;
+            try {
+                n = export ? GameInstaller.exportSaves(this, uri) : GameInstaller.importSaves(this, uri);
+            } catch (Exception e) {
+                err = e.getMessage() != null ? e.getMessage() : e.toString();
+            }
+            final String e2 = err;
+            final int count = n;
+            runOnUiThread(() -> {
+                mBusy = false;
+                render();
+                if (e2 != null) {
+                    showError(getString(export ? R.string.err_export_saves : R.string.err_import_saves), e2);
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setMessage(getString(export ? R.string.saves_exported : R.string.saves_imported, count))
+                            .setPositiveButton(R.string.ok, null).show();
+                }
+            });
+        }, "save-transfer").start();
     }
 
     /** Shows what the runtime patch reported during the last game session. */
@@ -477,10 +550,18 @@ public class LauncherActivity extends Activity
 
     private void confirmDelete()
     {
+        if (operationRunning()) return;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_title)
                 .setMessage(R.string.delete_msg)
-                .setPositiveButton(R.string.delete, (d, w) -> { GameInstaller.uninstall(this); render(); })
+                .setPositiveButton(R.string.delete, (d, w) -> {
+                    if (operationRunning()) return;
+                    mBusy = true;
+                    new Thread(() -> {
+                        GameInstaller.uninstall(this);
+                        runOnUiThread(() -> { mBusy = false; render(); });
+                    }, "game-delete").start();
+                })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
@@ -491,6 +572,10 @@ public class LauncherActivity extends Activity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_IMPORT && resultCode == RESULT_OK && data != null && data.getData() != null) {
             startImport(data.getData());
+        } else if (requestCode == REQ_EXPORT_SAVES && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            runSaveTransfer(data.getData(), true);
+        } else if (requestCode == REQ_IMPORT_SAVES && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            runSaveTransfer(data.getData(), false);
         } else if (requestCode == REQ_WIZARD_THEN_PLAY && resultCode == RESULT_OK) {
             play();
         }
@@ -498,6 +583,7 @@ public class LauncherActivity extends Activity
 
     private void startImport(Uri uri)
     {
+        if (operationRunning()) return;
         mBusy = true;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 

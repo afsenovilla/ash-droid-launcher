@@ -144,4 +144,12 @@
     <string name="update_downloading">Descargando… %1$d %%</string>
     <string name="update_permission">Para actualizar, permite que Ash Droid Launcher instale aplicaciones. Activa el permiso en la pantalla siguiente y vuelve a pulsar Actualizar. Tus partidas y ajustes se conservan.</string>
     <string name="update_failed">No se ha podido actualizar</string>
+    <string name="tile_export_saves">Exportar partidas</string>
+    <string name="tile_import_saves">Importar partidas</string>
+    <string name="saves_exported">%1$d archivo(s) de partida exportado(s).</string>
+    <string name="saves_imported">%1$d archivo(s) de partida importado(s).</string>
+    <string name="err_export_saves">No se pudieron exportar las partidas</string>
+    <string name="err_import_saves">No se pudieron importar las partidas</string>
+    <string name="err_no_saves">No se encontraron partidas.</string>
+    <string name="err_saves_too_big">El archivo de partidas es demasiado grande.</string>
 </resources>
