@@ -210,8 +210,13 @@ public final class GameInstaller
     /** True for entries directly under the game root that belong to the player. */
     private static boolean isUserData(File f)
     {
-        String n = f.getName().toLowerCase(java.util.Locale.ROOT);
-        if (f.isDirectory()) return n.equals("save files") || n.equals("saves") || n.equals("backups");
+        return isUserDataName(f.getName(), f.isDirectory());
+    }
+
+    private static boolean isUserDataName(String name, boolean dir)
+    {
+        String n = name.toLowerCase(java.util.Locale.ROOT);
+        if (dir) return n.equals("save files") || n.equals("saves") || n.equals("backups");
         return n.endsWith(".rxdata") || n.endsWith(".rxdata.bak") || n.endsWith(".rvdata")
                 || n.endsWith(".bak") && n.startsWith("game");
     }
@@ -296,6 +301,112 @@ public final class GameInstaller
             }
         }
         return entries;
+    }
+
+    // ---- save export / import ----
+
+    private static final long MAX_SAVE_ZIP_BYTES = 256L << 20;
+
+    /** Writes every save (in the game tree and parked) to a zip. Returns the number of files. */
+    public static int exportSaves(Context ctx, Uri dest) throws IOException
+    {
+        synchronized (LOCK) {
+            recover(ctx);
+            OutputStream raw = ctx.getContentResolver().openOutputStream(dest);
+            if (raw == null) throw new IOException(ctx.getString(R.string.err_open));
+            int[] count = { 0 };
+            try (java.util.zip.ZipOutputStream zos = new java.util.zip.ZipOutputStream(
+                    new java.io.BufferedOutputStream(raw, 1 << 16))) {
+                java.util.Set<String> seen = new java.util.HashSet<>();
+                for (File base : new File[] { gameDir(ctx), new File(ctx.getFilesDir(), USER_DIR) }) {
+                    File[] children = base.listFiles();
+                    if (children == null) continue;
+                    for (File c : children) {
+                        if (isUserData(c)) zipInto(zos, c, c.getName(), seen, count);
+                    }
+                }
+            }
+            if (count[0] == 0) throw new IOException(ctx.getString(R.string.err_no_saves));
+            return count[0];
+        }
+    }
+
+    private static void zipInto(java.util.zip.ZipOutputStream zos, File f, String path,
+                                java.util.Set<String> seen, int[] count) throws IOException
+    {
+        if (f.isDirectory()) {
+            File[] kids = f.listFiles();
+            if (kids != null) for (File k : kids) zipInto(zos, k, path + "/" + k.getName(), seen, count);
+            return;
+        }
+        if (!seen.add(path.toLowerCase(java.util.Locale.ROOT))) return;
+        zos.putNextEntry(new ZipEntry(path));
+        try (InputStream in = new java.io.FileInputStream(f)) {
+            byte[] buf = new byte[1 << 16];
+            int n;
+            while ((n = in.read(buf)) > 0) zos.write(buf, 0, n);
+        }
+        zos.closeEntry();
+        count[0]++;
+    }
+
+    /**
+     * Restores saves from a zip made by {@link #exportSaves}. Only save files are
+     * accepted (no game files, no scripts). Existing saves with the same name are
+     * replaced. Returns the number of files restored.
+     */
+    public static int importSaves(Context ctx, Uri src) throws IOException
+    {
+        synchronized (LOCK) {
+            recover(ctx);
+            File stage = new File(ctx.getFilesDir(), "saves_import");
+            Util.deleteRecursive(stage);
+            if (!stage.mkdirs()) throw new IOException(ctx.getString(R.string.err_tmp_dir));
+            String stageCanonical = stage.getCanonicalPath() + File.separator;
+            int count = 0;
+            long written = 0;
+            try {
+                InputStream raw = ctx.getContentResolver().openInputStream(src);
+                if (raw == null) throw new IOException(ctx.getString(R.string.err_open));
+                byte[] buf = new byte[1 << 16];
+                try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(raw, 1 << 16))) {
+                    ZipEntry e;
+                    while ((e = zis.getNextEntry()) != null) {
+                        String name = e.getName().replace('\\', '/');
+                        if (e.isDirectory()) continue;
+                        int slash = name.indexOf('/');
+                        String top = slash < 0 ? name : name.substring(0, slash);
+                        if (!isUserDataName(top, slash >= 0)) continue;
+                        File out = new File(stage, name);
+                        if (!out.getCanonicalPath().startsWith(stageCanonical)) {
+                            throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
+                        }
+                        File parent = out.getParentFile();
+                        if (parent != null) parent.mkdirs();
+                        try (OutputStream os = new FileOutputStream(out)) {
+                            int n;
+                            while ((n = zis.read(buf)) > 0) {
+                                written += n;
+                                if (written > MAX_SAVE_ZIP_BYTES) throw new IOException(ctx.getString(R.string.err_saves_too_big));
+                                os.write(buf, 0, n);
+                            }
+                        }
+                        count++;
+                    }
+                }
+                if (count == 0) throw new IOException(ctx.getString(R.string.err_no_saves));
+                // Into the game if installed, otherwise parked for the next import.
+                File target = new File(gameDir(ctx), MARKER).isFile()
+                        ? gameDir(ctx) : new File(ctx.getFilesDir(), USER_DIR);
+                //noinspection ResultOfMethodCallIgnored
+                target.mkdirs();
+                File[] kids = stage.listFiles();
+                if (kids != null) for (File k : kids) moveMerge(k, new File(target, k.getName()));
+                return count;
+            } finally {
+                Util.deleteRecursive(stage);
+            }
+        }
     }
 
     // ---- helpers ----
