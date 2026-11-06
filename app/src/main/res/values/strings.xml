@@ -149,4 +149,12 @@
     <string name="update_downloading">Downloading… %1$d %%</string>
     <string name="update_permission">To update, allow Ash Droid Launcher to install apps. Turn the permission on in the next screen, then press Update again. Your saves and settings are kept.</string>
     <string name="update_failed">The update failed</string>
+    <string name="tile_export_saves">Export saves</string>
+    <string name="tile_import_saves">Import saves</string>
+    <string name="saves_exported">%1$d save file(s) exported.</string>
+    <string name="saves_imported">%1$d save file(s) imported.</string>
+    <string name="err_export_saves">Could not export saves</string>
+    <string name="err_import_saves">Could not import saves</string>
+    <string name="err_no_saves">No save files found.</string>
+    <string name="err_saves_too_big">The save archive is too large.</string>
 </resources>
