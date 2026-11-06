@@ -51,6 +51,13 @@
         </activity>
 
         <activity
+            android:name=".launcher.TouchLayoutActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:configChanges="orientation|screenSize|screenLayout|keyboard|keyboardHidden|navigation"
+            android:exported="false" />
+
+        <activity
             android:name=".launcher.ButtonWizardActivity"
             android:screenOrientation="sensorLandscape"
             android:configChanges="orientation|screenSize|screenLayout|keyboard|keyboardHidden|navigation"

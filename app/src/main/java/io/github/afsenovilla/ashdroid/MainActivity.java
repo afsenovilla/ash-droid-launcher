@@ -91,6 +91,7 @@ public class MainActivity extends SDLActivity
         mTouchControls = ButtonMapping.touchControlsEnabled(this) && !isAndroidTV();
         mGamepadInvisible = !mTouchControls || isChromebook() || ButtonMapping.hasPhysicalGamepad();
         GamepadConfig gpadConfig = new GamepadConfig();
+        gpadConfig.touchMapping = io.github.afsenovilla.ashdroid.gamepad.TouchMapping.load(this);
         mGamepad.init(gpadConfig, mGamepadInvisible);
         mGamepad.setOnKeyDownListener(SDLActivity::onNativeKeyDown);
         mGamepad.setOnKeyUpListener(SDLActivity::onNativeKeyUp);
