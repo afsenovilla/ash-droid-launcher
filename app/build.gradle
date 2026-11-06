@@ -67,8 +67,9 @@ dependencies {
 }
 
 // Refuse to produce a release APK without the private signing key.
+// (Compiling release Java alone, e.g. the CI compile check, needs no key.)
 gradle.taskGraph.whenReady { graph ->
-    if (graph.allTasks.any { it.name.toLowerCase().contains("release") }) {
+    if (graph.allTasks.any { it.name ==~ /(package|assemble|bundle|sign).*Release.*/ }) {
         def missing = ["ASHDROID_KEYSTORE", "ASHDROID_STORE_PASSWORD", "ASHDROID_KEY_ALIAS", "ASHDROID_KEY_PASSWORD"]
                 .findAll { !System.getenv(it) }
         if (missing) throw new GradleException("Release signing not configured, missing: " + missing.join(", "))
