@@ -381,9 +381,15 @@ public class LauncherActivity extends Activity
 
     // ---------------------------------------------------------------- actions
 
+    /** True while Play preparation, import or deletion is running. */
+    private boolean operationRunning()
+    {
+        return mStarting || mBusy;
+    }
+
     private void play()
     {
-        if (mStarting) return;
+        if (operationRunning()) return;
         if (!ButtonMapping.ensureConfigured(this, DeviceProfile.detect(this))
                 && ButtonMapping.hasPhysicalGamepad()) {
             startActivityForResult(new Intent(this, ButtonWizardActivity.class), REQ_WIZARD_THEN_PLAY);
@@ -397,7 +403,10 @@ public class LauncherActivity extends Activity
         new Thread(() -> {
             String err = null;
             try {
-                ConfigWriter.write(this, DeviceProfile.detect(this));
+                synchronized (GameInstaller.lock()) {
+                    if (!GameInstaller.isInstalled(this)) throw new IOException(getString(R.string.err_no_game));
+                    ConfigWriter.write(this, DeviceProfile.detect(this));
+                }
             } catch (IOException e) {
                 err = e.getMessage();
             }
@@ -436,6 +445,7 @@ public class LauncherActivity extends Activity
 
     private void pickZip()
     {
+        if (operationRunning()) return;
         Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("*/*");
@@ -477,10 +487,18 @@ public class LauncherActivity extends Activity
 
     private void confirmDelete()
     {
+        if (operationRunning()) return;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_title)
                 .setMessage(R.string.delete_msg)
-                .setPositiveButton(R.string.delete, (d, w) -> { GameInstaller.uninstall(this); render(); })
+                .setPositiveButton(R.string.delete, (d, w) -> {
+                    if (operationRunning()) return;
+                    mBusy = true;
+                    new Thread(() -> {
+                        GameInstaller.uninstall(this);
+                        runOnUiThread(() -> { mBusy = false; render(); });
+                    }, "game-delete").start();
+                })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
@@ -498,6 +516,7 @@ public class LauncherActivity extends Activity
 
     private void startImport(Uri uri)
     {
+        if (operationRunning()) return;
         mBusy = true;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
