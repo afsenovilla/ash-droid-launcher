@@ -19,28 +19,34 @@ android {
         }
     }
 
+    // Release builds are signed with a private key that never lives in the repo.
+    // Provide it via environment variables (CI decodes it from secrets):
+    //   ASHDROID_KEYSTORE        path to the .jks file
+    //   ASHDROID_STORE_PASSWORD, ASHDROID_KEY_ALIAS, ASHDROID_KEY_PASSWORD
+    // Debug builds use the standard Android debug key, so they can never
+    // replace a release install.
+    def releaseKeystore = System.getenv("ASHDROID_KEYSTORE")
     signingConfigs {
-        // Stable signing key so updates install over the previous version
-        // without losing saves. See keystore/README.md.
-        stable {
-            storeFile file("../keystore/ashdroid.jks")
-            storePassword System.getenv("ASHDROID_STORE_PASSWORD") ?: "ashdroid"
-            keyAlias System.getenv("ASHDROID_KEY_ALIAS") ?: "ashdroid"
-            keyPassword System.getenv("ASHDROID_KEY_PASSWORD") ?: "ashdroid"
+        release {
+            if (releaseKeystore) {
+                storeFile file(releaseKeystore)
+                storePassword System.getenv("ASHDROID_STORE_PASSWORD")
+                keyAlias System.getenv("ASHDROID_KEY_ALIAS")
+                keyPassword System.getenv("ASHDROID_KEY_PASSWORD")
+            }
         }
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.stable
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
             debuggable true
             jniDebuggable true
-            signingConfig signingConfigs.stable
         }
     }
 
@@ -58,4 +64,14 @@ android {
 
 dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
+}
+
+// Refuse to produce a release APK without the private signing key.
+gradle.taskGraph.whenReady { graph ->
+    if (graph.allTasks.any { it.name.toLowerCase().contains("release") }) {
+        def missing = ["ASHDROID_KEYSTORE", "ASHDROID_STORE_PASSWORD", "ASHDROID_KEY_ALIAS", "ASHDROID_KEY_PASSWORD"]
+                .findAll { !System.getenv(it) }
+        if (missing) throw new GradleException("Release signing not configured, missing: " + missing.join(", "))
+        if (!file(System.getenv("ASHDROID_KEYSTORE")).isFile()) throw new GradleException("ASHDROID_KEYSTORE does not point to a file")
+    }
 }

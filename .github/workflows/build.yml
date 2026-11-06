@@ -173,8 +173,26 @@ jobs:
       - name: Build translation packs
         run: ruby tools/translation/build_pack.rb
 
+      - name: Decode release signing key
+        env:
+          ASHDROID_KEYSTORE_BASE64: ${{ secrets.ASHDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$ASHDROID_KEYSTORE_BASE64" ]; then
+            echo "::error::Secret ASHDROID_KEYSTORE_BASE64 is not set"; exit 1
+          fi
+          echo "$ASHDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          echo "ASHDROID_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+
       - name: Build APK
+        env:
+          ASHDROID_STORE_PASSWORD: ${{ secrets.ASHDROID_STORE_PASSWORD }}
+          ASHDROID_KEY_ALIAS: ${{ secrets.ASHDROID_KEY_ALIAS }}
+          ASHDROID_KEY_PASSWORD: ${{ secrets.ASHDROID_KEY_PASSWORD }}
         run: ci/run.sh gradle-apk ./gradlew --no-daemon assembleRelease
+
+      - name: Remove signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"
 
       - name: Rename APK
         run: |
