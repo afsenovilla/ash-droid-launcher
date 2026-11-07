@@ -12266,6 +12266,54 @@
      "anchor": "rect"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "asset": "art/raid_hard_es.png"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "asset": "art/raid_hard_fr.png"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "asset": "art/raid_hard_de.png"
+    }
+   ]
   }
  ]
 }
