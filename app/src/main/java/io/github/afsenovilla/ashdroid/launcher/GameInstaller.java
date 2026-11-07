@@ -49,6 +49,10 @@ public final class GameInstaller
     private static final String USER_DIR = "userdata";
     private static final String MARKER = ".ashdroid_installed";
 
+    /** Fire Ash is ~1-2 GB with tens of thousands of files; these are generous safety caps. */
+    private static final long MAX_BYTES = 8L << 30;
+    private static final int MAX_ENTRIES = 200_000;
+
     /** Serializes import, delete and launch preparation. */
     private static final Object LOCK = new Object();
 
@@ -129,6 +133,18 @@ public final class GameInstaller
         if (!tmp.mkdirs()) throw new IOException(ctx.getString(R.string.err_tmp_dir));
         String tmpCanonical = tmp.getCanonicalPath() + File.separator;
 
+        boolean ok = false;
+        try {
+            importStaged(ctx, cr, uri, tmp, tmpCanonical, total, progress);
+            ok = true;
+        } finally {
+            if (!ok) Util.deleteRecursive(tmp);
+        }
+    }
+
+    private static void importStaged(Context ctx, ContentResolver cr, Uri uri, File tmp, String tmpCanonical,
+                                     long total, Progress progress) throws IOException
+    {
         int entries;
         try {
             entries = extract(ctx, cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress);
@@ -275,22 +291,38 @@ public final class GameInstaller
         CountingInputStream counting = new CountingInputStream(new BufferedInputStream(raw, 1 << 16));
         byte[] buf = new byte[1 << 16];
         int entries = 0;
+        long written = 0;
+        java.util.Set<String> seen = new java.util.HashSet<>();
         try (ZipInputStream zis = new ZipInputStream(counting, cs)) {
             ZipEntry e;
             while ((e = zis.getNextEntry()) != null) {
+                if (seen.size() >= MAX_ENTRIES) throw new IOException(ctx.getString(R.string.err_zip_limits));
                 File out = new File(tmp, e.getName());
                 // Zip-slip protection
-                if (!out.getCanonicalPath().startsWith(tmpCanonical)) {
+                String canon = out.getCanonicalPath();
+                if (!canon.startsWith(tmpCanonical)) {
+                    throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
+                }
+                // Duplicate or case-colliding paths would silently replace earlier files
+                String key = canon.toLowerCase(java.util.Locale.ROOT) + (e.isDirectory() ? "/" : "");
+                if (!seen.add(key)) {
+                    if (e.isDirectory()) { zis.closeEntry(); continue; }
                     throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
                 }
                 if (e.isDirectory()) {
+                    if (out.isFile()) throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
                     out.mkdirs();
                 } else {
                     File parent = out.getParentFile();
                     if (parent != null) parent.mkdirs();
+                    if (out.isDirectory() || (parent != null && !parent.isDirectory())) {
+                        throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
+                    }
                     try (OutputStream os = new FileOutputStream(out)) {
                         int n;
                         while ((n = zis.read(buf)) > 0) {
+                            written += n;
+                            if (written > MAX_BYTES) throw new IOException(ctx.getString(R.string.err_zip_limits));
                             os.write(buf, 0, n);
                             if (progress != null) progress.onProgress(counting.count, total, e.getName());
                         }
