@@ -4766,6 +4766,187 @@
      "style": "plain"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_1",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_2",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_4",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_5",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "fr",
+   "grid": 2,
+   "offset": [
+    1,
+    1
+   ],
+   "regions": [
+    {
+     "rect": [
+      155,
+      54,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "de",
+   "grid": 2,
+   "offset": [
+    1,
+    1
+   ],
+   "regions": [
+    {
+     "rect": [
+      155,
+      54,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
   }
  ]
 }
