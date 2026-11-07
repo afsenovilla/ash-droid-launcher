@@ -6,6 +6,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-07
+
+### Changed
+- **New private signing key.** The old public key is retired. This version does not install over 0.4.x:
+  export your saves, uninstall, install this version, import the game zip, then import your saves.
+- Debug builds are signed with the Android debug key and can no longer replace a release install.
+
+### Fixed
+- Android 7–10: the game no longer fails to start asking for a storage permission it does not need.
+
 ## [0.4.18] - 2026-11-07
 
 ### Added
