@@ -4947,6 +4947,228 @@
      "style": "plain"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_info",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "ZONE",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMES",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_info",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "GEBIET",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_area",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "ZONE",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMES",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#187048",
+     "fill": "#90d8b8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_area",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "GEBIET",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#187048",
+     "fill": "#90d8b8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_forms",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "ZONE",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#6810b8",
+     "fill": "#d8b8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMES",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_forms",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "GEBIET",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#6810b8",
+     "fill": "#d8b8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    }
+   ]
   }
  ]
 }
