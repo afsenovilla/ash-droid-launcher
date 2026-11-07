@@ -312,14 +312,14 @@ def variants(recipes):
     for path in paths:
         entries = [i for i in recipes["images"] if i["path"] == path]
         langs = {i.get("lang", "es") for i in entries}
-        if "es" in langs:
-            yield path, "es", entries
+        for lang in [l for l in ("es", "fr", "de", "it") if l in langs] + sorted(langs - {"es", "fr", "de", "it", "any"}):
+            yield path, lang, [i for i in entries if i.get("lang", "es") in (lang, "any")]
         if "any" in langs:
             yield path, "any", [i for i in entries if i.get("lang", "es") == "any"]
 
 
 def out_file(path, lang):
-    return ("any_" if lang == "any" else "") + out_name(path)
+    return ("" if lang == "es" else lang + "_") + out_name(path)
 
 
 def run(game, recipes, out, buttons):
