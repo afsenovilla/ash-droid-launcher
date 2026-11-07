@@ -275,11 +275,14 @@ public class LauncherActivity extends Activity
         left.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1f));
 
         TextView title = mUi.title(GameInstaller.gameTitle(this));
+        String verified = GameInstaller.verifiedRelease(this);
         title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 32);
         title.setShadowLayer(8, 0, 2, 0xFF000000);
         left.addView(title);
         left.addView(mUi.small(getString(R.string.launcher_title) + "  ·  v"
                 + io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME));
+        left.addView(mUi.small(verified != null
+                ? getString(R.string.game_verified, verified) : getString(R.string.game_unverified)));
 
         if (mUpdate != null) {
             Button up = mUi.button(getString(R.string.update_button, mUpdate.version), v -> { cancelAutostart(); startUpdate(); });
@@ -711,7 +714,7 @@ public class LauncherActivity extends Activity
                             status.setText(getString(R.string.import_progress_nototal, (int) (done >> 20), file));
                         }
                     });
-                });
+                }, this::askUnverified);
                 ConfigWriter.write(this, DeviceProfile.detect(this));
             } catch (IOException e) {
                 error = e.getMessage();
@@ -731,6 +734,27 @@ public class LauncherActivity extends Activity
                 }
             });
         }, "game-import").start();
+    }
+
+    /** Worker thread: asks on the UI thread whether to install a zip that isn't a known official release. */
+    private boolean askUnverified(String sha256)
+    {
+        final java.util.concurrent.CountDownLatch done = new java.util.concurrent.CountDownLatch(1);
+        final boolean[] allow = { false };
+        runOnUiThread(() -> new AlertDialog.Builder(this)
+                .setTitle(R.string.unverified_title)
+                .setMessage(getString(R.string.unverified_msg, sha256))
+                .setCancelable(false)
+                .setPositiveButton(R.string.unverified_continue, (d, w) -> { allow[0] = true; done.countDown(); })
+                .setNegativeButton(R.string.cancel, (d, w) -> done.countDown())
+                .show());
+        try {
+            done.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+        return allow[0];
     }
 
     private void showError(String title, String msg)

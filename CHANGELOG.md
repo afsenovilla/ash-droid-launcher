@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Security
+- The game zip is checked against the SHA-256 of official Fire Ash releases (3.7.1 for now). A known zip
+  installs as before and the launcher shows "✓ Pokémon Fire Ash 3.7.1 (verified)"; any other zip asks for
+  confirmation first, since a modified game can run code inside the app.
+
 ## [0.5.1] - 2026-11-07
 
 ### Security
