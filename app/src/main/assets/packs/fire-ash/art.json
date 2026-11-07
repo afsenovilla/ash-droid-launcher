@@ -12761,6 +12761,75 @@
      "bgx": 368
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NUEVO",
+     "ttf": "power clear bold",
+     "cap": 13,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NOUVEAU",
+     "ttf": "power clear bold",
+     "cap": 13,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.3
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NEU",
+     "ttf": "power clear bold",
+     "cap": 14,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.5
+    }
+   ]
   }
  ]
 }
