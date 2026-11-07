@@ -5699,6 +5699,700 @@
      "bgx": 14
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "JETON",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "JETON",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "PERDU",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "PERDU",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bg",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      181,
+      25,
+      34,
+      5
+     ],
+     "text": "JETONS"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      221,
+      25,
+      33,
+      5
+     ],
+     "text": "GAINS"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "MÜNZE",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "MÜNZE",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "NIETE",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "NIETE",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bg",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      181,
+      25,
+      34,
+      5
+     ],
+     "text": "MÜNZEN"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      221,
+      25,
+      33,
+      5
+     ],
+     "text": "GEWINN"
+    }
+   ]
   }
  ]
 }
