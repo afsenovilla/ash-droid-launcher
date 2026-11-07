@@ -1362,7 +1362,19 @@
      "rect": [
       44,
       8,
-      47,
+      18,
+      10
+     ],
+     "text": "",
+     "font": "5x7",
+     "style": "outline",
+     "bgx": 6
+    },
+    {
+     "rect": [
+      62,
+      8,
+      29,
       10
      ],
      "text": "{SPECIAL}",
@@ -1746,7 +1758,7 @@
       4
      ],
      "text": "{ACTION}",
-     "font": "tiny",
+     "font": "tiny4",
      "style": "plain",
      "fills": [
       "#ffffff",
@@ -6391,6 +6403,108 @@
       5
      ],
      "text": "GEWINN"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      8,
+      8,
+      54,
+      10
+     ],
+     "text": "DÉPLACER",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 6,
+     "fills": [
+      "#f8c860",
+      "#f8b028"
+     ],
+     "align": "left"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      8,
+      8,
+      54,
+      10
+     ],
+     "text": "TAUSCHEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 6,
+     "fills": [
+      "#f8c860",
+      "#f8b028"
+     ],
+     "align": "left"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "APPUYEZ SUR {USE}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "DRÜCKE {USE}"
     }
    ]
   }
