@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Fixed
+- The "new signing key" notice is no longer decided from version numbers: it appears only if the downloaded
+  update really is signed with another key. An unreadable signature is reported as a failed update instead.
+
 ## [0.6.0] - 2026-11-07
 
 ### Added

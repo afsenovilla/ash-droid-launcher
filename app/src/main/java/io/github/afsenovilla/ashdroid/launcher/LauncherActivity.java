@@ -109,13 +109,8 @@ public class LauncherActivity extends Activity
     {
         final Updater.Info info = mUpdate;
         if (info == null) return;
-        // Only a pre-0.5.0 install (old key) can't take a 0.5.0+ update in place
-        String installed = io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME;
-        if (Updater.compare(installed, SIGNING_CHANGE_VERSION) < 0
-                && Updater.compare(info.version, SIGNING_CHANGE_VERSION) >= 0) {
-            showSigningChange(info);
-            return;
-        }
+        // No guessing from version numbers: the manual-reinstall notice is shown only if the
+        // downloaded APK really is signed with another key (Updater.SignatureMismatch).
         if (android.os.Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.update_title, info.version))
@@ -147,6 +142,11 @@ public class LauncherActivity extends Activity
                     }
                 });
                 runOnUiThread(dlg::dismiss);
+            } catch (Updater.SignatureMismatch e) {
+                runOnUiThread(() -> {
+                    dlg.dismiss();
+                    showSigningChange(info);
+                });
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     dlg.dismiss();
@@ -155,9 +155,6 @@ public class LauncherActivity extends Activity
             }
         }, "update-install").start();
     }
-
-    /** First version signed with the new private key: cannot install over this one. */
-    private static final String SIGNING_CHANGE_VERSION = "0.5.0";
 
     /**
      * Android refuses to install an APK with a different signature over this one,

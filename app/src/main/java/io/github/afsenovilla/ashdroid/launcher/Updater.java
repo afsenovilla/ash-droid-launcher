@@ -119,6 +119,12 @@ final class Updater
         return done;
     }
 
+    /** The downloaded APK is this app but signed with another key: Android won't install it over this one. */
+    static final class SignatureMismatch extends IOException
+    {
+        SignatureMismatch(String msg) { super(msg); }
+    }
+
     @SuppressWarnings("deprecation")
     private static void verify(Context ctx, java.io.File apk) throws IOException
     {
@@ -138,24 +144,24 @@ final class Updater
         long cv = Build.VERSION.SDK_INT >= 28 ? cand.getLongVersionCode() : cand.versionCode;
         long mv = Build.VERSION.SDK_INT >= 28 ? mine.getLongVersionCode() : mine.versionCode;
         if (cv <= mv) throw new IOException(bad + " (version)");
-        if (!sameSigner(cand, mine)) throw new IOException(bad + " (signature)");
+        android.content.pm.Signature[] cs = signers(cand), ms = signers(mine);
+        if (cs == null && Build.VERSION.SDK_INT >= 28) {
+            // Some Android versions leave signingInfo empty for an APK file: ask the old way
+            android.content.pm.PackageInfo c2 = pm.getPackageArchiveInfo(apk.getPath(),
+                    android.content.pm.PackageManager.GET_SIGNATURES);
+            if (c2 != null) cs = c2.signatures;
+        }
+        // Unreadable signers are a failed download, not a key change
+        if (cs == null || cs.length == 0 || ms == null || ms.length == 0) throw new IOException(bad + " (signature unreadable)");
+        if (!new java.util.HashSet<>(java.util.Arrays.asList(cs)).equals(new java.util.HashSet<>(java.util.Arrays.asList(ms))))
+            throw new SignatureMismatch(bad + " (signature)");
     }
 
     @SuppressWarnings("deprecation")
-    private static boolean sameSigner(android.content.pm.PackageInfo a, android.content.pm.PackageInfo b)
+    private static android.content.pm.Signature[] signers(android.content.pm.PackageInfo p)
     {
-        android.content.pm.Signature[] sa, sb;
-        if (Build.VERSION.SDK_INT >= 28) {
-            if (a.signingInfo == null || b.signingInfo == null) return false;
-            sa = a.signingInfo.getApkContentsSigners();
-            sb = b.signingInfo.getApkContentsSigners();
-        } else {
-            sa = a.signatures;
-            sb = b.signatures;
-        }
-        if (sa == null || sb == null || sa.length == 0) return false;
-        return new java.util.HashSet<>(java.util.Arrays.asList(sa))
-                .equals(new java.util.HashSet<>(java.util.Arrays.asList(sb)));
+        if (Build.VERSION.SDK_INT >= 28 && p.signingInfo != null) return p.signingInfo.getApkContentsSigners();
+        return p.signatures;
     }
 
     private static void commit(Context ctx, java.io.File apk, long total) throws IOException
