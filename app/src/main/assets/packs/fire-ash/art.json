@@ -1798,20 +1798,21 @@
     {
      "rect": [
       20,
-      110,
+      109,
       26,
-      4
+      5
      ],
      "text": "{ACTION}",
-     "font": "tiny4",
+     "font": "tiny",
      "style": "plain",
      "fills": [
+      "#ffffff",
       "#ffffff",
       "#e7e7e7",
       "#cecece",
       "#adadad"
      ],
-     "height": 4,
+     "height": 5,
      "bgx": 20
     }
    ]
