@@ -201,12 +201,20 @@ module AshDroidText
   SPAIN_PACK_FILE = "ashdroid_es_ES.dat"
 
   # Full retranslations, one pack per language file of the game
-  RETRANS = [[/spanish/i, SPAIN_PACK_FILE], [/french/i, "ashdroid_fr.dat"], [/german/i, "ashdroid_de.dat"]]
+  RETRANS = [[/spanish/i, SPAIN_PACK_FILE], [/french/i, "ashdroid_fr.dat"], [/german/i, "ashdroid_de.dat"],
+             [/italian/i, "ashdroid_it.dat"]]
+
+  # Italian isn't one of the game's languages: the patch adds "Italiano", which loads the
+  # game's English file with every text replaced by the Italian pack. For the patch it
+  # counts as the (virtual) language file "italian.dat".
+  ITALIAN_NAME = "Italiano"
+  ITALIAN_FILE = "italian.dat"
 
   def self.lang_file
     langs = Settings::LANGUAGES
     idx = $PokemonSystem ? $PokemonSystem.language : nil
-    langs && idx && langs[idx] ? langs[idx][1].to_s : nil
+    return nil unless langs && idx && langs[idx]
+    langs[idx][0] == ITALIAN_NAME ? ITALIAN_FILE : langs[idx][1].to_s
   rescue StandardError, NameError
     nil
   end
@@ -245,9 +253,7 @@ module AshDroidText
   end
 
   def self.english?
-    langs = Settings::LANGUAGES
-    idx = $PokemonSystem ? $PokemonSystem.language : nil
-    !!(langs && idx && langs[idx] && langs[idx][1].to_s =~ /english/i)
+    !!(lang_file.to_s =~ /english/i)
   rescue StandardError, NameError
     false
   end
@@ -258,6 +264,7 @@ module AshDroidText
     f = lang_file.to_s
     return "fr" if f =~ /french/i
     return "de" if f =~ /german/i
+    return "it" if f =~ /italian/i
     nil
   rescue StandardError
     nil
@@ -704,7 +711,8 @@ end
 module AshDroidCredits
   LINES = [[/spanish/i, "Parche Ash Droid: Alberto (afsenovilla)"],
            [/french/i, "Patch Ash Droid : Alberto (afsenovilla)"],
-           [/german/i, "Ash-Droid-Patch: Alberto (afsenovilla)"]]
+           [/german/i, "Ash-Droid-Patch: Alberto (afsenovilla)"],
+           [/italian/i, "Patch Ash Droid: Alberto (afsenovilla)"]]
   DEFAULT = "Ash Droid patch: Alberto (afsenovilla)"
 
   def self.stamp(bmp, path)
@@ -866,7 +874,7 @@ begin
         define_method(name) do |*args, &blk|
           if $ashdroid_quitting && name == :_INTL && args[0] == "Cancel"
             f = AshDroidText.lang_file.to_s
-            next(f =~ /spanish/i ? "Salir" : f =~ /french/i ? "Quitter" : f =~ /german/i ? "Beenden" : "Quit")
+            next(f =~ /spanish/i ? "Salir" : f =~ /french/i ? "Quitter" : f =~ /german/i ? "Beenden" : f =~ /italian/i ? "Esci" : "Quit")
           end
           es = AshDroidText.spain_lookup(args[key_index], args[key_index + 1])
           if es && es =~ /\A[¡¿]?\{1\}/ && args[key_index + 1].is_a?(String) &&
@@ -1061,6 +1069,28 @@ module AshDroidFixes
   # The game's "Spanish" entry becomes "Spanish (Spain)" (same data file), so the
   # Spain retranslation replaces the old Spanish instead of being an extra language.
   def self.add_language(settings)
+    add_spain(settings)
+    add_italian(settings)
+  end
+
+  # "Italiano" at the end of the list (so no existing language changes index), loading the
+  # game's English file; only when the Italian pack is there.
+  def self.add_italian(settings)
+    langs = settings::LANGUAGES
+    return if langs.any? { |l| l[0] == AshDroidText::ITALIAN_NAME }
+    return unless File.exist?("ashdroid_it.dat")
+    en = langs.find { |l| Array(l).join(" ") =~ /english/i } || langs[0]
+    return unless en
+    entry = [AshDroidText::ITALIAN_NAME, en[1]]
+    list = langs.map { |l| l.frozen? ? l.dup : l } + [entry]
+    settings.send(:remove_const, :LANGUAGES)
+    settings.const_set(:LANGUAGES, langs.frozen? ? list.freeze : list)
+    AshDroidLog.log("language added: #{entry.inspect} at #{list.size - 1}")
+  rescue StandardError => e
+    AshDroidLog.log("add_italian error: #{e.class}: #{e.message}")
+  end
+
+  def self.add_spain(settings)
     langs = settings::LANGUAGES
     return if langs.any? { |l| l[0] == AshDroidText::SPAIN_NAME }
     idx = langs.index { |l| l[1].to_s =~ /spanish|espa/i }
@@ -1165,8 +1195,9 @@ module AshDroidFixes
   module PokemonSystemLang
     def language
       v = super
-      n = (Settings::LANGUAGES.size rescue nil)
-      if v.is_a?(Integer) && n && v >= n && AshDroidFixes.spain_index
+      n = (Settings::LANGUAGES.count { |l| l[0] != AshDroidText::ITALIAN_NAME } rescue nil)
+      it = (Settings::LANGUAGES.index { |l| l[0] == AshDroidText::ITALIAN_NAME } rescue nil)
+      if v.is_a?(Integer) && n && v >= n && v != it && AshDroidFixes.spain_index
         v = AshDroidFixes.spain_index
         @language = v
       end

@@ -14064,6 +14064,4430 @@
      "height": 9
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/types",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      3,
+      32,
+      8
+     ],
+     "imageRect": [
+      0,
+      0,
+      32,
+      14
+     ],
+     "text": "NORMALE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "erase": "none",
+     "onlyImage": true,
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      17,
+      32,
+      8
+     ],
+     "text": "LOTTA",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      14,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      31,
+      32,
+      8
+     ],
+     "text": "VOLANTE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      28,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      45,
+      32,
+      8
+     ],
+     "text": "VELENO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      42,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      59,
+      32,
+      8
+     ],
+     "text": "TERRA",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      56,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      73,
+      32,
+      8
+     ],
+     "text": "ROCCIA",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      70,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      87,
+      32,
+      8
+     ],
+     "text": "COLEOT.",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      84,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      101,
+      32,
+      8
+     ],
+     "text": "SPETTRO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      98,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      115,
+      32,
+      8
+     ],
+     "text": "ACCIAIO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      112,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      143,
+      32,
+      8
+     ],
+     "text": "FUOCO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      140,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      157,
+      32,
+      8
+     ],
+     "text": "ACQUA",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      154,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      171,
+      32,
+      8
+     ],
+     "text": "ERBA",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      168,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      185,
+      32,
+      8
+     ],
+     "text": "ELETTRO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      182,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      199,
+      32,
+      8
+     ],
+     "text": "PSICO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      196,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      213,
+      32,
+      8
+     ],
+     "text": "GHIACCIO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      210,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      227,
+      32,
+      8
+     ],
+     "text": "DRAGO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      224,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      241,
+      32,
+      8
+     ],
+     "text": "BUIO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      238,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      255,
+      32,
+      8
+     ],
+     "text": "FOLLETTO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMALE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "LOTTA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "VOLANTE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "VELENO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "TERRA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "ROCCIA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "COLEOT.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "SPETTRO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "ACCIAIO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FUOCO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "ACQUA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "ERBA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ELETTRO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSICO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "GHIACCIO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRAGO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "BUIO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "FOLLETTO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/statuses",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      2,
+      1,
+      18,
+      6
+     ],
+     "text": "SON",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      9,
+      18,
+      6
+     ],
+     "text": "AVV",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      17,
+      18,
+      6
+     ],
+     "text": "SCO",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      33,
+      18,
+      6
+     ],
+     "text": "CON",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      41,
+      18,
+      6
+     ],
+     "text": "K.O.",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/icon_statuses",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      1,
+      1,
+      20,
+      7
+     ],
+     "text": "SON",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      9,
+      20,
+      7
+     ],
+     "text": "AVV",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      17,
+      20,
+      7
+     ],
+     "text": "SCO",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      33,
+      20,
+      7
+     ],
+     "text": "CON",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      41,
+      20,
+      7
+     ],
+     "text": "AVV",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#d858d0",
+     "shade": "#402040"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal_foe",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin_foe",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.####",
+      "##.#.##..",
+      "####...##",
+      "##...####"
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_faint",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.####",
+      "##.#.##..",
+      "####...##",
+      "##...####"
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_swap",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.####",
+      "##.#.##..",
+      "####...##",
+      "##...####"
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s#s#s.",
+      "##ss#s#s#s.",
+      "##s.#s#s#s.",
+      "##s.#ss#ss.",
+      "sss.ss.ss.."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "it",
+   "grid": 2,
+   "offset": [
+    1,
+    1
+   ],
+   "regions": [
+    {
+     "rect": [
+      155,
+      54,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_info",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "AREA",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORME",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_area",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "AREA",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORME",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#187048",
+     "fill": "#90d8b8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_forms",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "AREA",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#6810b8",
+     "fill": "#d8b8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORME",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/icon_mode",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      2,
+      7,
+      26,
+      8
+     ],
+     "text": "ABC"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      32,
+      7,
+      26,
+      8
+     ],
+     "text": "abc"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      92,
+      7,
+      26,
+      8
+     ],
+     "text": "Altri"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      16,
+      19,
+      26,
+      8
+     ],
+     "text": "ABC",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      47,
+      19,
+      26,
+      8
+     ],
+     "text": "abc",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      109,
+      19,
+      26,
+      8
+     ],
+     "text": "Altri",
+     "bg": "#b89028"
+    },
+    {
+     "rect": [
+      153,
+      19,
+      31,
+      9
+     ],
+     "text": "INDIETRO",
+     "font": [
+      "5x7",
+      "type"
+     ],
+     "style": "outline",
+     "fill": "#e0e0e0",
+     "shade": "#7868a0",
+     "corner": "#b080d0",
+     "height": 7,
+     "bgx": 153,
+     "dx": -1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#2860a8",
+      "#90b0d0",
+      "#b8d8f0",
+      "#a8c8f0"
+     ],
+     "text": "SCHEDA ALLENATORE",
+     "font": "card5",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#2860a8",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card_f",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#984040",
+      "#c8a0a0",
+      "#f0d8b0",
+      "#e8a8a8"
+     ],
+     "text": "SCHEDA ALLENATORE",
+     "font": "card5",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#984040",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/memo",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      2,
+      40,
+      11
+     ],
+     "text": "Chiudi",
+     "bgx": 8
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      18,
+      40,
+      11
+     ],
+     "text": "Memo",
+     "bgx": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      124,
+      36,
+      13
+     ],
+     "text": "Apri",
+     "bgx": 14
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      140,
+      36,
+      11
+     ],
+     "text": "Memo",
+     "bgx": 14
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "GETTONE",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "GETTONE",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "VINTO",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "VINTO",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "VINTO",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "VINTO",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "PERSO",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "it",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "PERSO",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bg",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      181,
+      25,
+      34,
+      5
+     ],
+     "text": "GETTONI"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      221,
+      25,
+      33,
+      5
+     ],
+     "text": "VINCITE"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      8,
+      8,
+      54,
+      10
+     ],
+     "text": "SPOSTA",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 6,
+     "fills": [
+      "#f8c860",
+      "#f8b028"
+     ],
+     "align": "left"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "PREMI {USE}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "it",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "it",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "SCHEDA TRAGUARDI",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "TURNO",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_field",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      16,
+      56,
+      12
+     ],
+     "text": "NESSUNO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      16,
+      56,
+      12
+     ],
+     "text": "SOLE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      16,
+      56,
+      12
+     ],
+     "text": "PIOGGIA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      16,
+      56,
+      12
+     ],
+     "text": "TEMPESTA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      16,
+      56,
+      12
+     ],
+     "text": "GRANDINE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      16,
+      56,
+      12
+     ],
+     "text": "OMBRA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      16,
+      56,
+      12
+     ],
+     "text": "NEBBIA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      16,
+      56,
+      12
+     ],
+     "text": "SICCITÀ",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      16,
+      56,
+      12
+     ],
+     "text": "DILUVIO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#0e1320",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      16,
+      56,
+      12
+     ],
+     "text": "VENTI FORTI",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      2,
+      56,
+      9
+     ],
+     "text": "METEO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      48,
+      56,
+      12
+     ],
+     "text": "NESSUNO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      48,
+      56,
+      12
+     ],
+     "text": "ELETTRICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      48,
+      56,
+      12
+     ],
+     "text": "ERBOSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      48,
+      56,
+      12
+     ],
+     "text": "NEBBIOSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      48,
+      56,
+      12
+     ],
+     "text": "PSICHICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      80,
+      56,
+      12
+     ],
+     "text": "????",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      80,
+      56,
+      12
+     ],
+     "text": "URBANO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      80,
+      56,
+      12
+     ],
+     "text": "PRATO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      80,
+      56,
+      12
+     ],
+     "text": "ACQUATICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      80,
+      56,
+      12
+     ],
+     "text": "PALUDE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      80,
+      56,
+      12
+     ],
+     "text": "SUBACQUEO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      80,
+      56,
+      12
+     ],
+     "text": "CAVERNA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      80,
+      56,
+      12
+     ],
+     "text": "ROCCIOSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      80,
+      56,
+      12
+     ],
+     "text": "SABBIOSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      80,
+      56,
+      12
+     ],
+     "text": "FORESTA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      80,
+      56,
+      12
+     ],
+     "text": "GELIDO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 581,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      639,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      80,
+      56,
+      12
+     ],
+     "text": "VULCANICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 639,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      697,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      80,
+      56,
+      12
+     ],
+     "text": "SPIRITUALE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 697,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      755,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      80,
+      56,
+      12
+     ],
+     "text": "CIELO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 755,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      813,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      80,
+      56,
+      12
+     ],
+     "text": "SPAZIO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 813,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      871,
+      66,
+      56,
+      9
+     ],
+     "text": "AMBIENTE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      80,
+      56,
+      12
+     ],
+     "text": "ULTRASPAZIO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 871,
+     "ttf": "power clear bold",
+     "cap": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_bonus",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      3,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 3,
+     "bg": "#ff1110"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "ESPERTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "ESPERTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "ESPERTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      44,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 44,
+     "bg": "#ffa810"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFETTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFETTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFETTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      85,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 85,
+     "bg": "#109eff"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TEMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TEMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TEMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      126,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 126,
+     "bg": "#b410ff"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "LOTTA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "LOTTA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "LOTTA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LEALE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LEALE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LEALE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      167,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 167,
+     "bg": "#27d40d"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CATTURA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CATTURA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CATTURA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "tips": [
+      [
+       24.5,
+       -0.5
+      ],
+      [
+       41,
+       2.5
+      ],
+      [
+       48.5,
+       16
+      ],
+      [
+       48.5,
+       32
+      ],
+      [
+       41,
+       45.5
+      ],
+      [
+       24.5,
+       48.5
+      ],
+      [
+       8,
+       45.5
+      ],
+      [
+       -0.5,
+       32
+      ],
+      [
+       -0.5,
+       16
+      ],
+      [
+       8,
+       2.5
+      ]
+     ],
+     "centre": [
+      24,
+      24
+     ],
+     "rin": 15,
+     "blur": 0.45,
+     "layers": [
+      [
+       1,
+       "#ff0041"
+      ],
+      [
+       0.88,
+       "#ff5a00"
+      ],
+      [
+       0.74,
+       "#ffe200"
+      ]
+     ]
+    },
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "lines": [
+      "MODO",
+      "ESPERTO"
+     ],
+     "tops": [
+      13,
+      26
+     ],
+     "font": "card",
+     "fill": "#ffffff",
+     "rcol": "#cdcdd2",
+     "halo": "#191919",
+     "halo_blur": 0.8,
+     "spacing": 0
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DATI RAID DYNAMAX",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRIMARIA",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SECONDARIA",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "AD AREA",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "SUPPORTO",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Modalità di ricerca",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "SPECIE",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DATI",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NUOVO",
+     "ttf": "power clear bold",
+     "cap": 13,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.3
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "it",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "ACCELERA",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPZIONI",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Cambia",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Indietro",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Scegli un percorso.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_command",
+   "lang": "it",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      6,
+      6,
+      53,
+      11
+     ],
+     "text": "LOTTA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      6,
+      53,
+      11
+     ],
+     "text": "LOTTA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      52,
+      53,
+      11
+     ],
+     "text": "ZAINO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      52,
+      53,
+      11
+     ],
+     "text": "ZAINO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      75,
+      53,
+      11
+     ],
+     "text": "FUGA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      75,
+      53,
+      11
+     ],
+     "text": "FUGA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      98,
+      53,
+      11
+     ],
+     "text": "CHIAMA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      98,
+      53,
+      11
+     ],
+     "text": "CHIAMA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      144,
+      53,
+      11
+     ],
+     "text": "SASSO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      144,
+      53,
+      11
+     ],
+     "text": "SASSO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      167,
+      53,
+      11
+     ],
+     "text": "ESCA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      167,
+      53,
+      11
+     ],
+     "text": "ESCA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      213,
+      53,
+      11
+     ],
+     "text": "ANNULLA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      213,
+      53,
+      11
+     ],
+     "text": "ANNULLA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      236,
+      53,
+      11
+     ],
+     "text": "INCITA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      236,
+      53,
+      11
+     ],
+     "text": "INCITA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      259,
+      53,
+      11
+     ],
+     "text": "CAMPO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      259,
+      53,
+      11
+     ],
+     "text": "CAMPO",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    }
+   ]
   }
  ]
 }

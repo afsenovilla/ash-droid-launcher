@@ -21,7 +21,7 @@ case "$TARGET" in
 esac
 if [ "$TARGET" = handheld ]; then P="$TOP/FireAsh-Patch/parche"; else P="$TOP/parche"; fi
 mkdir -p "$P"
-cp "$A/ashdroid_patches.rb" "$A/ashdroid_art.rb" "$A/packs/fire-ash/ashdroid_es.dat" "$A/packs/fire-ash/ashdroid_es_ES.dat" "$A/packs/fire-ash/ashdroid_en.dat" "$A/packs/fire-ash/ashdroid_fr.dat" "$A/packs/fire-ash/ashdroid_de.dat" "$P/"
+cp "$A/ashdroid_patches.rb" "$A/ashdroid_art.rb" "$A/packs/fire-ash/ashdroid_es.dat" "$A/packs/fire-ash/ashdroid_es_ES.dat" "$A/packs/fire-ash/ashdroid_en.dat" "$A/packs/fire-ash/ashdroid_fr.dat" "$A/packs/fire-ash/ashdroid_de.dat" "$A/packs/fire-ash/ashdroid_it.dat" "$P/"
 ruby "$ROOT/tools/art/make_art_dat.rb" "$A/packs/fire-ash/art.json" "$P/ashdroid_art.dat" >/dev/null
 for l in es fr de; do mkdir -p "$P/ashdroid_audio_$l"; cp "$A/packs/fire-ash/audio_$l/"* "$P/ashdroid_audio_$l/"; done
 printf '%s' "$VER" > "$P/VERSION.txt"
