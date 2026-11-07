@@ -118,7 +118,7 @@ def find_user_file(game, rel):
     return cur if os.path.isfile(cur) else None
 
 
-def paste_image(cv, src, rect):
+def paste_image(cv, src, rect, replace=False):
     x, y, w, h = rect
     im = Image.open(src).convert("RGBA")
     p = im.load()
@@ -128,6 +128,10 @@ def paste_image(cv, src, rect):
 
 
 def apply_region(cv, r, fonts, buttons, game=None):
+    if r.get("asset"):
+        src = os.path.join(HERE, "..", "..", "app", "src", "main", "assets", "packs", "fire-ash", r["asset"])
+        paste_image(cv, src, r.get("imageRect", r["rect"]), replace=True)
+        return
     if r.get("image") and game:
         src = find_user_file(game, r["image"])
         if src:
