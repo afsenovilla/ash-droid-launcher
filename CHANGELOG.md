@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-07
+
 ### Security
 - The game's Ruby runtime no longer offers HTTPLite (HTTPS without certificate checks). Fire Ash doesn't use it.
 - The updater downloads only the APK named for the release and installs it only if it is this app, a
