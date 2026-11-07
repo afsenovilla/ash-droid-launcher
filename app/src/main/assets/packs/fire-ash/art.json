@@ -6599,6 +6599,162 @@
      "fill": "#ffffff"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "es",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "es",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "fr",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "fr",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "de",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "de",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
   }
  ]
 }
