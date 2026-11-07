@@ -230,21 +230,24 @@ public class Gamepad
         else if (Float.compare(xAxis, 1.0f) == 0)
             keycode = KeyEvent.KEYCODE_DPAD_RIGHT;
 
-        if (keycode == null)
+        int action = evt.getActionMasked();
+        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP)
+            keycode = null;
+
+        // Hats report position changes (usually as ACTION_MOVE), not presses:
+        // emit a release/press pair whenever the direction changes.
+        if (keycode == null && mHatKey == null)
             return false;
-
-        switch (evt.getAction())
-        {
-            case MotionEvent.ACTION_DOWN:
-                mOnKeyDownListener.onKeyDown(keycode);
-                break;
-
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                mOnKeyUpListener.onKeyUp(keycode);
-                break;
-        }
-
+        if (keycode != null && keycode.equals(mHatKey))
+            return true;
+        if (mHatKey != null)
+            mOnKeyUpListener.onKeyUp(mHatKey);
+        mHatKey = keycode;
+        if (keycode != null)
+            mOnKeyDownListener.onKeyDown(keycode);
         return true;
     }
+
+    /** Direction currently held on a hat D-pad, or null when neutral. */
+    private Integer mHatKey = null;
 }

@@ -52,10 +52,22 @@ final class Util
         return s;
     }
 
+    /** Atomic: writes a sibling temp file, syncs it, then renames it over {@code f}. */
     static void writeText(File f, String text) throws IOException
     {
-        try (OutputStream os = new FileOutputStream(f)) {
+        File tmp = new File(f.getPath() + ".tmp");
+        try (FileOutputStream os = new FileOutputStream(tmp)) {
             os.write(text.getBytes(StandardCharsets.UTF_8));
+            os.getFD().sync();
+        } catch (IOException e) {
+            //noinspection ResultOfMethodCallIgnored
+            tmp.delete();
+            throw e;
+        }
+        if (!tmp.renameTo(f)) {
+            //noinspection ResultOfMethodCallIgnored
+            tmp.delete();
+            throw new IOException("Could not replace " + f.getName());
         }
     }
 

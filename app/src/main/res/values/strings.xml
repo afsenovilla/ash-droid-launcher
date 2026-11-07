@@ -184,4 +184,6 @@
     <string name="touch_layout_reset">Default positions</string>
     <string name="signing_change_msg">This update uses a new signing key, so it cannot install over this version.\n\n1. Export your saves.\n2. Uninstall this app.\n3. Install the new version from the release page.\n4. Import the game .zip, then Import saves.</string>
     <string name="signing_change_open">Release page</string>
+    <string name="err_zip_limits">The archive is too large or has too many files.</string>
+    <string name="update_bad_apk">The downloaded update is not a valid newer version of this app.</string>
 </resources>

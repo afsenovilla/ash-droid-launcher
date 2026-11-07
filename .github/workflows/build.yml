@@ -13,7 +13,7 @@ on:
         default: ''
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: build-${{ github.ref }}
@@ -58,8 +58,10 @@ jobs:
 
       - name: Version
         id: version
+        env:
+          INPUT_RELEASE: ${{ github.event.inputs.release }}
         run: |
-          REL="${{ github.event.inputs.release }}"
+          REL="$INPUT_RELEASE"
           if [ -n "$REL" ]; then
             REL="${REL#v}"
             [[ "$REL" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Invalid version '$REL'"; exit 1; }
@@ -115,9 +117,9 @@ jobs:
             app/jni/SDL2_sound
             app/jni/openssl
             app/jni/ruby
-          key: native-v2-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
+          key: native-v3-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
           restore-keys: |
-            native-v2-${{ env.NDK_VERSION }}-${{ env.ABI }}-
+            native-v3-${{ env.NDK_VERSION }}-${{ env.ABI }}-
 
       - name: Fetch native sources
         working-directory: app/jni
@@ -164,7 +166,7 @@ jobs:
             app/jni/SDL2_sound
             app/jni/openssl
             app/jni/ruby
-          key: native-v2-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
+          key: native-v3-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
 
       - name: Generate embedded mkxp-z assets
         working-directory: app/jni/mkxp-z
@@ -199,6 +201,23 @@ jobs:
           mkdir -p dist
           cp app/build/outputs/apk/release/*.apk "dist/ash-droid-launcher-${VERSION_NAME}.apk"
           ls -la dist
+
+      - name: Check 16 KB alignment of native libraries
+        run: |
+          d=$(mktemp -d); unzip -q -o dist/*.apk 'lib/*' -d "$d"
+          bad=0
+          for so in "$d"/lib/*/*.so; do
+            for a in $(llvm-readelf -lW "$so" | awk '$1=="LOAD"{print $NF}'); do
+              if [ $((a)) -lt 16384 ]; then echo "::error::$(basename "$so") LOAD align $a (< 16 KB)"; bad=1; fi
+            done
+          done
+          rm -rf "$d"; exit $bad
+
+      - name: Signer and checksum
+        run: |
+          BT=$(ls -d "$ANDROID_SDK_ROOT"/build-tools/* | sort -V | tail -1)
+          "$BT/apksigner" verify --print-certs dist/*.apk | tee -a "$GITHUB_STEP_SUMMARY"
+          (cd dist && sha256sum *.apk) | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload build logs
         if: always()
@@ -260,6 +279,8 @@ jobs:
     needs: [apk, pc-packages]
     if: needs.apk.outputs.release == 'true'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     env:
       VERSION_NAME: ${{ needs.apk.outputs.version }}
       GH_TOKEN: ${{ github.token }}

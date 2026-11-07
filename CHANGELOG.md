@@ -6,6 +6,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-07
+
+### Security
+- The game's Ruby runtime no longer offers HTTPLite (HTTPS without certificate checks). Fire Ash doesn't use it.
+- The updater downloads only the APK named for the release and installs it only if it is this app, a
+  newer version and signed with the same key.
+- Build pipeline: write access limited to the release job, workflow input no longer interpolated into
+  shell code; each build reports the APK signer and SHA-256.
+
+### Fixed
+- Importing a zip with duplicate or conflicting paths, or an implausibly large one, fails with a clear
+  error instead of silently overwriting files; a failed import never leaves temporary files behind.
+- mkxp.json and patch files are written atomically, so an interrupted write can't leave a broken config.
+- Controllers whose D-pad reports as a "hat" no longer lose direction presses.
+- Native libraries are built for 16 KB memory pages (newer Android devices); CI checks every library.
+
 ## [0.5.0] - 2026-11-07
 
 ### Changed
