@@ -4041,6 +4041,401 @@
      "shade": "#707878"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/statuses",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      2,
+      1,
+      18,
+      6
+     ],
+     "text": "SOM",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      9,
+      18,
+      6
+     ],
+     "text": "PSN",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      17,
+      18,
+      6
+     ],
+     "text": "BRU",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      33,
+      18,
+      6
+     ],
+     "text": "GEL",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      41,
+      18,
+      6
+     ],
+     "text": "K.O.",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/statuses",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      2,
+      1,
+      18,
+      6
+     ],
+     "text": "SLF",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      9,
+      18,
+      6
+     ],
+     "text": "GIF",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      17,
+      18,
+      6
+     ],
+     "text": "BRT",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      33,
+      18,
+      6
+     ],
+     "text": "GFR",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      41,
+      18,
+      6
+     ],
+     "text": "BSG",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/icon_statuses",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      1,
+      1,
+      20,
+      7
+     ],
+     "text": "SOM",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      9,
+      20,
+      7
+     ],
+     "text": "PSN",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      17,
+      20,
+      7
+     ],
+     "text": "BRU",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      33,
+      20,
+      7
+     ],
+     "text": "GEL",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      41,
+      20,
+      7
+     ],
+     "text": "PSN",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#d858d0",
+     "shade": "#402040"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/icon_statuses",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      1,
+      1,
+      20,
+      7
+     ],
+     "text": "SLF",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      9,
+      20,
+      7
+     ],
+     "text": "GIF",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      17,
+      20,
+      7
+     ],
+     "text": "BRT",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      33,
+      20,
+      7
+     ],
+     "text": "GFR",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      41,
+      20,
+      7
+     ],
+     "text": "GIF",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#d858d0",
+     "shade": "#402040"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/overlay_lv",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_lv",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Storage/overlay_lv",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
   }
  ]
 }
