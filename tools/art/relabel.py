@@ -183,7 +183,12 @@ def apply_region(cv, r, fonts, buttons, game=None):
         ink = {hexcol(c)[:3] for c in r.get("ink", [])}
         for yy in range(y, y + h):
             row = [cv.get(xx, yy) for xx in range(x - w, x + 2 * w)]
-            is_ink = [c[:3] in ink for c in row]
+            if r.get("bgset"):
+                # Anything not close to one of the background colours is old lettering.
+                keep = [hexcol(c) for c in r["bgset"]]
+                is_ink = [all(max(abs(c[i] - k[i]) for i in range(3)) > 6 for k in keep) for c in row]
+            else:
+                is_ink = [c[:3] in ink for c in row]
             for i in range(w, 2 * w):
                 if not is_ink[i]:
                     continue
@@ -192,6 +197,15 @@ def apply_region(cv, r, fonts, buttons, game=None):
                         cv.put(x + i - w, yy, row[i - dd]); break
                     if i + dd < len(row) and not is_ink[i + dd]:
                         cv.put(x + i - w, yy, row[i + dd]); break
+    elif erase == "lerp":
+        # Gradient backgrounds: each row blends from the colour at bgx to the
+        # colour at bgx2 across the rect.
+        bx2 = r["bgx2"]
+        for yy in range(y, y + h):
+            a, b = cv.get(bgx, yy), cv.get(bx2, yy)
+            for xx in range(x, x + w):
+                t = min(1.0, max(0.0, (xx - bgx) / float(bx2 - bgx)))
+                cv.put(xx, yy, tuple(int(round(a[i] + (b[i] - a[i]) * t)) for i in range(4)))
     elif erase != "none":
         for yy in range(y, y + h):
             for xx in range(x, x + w):
@@ -272,7 +286,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
                             for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
                                 cv.put(X + dx, Y + dy, corner)
                         elif style == "shadow":
-                            cv.put(X + 1, Y + 1, shade)
+                            cv.put(X + r.get("sdx", 1), Y + r.get("sdy", 1), shade)
                         elif corner:
                             for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):
                                 cv.put(X + dx, Y + dy, shade)
