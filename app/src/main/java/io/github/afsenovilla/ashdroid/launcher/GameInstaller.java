@@ -43,6 +43,25 @@ public final class GameInstaller
         void onProgress(long done, long total, String currentFile);
     }
 
+    /** Asked (on the worker thread, may block) when the zip is not a known official release. */
+    public interface Verifier
+    {
+        boolean allowUnverified(String sha256Hex);
+    }
+
+    private static final String VERIFIED = ".ashdroid_verified";
+
+    /** Name of the verified official release installed, or null if unverified/unknown. */
+    public static String verifiedRelease(Context ctx)
+    {
+        File f = new File(gameDir(ctx), VERIFIED);
+        try {
+            return f.isFile() ? Util.readText(f).trim() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private static final String GAME_DIR = "game";
     private static final String TMP_DIR = "game_import";
     private static final String OLD_DIR = "game_old";
@@ -125,6 +144,16 @@ public final class GameInstaller
      */
     public static void importZip(Context ctx, Uri uri, Progress progress) throws IOException
     {
+        importZip(ctx, uri, progress, null);
+    }
+
+    /**
+     * @param verifier asked when the zip's SHA-256 is not a known official release;
+     *                 null = accept any zip (tests). The hash is computed over the
+     *                 very bytes that are extracted.
+     */
+    public static void importZip(Context ctx, Uri uri, Progress progress, Verifier verifier) throws IOException
+    {
         ContentResolver cr = ctx.getContentResolver();
         long total = querySize(cr, uri);
 
@@ -135,7 +164,7 @@ public final class GameInstaller
 
         boolean ok = false;
         try {
-            importStaged(ctx, cr, uri, tmp, tmpCanonical, total, progress);
+            importStaged(ctx, cr, uri, tmp, tmpCanonical, total, progress, verifier);
             ok = true;
         } finally {
             if (!ok) Util.deleteRecursive(tmp);
@@ -143,11 +172,12 @@ public final class GameInstaller
     }
 
     private static void importStaged(Context ctx, ContentResolver cr, Uri uri, File tmp, String tmpCanonical,
-                                     long total, Progress progress) throws IOException
+                                     long total, Progress progress, Verifier verifier) throws IOException
     {
         int entries;
+        String[] hash = new String[1];
         try {
-            entries = extract(ctx, cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress);
+            entries = extract(ctx, cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress, hash);
         } catch (IllegalArgumentException ex) {
             // Names aren't valid UTF-8: zip made with an old Windows/OEM encoding. Retry.
             Util.deleteRecursive(tmp);
@@ -159,7 +189,7 @@ public final class GameInstaller
                 legacy = StandardCharsets.ISO_8859_1;
             }
             try {
-                entries = extract(ctx, cr, uri, tmp, tmpCanonical, legacy, total, progress);
+                entries = extract(ctx, cr, uri, tmp, tmpCanonical, legacy, total, progress, hash);
             } catch (IllegalArgumentException ex2) {
                 throw new IOException(ctx.getString(R.string.err_encoding));
             }
@@ -175,6 +205,14 @@ public final class GameInstaller
             Util.deleteRecursive(tmp);
             throw new IOException(ctx.getString(R.string.err_no_game));
         }
+
+        String release = OfficialGames.lookup(hash[0]);
+        if (release == null && verifier != null && !verifier.allowUnverified(hash[0])) {
+            Util.deleteRecursive(tmp);
+            throw new IOException(ctx.getString(R.string.import_cancelled_unverified));
+        }
+        Util.deleteRecursive(new File(root, VERIFIED));
+        if (release != null) Util.writeText(new File(root, VERIFIED), release);
 
         synchronized (LOCK) {
             recover(ctx);
@@ -283,12 +321,21 @@ public final class GameInstaller
     }
 
     private static int extract(Context ctx, ContentResolver cr, Uri uri, File tmp, String tmpCanonical, Charset cs,
-                               long total, Progress progress) throws IOException
+                               long total, Progress progress, String[] hashOut) throws IOException
     {
         InputStream raw = cr.openInputStream(uri);
         if (raw == null) throw new IOException(ctx.getString(R.string.err_open));
 
-        CountingInputStream counting = new CountingInputStream(new BufferedInputStream(raw, 1 << 16));
+        java.security.MessageDigest md;
+        try {
+            md = java.security.MessageDigest.getInstance("SHA-256");
+        } catch (java.security.NoSuchAlgorithmException ex) {
+            throw new IOException(ex.toString());
+        }
+        // Digest sits below the zip reader's own buffering, so it sees every byte read from the file.
+        java.security.DigestInputStream digest = new java.security.DigestInputStream(
+                new BufferedInputStream(raw, 1 << 16), md);
+        CountingInputStream counting = new CountingInputStream(digest);
         byte[] buf = new byte[1 << 16];
         int entries = 0;
         long written = 0;
@@ -331,7 +378,14 @@ public final class GameInstaller
                 }
                 zis.closeEntry();
             }
+            // Central directory and anything after it: part of the file's hash too.
+            byte[] rest = new byte[1 << 16];
+            //noinspection StatementWithEmptyBody
+            while (digest.read(rest) > 0) { }
         }
+        StringBuilder hex = new StringBuilder(64);
+        for (byte b : md.digest()) hex.append(String.format(java.util.Locale.ROOT, "%02x", b));
+        hashOut[0] = hex.toString();
         return entries;
     }
 
