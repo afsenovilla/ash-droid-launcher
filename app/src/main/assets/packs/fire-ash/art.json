@@ -13582,6 +13582,488 @@
      "fat": 0.35
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_command",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      6,
+      6,
+      53,
+      11
+     ],
+     "text": "ATTAQUE",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      6,
+      53,
+      11
+     ],
+     "text": "ATTAQUE",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      52,
+      53,
+      11
+     ],
+     "text": "SAC",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      52,
+      53,
+      11
+     ],
+     "text": "SAC",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      75,
+      53,
+      11
+     ],
+     "text": "FUITE",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      75,
+      53,
+      11
+     ],
+     "text": "FUITE",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      98,
+      53,
+      11
+     ],
+     "text": "APPEL",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      98,
+      53,
+      11
+     ],
+     "text": "APPEL",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      144,
+      53,
+      11
+     ],
+     "text": "CAILLOU",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      144,
+      53,
+      11
+     ],
+     "text": "CAILLOU",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      167,
+      53,
+      11
+     ],
+     "text": "APPÂT",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      167,
+      53,
+      11
+     ],
+     "text": "APPÂT",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      213,
+      53,
+      11
+     ],
+     "text": "ANNULER",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      213,
+      53,
+      11
+     ],
+     "text": "ANNULER",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      236,
+      53,
+      11
+     ],
+     "text": "HOURRA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      236,
+      53,
+      11
+     ],
+     "text": "HOURRA",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      259,
+      53,
+      11
+     ],
+     "text": "TERRAIN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      259,
+      53,
+      11
+     ],
+     "text": "TERRAIN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_command",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      6,
+      6,
+      53,
+      11
+     ],
+     "text": "KAMPF",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      6,
+      53,
+      11
+     ],
+     "text": "KAMPF",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      52,
+      53,
+      11
+     ],
+     "text": "BEUTEL",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      52,
+      53,
+      11
+     ],
+     "text": "BEUTEL",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      75,
+      53,
+      11
+     ],
+     "text": "FLUCHT",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      75,
+      53,
+      11
+     ],
+     "text": "FLUCHT",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      98,
+      53,
+      11
+     ],
+     "text": "RUFEN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      98,
+      53,
+      11
+     ],
+     "text": "RUFEN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      144,
+      53,
+      11
+     ],
+     "text": "STEIN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      144,
+      53,
+      11
+     ],
+     "text": "STEIN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      167,
+      53,
+      11
+     ],
+     "text": "KÖDER",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      167,
+      53,
+      11
+     ],
+     "text": "KÖDER",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      213,
+      53,
+      11
+     ],
+     "text": "ZURÜCK",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      213,
+      53,
+      11
+     ],
+     "text": "ZURÜCK",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      236,
+      53,
+      11
+     ],
+     "text": "ANFEUERN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      236,
+      53,
+      11
+     ],
+     "text": "ANFEUERN",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    },
+    {
+     "rect": [
+      6,
+      259,
+      53,
+      11
+     ],
+     "text": "FELD",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 7,
+     "height": 9
+    },
+    {
+     "rect": [
+      71,
+      259,
+      53,
+      11
+     ],
+     "text": "FELD",
+     "font": "cmd",
+     "style": "outline",
+     "bgx": 72,
+     "height": 9
+    }
+   ]
   }
  ]
 }
