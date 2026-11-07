@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-11-07
+
+### Fixed
+- 0.5.x no longer shows the "new signing key" notice when an update is available: it only applies when
+  updating from 0.4.x. **On 0.5.1 or 0.5.2, install this version once by hand** (download the APK and
+  install it over the current one, no uninstall needed); later updates work from the launcher again.
+
 ## [0.5.2] - 2026-11-07
 
 ### Security

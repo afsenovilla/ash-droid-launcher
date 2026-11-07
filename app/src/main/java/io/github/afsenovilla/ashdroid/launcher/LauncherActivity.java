@@ -109,7 +109,10 @@ public class LauncherActivity extends Activity
     {
         final Updater.Info info = mUpdate;
         if (info == null) return;
-        if (Updater.compare(info.version, SIGNING_CHANGE_VERSION) >= 0) {
+        // Only a pre-0.5.0 install (old key) can't take a 0.5.0+ update in place
+        String installed = io.github.afsenovilla.ashdroid.BuildConfig.VERSION_NAME;
+        if (Updater.compare(installed, SIGNING_CHANGE_VERSION) < 0
+                && Updater.compare(info.version, SIGNING_CHANGE_VERSION) >= 0) {
             showSigningChange(info);
             return;
         }
