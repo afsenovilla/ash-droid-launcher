@@ -12,6 +12,7 @@ LOCAL_CPPFLAGS := \
 	-DMKXPZ_INIT_GL_LATER \
 	-DMKXPZ_ALCDEVICE="ALCdevice" \
 	-DMKXPZ_SSL \
+	-DMKXPZ_NO_HTTP \
 	-DMKXPZ_MINIFFI \
 	-Wno-undefined-var-template \
 	-Wno-uninitialized

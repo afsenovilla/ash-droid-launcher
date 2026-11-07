@@ -77,7 +77,7 @@ endif
 
 # Compiler/linker flags
 CFLAGS      := -O0 $(CROSSFLAGS) --sysroot=$(TOOLCHAIN)/sysroot -I$(TOOLCHAIN)/sysroot/usr/include -I$(INCDIR)
-LDFLAGS     := -L$(LIBDIR) -lm -lz
+LDFLAGS     := -L$(LIBDIR) -lm -lz -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
 CLANG_FLAGS := -target $(TARGET) --gcc-toolchain $(TOOLCHAIN)
 
 # CMake arguments
@@ -180,7 +180,7 @@ $(LIBDIR)/libruby.so.3.1.0: ruby/Makefile
 	cd ruby; env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES sh -c 'make -j$(NPROC) || make -j1' && env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES make install INSTRUBY_OPTS=--exclude=gem
 
 ruby/Makefile: ruby/configure
-	cd ruby; DLDFLAGS="-Wl,-soname,libruby.so" \
+	cd ruby; DLDFLAGS="-Wl,-soname,libruby.so -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384" \
 	$(CONFIGURE) $(RUBY_CONFIGURE_ARGS)
 
 ruby/configure: ruby/configure.ac
