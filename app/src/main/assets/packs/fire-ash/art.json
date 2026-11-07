@@ -12314,6 +12314,453 @@
      "asset": "art/raid_hard_de.png"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DATOS DE INCURSIONES",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRINCIPAL",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SECUNDARIO",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "EN ÁREA",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "APOYO",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Modos de búsqueda",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "ESPECIE",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DATOS",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DONNÉES DES RAIDS",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRINCIPAL",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SECONDAIRE",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "DE ZONE",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "SOUTIEN",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Modes de recherche",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "ESPÈCE",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DONNÉES",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DYNA-RAID-DATEN",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRIMÄR",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SEKUNDÄR",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "FLÄCHE",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "SUPPORT",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Suchmodi",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "ART",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DATEN",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
   }
  ]
 }
