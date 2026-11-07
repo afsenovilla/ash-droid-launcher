@@ -47,6 +47,8 @@ Legacy compatibility is not currently a priority. This application has not yet r
 ## Other project rules
 
 - Every change adds an entry under `## [Unreleased]` in `CHANGELOG.md` (English).
-- A release is cut by adding a `## [X.Y.Z]` section at the top of the changelog and pushing it to `main`; every release ships all platform packages together. No rolling "dev" builds.
+- A release is cut by adding a `## [X.Y.Z]` section at the top of the changelog and pushing it to `main`. No rolling "dev" builds.
+- Each supported platform (Android APK, Windows, Steam Deck/Linux, and H700) maintains an independent build and release package in its own designated folder, reusing shared core assets where applicable.
+- Platform releases are independent. Updating or releasing one platform does not require rebuilding or releasing the others.
 - Don't push to `main` or start release builds without the maintainer's OK. Pushing commits to a working branch as a backup is fine; merging still waits for the go-ahead.
 - Show visual changes (redrawn images, UI) to the maintainer before they're released.
