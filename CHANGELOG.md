@@ -6,13 +6,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-07
+
 ### Changed
-- **New private signing key.** The old public key is retired. This version does not install over 0.4.17:
+- **New private signing key.** The old public key is retired. This version does not install over 0.4.x:
   export your saves, uninstall, install this version, import the game zip, then import your saves.
 - Debug builds are signed with the Android debug key and can no longer replace a release install.
 
 ### Fixed
 - Android 7–10: the game no longer fails to start asking for a storage permission it does not need.
+
+## [0.4.18] - 2026-11-07
+
+### Added
+- **Touch buttons** (Settings): choose what each on-screen button does, hide the ones you don't use, and
+  **move** any button or the D-pad by dragging it. "Reset to default" restores both.
+- The next version (0.5.0) changes the signing key. Instead of a failing update, the launcher now explains
+  the steps and offers "Export saves" and the release page.
 
 ## [0.4.17] - 2026-11-06
 

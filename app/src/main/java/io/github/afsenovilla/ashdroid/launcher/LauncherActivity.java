@@ -109,6 +109,10 @@ public class LauncherActivity extends Activity
     {
         final Updater.Info info = mUpdate;
         if (info == null) return;
+        if (Updater.compare(info.version, SIGNING_CHANGE_VERSION) >= 0) {
+            showSigningChange(info);
+            return;
+        }
         if (android.os.Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.update_title, info.version))
@@ -147,6 +151,30 @@ public class LauncherActivity extends Activity
                 });
             }
         }, "update-install").start();
+    }
+
+    /** First version signed with the new private key: cannot install over this one. */
+    private static final String SIGNING_CHANGE_VERSION = "0.5.0";
+
+    /**
+     * Android refuses to install an APK with a different signature over this one,
+     * so instead of a failing update, explain the manual steps and offer the export.
+     */
+    private void showSigningChange(Updater.Info info)
+    {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.update_title, info.version))
+                .setMessage(R.string.signing_change_msg)
+                .setPositiveButton(R.string.tile_export_saves, (d, w) -> pickExportSaves())
+                .setNeutralButton(R.string.signing_change_open, (d, w) -> {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                "https://github.com/afsenovilla/ash-droid-launcher/releases/latest")));
+                    } catch (Exception ignored) {
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private boolean autostartEnabled()
@@ -287,6 +315,7 @@ public class LauncherActivity extends Activity
             render();
             focusItem(3);
         });
+        mUi.item(g1, getString(R.string.tile_touch_buttons), mUi.value("›"), false, v -> touchButtonsMenu());
         right.addView(g1);
 
         TextView cap2 = mUi.caption(getString(R.string.game_section).toUpperCase(java.util.Locale.getDefault()));
@@ -460,6 +489,73 @@ public class LauncherActivity extends Activity
         } catch (Exception e) {
             showError(getString(R.string.err_no_picker_title), getString(R.string.err_no_picker));
         }
+    }
+
+    // ------------------------------------------------------- touch buttons
+
+    private void touchButtonsMenu()
+    {
+        if (operationRunning()) return;
+        String[] items = {
+            getString(R.string.touch_menu_actions),
+            getString(R.string.touch_menu_layout),
+            getString(R.string.touch_menu_reset),
+        };
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.tile_touch_buttons)
+                .setItems(items, (d, which) -> {
+                    if (which == 0) touchActionsList();
+                    else if (which == 1) startActivity(new Intent(this, TouchLayoutActivity.class));
+                    else {
+                        io.github.afsenovilla.ashdroid.gamepad.TouchMapping.reset(this);
+                        io.github.afsenovilla.ashdroid.gamepad.TouchMapping.resetPositions(this);
+                        android.widget.Toast.makeText(this, R.string.touch_reset_done, android.widget.Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /** One row per touch button: "A — Confirm / Interact". Tap a row to pick its action. */
+    private void touchActionsList()
+    {
+        io.github.afsenovilla.ashdroid.gamepad.TouchMapping tm =
+                io.github.afsenovilla.ashdroid.gamepad.TouchMapping.load(this);
+        String[] slots = io.github.afsenovilla.ashdroid.gamepad.TouchMapping.SLOTS;
+        String[] rows = new String[slots.length];
+        for (int i = 0; i < slots.length; i++) {
+            io.github.afsenovilla.ashdroid.gamepad.TouchMapping.Option o = tm.get(slots[i]);
+            rows[i] = getString(R.string.touch_row, slots[i],
+                    o != null ? o.label(this) : getString(R.string.touch_opt_original));
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.touch_menu_actions)
+                .setItems(rows, (d, which) -> pickTouchAction(tm, slots[which]))
+                .setNegativeButton(R.string.ok, null)
+                .show();
+    }
+
+    private void pickTouchAction(io.github.afsenovilla.ashdroid.gamepad.TouchMapping tm, String slot)
+    {
+        io.github.afsenovilla.ashdroid.gamepad.TouchMapping.Option[] opts =
+                io.github.afsenovilla.ashdroid.gamepad.TouchMapping.OPTIONS;
+        String[] labels = new String[opts.length];
+        int checked = -1;
+        io.github.afsenovilla.ashdroid.gamepad.TouchMapping.Option cur = tm.get(slot);
+        for (int i = 0; i < opts.length; i++) {
+            labels[i] = opts[i].label(this);
+            if (opts[i] == cur) checked = i;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.touch_pick_title, slot))
+                .setSingleChoiceItems(labels, checked, (d, which) -> {
+                    tm.set(slot, opts[which]);
+                    tm.save(this);
+                    d.dismiss();
+                    touchActionsList();
+                })
+                .setNegativeButton(R.string.cancel, (d, w) -> touchActionsList())
+                .show();
     }
 
     private void pickExportSaves()
