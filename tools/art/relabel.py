@@ -313,12 +313,13 @@ def draw_ttf(cv, r, buttons, game, fill, shade):
     oy = (h * K - (hb[3] - hb[1])) // 2 - hb[1] + r.get("dy", 0) * K
     if shade and style_of(r) != "plain":
         dr.text((-bb[0] + K, oy + K), text, font=font, fill=tuple(shade[:3]) + (255,))
-    dr.text((-bb[0], oy), text, font=font, fill=tuple(fill[:3]) + (255,))
+    fat = int(r.get("fat", 0) * K)
+    dr.text((-bb[0], oy), text, font=font, fill=tuple(fill[:3]) + (255,), stroke_width=fat, stroke_fill=tuple(fill[:3]) + (255,))
     maxw = (w - 2) * K
     if big.width > maxw:
         big = big.resize((maxw, big.height), Image.LANCZOS)
     small = big.resize((max(1, big.width // K), max(1, big.height // K)), Image.LANCZOS)
-    ox = x + (w - small.width) // 2 + r.get("dx", 0)
+    ox = (x + 1 if r.get("align") == "left" else x + (w - small.width) // 2) + r.get("dx", 0)
     for yy in range(small.height):
         for xx in range(small.width):
             p = small.getpixel((xx, yy))
