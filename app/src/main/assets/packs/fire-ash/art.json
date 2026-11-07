@@ -5169,6 +5169,272 @@
      "fill": "#f8f8f8"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/icon_mode",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      2,
+      7,
+      26,
+      8
+     ],
+     "text": "ABC"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      32,
+      7,
+      26,
+      8
+     ],
+     "text": "abc"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      92,
+      7,
+      26,
+      8
+     ],
+     "text": "Autres"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/icon_mode",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      2,
+      7,
+      26,
+      8
+     ],
+     "text": "ABC"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      32,
+      7,
+      26,
+      8
+     ],
+     "text": "abc"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      92,
+      7,
+      26,
+      8
+     ],
+     "text": "Andere"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      16,
+      19,
+      26,
+      8
+     ],
+     "text": "ABC",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      47,
+      19,
+      26,
+      8
+     ],
+     "text": "abc",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      109,
+      19,
+      26,
+      8
+     ],
+     "text": "Autres",
+     "bg": "#b89028"
+    },
+    {
+     "rect": [
+      153,
+      19,
+      31,
+      9
+     ],
+     "text": "RETOUR",
+     "font": [
+      "5x7",
+      "type"
+     ],
+     "style": "outline",
+     "fill": "#e0e0e0",
+     "shade": "#7868a0",
+     "corner": "#b080d0",
+     "height": 7,
+     "bgx": 153,
+     "dx": -1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      16,
+      19,
+      26,
+      8
+     ],
+     "text": "ABC",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      47,
+      19,
+      26,
+      8
+     ],
+     "text": "abc",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      109,
+      19,
+      26,
+      8
+     ],
+     "text": "Andere",
+     "bg": "#b89028"
+    },
+    {
+     "rect": [
+      153,
+      19,
+      31,
+      9
+     ],
+     "text": "ZURÜCK",
+     "font": [
+      "5x7",
+      "type"
+     ],
+     "style": "outline",
+     "fill": "#e0e0e0",
+     "shade": "#7868a0",
+     "corner": "#b080d0",
+     "height": 7,
+     "bgx": 153,
+     "dx": -1
+    }
+   ]
   }
  ]
 }
