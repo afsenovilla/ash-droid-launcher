@@ -193,6 +193,9 @@ def apply_region(cv, r, fonts, buttons, game=None):
             for xx in range(x, x + w):
                 cv.put(xx, yy, rowbg[yy])
 
+    if "ttf" in r:
+        draw_ttf(cv, r, buttons, game, fill, shade)
+        return
     if "bitmap" in r:
         ox, oy = x + r.get("dx", 0), y + r.get("dy", 0)
         for j, row in enumerate(r["bitmap"]):
@@ -274,6 +277,58 @@ def apply_region(cv, r, fonts, buttons, game=None):
                                 for dx in (-1, 0, 1):
                                     cv.put(X + dx, Y + dy, shade)
             cx += gw + spacing
+
+
+
+def draw_ttf(cv, r, buttons, game, fill, shade):
+    """Smooth lettering with one of the game's own TrueType fonts (Fonts/<ttf>.ttf):
+    drawn 4x larger with a 1px (art) drop shadow, squeezed horizontally if it does
+    not fit, then scaled down so the edges are anti-aliased like the original art.
+    "cap": height of a capital letter in art pixels."""
+    from PIL import ImageDraw, ImageFont
+    K = 4
+    text = r.get("text", "")
+    for k, v in buttons.items():
+        text = text.replace("{" + k + "}", v)
+    path = find_user_file(game, "Fonts/" + r["ttf"] + ".ttf") if game else None
+    if not path or not text:
+        return
+    cap = r.get("cap", r["rect"][3] - 2)
+    font = None
+    for size in range(120, 6, -1):
+        font = ImageFont.truetype(path, size)
+        hb = font.getbbox("H")
+        if hb[3] - hb[1] <= cap * K:
+            break
+    x, y, w, h = r["rect"]
+    hb = font.getbbox("H")
+    bb = font.getbbox(text)
+    tw = bb[2] - bb[0] + K
+    big = Image.new("RGBA", (tw + K, h * K + 2 * K), (0, 0, 0, 0))
+    dr = ImageDraw.Draw(big)
+    oy = (h * K - (hb[3] - hb[1])) // 2 - hb[1] + r.get("dy", 0) * K
+    if shade and style_of(r) != "plain":
+        dr.text((-bb[0] + K, oy + K), text, font=font, fill=tuple(shade[:3]) + (255,))
+    dr.text((-bb[0], oy), text, font=font, fill=tuple(fill[:3]) + (255,))
+    maxw = (w - 2) * K
+    if big.width > maxw:
+        big = big.resize((maxw, big.height), Image.LANCZOS)
+    small = big.resize((max(1, big.width // K), max(1, big.height // K)), Image.LANCZOS)
+    ox = x + (w - small.width) // 2 + r.get("dx", 0)
+    for yy in range(small.height):
+        for xx in range(small.width):
+            p = small.getpixel((xx, yy))
+            if p[3] == 0:
+                continue
+            under = cv.get(ox + xx, y + yy)
+            if under is None:
+                continue
+            a = p[3] / 255.0
+            cv.put(ox + xx, y + yy, tuple(int(p[i] * a + under[i] * (1 - a)) for i in range(3)) + (255,))
+
+
+def style_of(r):
+    return r.get("style", "shadow")
 
 
 def pick_char(font, ch):
