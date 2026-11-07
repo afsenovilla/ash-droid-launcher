@@ -2196,6 +2196,1851 @@
      "text": "PULSA {USE}"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/types",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      3,
+      32,
+      8
+     ],
+     "imageRect": [
+      0,
+      0,
+      32,
+      14
+     ],
+     "text": "NORMAL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "erase": "none",
+     "onlyImage": true,
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      17,
+      32,
+      8
+     ],
+     "text": "COMBAT",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      14,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      31,
+      32,
+      8
+     ],
+     "text": "VOL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      28,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      45,
+      32,
+      8
+     ],
+     "text": "POISON",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      42,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      59,
+      32,
+      8
+     ],
+     "text": "SOL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      56,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      73,
+      32,
+      8
+     ],
+     "text": "ROCHE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      70,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      87,
+      32,
+      8
+     ],
+     "text": "INSECTE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      84,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      101,
+      32,
+      8
+     ],
+     "text": "SPECTRE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      98,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      115,
+      32,
+      8
+     ],
+     "text": "ACIER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      112,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      143,
+      32,
+      8
+     ],
+     "text": "FEU",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      140,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      157,
+      32,
+      8
+     ],
+     "text": "EAU",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      154,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      171,
+      32,
+      8
+     ],
+     "text": "PLANTE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      168,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      185,
+      32,
+      8
+     ],
+     "text": "ÉLECTRIK",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      182,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      199,
+      32,
+      8
+     ],
+     "text": "PSY",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      196,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      213,
+      32,
+      8
+     ],
+     "text": "GLACE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      210,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      227,
+      32,
+      8
+     ],
+     "text": "DRAGON",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      224,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      241,
+      32,
+      8
+     ],
+     "text": "TÉNÈBRES",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      238,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      255,
+      32,
+      8
+     ],
+     "text": "FÉE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/types",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      3,
+      32,
+      8
+     ],
+     "imageRect": [
+      0,
+      0,
+      32,
+      14
+     ],
+     "text": "NORMAL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "erase": "none",
+     "onlyImage": true,
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      17,
+      32,
+      8
+     ],
+     "text": "KAMPF",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      14,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      31,
+      32,
+      8
+     ],
+     "text": "FLUG",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      28,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      45,
+      32,
+      8
+     ],
+     "text": "GIFT",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      42,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      59,
+      32,
+      8
+     ],
+     "text": "BODEN",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      56,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      73,
+      32,
+      8
+     ],
+     "text": "GESTEIN",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      70,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      87,
+      32,
+      8
+     ],
+     "text": "KÄFER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      84,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      101,
+      32,
+      8
+     ],
+     "text": "GEIST",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      98,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      115,
+      32,
+      8
+     ],
+     "text": "STAHL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      112,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      143,
+      32,
+      8
+     ],
+     "text": "FEUER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      140,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      157,
+      32,
+      8
+     ],
+     "text": "WASSER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      154,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      171,
+      32,
+      8
+     ],
+     "text": "PFLANZE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      168,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      185,
+      32,
+      8
+     ],
+     "text": "ELEKTRO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      182,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      199,
+      32,
+      8
+     ],
+     "text": "PSYCHO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      196,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      213,
+      32,
+      8
+     ],
+     "text": "EIS",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      210,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      227,
+      32,
+      8
+     ],
+     "text": "DRACHE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      224,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      241,
+      32,
+      8
+     ],
+     "text": "UNLICHT",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      238,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      255,
+      32,
+      8
+     ],
+     "text": "FEE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMAL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "LUCHA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "VOLAD.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "VENENO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "TIERRA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "ROCA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "BICHO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "FANT.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "ACERO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FUEGO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "AGUA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "PLANTA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ELÉCT.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSÍQ.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "HIELO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRAGÓN",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "SINIE.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "HADA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMAL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "COMBAT",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "VOL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "POISON",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "SOL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "ROCHE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "INSECTE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "SPECTRE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "ACIER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FEU",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "EAU",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "PLANTE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ÉLECTRIK",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSY",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "GLACE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRAGON",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "TÉNÈBRES",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "FÉE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMAL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "KAMPF",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "FLUG",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "GIFT",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "BODEN",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "GESTEIN",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "KÄFER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "GEIST",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "STAHL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FEUER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "WASSER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "PFLANZE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ELEKTRO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSYCHO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "EIS",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRACHE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "UNLICHT",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "FEE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
   }
  ]
 }
