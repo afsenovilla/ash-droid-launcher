@@ -2,32 +2,47 @@
 
 Guidance for AI agents (and humans) working on this repository.
 
-## Language policy: English for everything development-facing
+## Language policy
 
-From 2026-11-07, English is the single language of the project's development-facing side. When you add or change any of the following, write it in English:
+**All development-facing repository content must be written in English, excluding localization resources.**
+
+Developers may communicate with AI agents in their preferred language (for example, Spanish). The language of a request doesn't change the language of the result: development-facing content produced from it is written in English.
+
+### Development-facing content (English)
 
 - **Code:** identifiers, comments, docstrings, log messages, error messages, CLI help and argument descriptions.
-- **Anything a player sees that is not the game's own text:** launcher UI (Android), installer windows and terminal output, pop-ups and dialogs (updater prompts, confirmations, errors), progress screens and status messages.
+- **Source strings:** the default (base) strings of any localized UI, e.g. the Android launcher's `app/src/main/res/values/strings.xml`.
+- **Tool and installer text that isn't a localization resource:** Windows installer, Steam Deck / Linux installer and updater, H700 installer: their windows, pop-ups, dialogs, progress screens and terminal output.
 - **File and folder names** shipped in release packages or created on players' devices: installers, launch scripts, readme files, log files, marker and config files, payload folders inside the zips.
-- **Documentation:** `README.md` (the canonical README), tool READMEs, `CHANGELOG.md`, release notes, code review notes, planning and design documents.
+- **Documentation:** `README.md` (the canonical README), tool READMEs, `CHANGELOG.md`, release notes, planning and design documents.
 - **Git and GitHub:** commit messages, branch names, pull request titles and descriptions, issue text, workflow step names and CI output.
 
-Don't add a Spanish (or any other non-English) variant of a development-facing string next to the English one. The launcher and tools are not localized; if localization is ever reintroduced, it will be a deliberate, multi-language decision, not a per-string choice.
+### Localization resources (excluded)
 
-### Out of scope: game translations
+Localization resources hold player-facing text in other languages. They stay in their target language, and the features they support must keep working.
 
-The game translations are separate and follow their own rules. Do **not** convert them to English:
+**Launcher localization.** The Android launcher's Spanish UI is a supported feature.
+- English is the source language: `app/src/main/res/values/strings.xml`.
+- Spanish is a localization: `app/src/main/res/values-es/strings.xml`. Android shows it when the device is in Spanish.
+- Every new or changed launcher string goes into the source file and into every existing localization, with the same key. UI text is never hardcoded in Java.
+- More languages can be added the same way (`values-fr`, `values-de`, `values-it`…).
+- If a tool or installer is ever localized, it follows the same model: English source strings, with translations kept as separate localization resources.
 
+**Game translations.** They are separate and follow their own rules:
 - Translation packs and their sources: `packs/<game>/*.json`, `app/src/main/assets/packs/<game>/*.dat`.
 - Image recipes and lettering in `art.json` / `pixelfonts.txt`, and the per-language intro songs.
-- In-game text the runtime patch shows in the game's current language (e.g. per-language tables in `ashdroid_patches.rb` such as the controls-screen texts, the "Intro en español / en français / (Deutsch)" option and its Yes/No values, the device notices with a Spanish and an English variant, the splash credit line).
-- Translation style guides for a target language (e.g. `tools/translation/GUIDE_es_ES.md`). Their instructions should still be written in English, but they will naturally contain target-language examples.
+- In-game text the runtime patch shows in the game's current language (e.g. the per-language tables in `ashdroid_patches.rb`: controls-screen texts, the "Intro en español / en français / (Deutsch)" option and its Yes/No values, the device notices with a Spanish and an English variant, the splash credit line).
+- Translation style guides for a target language (e.g. `tools/translation/GUIDE_es_ES.md`). Their instructions are written in English, with target-language examples.
 
-These keep using official Pokémon terminology for each language.
+Game translations keep using official Pokémon terminology for each language.
 
-### Renaming shipped files: keep existing installs working
+## New development baseline: no legacy compatibility
 
-Changing the name of something already on players' devices needs a migration path. Before renaming, check what depends on the old name (Steam shortcut IDs and artwork, updater lookups, uninstallers, old marker files) and either keep a compatibility forwarder or migrate it in the installer. See `ENGLISH_STANDARDIZATION.md` for the known cases.
+Legacy compatibility is not currently a priority. This application has not yet received its official Fire Ash release, and we are establishing a new development baseline.
+
+- Once the changes outlined in `ENGLISH_STANDARDIZATION.md` are approved and implemented, new installations follow the standardized structure.
+- Previous beta implementations, legacy filenames, compatibility forwarders and migration requirements must not dictate the new standard.
+- Preserve useful functionality, without requiring backward compatibility with experimental builds.
 
 ## Other project rules
 
