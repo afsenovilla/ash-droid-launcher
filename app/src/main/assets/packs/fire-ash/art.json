@@ -6755,6 +6755,78 @@
      "height": 7
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "FICHA DE LOGROS",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "CARTE DE SUCCÈS",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "ERFOLGSKARTE",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
   }
  ]
 }
