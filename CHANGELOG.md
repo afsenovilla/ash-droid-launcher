@@ -6,7 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-07
+
 ### Fixed
+- Battle command menu (Fight, Bag, Run…) now in French and German too; it stayed in English in 0.6.0.
 - The "new signing key" notice is no longer decided from version numbers: it appears only if the downloaded
   update really is signed with another key. An unreadable signature is reported as a failed update instead.
 
