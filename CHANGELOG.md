@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+- **Italian**: new "Italiano" language in the game's options (it isn't one of the game's own languages), with
+  every text translated and the images with English lettering redrawn in Italian. It loads the game's
+  English files and replaces every text with the Italian pack, on Android and PC.
+
 ## [0.6.1] - 2026-11-07
 
 ### Fixed
