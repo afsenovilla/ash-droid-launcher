@@ -4436,6 +4436,336 @@
      "erase": "transparent"
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal_foe",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal_foe",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin_foe",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin_foe",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.##.#",
+      "##.#.##.#",
+      "####.##.#",
+      "##....##."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "##.#.####",
+      "###..##.#",
+      "###..####",
+      "##.#.##.."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_faint",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.##.#",
+      "##.#.##.#",
+      "####.##.#",
+      "##....##."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_faint",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "##.#.####",
+      "###..##.#",
+      "###..####",
+      "##.#.##.."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_swap",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.##.#",
+      "##.#.##.#",
+      "####.##.#",
+      "##....##."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_swap",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "##.#.####",
+      "###..##.#",
+      "###..####",
+      "##.#.##.."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
   }
  ]
 }
