@@ -6827,6 +6827,147 @@
      "spacing": 1
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "TURNO",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "TOUR",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "RUNDE",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
   }
  ]
 }
