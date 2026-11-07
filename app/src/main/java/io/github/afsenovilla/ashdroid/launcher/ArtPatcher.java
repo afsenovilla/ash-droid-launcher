@@ -3,7 +3,8 @@ package io.github.afsenovilla.ashdroid.launcher;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,61 +16,101 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.Normalizer;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 /**
  * Redraws English lettering inside game images, following the recipes in
  * assets/packs/<id>/art.json and the pixel fonts in assets/pixelfonts.txt.
- * Same algorithm as tools/art/relabel.py (used to author and preview recipes).
+ * The drawing itself is {@link ArtEngine} (same algorithm as tools/art/relabel.py,
+ * used to author and preview recipes); this class adds the Android parts: reading
+ * and writing PNGs and rasterising the game's TrueType fonts.
  *
  * Results go to ashdroid_art/ in the game folder (originals untouched) plus an
- * index the runtime patch reads: "es" images replace the originals only while
- * the game is in Spanish; "any" images (button names) always do.
+ * index the runtime patch reads: "es"/"fr"/"de" images replace the originals only
+ * while the game is in that language; "any" images (button names) always do.
  */
 final class ArtPatcher
 {
     static final String OUT_DIR = "ashdroid_art";
     static final String INDEX = "ashdroid_art/index.txt";
 
-    private static final class Font
-    {
-        int w, h;
-        final Map<Character, String[]> glyphs = new HashMap<>();
-    }
-
     private ArtPatcher() {}
 
-    /** Image seen in "art pixels": grid x grid blocks starting at an offset. */
-    private static final class Canvas
+    /** Android side of the engine: user pictures and TrueType text from the game folder. */
+    private static final class AndroidHost implements ArtEngine.Host
     {
-        final Bitmap b;
-        final int g, ox, oy, W, H;
-        int dot; // dot-matrix art: each cell is a dot x dot lamp, the rest is black gap
+        final File game;
+        final Map<String, Typeface> faces = new HashMap<>();
 
-        Canvas(Bitmap b, int g, int ox, int oy)
+        AndroidHost(File game) { this.game = game; }
+
+        @Override
+        public ArtEngine.Img userImage(String rel)
         {
-            this.b = b; this.g = g; this.ox = ox; this.oy = oy;
-            W = (b.getWidth() - ox) / g;
-            H = (b.getHeight() - oy) / g;
+            File src = findUserFile(game, rel);
+            return src == null ? null : load(src);
         }
 
-        int get(int x, int y)
+        @Override
+        public ArtEngine.Mask ttf(String font, int size, String text)
         {
-            return (x >= 0 && y >= 0 && x < W && y < H) ? b.getPixel(ox + x * g, oy + y * g) : 0;
-        }
-
-        void put(int x, int y, int c)
-        {
-            if (x < 0 || y < 0 || x >= W || y >= H) return;
-            for (int yy = 0; yy < g; yy++)
-                for (int xx = 0; xx < g; xx++) {
-                    int X = ox + x * g + xx, Y = oy + y * g + yy;
-                    if (X >= b.getWidth() || Y >= b.getHeight()) continue;
-                    boolean lamp = dot == 0 || (xx < dot && yy < dot);
-                    b.setPixel(X, Y, lamp ? c : Color.BLACK);
+            Typeface tf;
+            if (faces.containsKey(font)) tf = faces.get(font);
+            else {
+                File f = findUserFile(game, "Fonts/" + font + ".ttf");
+                tf = null;
+                try {
+                    if (f != null) tf = Typeface.createFromFile(f);
+                } catch (RuntimeException ignored) {
                 }
+                faces.put(font, tf);
+            }
+            if (tf == null) return null;
+            int w = (int) (size * 0.8 * Math.max(1, text.length())) + size * 2, h = size * 2;
+            Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ALPHA_8);
+            android.graphics.Canvas c = new android.graphics.Canvas(b);
+            Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+            p.setTypeface(tf);
+            p.setTextSize(size);
+            p.setColor(0xFFFFFFFF);
+            Paint.FontMetrics fm = p.getFontMetrics();
+            c.drawText(text, size / 2f, size / 4f - fm.ascent, p);
+            int[] px = new int[w * h];
+            Bitmap argb = b.copy(Bitmap.Config.ARGB_8888, false);
+            argb.getPixels(px, 0, w, 0, 0, w, h);
+            argb.recycle();
+            b.recycle();
+            double[] a = new double[w * h];
+            for (int i = 0; i < px.length; i++) a[i] = (px[i] >>> 24) / 255.0;
+            return new ArtEngine.Mask(w, h, a);
         }
+    }
+
+    static ArtEngine.Img load(File f)
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inPremultiplied = false;
+        Bitmap b = BitmapFactory.decodeFile(f.getAbsolutePath(), o);
+        if (b == null) return null;
+        int w = b.getWidth(), h = b.getHeight();
+        int[] px = new int[w * h];
+        b.getPixels(px, 0, w, 0, 0, w, h);
+        b.recycle();
+        return new ArtEngine.Img(w, h, px);
+    }
+
+    static void save(ArtEngine.Img im, File f) throws IOException
+    {
+        Bitmap b = Bitmap.createBitmap(im.w, im.h, Bitmap.Config.ARGB_8888);
+        b.setPremultiplied(false);
+        b.setPixels(im.px, 0, im.w, 0, 0, im.w, im.h);
+        try (OutputStream os = new FileOutputStream(f)) {
+            b.compress(Bitmap.CompressFormat.PNG, 100, os);
+        }
+        b.recycle();
     }
 
     /** buttons: label for USE, BACK, ACTION, SPECIAL (e.g. "A", "B", "X", "Y"). */
@@ -78,50 +119,24 @@ final class ArtPatcher
         File out = new File(game, OUT_DIR);
         StringBuilder index = new StringBuilder();
         try {
-            Map<String, Font> fonts = loadFonts(ctx);
+            Map<String, ArtEngine.Font> fonts = ArtEngine.parseFonts(readAsset(ctx, "pixelfonts.txt"));
             JSONObject recipes = new JSONObject(readAsset(ctx, "packs/" + packId + "/art.json"));
             JSONArray images = recipes.getJSONArray("images");
-            // One output per (path, lang): the "es" image gets every entry for its
-            // path in order; the "any" image only the "any" entries (button names),
-            // so it can be used whatever the game language.
-            java.util.LinkedHashMap<String, java.util.Set<String>> paths = new java.util.LinkedHashMap<>();
-            for (int i = 0; i < images.length(); i++) {
-                JSONObject img = images.getJSONObject(i);
-                String path = img.getString("path");
-                if (!paths.containsKey(path)) paths.put(path, new java.util.HashSet<>());
-                paths.get(path).add(img.optString("lang", "es"));
-            }
+            LinkedHashSet<String> paths = new LinkedHashSet<>();
+            for (int i = 0; i < images.length(); i++) paths.add(images.getJSONObject(i).getString("path"));
+            AndroidHost host = new AndroidHost(game);
             out.mkdirs();
-            for (Map.Entry<String, java.util.Set<String>> p : paths.entrySet()) {
-                String path = p.getKey();
-                for (String lang : new String[] { "es", "any" }) {
-                    if (!p.getValue().contains(lang)) continue;
+            for (String path : paths) {
+                File src = findImage(game, path);
+                ArtEngine.Img orig = src == null ? null : load(src);
+                if (orig == null) continue;
+                for (Map.Entry<String, List<JSONObject>> v : ArtEngine.variants(images, path).entrySet()) {
                     try {
-                        File src = findImage(game, path);
-                        if (src == null) continue;
-                        Bitmap orig = BitmapFactory.decodeFile(src.getAbsolutePath());
-                        if (orig == null) continue;
-                        Bitmap im = orig.copy(Bitmap.Config.ARGB_8888, true);
-                        orig.recycle();
-                        for (int i = 0; i < images.length(); i++) {
-                            JSONObject img = images.getJSONObject(i);
-                            if (!path.equals(img.getString("path"))) continue;
-                            if ("any".equals(lang) && !"any".equals(img.optString("lang", "es"))) continue;
-                            JSONArray off = img.optJSONArray("offset");
-                            Canvas cv = new Canvas(im, img.optInt("grid", 1),
-                                    off == null ? 0 : off.getInt(0), off == null ? 0 : off.getInt(1));
-                            cv.dot = img.optInt("dot", 0);
-                            JSONArray regions = img.getJSONArray("regions");
-                            for (int r = 0; r < regions.length(); r++) {
-                                applyRegion(cv, regions.getJSONObject(r), fonts, buttons, game);
-                            }
-                        }
-                        String name = ("any".equals(lang) ? "any_" : "") + outName(path);
-                        try (OutputStream os = new FileOutputStream(new File(out, name))) {
-                            im.compress(Bitmap.CompressFormat.PNG, 100, os);
-                        }
-                        im.recycle();
-                        index.append(lang).append('\t').append(path.toLowerCase(Locale.ROOT)).append('\t')
+                        ArtEngine.Img im = ArtEngine.relabel(orig, v.getValue(), fonts, buttons, host);
+                        String name = "any".equals(v.getKey()) ? "any_" + ArtEngine.outName(path)
+                                : ArtEngine.outFile(path, v.getKey());
+                        save(im, new File(out, name));
+                        index.append(v.getKey()).append('\t').append(path.toLowerCase(Locale.ROOT)).append('\t')
                                 .append(OUT_DIR).append('/').append(name).append('\n');
                     } catch (Exception ignored) {
                         // skip this image, keep the rest
@@ -138,224 +153,9 @@ final class ArtPatcher
         }
     }
 
-    // ------------------------------------------------------------------ core
-
-    private static void applyRegion(Canvas cv, JSONObject r, Map<String, Font> fonts, Map<String, String> buttons,
-            File game) throws Exception
-    {
-        // Picture supplied by the user in the game folder (e.g. official Spanish art)
-        if (r.has("image")) {
-            File src = findUserFile(game, r.getString("image"));
-            Bitmap pic = src == null ? null : BitmapFactory.decodeFile(src.getAbsolutePath());
-            if (pic != null) {
-                JSONArray ir = r.has("imageRect") ? r.getJSONArray("imageRect") : r.getJSONArray("rect");
-                int x = ir.getInt(0), y = ir.getInt(1), w = ir.getInt(2), h = ir.getInt(3);
-                for (int yy = 0; yy < h; yy++)
-                    for (int xx = 0; xx < w; xx++)
-                        cv.put(x + xx, y + yy, pic.getPixel(xx * pic.getWidth() / w, yy * pic.getHeight() / h));
-                pic.recycle();
-                return;
-            }
-        }
-        if (r.optBoolean("onlyImage", false)) return;
-
-        JSONArray rect = r.getJSONArray("rect");
-        int x = rect.getInt(0), y = rect.getInt(1), w = rect.getInt(2), h = rect.getInt(3);
-        String style = r.optString("style", "shadow");
-        String erase = r.optString("erase", "row");
-        int bgx = r.optInt("bgx", x);
-
-        int[] rowbg = new int[h];
-        for (int yy = 0; yy < h; yy++) {
-            if ("transparent".equals(erase)) rowbg[yy] = 0;
-            else if (r.has("bg")) rowbg[yy] = parseColor(r.getString("bg"));
-            else rowbg[yy] = cv.get(bgx, y + yy);
-        }
-
-        // Count colours as in the reference tool: most frequent first, ties by first seen
-        java.util.LinkedHashMap<Integer, Integer> cnt = new java.util.LinkedHashMap<>();
-        int tx0 = Integer.MAX_VALUE, ty0 = Integer.MAX_VALUE, tx1 = -1, ty1 = -1;
-        for (int yy = y; yy < y + h; yy++)
-            for (int xx = x; xx < x + w; xx++) {
-                int c = cv.get(xx, yy);
-                if (c != rowbg[yy - y] && Color.alpha(c) > 0) {
-                    Integer n = cnt.get(c);
-                    cnt.put(c, n == null ? 1 : n + 1);
-                    tx0 = Math.min(tx0, xx); tx1 = Math.max(tx1, xx);
-                    ty0 = Math.min(ty0, yy); ty1 = Math.max(ty1, yy);
-                }
-            }
-        int first = 0, second = 0, n1 = -1, n2 = -1;
-        for (Map.Entry<Integer, Integer> e : cnt.entrySet()) {
-            int c = e.getKey(), n = e.getValue();
-            if (n > n1) { second = first; n2 = n1; first = c; n1 = n; }
-            else if (n > n2) { second = c; n2 = n; }
-        }
-        boolean has1 = n1 >= 0, has2 = n2 >= 0;
-        int fill, shade;
-        boolean hasShade;
-        if ("outline".equals(style)) {
-            shade = has1 ? first : Color.rgb(64, 64, 64);
-            fill = has2 ? second : Color.rgb(248, 248, 248);
-            hasShade = true;
-        } else {
-            fill = has1 ? first : Color.rgb(64, 64, 64);
-            shade = second;
-            hasShade = has2;
-        }
-        if (r.has("fill")) {
-            fill = parseColor(r.getString("fill"));
-            if (!"outline".equals(style)) {
-                // shade = most frequent colour that isn't the fill
-                int best = -1;
-                hasShade = false;
-                for (Map.Entry<Integer, Integer> e : cnt.entrySet()) {
-                    if ((e.getKey() & 0xFFFFFF) == (fill & 0xFFFFFF)) continue;
-                    if (e.getValue() > best) { best = e.getValue(); shade = e.getKey(); hasShade = true; }
-                }
-            }
-        }
-        if (r.has("shade")) { shade = parseColor(r.getString("shade")); hasShade = true; }
-        JSONArray fa = r.optJSONArray("fills");
-        int[] fills = new int[fa == null ? 0 : fa.length()];
-        for (int i = 0; i < fills.length; i++) fills[i] = parseColor(fa.getString(i));
-        if (ty1 < 0) { ty0 = y; ty1 = y + h - 1; tx0 = x; }
-
-        if ("inpaint".equals(erase)) {
-            // Remove only the old lettering ("ink" colours): each such pixel takes the
-            // colour of the nearest non-ink pixel on its row (keeps stripes/circles).
-            java.util.HashSet<Integer> ink = new java.util.HashSet<>();
-            JSONArray il = r.optJSONArray("ink");
-            if (il != null) for (int i = 0; i < il.length(); i++) ink.add(parseColor(il.getString(i)) & 0xFFFFFF);
-            int[] row = new int[3 * w];
-            boolean[] isInk = new boolean[3 * w];
-            for (int yy = y; yy < y + h; yy++) {
-                for (int i = 0; i < 3 * w; i++) {
-                    row[i] = cv.get(x - w + i, yy);
-                    isInk[i] = ink.contains(row[i] & 0xFFFFFF);
-                }
-                for (int i = w; i < 2 * w; i++) {
-                    if (!isInk[i]) continue;
-                    for (int dd = 1; dd <= w; dd++) {
-                        if (i - dd >= 0 && !isInk[i - dd]) { cv.put(x + i - w, yy, row[i - dd]); break; }
-                        if (i + dd < 3 * w && !isInk[i + dd]) { cv.put(x + i - w, yy, row[i + dd]); break; }
-                    }
-                }
-            }
-        } else if (!"none".equals(erase)) {
-            for (int yy = y; yy < y + h; yy++)
-                for (int xx = x; xx < x + w; xx++) cv.put(xx, yy, rowbg[yy - y]);
-        }
-
-        JSONArray bm = r.optJSONArray("bitmap");
-        if (bm != null) {
-            int ox = x + r.optInt("dx", 0), oy = y + r.optInt("dy", 0);
-            for (int j = 0; j < bm.length(); j++) {
-                String row = bm.getString(j);
-                for (int i = 0; i < row.length(); i++) {
-                    char ch = row.charAt(i);
-                    if (ch == '#') cv.put(ox + i, oy + j, fill);
-                    else if (ch == 's' && hasShade) cv.put(ox + i, oy + j, shade);
-                }
-            }
-            return;
-        }
-
-        String text = r.optString("text", "");
-        for (Map.Entry<String, String> b : buttons.entrySet())
-            if (b.getValue() != null) text = text.replace("{" + b.getKey() + "}", b.getValue());
-        java.util.List<String> names = new java.util.ArrayList<>();
-        JSONArray fl = r.optJSONArray("font");
-        if (fl != null) for (int i = 0; i < fl.length(); i++) names.add(fl.getString(i));
-        else names.add(r.optString("font", "5x7"));
-        int bold = r.optBoolean("bold", false) ? 1 : 0;
-        int extra = "shadow".equals(style) && hasShade ? 1 : ("outline".equals(style) ? 2 : 0);
-        int height = r.has("height") ? r.getInt("height") : Math.max(1, ty1 - ty0 + 1 - extra);
-
-        // First font (in order) whose glyphs cover the text and fit at the preferred
-        // spacing; the last one is squeezed if nothing fits.
-        Font font = null;
-        String[][] glyphs = null;
-        int[] widths = null;
-        int sum = 0, spacing = 0, tw;
-        for (int fi = 0; fi < names.size(); fi++) {
-            font = fonts.get(names.get(fi));
-            if (font == null) return;
-            glyphs = new String[text.length()][];
-            widths = new int[text.length()];
-            sum = 0;
-            boolean covered = true;
-            for (int i = 0; i < text.length(); i++) {
-                String[] g = pickGlyph(font, text.charAt(i));
-                if (g == null) {
-                    if (text.charAt(i) != ' ') covered = false;
-                    g = new String[font.h];
-                    java.util.Arrays.fill(g, new String(new char[font.w]).replace('\0', '.'));
-                }
-                glyphs[i] = g;
-                widths[i] = g[0].length() + bold;
-                sum += widths[i];
-            }
-            spacing = r.optInt("spacing", 1);
-            tw = sum + spacing * (text.length() - 1) + extra;
-            if (fi == names.size() - 1 || (covered && tw <= w)) break;
-        }
-        while (true) {
-            tw = sum + spacing * (text.length() - 1) + extra;
-            if (tw <= w || spacing <= 0) break;
-            spacing--;
-        }
-        String align = r.optString("align", "center");
-        int ox;
-        if ("left".equals(align)) ox = tx1 >= 0 ? tx0 : x;
-        else if ("right".equals(align)) ox = x + w - tw;
-        else ox = x + Math.floorDiv(w - tw, 2);
-        ox += r.optInt("dx", 0);
-        int oy = ty0 + r.optInt("dy", 0);
-        int gx0 = ox + ("outline".equals(style) ? 1 : 0);
-        int gy0 = oy + ("outline".equals(style) ? 1 : 0);
-
-        for (int pass = 0; pass < 2; pass++) {
-            if (pass == 0 && ("plain".equals(style) || !hasShade)) continue;
-            int cx = gx0;
-            for (int i = 0; i < text.length(); i++) {
-                String[] g = glyphs[i];
-                int top = g.length - font.h; // accent rows drawn above the line, unscaled
-                for (int ty = -top; ty < height; ty++) {
-                    int gy = ty < 0 ? top + ty : top + (ty * font.h + font.h / 2) / height;
-                    int col = fills.length > 0 ? fills[Math.max(0, ty) * fills.length / height] : fill;
-                    String row = g[gy];
-                    for (int gx = 0; gx < row.length(); gx++) {
-                        if (row.charAt(gx) != '#') continue;
-                        for (int b = 0; b <= bold; b++) {
-                            int X = cx + gx + b, Y = gy0 + ty;
-                            if (pass == 1) cv.put(X, Y, col);
-                            else if ("shadow".equals(style)) cv.put(X + 1, Y + 1, shade);
-                            else for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++) cv.put(X + dx, Y + dy, shade);
-                        }
-                    }
-                }
-                cx += widths[i] + spacing;
-            }
-        }
-    }
-
-    private static int parseColor(String s)
-    {
-        s = s.startsWith("#") ? s.substring(1) : s;
-        return Color.rgb(Integer.parseInt(s.substring(0, 2), 16), Integer.parseInt(s.substring(2, 4), 16),
-                Integer.parseInt(s.substring(4, 6), 16));
-    }
-
     private static String stripAccents(String s)
     {
         return Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
-    }
-
-    static String outName(String path)
-    {
-        return path.replace("Graphics/Pictures/", "").replace('/', '_').replace(' ', '_')
-                .toLowerCase(Locale.ROOT) + ".png";
     }
 
     /** Finds a file the user added to the game folder, ignoring case and accents. */
@@ -386,52 +186,6 @@ final class ArtPatcher
             if (cur == null) return null;
         }
         return cur.isFile() ? cur : null;
-    }
-
-    /** Same order as ashdroid_art.rb: the character as is (fonts with lowercase, such as "naming"),
-     *  then uppercase, then without its accent. */
-    private static String[] pickGlyph(Font font, char ch)
-    {
-        String s = String.valueOf(ch);
-        String[] tries = { s, s.toUpperCase(Locale.ROOT), stripAccents(s), stripAccents(s).toUpperCase(Locale.ROOT) };
-        for (String t : tries) {
-            if (t.length() != 1) continue;
-            String[] g = font.glyphs.get(t.charAt(0));
-            if (g != null) return g;
-        }
-        return null;
-    }
-
-    // ------------------------------------------------------------------ fonts
-
-    private static Map<String, Font> loadFonts(Context ctx) throws IOException
-    {
-        Map<String, Font> fonts = new HashMap<>();
-        Font cur = null;
-        Character ch = null;
-        java.util.ArrayList<String> rows = new java.util.ArrayList<>();
-        for (String line : readAsset(ctx, "pixelfonts.txt").split("\n")) {
-            line = line.replace("\r", "");
-            if (line.isEmpty() || line.startsWith("//")) continue;
-            if (line.startsWith("@font")) {
-                if (cur != null && ch != null) cur.glyphs.put(ch, rows.toArray(new String[0]));
-                String[] p = line.split("\\s+");
-                cur = new Font();
-                cur.w = Integer.parseInt(p[2]);
-                cur.h = Integer.parseInt(p[3]);
-                fonts.put(p[1], cur);
-                ch = null;
-                rows.clear();
-            } else if (line.startsWith("char:")) {
-                if (cur != null && ch != null) cur.glyphs.put(ch, rows.toArray(new String[0]));
-                ch = line.length() > 5 ? line.charAt(5) : ' ';
-                rows.clear();
-            } else {
-                rows.add(line);
-            }
-        }
-        if (cur != null && ch != null) cur.glyphs.put(ch, rows.toArray(new String[0]));
-        return fonts;
     }
 
     private static String readAsset(Context ctx, String name) throws IOException
