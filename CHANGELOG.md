@@ -6,6 +6,46 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-11-07
+
+### Fixed
+- 0.5.x no longer shows the "new signing key" notice when an update is available: it only applies when
+  updating from 0.4.x. **On 0.5.1 or 0.5.2, install this version once by hand** (download the APK and
+  install it over the current one, no uninstall needed); later updates work from the launcher again.
+
+## [0.5.2] - 2026-11-07
+
+### Security
+- The game zip is checked against the SHA-256 of official Fire Ash releases (3.7.1 for now). A known zip
+  installs as before and the launcher shows "✓ Pokémon Fire Ash 3.7.1 (verified)"; any other zip asks for
+  confirmation first, since a modified game can run code inside the app.
+
+## [0.5.1] - 2026-11-07
+
+### Security
+- The game's Ruby runtime no longer offers HTTPLite (HTTPS without certificate checks). Fire Ash doesn't use it.
+- The updater downloads only the APK named for the release and installs it only if it is this app, a
+  newer version and signed with the same key.
+- Build pipeline: write access limited to the release job, workflow input no longer interpolated into
+  shell code; each build reports the APK signer and SHA-256.
+
+### Fixed
+- Importing a zip with duplicate or conflicting paths, or an implausibly large one, fails with a clear
+  error instead of silently overwriting files; a failed import never leaves temporary files behind.
+- mkxp.json and patch files are written atomically, so an interrupted write can't leave a broken config.
+- Controllers whose D-pad reports as a "hat" no longer lose direction presses.
+- Native libraries are built for 16 KB memory pages (newer Android devices); CI checks every library.
+
+## [0.5.0] - 2026-11-07
+
+### Changed
+- **New private signing key.** The old public key is retired. This version does not install over 0.4.x:
+  export your saves, uninstall, install this version, import the game zip, then import your saves.
+- Debug builds are signed with the Android debug key and can no longer replace a release install.
+
+### Fixed
+- Android 7–10: the game no longer fails to start asking for a storage permission it does not need.
+
 ## [0.4.18] - 2026-11-07
 
 ### Added

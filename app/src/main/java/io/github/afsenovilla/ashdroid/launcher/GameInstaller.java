@@ -43,11 +43,34 @@ public final class GameInstaller
         void onProgress(long done, long total, String currentFile);
     }
 
+    /** Asked (on the worker thread, may block) when the zip is not a known official release. */
+    public interface Verifier
+    {
+        boolean allowUnverified(String sha256Hex);
+    }
+
+    private static final String VERIFIED = ".ashdroid_verified";
+
+    /** Name of the verified official release installed, or null if unverified/unknown. */
+    public static String verifiedRelease(Context ctx)
+    {
+        File f = new File(gameDir(ctx), VERIFIED);
+        try {
+            return f.isFile() ? Util.readText(f).trim() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private static final String GAME_DIR = "game";
     private static final String TMP_DIR = "game_import";
     private static final String OLD_DIR = "game_old";
     private static final String USER_DIR = "userdata";
     private static final String MARKER = ".ashdroid_installed";
+
+    /** Fire Ash is ~1-2 GB with tens of thousands of files; these are generous safety caps. */
+    private static final long MAX_BYTES = 8L << 30;
+    private static final int MAX_ENTRIES = 200_000;
 
     /** Serializes import, delete and launch preparation. */
     private static final Object LOCK = new Object();
@@ -121,6 +144,16 @@ public final class GameInstaller
      */
     public static void importZip(Context ctx, Uri uri, Progress progress) throws IOException
     {
+        importZip(ctx, uri, progress, null);
+    }
+
+    /**
+     * @param verifier asked when the zip's SHA-256 is not a known official release;
+     *                 null = accept any zip (tests). The hash is computed over the
+     *                 very bytes that are extracted.
+     */
+    public static void importZip(Context ctx, Uri uri, Progress progress, Verifier verifier) throws IOException
+    {
         ContentResolver cr = ctx.getContentResolver();
         long total = querySize(cr, uri);
 
@@ -129,9 +162,22 @@ public final class GameInstaller
         if (!tmp.mkdirs()) throw new IOException(ctx.getString(R.string.err_tmp_dir));
         String tmpCanonical = tmp.getCanonicalPath() + File.separator;
 
-        int entries;
+        boolean ok = false;
         try {
-            entries = extract(ctx, cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress);
+            importStaged(ctx, cr, uri, tmp, tmpCanonical, total, progress, verifier);
+            ok = true;
+        } finally {
+            if (!ok) Util.deleteRecursive(tmp);
+        }
+    }
+
+    private static void importStaged(Context ctx, ContentResolver cr, Uri uri, File tmp, String tmpCanonical,
+                                     long total, Progress progress, Verifier verifier) throws IOException
+    {
+        int entries;
+        String[] hash = new String[1];
+        try {
+            entries = extract(ctx, cr, uri, tmp, tmpCanonical, StandardCharsets.UTF_8, total, progress, hash);
         } catch (IllegalArgumentException ex) {
             // Names aren't valid UTF-8: zip made with an old Windows/OEM encoding. Retry.
             Util.deleteRecursive(tmp);
@@ -143,7 +189,7 @@ public final class GameInstaller
                 legacy = StandardCharsets.ISO_8859_1;
             }
             try {
-                entries = extract(ctx, cr, uri, tmp, tmpCanonical, legacy, total, progress);
+                entries = extract(ctx, cr, uri, tmp, tmpCanonical, legacy, total, progress, hash);
             } catch (IllegalArgumentException ex2) {
                 throw new IOException(ctx.getString(R.string.err_encoding));
             }
@@ -159,6 +205,14 @@ public final class GameInstaller
             Util.deleteRecursive(tmp);
             throw new IOException(ctx.getString(R.string.err_no_game));
         }
+
+        String release = OfficialGames.lookup(hash[0]);
+        if (release == null && verifier != null && !verifier.allowUnverified(hash[0])) {
+            Util.deleteRecursive(tmp);
+            throw new IOException(ctx.getString(R.string.import_cancelled_unverified));
+        }
+        Util.deleteRecursive(new File(root, VERIFIED));
+        if (release != null) Util.writeText(new File(root, VERIFIED), release);
 
         synchronized (LOCK) {
             recover(ctx);
@@ -267,30 +321,55 @@ public final class GameInstaller
     }
 
     private static int extract(Context ctx, ContentResolver cr, Uri uri, File tmp, String tmpCanonical, Charset cs,
-                               long total, Progress progress) throws IOException
+                               long total, Progress progress, String[] hashOut) throws IOException
     {
         InputStream raw = cr.openInputStream(uri);
         if (raw == null) throw new IOException(ctx.getString(R.string.err_open));
 
-        CountingInputStream counting = new CountingInputStream(new BufferedInputStream(raw, 1 << 16));
+        java.security.MessageDigest md;
+        try {
+            md = java.security.MessageDigest.getInstance("SHA-256");
+        } catch (java.security.NoSuchAlgorithmException ex) {
+            throw new IOException(ex.toString());
+        }
+        // Digest sits below the zip reader's own buffering, so it sees every byte read from the file.
+        java.security.DigestInputStream digest = new java.security.DigestInputStream(
+                new BufferedInputStream(raw, 1 << 16), md);
+        CountingInputStream counting = new CountingInputStream(digest);
         byte[] buf = new byte[1 << 16];
         int entries = 0;
+        long written = 0;
+        java.util.Set<String> seen = new java.util.HashSet<>();
         try (ZipInputStream zis = new ZipInputStream(counting, cs)) {
             ZipEntry e;
             while ((e = zis.getNextEntry()) != null) {
+                if (seen.size() >= MAX_ENTRIES) throw new IOException(ctx.getString(R.string.err_zip_limits));
                 File out = new File(tmp, e.getName());
                 // Zip-slip protection
-                if (!out.getCanonicalPath().startsWith(tmpCanonical)) {
+                String canon = out.getCanonicalPath();
+                if (!canon.startsWith(tmpCanonical)) {
+                    throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
+                }
+                // Duplicate or case-colliding paths would silently replace earlier files
+                String key = canon.toLowerCase(java.util.Locale.ROOT) + (e.isDirectory() ? "/" : "");
+                if (!seen.add(key)) {
+                    if (e.isDirectory()) { zis.closeEntry(); continue; }
                     throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
                 }
                 if (e.isDirectory()) {
+                    if (out.isFile()) throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
                     out.mkdirs();
                 } else {
                     File parent = out.getParentFile();
                     if (parent != null) parent.mkdirs();
+                    if (out.isDirectory() || (parent != null && !parent.isDirectory())) {
+                        throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
+                    }
                     try (OutputStream os = new FileOutputStream(out)) {
                         int n;
                         while ((n = zis.read(buf)) > 0) {
+                            written += n;
+                            if (written > MAX_BYTES) throw new IOException(ctx.getString(R.string.err_zip_limits));
                             os.write(buf, 0, n);
                             if (progress != null) progress.onProgress(counting.count, total, e.getName());
                         }
@@ -299,7 +378,14 @@ public final class GameInstaller
                 }
                 zis.closeEntry();
             }
+            // Central directory and anything after it: part of the file's hash too.
+            byte[] rest = new byte[1 << 16];
+            //noinspection StatementWithEmptyBody
+            while (digest.read(rest) > 0) { }
         }
+        StringBuilder hex = new StringBuilder(64);
+        for (byte b : md.digest()) hex.append(String.format(java.util.Locale.ROOT, "%02x", b));
+        hashOut[0] = hex.toString();
         return entries;
     }
 
