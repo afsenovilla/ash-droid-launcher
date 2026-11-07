@@ -12830,6 +12830,512 @@
      "fat": 0.5
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "any",
+   "grid": 1,
+   "regions": [
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      12,
+      37,
+      46,
+      8
+     ],
+     "text": "{ACTION}",
+     "bgx": 12
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      12,
+      63,
+      46,
+      8
+     ],
+     "text": "{ACTION}",
+     "bgx": 12
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      141,
+      9,
+      46,
+      8
+     ],
+     "text": "{USE}",
+     "bgx": 141
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      141,
+      32,
+      46,
+      8
+     ],
+     "text": "{ACTION}",
+     "bgx": 141
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      141,
+      55,
+      46,
+      8
+     ],
+     "text": "{BACK}",
+     "bgx": 141
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "ACELERAR",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPCIONES",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Alternar",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Volver",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Elige un camino.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "ACCÉLÉRER",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPTIONS",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Basculer",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Retour",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Choisis un chemin.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "SCHNELLER",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPTIONEN",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Wechseln",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Zurück",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Wähle einen Weg.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
+    }
+   ]
   }
  ]
 }
