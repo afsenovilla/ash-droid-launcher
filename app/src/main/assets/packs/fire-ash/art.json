@@ -5551,6 +5551,154 @@
      "height": 10
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/memo",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      2,
+      40,
+      11
+     ],
+     "text": "Fermer",
+     "bgx": 8
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      18,
+      40,
+      11
+     ],
+     "text": "Mémo",
+     "bgx": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/memo",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      2,
+      40,
+      11
+     ],
+     "text": "Memo",
+     "bgx": 8
+    },
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      18,
+      40,
+      11
+     ],
+     "text": "schließen",
+     "bgx": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      124,
+      36,
+      13
+     ],
+     "text": "Ouvrir",
+     "bgx": 14
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      140,
+      36,
+      11
+     ],
+     "text": "Mémo",
+     "bgx": 14
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      124,
+      36,
+      13
+     ],
+     "text": "Memo",
+     "bgx": 14
+    },
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      140,
+      36,
+      11
+     ],
+     "text": "öffnen",
+     "bgx": 14
+    }
+   ]
   }
  ]
 }
