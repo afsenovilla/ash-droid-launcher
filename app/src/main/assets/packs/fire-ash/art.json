@@ -1226,11 +1226,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1240,11 +1245,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1261,11 +1271,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1275,11 +1290,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1296,11 +1316,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1310,11 +1335,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1331,11 +1361,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1345,11 +1380,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
      "height": 8,
-     "dx": -5
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1378,9 +1418,14 @@
       10
      ],
      "text": "{SPECIAL}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
-     "bgx": 6
+     "bgx": 6,
+     "spacing": 2
     }
    ]
   },
