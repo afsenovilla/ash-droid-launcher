@@ -6,6 +6,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-07
+
+### Added
+- Images with English lettering redrawn in **French and German** too, besides Spanish: battle menus and
+  cursors, statuses and types, Pokédex, summary, party, bag, naming screen, trainer card, minigames and
+  Dynamax raids. Each language's images are used while the game is in that language (PC too).
+- Spanish (Spain) lettering redone for every image, with official Pokémon terms and thicker, consistent
+  pixel fonts.
+- Dynamax raid screens (database, lair map, rewards, "hard mode" badge) drawn with the game's own fonts.
+
 ## [0.5.3] - 2026-11-07
 
 ### Fixed
