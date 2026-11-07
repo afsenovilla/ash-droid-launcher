@@ -1226,11 +1226,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1240,11 +1245,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1261,11 +1271,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1275,11 +1290,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1296,11 +1316,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1310,11 +1335,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1331,11 +1361,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     },
     {
      "rect": [
@@ -1345,11 +1380,16 @@
       10
      ],
      "text": "{ACTION}",
-     "font": "5x7",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
      "style": "outline",
      "bgx": 28,
-     "height": 8,
-     "dx": -5
+     "height": 7,
+     "dx": -5,
+     "spacing": 2
     }
    ]
   },
@@ -1362,13 +1402,31 @@
      "rect": [
       44,
       8,
-      47,
+      18,
       10
      ],
-     "text": "{SPECIAL}",
+     "text": "",
      "font": "5x7",
      "style": "outline",
      "bgx": 6
+    },
+    {
+     "rect": [
+      62,
+      8,
+      29,
+      10
+     ],
+     "text": "{SPECIAL}",
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "outline",
+     "bgx": 6,
+     "spacing": 2,
+     "height": 7
     }
    ]
   },
@@ -1741,20 +1799,21 @@
     {
      "rect": [
       20,
-      110,
+      109,
       26,
-      4
+      5
      ],
      "text": "{ACTION}",
      "font": "tiny",
      "style": "plain",
      "fills": [
       "#ffffff",
+      "#ffffff",
       "#e7e7e7",
       "#cecece",
       "#adadad"
      ],
-     "height": 4,
+     "height": 5,
      "bgx": 20
     }
    ]
@@ -2194,6 +2253,11333 @@
      "bg": "#000000",
      "height": 5,
      "text": "PULSA {USE}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/types",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      3,
+      32,
+      8
+     ],
+     "imageRect": [
+      0,
+      0,
+      32,
+      14
+     ],
+     "text": "NORMAL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "erase": "none",
+     "onlyImage": true,
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      17,
+      32,
+      8
+     ],
+     "text": "COMBAT",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      14,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      31,
+      32,
+      8
+     ],
+     "text": "VOL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      28,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      45,
+      32,
+      8
+     ],
+     "text": "POISON",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      42,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      59,
+      32,
+      8
+     ],
+     "text": "SOL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      56,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      73,
+      32,
+      8
+     ],
+     "text": "ROCHE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      70,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      87,
+      32,
+      8
+     ],
+     "text": "INSECTE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      84,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      101,
+      32,
+      8
+     ],
+     "text": "SPECTRE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      98,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      115,
+      32,
+      8
+     ],
+     "text": "ACIER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      112,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      143,
+      32,
+      8
+     ],
+     "text": "FEU",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      140,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      157,
+      32,
+      8
+     ],
+     "text": "EAU",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      154,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      171,
+      32,
+      8
+     ],
+     "text": "PLANTE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      168,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      185,
+      32,
+      8
+     ],
+     "text": "ÉLECTRIK",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      182,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      199,
+      32,
+      8
+     ],
+     "text": "PSY",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      196,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      213,
+      32,
+      8
+     ],
+     "text": "GLACE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      210,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      227,
+      32,
+      8
+     ],
+     "text": "DRAGON",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      224,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      241,
+      32,
+      8
+     ],
+     "text": "TÉNÈBRES",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      238,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      255,
+      32,
+      8
+     ],
+     "text": "FÉE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/types",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      3,
+      32,
+      8
+     ],
+     "imageRect": [
+      0,
+      0,
+      32,
+      14
+     ],
+     "text": "NORMAL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "erase": "none",
+     "onlyImage": true,
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      17,
+      32,
+      8
+     ],
+     "text": "KAMPF",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      14,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      31,
+      32,
+      8
+     ],
+     "text": "FLUG",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      28,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      45,
+      32,
+      8
+     ],
+     "text": "GIFT",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      42,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      59,
+      32,
+      8
+     ],
+     "text": "BODEN",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      56,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      73,
+      32,
+      8
+     ],
+     "text": "GESTEIN",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      70,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      87,
+      32,
+      8
+     ],
+     "text": "KÄFER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      84,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      101,
+      32,
+      8
+     ],
+     "text": "GEIST",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      98,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      115,
+      32,
+      8
+     ],
+     "text": "STAHL",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      112,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      143,
+      32,
+      8
+     ],
+     "text": "FEUER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      140,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      157,
+      32,
+      8
+     ],
+     "text": "WASSER",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      154,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      171,
+      32,
+      8
+     ],
+     "text": "PFLANZE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      168,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      185,
+      32,
+      8
+     ],
+     "text": "ELEKTRO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      182,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      199,
+      32,
+      8
+     ],
+     "text": "PSYCHO",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      196,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      213,
+      32,
+      8
+     ],
+     "text": "EIS",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      210,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      227,
+      32,
+      8
+     ],
+     "text": "DRACHE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      224,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      241,
+      32,
+      8
+     ],
+     "text": "UNLICHT",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "imageRect": [
+      0,
+      238,
+      32,
+      14
+     ],
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      0,
+      255,
+      32,
+      8
+     ],
+     "text": "FEE",
+     "font": [
+      "type5",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMAL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "LUCHA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "VOLAD.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "VENENO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "TIERRA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "ROCA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "BICHO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "FANT.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "ACERO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FUEGO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "AGUA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "PLANTA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ELÉCT.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSÍQ.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "HIELO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRAGÓN",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "SINIE.",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "HADA",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMAL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "COMBAT",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "VOL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "POISON",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "SOL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "ROCHE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "INSECTE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "SPECTRE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "ACIER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FEU",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "EAU",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "PLANTE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ÉLECTRIK",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSY",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "GLACE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRAGON",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "TÉNÈBRES",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "FÉE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/icon_types",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      3,
+      40,
+      10
+     ],
+     "text": "NORMAL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      19,
+      40,
+      10
+     ],
+     "text": "KAMPF",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      35,
+      40,
+      10
+     ],
+     "text": "FLUG",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      51,
+      40,
+      10
+     ],
+     "text": "GIFT",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      67,
+      40,
+      10
+     ],
+     "text": "BODEN",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      83,
+      40,
+      10
+     ],
+     "text": "GESTEIN",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      99,
+      40,
+      10
+     ],
+     "text": "KÄFER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      115,
+      40,
+      10
+     ],
+     "text": "GEIST",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      131,
+      40,
+      10
+     ],
+     "text": "STAHL",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      163,
+      40,
+      10
+     ],
+     "text": "FEUER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      179,
+      40,
+      10
+     ],
+     "text": "WASSER",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      195,
+      40,
+      10
+     ],
+     "text": "PFLANZE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      211,
+      40,
+      10
+     ],
+     "text": "ELEKTRO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      227,
+      40,
+      10
+     ],
+     "text": "PSYCHO",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      243,
+      40,
+      10
+     ],
+     "text": "EIS",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      259,
+      40,
+      10
+     ],
+     "text": "DRACHE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      275,
+      40,
+      10
+     ],
+     "text": "UNLICHT",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    },
+    {
+     "rect": [
+      4,
+      291,
+      40,
+      10
+     ],
+     "text": "FEE",
+     "font": [
+      "typeb",
+      "type3t"
+     ],
+     "style": "shadow",
+     "height": 9,
+     "bgx": 4,
+     "bold": false,
+     "fill": "#f8f8f8",
+     "shade": "#707878"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/statuses",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      2,
+      1,
+      18,
+      6
+     ],
+     "text": "SOM",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      9,
+      18,
+      6
+     ],
+     "text": "PSN",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      17,
+      18,
+      6
+     ],
+     "text": "BRU",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      33,
+      18,
+      6
+     ],
+     "text": "GEL",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      41,
+      18,
+      6
+     ],
+     "text": "K.O.",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/statuses",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      2,
+      1,
+      18,
+      6
+     ],
+     "text": "SLF",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      0,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      9,
+      18,
+      6
+     ],
+     "text": "GIF",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      8,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      17,
+      18,
+      6
+     ],
+     "text": "BRT",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      16,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      33,
+      18,
+      6
+     ],
+     "text": "GFR",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      32,
+      20,
+      8
+     ]
+    },
+    {
+     "rect": [
+      2,
+      41,
+      18,
+      6
+     ],
+     "text": "BSG",
+     "font": "status",
+     "style": "plain",
+     "imageRect": [
+      1,
+      40,
+      20,
+      8
+     ]
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/icon_statuses",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      1,
+      1,
+      20,
+      7
+     ],
+     "text": "SOM",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      9,
+      20,
+      7
+     ],
+     "text": "PSN",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      17,
+      20,
+      7
+     ],
+     "text": "BRU",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      33,
+      20,
+      7
+     ],
+     "text": "GEL",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      41,
+      20,
+      7
+     ],
+     "text": "PSN",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#d858d0",
+     "shade": "#402040"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/icon_statuses",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      1,
+      1,
+      20,
+      7
+     ],
+     "text": "SLF",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      9,
+      20,
+      7
+     ],
+     "text": "GIF",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      17,
+      20,
+      7
+     ],
+     "text": "BRT",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      33,
+      20,
+      7
+     ],
+     "text": "GFR",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      1,
+      41,
+      20,
+      7
+     ],
+     "text": "GIF",
+     "font": "icon",
+     "style": "shadow",
+     "fill": "#d858d0",
+     "shade": "#402040"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/overlay_lv",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_lv",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Storage/overlay_lv",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      11,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "erase": "transparent"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      53,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal_foe",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_normal_foe",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin_foe",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/databox_thin_foe",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      44,
+      19,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.##.#",
+      "##.#.##.#",
+      "####.##.#",
+      "##....##."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "##.#.####",
+      "###..##.#",
+      "###..####",
+      "##.#.##.."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_faint",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.##.#",
+      "##.#.##.#",
+      "####.##.#",
+      "##....##."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_faint",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "##.#.####",
+      "###..##.#",
+      "###..####",
+      "##.#.##.."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_swap",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "####.##.#",
+      "##.#.##.#",
+      "####.##.#",
+      "##....##."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Party/overlay_hp_back_swap",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      4,
+      1,
+      9,
+      4
+     ],
+     "bitmap": [
+      "##.#.####",
+      "###..##.#",
+      "###..####",
+      "##.#.##.."
+     ],
+     "bgx": 8,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_1",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_2",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_4",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_5",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      12,
+      52,
+      14,
+      7
+     ],
+     "bitmap": [
+      "##s.#s.....",
+      "###s#s.....",
+      "##s##s.....",
+      "##ss#s.....",
+      "##s.#s.....",
+      "##s.#s.##s.",
+      "sss.ss..ss."
+     ],
+     "bgx": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "fr",
+   "grid": 2,
+   "offset": [
+    1,
+    1
+   ],
+   "regions": [
+    {
+     "rect": [
+      155,
+      54,
+      13,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Summary/bg_3",
+   "lang": "de",
+   "grid": 2,
+   "offset": [
+    1,
+    1
+   ],
+   "regions": [
+    {
+     "rect": [
+      155,
+      54,
+      13,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "dx": 1,
+     "style": "plain"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_info",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "ZONE",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMES",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_info",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "GEBIET",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#901020",
+     "fill": "#f898a0"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_area",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "ZONE",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMES",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#187048",
+     "fill": "#90d8b8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_area",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "GEBIET",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#187048",
+     "fill": "#90d8b8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_forms",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "ZONE",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#6810b8",
+     "fill": "#d8b8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMES",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Pokedex/bg_forms",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      62,
+      3,
+      44,
+      10
+     ],
+     "text": "GEBIET",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 62,
+     "align": "center",
+     "shade": "#6810b8",
+     "fill": "#d8b8f8"
+    },
+    {
+     "rect": [
+      106,
+      3,
+      52,
+      10
+     ],
+     "text": "FORMEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 106,
+     "align": "center",
+     "shade": "#000000",
+     "fill": "#f8f8f8"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/icon_mode",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      2,
+      7,
+      26,
+      8
+     ],
+     "text": "ABC"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      32,
+      7,
+      26,
+      8
+     ],
+     "text": "abc"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      92,
+      7,
+      26,
+      8
+     ],
+     "text": "Autres"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/icon_mode",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      2,
+      7,
+      26,
+      8
+     ],
+     "text": "ABC"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      32,
+      7,
+      26,
+      8
+     ],
+     "text": "abc"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "bg": "#f8d810",
+     "fill": "#e0e0e0",
+     "shade": "#a88018",
+     "corner": "#c8a840",
+     "height": 6,
+     "spacing": 1,
+     "rect": [
+      92,
+      7,
+      26,
+      8
+     ],
+     "text": "Andere"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      16,
+      19,
+      26,
+      8
+     ],
+     "text": "ABC",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      47,
+      19,
+      26,
+      8
+     ],
+     "text": "abc",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      109,
+      19,
+      26,
+      8
+     ],
+     "text": "Autres",
+     "bg": "#b89028"
+    },
+    {
+     "rect": [
+      153,
+      19,
+      31,
+      9
+     ],
+     "text": "RETOUR",
+     "font": [
+      "5x7",
+      "type"
+     ],
+     "style": "outline",
+     "fill": "#e0e0e0",
+     "shade": "#7868a0",
+     "corner": "#b080d0",
+     "height": 7,
+     "bgx": 153,
+     "dx": -1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Naming/overlay_controls",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      16,
+      19,
+      26,
+      8
+     ],
+     "text": "ABC",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      47,
+      19,
+      26,
+      8
+     ],
+     "text": "abc",
+     "bg": "#b89028"
+    },
+    {
+     "font": "naming",
+     "style": "outline",
+     "fill": "#c8a840",
+     "shade": "#787878",
+     "corner": "#b89028",
+     "height": 6,
+     "rect": [
+      109,
+      19,
+      26,
+      8
+     ],
+     "text": "Andere",
+     "bg": "#b89028"
+    },
+    {
+     "rect": [
+      153,
+      19,
+      31,
+      9
+     ],
+     "text": "ZURÜCK",
+     "font": [
+      "5x7",
+      "type"
+     ],
+     "style": "outline",
+     "fill": "#e0e0e0",
+     "shade": "#7868a0",
+     "corner": "#b080d0",
+     "height": 7,
+     "bgx": 153,
+     "dx": -1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#2860a8",
+      "#90b0d0",
+      "#b8d8f0",
+      "#a8c8f0"
+     ],
+     "text": "CARTE DRESSEUR",
+     "font": "card5",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#2860a8",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#2860a8",
+      "#90b0d0",
+      "#b8d8f0",
+      "#a8c8f0"
+     ],
+     "text": "TRAINERPASS",
+     "font": "card",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#2860a8",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card_f",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#984040",
+      "#c8a0a0",
+      "#f0d8b0",
+      "#e8a8a8"
+     ],
+     "text": "CARTE DRESSEUR",
+     "font": "card5",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#984040",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card_f",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#984040",
+      "#c8a0a0",
+      "#f0d8b0",
+      "#e8a8a8"
+     ],
+     "text": "TRAINERPASS",
+     "font": "card",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#984040",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/memo",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      2,
+      40,
+      11
+     ],
+     "text": "Fermer",
+     "bgx": 8
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      18,
+      40,
+      11
+     ],
+     "text": "Mémo",
+     "bgx": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/memo",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      2,
+      40,
+      11
+     ],
+     "text": "Memo",
+     "bgx": 8
+    },
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      8,
+      18,
+      40,
+      11
+     ],
+     "text": "schließen",
+     "bgx": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      124,
+      36,
+      13
+     ],
+     "text": "Ouvrir",
+     "bgx": 14
+    },
+    {
+     "font": "memo",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      140,
+      36,
+      11
+     ],
+     "text": "Mémo",
+     "bgx": 14
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Voltorb Flip/boardbg",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      124,
+      36,
+      13
+     ],
+     "text": "Memo",
+     "bgx": 14
+    },
+    {
+     "font": "memo4",
+     "style": "outline",
+     "fill": "#ffffff",
+     "shade": "#393939",
+     "height": 9,
+     "rect": [
+      14,
+      140,
+      36,
+      11
+     ],
+     "text": "öffnen",
+     "bgx": 14
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "JETON",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "JETON",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "GAGNE",
+     "font": "dot8n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "PERDU",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "fr",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "PERDU",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bg",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      181,
+      25,
+      34,
+      5
+     ],
+     "text": "JETONS"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      221,
+      25,
+      33,
+      5
+     ],
+     "text": "GAINS"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "MÜNZE",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/insert",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      24,
+      5
+     ],
+     "text": "MÜNZE",
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/stop",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      2,
+      21,
+      5
+     ],
+     "text": "STOP",
+     "font": "dot5",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    306,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/win",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    458,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      6,
+      21,
+      8
+     ],
+     "text": "SIEG",
+     "font": "dot8",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    2,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "NIETE",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/lose",
+   "lang": "de",
+   "grid": 6,
+   "offset": [
+    154,
+    4
+   ],
+   "dot": 4,
+   "regions": [
+    {
+     "rect": [
+      2,
+      3,
+      21,
+      9
+     ],
+     "text": "NIETE",
+     "font": "dot9n",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bg",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      181,
+      25,
+      34,
+      5
+     ],
+     "text": "MÜNZEN"
+    },
+    {
+     "font": "tiny",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bg": "#000000",
+     "height": 5,
+     "rect": [
+      221,
+      25,
+      33,
+      5
+     ],
+     "text": "GEWINN"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      8,
+      8,
+      54,
+      10
+     ],
+     "text": "DÉPLACER",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 6,
+     "fills": [
+      "#f8c860",
+      "#f8b028"
+     ],
+     "align": "left"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Battle/cursor_shift",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      8,
+      8,
+      54,
+      10
+     ],
+     "text": "TAUSCHEN",
+     "font": "bold8",
+     "style": "outline",
+     "bgx": 6,
+     "fills": [
+      "#f8c860",
+      "#f8b028"
+     ],
+     "align": "left"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "APPUYEZ SUR {USE}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Titles/start",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      256,
+      5
+     ],
+     "font": "wide",
+     "style": "plain",
+     "fills": [
+      "#f8f8f8",
+      "#f8f8f8",
+      "#d8d8d8",
+      "#c0c0c0",
+      "#c0c0c0"
+     ],
+     "bg": "#000000",
+     "height": 5,
+     "text": "DRÜCKE {USE}"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Bag/icon_register",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      11,
+      3,
+      14,
+      6
+     ],
+     "bitmap": [
+      "####.#..#.###.",
+      "#....##.#.#..#",
+      "###..#.##.###.",
+      "#....#..#.#.#.",
+      "#....#..#.#..#",
+      "####.#..#.#..#"
+     ],
+     "style": "plain",
+     "bgx": 10,
+     "fill": "#ffffff"
+    },
+    {
+     "rect": [
+      11,
+      15,
+      14,
+      6
+     ],
+     "bitmap": [
+      "####.#..#.###.",
+      "#....##.#.#..#",
+      "###..#.##.###.",
+      "#....#..#.#.#.",
+      "#....#..#.#..#",
+      "####.#..#.#..#"
+     ],
+     "style": "plain",
+     "bgx": 10,
+     "fill": "#ffffff"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "es",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "es",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "fr",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "fr",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "de",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    2,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MINI",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Slot Machine/bonus",
+   "lang": "de",
+   "grid": 6,
+   "dot": 4,
+   "offset": [
+    154,
+    4
+   ],
+   "regions": [
+    {
+     "rect": [
+      3,
+      3,
+      19,
+      7
+     ],
+     "text": "MEGA",
+     "font": "type3t",
+     "style": "plain",
+     "fill": "#f8b810",
+     "bg": "#000000",
+     "height": 7
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "FICHA DE LOGROS",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "CARTE DE SUCCÈS",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/GCcardP1",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      15,
+      117,
+      13
+     ],
+     "text": "ERFOLGSKARTE",
+     "font": "card",
+     "bold": false,
+     "style": "shadow",
+     "fill": "#f8f4fc",
+     "shade": "#6629a5",
+     "height": 10,
+     "bgx": 29,
+     "spacing": 1
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "TURNO",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "es",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "#####.#####",
+      "##.##.##...",
+      "#####.#####",
+      "##.......##",
+      "##....#####"
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "TOUR",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "#####.##.##",
+      "##.##.##.##",
+      "#####.##.##",
+      "##.....###.",
+      "##......#.."
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      154,
+      8,
+      40,
+      8
+     ],
+     "text": "RUNDE",
+     "font": "bold8",
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 152,
+     "align": "left",
+     "height": 8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/databox_maxraid",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      45,
+      19,
+      11,
+      5
+     ],
+     "bitmap": [
+      "##.##.#####",
+      "####..##.##",
+      "###...#####",
+      "####..##...",
+      "##.##.##..."
+     ],
+     "style": "plain",
+     "fill": "#f8b000",
+     "bgx": 44
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_field",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      16,
+      56,
+      12
+     ],
+     "text": "NINGUNO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      16,
+      56,
+      12
+     ],
+     "text": "SOL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      16,
+      56,
+      12
+     ],
+     "text": "LLUVIA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      16,
+      56,
+      12
+     ],
+     "text": "TORMENTA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      16,
+      56,
+      12
+     ],
+     "text": "GRANIZO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      16,
+      56,
+      12
+     ],
+     "text": "SOMBRA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      16,
+      56,
+      12
+     ],
+     "text": "NIEBLA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      16,
+      56,
+      12
+     ],
+     "text": "SOL INTENSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      16,
+      56,
+      12
+     ],
+     "text": "DILUVIO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#0e1320",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      16,
+      56,
+      12
+     ],
+     "text": "TURBULENCIA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      2,
+      56,
+      9
+     ],
+     "text": "CLIMA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      48,
+      56,
+      12
+     ],
+     "text": "NINGUNO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      48,
+      56,
+      12
+     ],
+     "text": "ELÉCTRICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      48,
+      56,
+      12
+     ],
+     "text": "HIERBA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      48,
+      56,
+      12
+     ],
+     "text": "NIEBLA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      48,
+      56,
+      12
+     ],
+     "text": "PSÍQUICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      34,
+      56,
+      9
+     ],
+     "text": "CAMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      80,
+      56,
+      12
+     ],
+     "text": "????",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      80,
+      56,
+      12
+     ],
+     "text": "URBANO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      80,
+      56,
+      12
+     ],
+     "text": "PRADERA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      80,
+      56,
+      12
+     ],
+     "text": "ACUÁTICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      80,
+      56,
+      12
+     ],
+     "text": "HUMEDAL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      80,
+      56,
+      12
+     ],
+     "text": "SUBMARINO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      80,
+      56,
+      12
+     ],
+     "text": "CUEVA",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      80,
+      56,
+      12
+     ],
+     "text": "ROCOSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      80,
+      56,
+      12
+     ],
+     "text": "ARENOSO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      80,
+      56,
+      12
+     ],
+     "text": "BOSQUE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      80,
+      56,
+      12
+     ],
+     "text": "NEVADO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 581,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      639,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      80,
+      56,
+      12
+     ],
+     "text": "VOLCÁNICO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 639,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      697,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      80,
+      56,
+      12
+     ],
+     "text": "ESPIRITUAL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 697,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      755,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      80,
+      56,
+      12
+     ],
+     "text": "CIELO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 755,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      813,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      80,
+      56,
+      12
+     ],
+     "text": "ESPACIO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 813,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      871,
+      66,
+      56,
+      9
+     ],
+     "text": "ENTORNO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      80,
+      56,
+      12
+     ],
+     "text": "ULTRAESP.",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 871,
+     "ttf": "power clear bold",
+     "cap": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_field",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      16,
+      56,
+      12
+     ],
+     "text": "AUCUN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      16,
+      56,
+      12
+     ],
+     "text": "SOLEIL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      16,
+      56,
+      12
+     ],
+     "text": "PLUIE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      16,
+      56,
+      12
+     ],
+     "text": "TEMPÊTE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      16,
+      56,
+      12
+     ],
+     "text": "GRÊLE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      16,
+      56,
+      12
+     ],
+     "text": "OMBRE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      16,
+      56,
+      12
+     ],
+     "text": "BROUILLARD",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      16,
+      56,
+      12
+     ],
+     "text": "CANICULE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      16,
+      56,
+      12
+     ],
+     "text": "DÉLUGE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#0e1320",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      16,
+      56,
+      12
+     ],
+     "text": "VENTS FORTS",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      2,
+      56,
+      9
+     ],
+     "text": "MÉTÉO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      48,
+      56,
+      12
+     ],
+     "text": "AUCUN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      48,
+      56,
+      12
+     ],
+     "text": "ÉLECTRIFIÉ",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      48,
+      56,
+      12
+     ],
+     "text": "HERBU",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      48,
+      56,
+      12
+     ],
+     "text": "BRUMEUX",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      48,
+      56,
+      12
+     ],
+     "text": "PSYCHIQUE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      34,
+      56,
+      9
+     ],
+     "text": "CHAMP",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      80,
+      56,
+      12
+     ],
+     "text": "????",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      80,
+      56,
+      12
+     ],
+     "text": "URBAIN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      80,
+      56,
+      12
+     ],
+     "text": "PRAIRIE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      80,
+      56,
+      12
+     ],
+     "text": "AQUATIQUE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      80,
+      56,
+      12
+     ],
+     "text": "MARAIS",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      80,
+      56,
+      12
+     ],
+     "text": "SOUS-MARIN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      80,
+      56,
+      12
+     ],
+     "text": "GROTTE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      80,
+      56,
+      12
+     ],
+     "text": "ROCHEUX",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      80,
+      56,
+      12
+     ],
+     "text": "SABLEUX",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      80,
+      56,
+      12
+     ],
+     "text": "FORÊT",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      80,
+      56,
+      12
+     ],
+     "text": "GLACIAL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 581,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      639,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      80,
+      56,
+      12
+     ],
+     "text": "VOLCANIQUE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 639,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      697,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      80,
+      56,
+      12
+     ],
+     "text": "SPIRITUEL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 697,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      755,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      80,
+      56,
+      12
+     ],
+     "text": "CIEL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 755,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      813,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      80,
+      56,
+      12
+     ],
+     "text": "ESPACE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 813,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      871,
+      66,
+      56,
+      9
+     ],
+     "text": "MILIEU",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      80,
+      56,
+      12
+     ],
+     "text": "ULTRA-DIM.",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 871,
+     "ttf": "power clear bold",
+     "cap": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_field",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      1,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      16,
+      56,
+      12
+     ],
+     "text": "KEINES",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      16,
+      56,
+      12
+     ],
+     "text": "SONNE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      16,
+      56,
+      12
+     ],
+     "text": "REGEN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      16,
+      56,
+      12
+     ],
+     "text": "SANDSTURM",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      16,
+      56,
+      12
+     ],
+     "text": "HAGEL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      16,
+      56,
+      12
+     ],
+     "text": "SCHATTEN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      16,
+      56,
+      12
+     ],
+     "text": "NEBEL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      16,
+      56,
+      12
+     ],
+     "text": "GLUTSONNE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      16,
+      56,
+      12
+     ],
+     "text": "STARKREGEN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#0e1320",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      16,
+      56,
+      12
+     ],
+     "text": "STURM",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      2,
+      56,
+      9
+     ],
+     "text": "WETTER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      48,
+      56,
+      12
+     ],
+     "text": "KEINES",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      48,
+      56,
+      12
+     ],
+     "text": "ELEKTRO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      48,
+      56,
+      12
+     ],
+     "text": "GRAS",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      48,
+      56,
+      12
+     ],
+     "text": "NEBEL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      48,
+      56,
+      12
+     ],
+     "text": "PSYCHO",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      34,
+      56,
+      9
+     ],
+     "text": "FELD",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 1,
+     "height": 7
+    },
+    {
+     "rect": [
+      1,
+      80,
+      56,
+      12
+     ],
+     "text": "????",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 1,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      59,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 59,
+     "height": 7
+    },
+    {
+     "rect": [
+      59,
+      80,
+      56,
+      12
+     ],
+     "text": "STADT",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 59,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      117,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 117,
+     "height": 7
+    },
+    {
+     "rect": [
+      117,
+      80,
+      56,
+      12
+     ],
+     "text": "WIESE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 117,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      175,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 175,
+     "height": 7
+    },
+    {
+     "rect": [
+      175,
+      80,
+      56,
+      12
+     ],
+     "text": "WASSER",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 175,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      233,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 233,
+     "height": 7
+    },
+    {
+     "rect": [
+      233,
+      80,
+      56,
+      12
+     ],
+     "text": "SUMPF",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 233,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      291,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 291,
+     "height": 7
+    },
+    {
+     "rect": [
+      291,
+      80,
+      56,
+      12
+     ],
+     "text": "UNTERWASSER",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 291,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      349,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 349,
+     "height": 7
+    },
+    {
+     "rect": [
+      349,
+      80,
+      56,
+      12
+     ],
+     "text": "HÖHLE",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 349,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      407,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 407,
+     "height": 7
+    },
+    {
+     "rect": [
+      407,
+      80,
+      56,
+      12
+     ],
+     "text": "FELSIG",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 407,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      465,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 465,
+     "height": 7
+    },
+    {
+     "rect": [
+      465,
+      80,
+      56,
+      12
+     ],
+     "text": "SANDIG",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 465,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      523,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 523,
+     "height": 7
+    },
+    {
+     "rect": [
+      523,
+      80,
+      56,
+      12
+     ],
+     "text": "WALD",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 523,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      581,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 581,
+     "height": 7
+    },
+    {
+     "rect": [
+      581,
+      80,
+      56,
+      12
+     ],
+     "text": "FROSTIG",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 581,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      639,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 639,
+     "height": 7
+    },
+    {
+     "rect": [
+      639,
+      80,
+      56,
+      12
+     ],
+     "text": "VULKAN",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 639,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      697,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 697,
+     "height": 7
+    },
+    {
+     "rect": [
+      697,
+      80,
+      56,
+      12
+     ],
+     "text": "GEISTER",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 697,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      755,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 755,
+     "height": 7
+    },
+    {
+     "rect": [
+      755,
+      80,
+      56,
+      12
+     ],
+     "text": "HIMMEL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 755,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      813,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 813,
+     "height": 7
+    },
+    {
+     "rect": [
+      813,
+      80,
+      56,
+      12
+     ],
+     "text": "WELTALL",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 813,
+     "ttf": "power clear bold",
+     "cap": 9
+    },
+    {
+     "rect": [
+      871,
+      66,
+      56,
+      9
+     ],
+     "text": "UMGEBUNG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 871,
+     "height": 7
+    },
+    {
+     "rect": [
+      871,
+      80,
+      56,
+      12
+     ],
+     "text": "ULTRARAUM",
+     "style": "shadow",
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "bgx": 871,
+     "ttf": "power clear bold",
+     "cap": 9
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_bonus",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      3,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 3,
+     "bg": "#ff1110"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "DIFÍCIL",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "DIFÍCIL",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "DIFÍCIL",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      44,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 44,
+     "bg": "#ffa810"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFECTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFECTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFECTO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      85,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 85,
+     "bg": "#109eff"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TIEMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TIEMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TIEMPO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      126,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 126,
+     "bg": "#b410ff"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "JUEGO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "JUEGO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "JUEGO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LIMPIO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LIMPIO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LIMPIO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      167,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 167,
+     "bg": "#27d40d"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CAPTURA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CAPTURA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CAPTURA",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_bonus",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      3,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 3,
+     "bg": "#ff1110"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "MODE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "EXPERT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "EXPERT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "EXPERT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      44,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 44,
+     "bg": "#ffa810"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PARFAIT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PARFAIT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PARFAIT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      85,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 85,
+     "bg": "#109eff"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "CHRONO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "CHRONO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "CHRONO",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      126,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 126,
+     "bg": "#b410ff"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "COMBAT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "COMBAT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "COMBAT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LOYAL",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LOYAL",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "LOYAL",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      167,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 167,
+     "bg": "#27d40d"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CAPTURE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CAPTURE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "CAPTURE",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_bonus",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      3,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 3,
+     "bg": "#ff1110"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "PROFI",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "PROFI",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      6,
+      34,
+      7
+     ],
+     "text": "PROFI",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "MODUS",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "MODUS",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      4,
+      18,
+      34,
+      7
+     ],
+     "text": "MODUS",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      44,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 44,
+     "bg": "#ffa810"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFEKT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFEKT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      45,
+      12,
+      34,
+      7
+     ],
+     "text": "PERFEKT",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      85,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 85,
+     "bg": "#109eff"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TIMER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TIMER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      86,
+      12,
+      34,
+      7
+     ],
+     "text": "TIMER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      126,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 126,
+     "bg": "#b410ff"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "FAIRER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "FAIRER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      6,
+      34,
+      7
+     ],
+     "text": "FAIRER",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "KAMPF",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "KAMPF",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      127,
+      18,
+      34,
+      7
+     ],
+     "text": "KAMPF",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      167,
+      5,
+      35,
+      22
+     ],
+     "text": "",
+     "font": "type",
+     "style": "plain",
+     "bgx": 167,
+     "bg": "#27d40d"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "FANG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": -1,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "FANG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#4a4a4a",
+     "dx": 0,
+     "dy": 1,
+     "anchor": "rect"
+    },
+    {
+     "rect": [
+      168,
+      12,
+      34,
+      7
+     ],
+     "text": "FANG",
+     "font": [
+      "type",
+      "type3"
+     ],
+     "height": 7,
+     "style": "plain",
+     "erase": "none",
+     "fill": "#ffffff",
+     "anchor": "rect"
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "tips": [
+      [
+       24.5,
+       -0.5
+      ],
+      [
+       41,
+       2.5
+      ],
+      [
+       48.5,
+       16
+      ],
+      [
+       48.5,
+       32
+      ],
+      [
+       41,
+       45.5
+      ],
+      [
+       24.5,
+       48.5
+      ],
+      [
+       8,
+       45.5
+      ],
+      [
+       -0.5,
+       32
+      ],
+      [
+       -0.5,
+       16
+      ],
+      [
+       8,
+       2.5
+      ]
+     ],
+     "centre": [
+      24,
+      24
+     ],
+     "rin": 15,
+     "blur": 0.45,
+     "layers": [
+      [
+       1,
+       "#ff0041"
+      ],
+      [
+       0.88,
+       "#ff5a00"
+      ],
+      [
+       0.74,
+       "#ffe200"
+      ]
+     ]
+    },
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "lines": [
+      "MODO",
+      "DIFÍCIL"
+     ],
+     "tops": [
+      13,
+      26
+     ],
+     "font": "card",
+     "fill": "#ffffff",
+     "rcol": "#cdcdd2",
+     "halo": "#191919",
+     "halo_blur": 0.8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "tips": [
+      [
+       24.5,
+       -0.5
+      ],
+      [
+       41,
+       2.5
+      ],
+      [
+       48.5,
+       16
+      ],
+      [
+       48.5,
+       32
+      ],
+      [
+       41,
+       45.5
+      ],
+      [
+       24.5,
+       48.5
+      ],
+      [
+       8,
+       45.5
+      ],
+      [
+       -0.5,
+       32
+      ],
+      [
+       -0.5,
+       16
+      ],
+      [
+       8,
+       2.5
+      ]
+     ],
+     "centre": [
+      24,
+      24
+     ],
+     "rin": 15,
+     "blur": 0.45,
+     "layers": [
+      [
+       1,
+       "#ff0041"
+      ],
+      [
+       0.88,
+       "#ff5a00"
+      ],
+      [
+       0.74,
+       "#ffe200"
+      ]
+     ]
+    },
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "lines": [
+      "MODE",
+      "EXPERT"
+     ],
+     "tops": [
+      13,
+      26
+     ],
+     "font": "card",
+     "fill": "#ffffff",
+     "rcol": "#cdcdd2",
+     "halo": "#191919",
+     "halo_blur": 0.8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raid_hard",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "tips": [
+      [
+       24.5,
+       -0.5
+      ],
+      [
+       41,
+       2.5
+      ],
+      [
+       48.5,
+       16
+      ],
+      [
+       48.5,
+       32
+      ],
+      [
+       41,
+       45.5
+      ],
+      [
+       24.5,
+       48.5
+      ],
+      [
+       8,
+       45.5
+      ],
+      [
+       -0.5,
+       32
+      ],
+      [
+       -0.5,
+       16
+      ],
+      [
+       8,
+       2.5
+      ]
+     ],
+     "centre": [
+      24,
+      24
+     ],
+     "rin": 15,
+     "blur": 0.45,
+     "layers": [
+      [
+       1,
+       "#ff0041"
+      ],
+      [
+       0.88,
+       "#ff5a00"
+      ],
+      [
+       0.74,
+       "#ffe200"
+      ]
+     ]
+    },
+    {
+     "rect": [
+      0,
+      0,
+      48,
+      48
+     ],
+     "lines": [
+      "PROFI",
+      "MODUS"
+     ],
+     "tops": [
+      13,
+      26
+     ],
+     "font": "card",
+     "fill": "#ffffff",
+     "rcol": "#cdcdd2",
+     "halo": "#191919",
+     "halo_blur": 0.8
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DATOS DE INCURSIONES",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRINCIPAL",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SECUNDARIO",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "EN ÁREA",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "APOYO",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Modos de búsqueda",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "ESPECIE",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DATOS",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DONNÉES DES RAIDS",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRINCIPAL",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SECONDAIRE",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "DE ZONE",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "SOUTIEN",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Modes de recherche",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "ESPÈCE",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DONNÉES",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_menu",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      120,
+      12,
+      272,
+      22
+     ],
+     "text": "DYNA-RAID-DATEN",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 120
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_moves",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      8,
+      13,
+      166,
+      16
+     ],
+     "text": "PRIMÄR",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      13,
+      166,
+      16
+     ],
+     "text": "SEKUNDÄR",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    },
+    {
+     "rect": [
+      8,
+      201,
+      166,
+      16
+     ],
+     "text": "FLÄCHE",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 8
+    },
+    {
+     "rect": [
+      190,
+      201,
+      166,
+      16
+     ],
+     "text": "SUPPORT",
+     "ttf": "power clear bold",
+     "cap": 12,
+     "fat": 0,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 190
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_search",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      70,
+      68,
+      372,
+      22
+     ],
+     "text": "Suchmodi",
+     "ttf": "power clear",
+     "cap": 15,
+     "fat": 0.25,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 70
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/raiddata_bg",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      367,
+      7,
+      130,
+      11
+     ],
+     "text": "ART",
+     "ttf": "power clear",
+     "cap": 7,
+     "fat": 0.12,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 366,
+     "align": "left"
+    },
+    {
+     "rect": [
+      368,
+      171,
+      130,
+      17
+     ],
+     "text": "DATEN",
+     "ttf": "power clear",
+     "cap": 12,
+     "fat": 0.2,
+     "style": "plain",
+     "fill": "#ffffff",
+     "bgx": 368
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NUEVO",
+     "ttf": "power clear bold",
+     "cap": 13,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NOUVEAU",
+     "ttf": "power clear bold",
+     "cap": 13,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.3
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmenu_slot",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      172,
+      3,
+      50,
+      15
+     ],
+     "text": "NEU",
+     "ttf": "power clear bold",
+     "cap": 14,
+     "fill": "#ffffff",
+     "style": "plain",
+     "erase": "row",
+     "bgx": 169,
+     "fat": 0.5
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "any",
+   "grid": 1,
+   "regions": [
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      12,
+      37,
+      46,
+      8
+     ],
+     "text": "{ACTION}",
+     "bgx": 12
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      12,
+      63,
+      46,
+      8
+     ],
+     "text": "{ACTION}",
+     "bgx": 12
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      141,
+      9,
+      46,
+      8
+     ],
+     "text": "{USE}",
+     "bgx": 141
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      141,
+      32,
+      46,
+      8
+     ],
+     "text": "{ACTION}",
+     "bgx": 141
+    },
+    {
+     "font": [
+      "5x7",
+      "type",
+      "type3"
+     ],
+     "style": "shadow",
+     "fill": "#c0c0c0",
+     "shade": "#a8a898",
+     "sdx": -1,
+     "sdy": -1,
+     "height": 7,
+     "spacing": 2,
+     "erase": "row",
+     "anchor": "rect",
+     "dx": 1,
+     "dy": 1,
+     "rect": [
+      141,
+      55,
+      46,
+      8
+     ],
+     "text": "{BACK}",
+     "bgx": 141
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "es",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "ACELERAR",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPCIONES",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Alternar",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Volver",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Elige un camino.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "fr",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "ACCÉLÉRER",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPTIONS",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Basculer",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Retour",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Choisis un chemin.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Dynamax/lairmap_ui",
+   "lang": "de",
+   "grid": 1,
+   "regions": [
+    {
+     "rect": [
+      66,
+      37,
+      68,
+      12
+     ],
+     "text": "SCHNELLER",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      66,
+      63,
+      68,
+      12
+     ],
+     "text": "OPTIONEN",
+     "ttf": "power clear bold",
+     "cap": 9,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "lerp",
+     "align": "left",
+     "bgx": 64,
+     "bgx2": 128
+    },
+    {
+     "rect": [
+      200,
+      8,
+      54,
+      14
+     ],
+     "text": ": Info",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      32,
+      54,
+      15
+     ],
+     "text": ": Wechseln",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      200,
+      56,
+      54,
+      14
+     ],
+     "text": ": Zurück",
+     "ttf": "power clear",
+     "cap": 10,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "row",
+     "align": "left",
+     "bgx": 198,
+     "fat": 0.3
+    },
+    {
+     "rect": [
+      12,
+      90,
+      232,
+      22
+     ],
+     "text": "Wähle einen Weg.",
+     "ttf": "power clear",
+     "cap": 14,
+     "fill": "#ffffff",
+     "shade": "#000000",
+     "style": "shadow",
+     "erase": "inpaint",
+     "align": "center",
+     "bgset": [
+      "#004048",
+      "#00444d",
+      "#004850",
+      "#004249",
+      "#00454d",
+      "#00454e",
+      "#004047"
+     ],
+     "fat": 0.35
     }
    ]
   }

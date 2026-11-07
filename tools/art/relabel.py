@@ -39,8 +39,21 @@ Recipe format:
   exists it is pasted over "imageRect" (default: rect) and the text is
   skipped; otherwise the text is drawn as usual ("onlyImage": do nothing).
   Nothing like this is shipped.
+- Per-language variants: entries with "lang" "es", "fr", "de"… make that
+  language's image (plus the "any" entries, in order); "any" alone makes the image
+  used in every other language.
+- "anchor": "rect" places text at the rect itself instead of the old letters.
+- "sdx"/"sdy": shadow offset (default 1, 1).
+- erase "lerp": each row blends from the colour at bgx to the one at "bgx2";
+  erase "inpaint" with "bgset": every colour not close to one of those is ink.
+- "ttf": smooth lettering with the game's own Fonts/<ttf>.ttf ("cap": capital
+  height in art pixels, "fat": extra stroke, "align": "left").
+- "tips"/"rin"/"layers"/"blur": star-burst badge drawn from polygons.
+- "lines"/"tops": pixel-font lines with a black outline and a soft "halo".
+ArtEngine.java (Android) and ashdroid_art.rb (PC) implement the same arithmetic;
+only TrueType rasterisation (ttf_raster) is done by each platform.
 """
-import json, os, sys, unicodedata
+import json, math, os, sys, unicodedata
 from collections import Counter
 from PIL import Image
 
@@ -118,7 +131,7 @@ def find_user_file(game, rel):
     return cur if os.path.isfile(cur) else None
 
 
-def paste_image(cv, src, rect):
+def paste_image(cv, src, rect, replace=False):
     x, y, w, h = rect
     im = Image.open(src).convert("RGBA")
     p = im.load()
@@ -128,6 +141,12 @@ def paste_image(cv, src, rect):
 
 
 def apply_region(cv, r, fonts, buttons, game=None):
+    if r.get("tips"):
+        starburst(cv, r)
+        return
+    if r.get("lines"):
+        draw_halo(cv, r, fonts, buttons)
+        return
     if r.get("image") and game:
         src = find_user_file(game, r["image"])
         if src:
@@ -171,7 +190,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
     if r.get("shade"):
         shade = hexcol(r["shade"])
     fills = [hexcol(c) for c in r.get("fills", [])]
-    if ty1 < 0:
+    if ty1 < 0 or r.get("anchor") == "rect":
         ty0, ty1, tx0 = y, y + h - 1, x
     if erase == "inpaint":
         # Remove only the old lettering ("ink" colours): each such pixel takes the
@@ -179,7 +198,12 @@ def apply_region(cv, r, fonts, buttons, game=None):
         ink = {hexcol(c)[:3] for c in r.get("ink", [])}
         for yy in range(y, y + h):
             row = [cv.get(xx, yy) for xx in range(x - w, x + 2 * w)]
-            is_ink = [c[:3] in ink for c in row]
+            if r.get("bgset"):
+                # Anything not close to one of the background colours is old lettering.
+                keep = [hexcol(c) for c in r["bgset"]]
+                is_ink = [all(max(abs(c[i] - k[i]) for i in range(3)) > 6 for k in keep) for c in row]
+            else:
+                is_ink = [c[:3] in ink for c in row]
             for i in range(w, 2 * w):
                 if not is_ink[i]:
                     continue
@@ -188,11 +212,23 @@ def apply_region(cv, r, fonts, buttons, game=None):
                         cv.put(x + i - w, yy, row[i - dd]); break
                     if i + dd < len(row) and not is_ink[i + dd]:
                         cv.put(x + i - w, yy, row[i + dd]); break
+    elif erase == "lerp":
+        # Gradient backgrounds: each row blends from the colour at bgx to the
+        # colour at bgx2 across the rect.
+        bx2 = r["bgx2"]
+        for yy in range(y, y + h):
+            a, b = cv.get(bgx, yy), cv.get(bx2, yy)
+            for xx in range(x, x + w):
+                t = min(1.0, max(0.0, (xx - bgx) / float(bx2 - bgx)))
+                cv.put(xx, yy, tuple(int(math.floor(a[i] + (b[i] - a[i]) * t + 0.5)) for i in range(4)))
     elif erase != "none":
         for yy in range(y, y + h):
             for xx in range(x, x + w):
                 cv.put(xx, yy, rowbg[yy])
 
+    if "ttf" in r:
+        draw_ttf(cv, r, buttons, game, fill, shade)
+        return
     if "bitmap" in r:
         ox, oy = x + r.get("dx", 0), y + r.get("dy", 0)
         for j, row in enumerate(r["bitmap"]):
@@ -265,7 +301,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
                             for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
                                 cv.put(X + dx, Y + dy, corner)
                         elif style == "shadow":
-                            cv.put(X + 1, Y + 1, shade)
+                            cv.put(X + r.get("sdx", 1), Y + r.get("sdy", 1), shade)
                         elif corner:
                             for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):
                                 cv.put(X + dx, Y + dy, shade)
@@ -274,6 +310,374 @@ def apply_region(cv, r, fonts, buttons, game=None):
                                 for dx in (-1, 0, 1):
                                     cv.put(X + dx, Y + dy, shade)
             cx += gw + spacing
+
+
+
+# ---------------------------------------------------------------- shared maths
+# Everything below is plain pixel arithmetic, ported line by line to
+# ArtEngine.java and ashdroid_art.rb, so the three give the same pixels. The only
+# platform-specific step is rasterising TrueType text (ttf_raster).
+
+def area_resample(src, sw, sh, dw, dh):
+    """Box (area-average) resample of a premultiplied RGBA float list."""
+    out = [[0.0, 0.0, 0.0, 0.0] for _ in range(dw * dh)]
+    fx, fy = sw / float(dw), sh / float(dh)
+    for dy in range(dh):
+        y0, y1 = dy * fy, (dy + 1) * fy
+        for dx in range(dw):
+            x0, x1 = dx * fx, (dx + 1) * fx
+            acc = [0.0, 0.0, 0.0, 0.0]
+            yy = int(y0)
+            while yy < y1 and yy < sh:
+                wy = min(y1, yy + 1) - max(y0, yy)
+                xx = int(x0)
+                while xx < x1 and xx < sw:
+                    wgt = wy * (min(x1, xx + 1) - max(x0, xx))
+                    p = src[yy * sw + xx]
+                    for i in range(4):
+                        acc[i] += p[i] * wgt
+                    xx += 1
+                yy += 1
+            area = fx * fy
+            out[dy * dw + dx] = [v / area for v in acc]
+    return out
+
+
+def _lanczos(x):
+    if x == 0:
+        return 1.0
+    if -3.0 < x < 3.0:
+        px = math.pi * x
+        return 3.0 * math.sin(px) * math.sin(px / 3.0) / (px * px)
+    return 0.0
+
+
+def _lanczos_weights(sn, dn):
+    """Per output index: (first source index, normalised weights), as Pillow's
+    resample with filter LANCZOS (support 3, widened by the scale when shrinking)."""
+    scale = sn / float(dn)
+    fs = max(scale, 1.0)
+    support = 3.0 * fs
+    res = []
+    for i in range(dn):
+        centre = (i + 0.5) * scale
+        lo = max(0, int(centre - support + 0.5))
+        hi = min(sn, int(centre + support + 0.5))
+        ws = [_lanczos((j - centre + 0.5) / fs) for j in range(lo, hi)]
+        t = sum(ws)
+        res.append((lo, [v / t for v in ws] if t else ws))
+    return res
+
+
+def lanczos_resample(src, sw, sh, dw, dh):
+    """Separable Lanczos-3 resample of a premultiplied RGBA float list (horizontal
+    pass, then vertical), results clamped to 0..1."""
+    tmp = src
+    if dw != sw:
+        wx = _lanczos_weights(sw, dw)
+        tmp = []
+        for y in range(sh):
+            row = src[y * sw:(y + 1) * sw]
+            for lo, ws in wx:
+                acc = [0.0, 0.0, 0.0, 0.0]
+                for k, wgt in enumerate(ws):
+                    p = row[lo + k]
+                    for c in range(4):
+                        acc[c] += p[c] * wgt
+                tmp.append(acc)
+    if dh == sh:
+        out = tmp
+    else:
+        wy = _lanczos_weights(sh, dh)
+        out = []
+        for lo, ws in wy:
+            for x in range(dw):
+                acc = [0.0, 0.0, 0.0, 0.0]
+                for k, wgt in enumerate(ws):
+                    p = tmp[(lo + k) * dw + x]
+                    for c in range(4):
+                        acc[c] += p[c] * wgt
+                out.append(acc)
+    for p in out:
+        for c in range(4):
+            p[c] = min(1.0, max(0.0, p[c]))
+    return out
+
+
+def dilate(mask, w, h, rad):
+    """Max filter with a square (2*rad+1) window over a 0..1 float mask."""
+    if rad <= 0:
+        return mask
+    tmp = [0.0] * (w * h)
+    for y in range(h):
+        for x in range(w):
+            tmp[y * w + x] = max(mask[y * w + xx] for xx in range(max(0, x - rad), min(w, x + rad + 1)))
+    out = [0.0] * (w * h)
+    for y in range(h):
+        for x in range(w):
+            out[y * w + x] = max(tmp[yy * w + x] for yy in range(max(0, y - rad), min(h, y + rad + 1)))
+    return out
+
+
+def dilate_disc(mask, w, h, rad):
+    """Max filter with a round window (thickens strokes like a pen of radius rad)."""
+    if rad <= 0:
+        return mask
+    offs = [(dx, dy) for dy in range(-rad, rad + 1) for dx in range(-rad, rad + 1) if dx * dx + dy * dy <= rad * rad]
+    out = [0.0] * (w * h)
+    for y in range(h):
+        for x in range(w):
+            m = 0.0
+            for dx, dy in offs:
+                X, Y = x + dx, y + dy
+                if 0 <= X < w and 0 <= Y < h and mask[Y * w + X] > m:
+                    m = mask[Y * w + X]
+            out[y * w + x] = m
+    return out
+
+
+def gauss_kernel(sigma):
+    rad = max(1, int(sigma * 3 + 0.999))
+    k = [math.exp(-(i * i) / (2.0 * sigma * sigma)) for i in range(-rad, rad + 1)]
+    t = sum(k)
+    return [v / t for v in k], rad
+
+
+def blur(chans, w, h, sigma):
+    """Separable gaussian blur of a list of float channels (edges clamped)."""
+    if sigma <= 0:
+        return chans
+    k, rad = gauss_kernel(sigma)
+    res = []
+    for ch in chans:
+        tmp = [0.0] * (w * h)
+        for y in range(h):
+            for x in range(w):
+                a = 0.0
+                for i in range(-rad, rad + 1):
+                    a += ch[y * w + min(w - 1, max(0, x + i))] * k[i + rad]
+                tmp[y * w + x] = a
+        out = [0.0] * (w * h)
+        for y in range(h):
+            for x in range(w):
+                a = 0.0
+                for i in range(-rad, rad + 1):
+                    a += tmp[min(h - 1, max(0, y + i)) * w + x] * k[i + rad]
+                out[y * w + x] = a
+        res.append(out)
+    return res
+
+
+def blend_over(cv, x, y, p):
+    """Draws a premultiplied float RGBA pixel over the canvas."""
+    a = p[3]
+    if a <= 0.0:
+        return
+    if a > 1.0:
+        a = 1.0
+    u = cv.get(x, y)
+    ua = u[3] / 255.0
+    oa = a + ua * (1 - a)
+    if oa <= 0:
+        return
+    col = [(p[i] * 255.0 + u[i] * ua * (1 - a)) / oa for i in range(3)]
+    cv.put(x, y, tuple(int(min(255, max(0, c)) + 0.5) for c in col) + (int(oa * 255 + 0.5),))
+
+
+def ttf_raster(game, name, size, text):
+    """PLATFORM STEP. Alpha mask (0..1 floats) of `text` in font Fonts/<name>.ttf at
+    pixel size `size`, drawn from origin (0, 0) on a canvas wide enough for it.
+    Returns (w, h, mask). Same origin for every text at a given size, so masks of
+    different texts share the baseline."""
+    from PIL import ImageDraw, ImageFont
+    path = find_user_file(game, "Fonts/" + name + ".ttf") if game else None
+    if not path:
+        return None
+    font = ImageFont.truetype(path, size)
+    w = int(size * 0.8 * max(1, len(text))) + size * 2
+    h = size * 2
+    im = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(im).text((size // 2, size // 4), text, font=font, fill=255)
+    return w, h, [v / 255.0 for v in im.getdata()]
+
+
+def ink_box(w, h, mask):
+    xs = ys = None
+    x0, y0, x1, y1 = w, h, -1, -1
+    for y in range(h):
+        for x in range(w):
+            if mask[y * w + x] > 0.0:
+                x0, x1, y0, y1 = min(x0, x), max(x1, x), min(y0, y), max(y1, y)
+    return (x0, y0, x1, y1) if x1 >= 0 else None
+
+
+TTF_K = 4
+
+
+def draw_ttf(cv, r, buttons, game, fill, shade):
+    """Smooth lettering with one of the game's own TrueType fonts (Fonts/<ttf>.ttf).
+    Drawn TTF_K times larger (capital height "cap" art pixels), thickened by "fat",
+    with a 1 px (art) drop shadow, squeezed horizontally if it does not fit the rect,
+    then area-averaged down so the edges are anti-aliased like the original art."""
+    K = TTF_K
+    text = r.get("text", "")
+    for k, v in buttons.items():
+        text = text.replace("{" + k + "}", v)
+    if not text:
+        return
+    cap = r.get("cap", r["rect"][3] - 2)
+    size, hb = None, None
+    for s in range(int(cap * K * 2), 5, -1):
+        ras = ttf_raster(game, r["ttf"], s, "H")
+        if ras is None:
+            return
+        b = ink_box(*ras)
+        if b and b[3] - b[1] + 1 <= cap * K:
+            size, hb = s, b
+            break
+    if size is None:
+        return
+    tw_, th_, tm = ttf_raster(game, r["ttf"], size, text)
+    tb = ink_box(tw_, th_, tm)
+    if tb is None:
+        return
+    fat = int(r.get("fat", 0) * K)
+    x, y, w, h = r["rect"]
+    gw = tb[2] - tb[0] + 1 + 2 * fat
+    BW, BH = gw + K, h * K + 2 * K
+    oy = (h * K - (hb[3] - hb[1] + 1)) // 2 - hb[1] + r.get("dy", 0) * K
+    glyph = [0.0] * (BW * BH)
+    for yy in range(th_):
+        Y = yy + oy
+        if not 0 <= Y < BH:
+            continue
+        for xx in range(tb[0], tb[2] + 1):
+            v = tm[yy * tw_ + xx]
+            if v > 0:
+                glyph[Y * BW + xx - tb[0] + fat] = v
+    sh = [0.0] * (BW * BH)
+    if shade and style_of(r) != "plain":
+        for yy in range(BH - K):
+            for xx in range(BW - K):
+                sh[(yy + K) * BW + xx + K] = glyph[yy * BW + xx]
+    glyph = dilate_disc(glyph, BW, BH, fat)
+    big = []
+    for i in range(BW * BH):
+        fa, sa = glyph[i], sh[i] * (1 - glyph[i])
+        big.append([fill[0] / 255.0 * fa + (shade[0] / 255.0 * sa if sa else 0),
+                    fill[1] / 255.0 * fa + (shade[1] / 255.0 * sa if sa else 0),
+                    fill[2] / 255.0 * fa + (shade[2] / 255.0 * sa if sa else 0), fa + sa])
+    maxw = (w - 2) * K
+    if BW > maxw:
+        big = lanczos_resample(big, BW, BH, maxw, BH)
+        BW = maxw
+    dw, dh = max(1, BW // K), max(1, BH // K)
+    small = lanczos_resample(big, BW, BH, dw, dh)
+    ox = (x + 1 if r.get("align") == "left" else x + (w - dw) // 2) + r.get("dx", 0)
+    for yy in range(dh):
+        for xx in range(dw):
+            blend_over(cv, ox + xx, y + yy, small[yy * dw + xx])
+
+
+# ------------------------------------------------------------ star-burst badge
+
+def starburst(cv, r):
+    """Explosion star (Dynamax "hard mode" badge): nested polygons from the tips in
+    "tips" (art pixels) and an inner radius "rin", one per layer [scale, colour],
+    drawn TTF_K-times larger, colours softened by a gaussian blur ("blur", art px),
+    then area-averaged down. Replaces the rect entirely."""
+    K = TTF_K
+    x, y, w, h = r["rect"]
+    cx, cy = r.get("centre", [w / 2.0, h / 2.0])
+    tips = sorted(r["tips"], key=lambda t: math.atan2(t[1] - cy, t[0] - cx))
+    rin = r["rin"]
+    W, H = w * K, h * K
+    layers = []
+    for sc, col in r["layers"]:
+        pts = []
+        for i, t in enumerate(tips):
+            n = tips[(i + 1) % len(tips)]
+            a1, a2 = math.atan2(t[1] - cy, t[0] - cx), math.atan2(n[1] - cy, n[0] - cx)
+            if a2 < a1:
+                a2 += 2 * math.pi
+            am = (a1 + a2) / 2
+            pts.append(((cx + (t[0] - cx) * sc) * K, (cy + (t[1] - cy) * sc) * K))
+            pts.append(((cx + rin * sc * math.cos(am)) * K, (cy + rin * sc * math.sin(am)) * K))
+        layers.append((pts, hexcol(col)))
+    R, G, B, A = [0.0] * (W * H), [0.0] * (W * H), [0.0] * (W * H), [0.0] * (W * H)
+    base = layers[0][1]
+    for i in range(W * H):
+        R[i], G[i], B[i] = base[0] / 255.0, base[1] / 255.0, base[2] / 255.0
+    for li, (pts, col) in enumerate(layers):
+        n = len(pts)
+        for yy in range(H):
+            py = yy + 0.5
+            xs = []
+            for i in range(n):
+                (x1, y1), (x2, y2) = pts[i], pts[(i + 1) % n]
+                if (y1 <= py) != (y2 <= py):
+                    xs.append(x1 + (py - y1) * (x2 - x1) / (y2 - y1))
+            xs.sort()
+            for j in range(0, len(xs) - 1, 2):
+                a = max(0, int(math.ceil(xs[j] - 0.5)))
+                b = min(W - 1, int(math.ceil(xs[j + 1] - 0.5)) - 1)
+                for xx in range(a, b + 1):
+                    k = yy * W + xx
+                    R[k], G[k], B[k] = col[0] / 255.0, col[1] / 255.0, col[2] / 255.0
+                    if li == 0:
+                        A[k] = 1.0
+    R, G, B = blur([R, G, B], W, H, r.get("blur", 0) * K)
+    big = [[R[i] * A[i], G[i] * A[i], B[i] * A[i], A[i]] for i in range(W * H)]
+    small = lanczos_resample(big, W, H, w, h)
+    for yy in range(h):
+        for xx in range(w):
+            p = small[yy * w + xx]
+            a = p[3]
+            if a <= 0:
+                cv.put(x + xx, y + yy, (0, 0, 0, 0))
+            else:
+                cv.put(x + xx, y + yy, tuple(int(min(255, p[i] / a * 255) + 0.5) for i in range(3)) + (int(a * 255 + 0.5),))
+
+
+def draw_halo(cv, r, fonts, buttons):
+    """Pixel-font lettering with a black 1 px outline and a soft dark halo around it
+    ("halo" colour, "halo_blur" sigma), each letter's right-most column of a stroke
+    in "rcol" (inner shading). Lines in "lines", one per row top ["tops"], centred."""
+    x, y, w, h = r["rect"]
+    font = fonts[r.get("font", "card")]
+    fill, rcol = hexcol(r.get("fill", "#ffffff")), hexcol(r.get("rcol", r.get("fill", "#ffffff")))
+    col = {}
+    mask = [0.0] * (w * h)
+    for line, top in zip(r["lines"], r["tops"]):
+        for k, v in buttons.items():
+            line = line.replace("{" + k + "}", v)
+        glyphs = [font["g"][pick_char(font, ch)] for ch in line]
+        widths = [max(len(rw) for rw in g) for g in glyphs]
+        gx = (w - (sum(widths) + r.get("spacing", 1) * (len(widths) - 1))) // 2
+        for g, gw in zip(glyphs, widths):
+            y0 = top - (len(g) - font["h"])
+            for dy, row in enumerate(g):
+                for dx, c in enumerate(row):
+                    if c == "#" and 0 <= gx + dx < w and 0 <= y0 + dy < h:
+                        right = dx + 1 < len(row) and row[dx + 1] == "#"
+                        col[(gx + dx, y0 + dy)] = fill if right else rcol
+                        mask[(y0 + dy) * w + gx + dx] = 1.0
+            gx += gw + r.get("spacing", 1)
+    halo = blur([dilate(mask, w, h, 2)], w, h, r.get("halo_blur", 0.8))[0]
+    edge = dilate(mask, w, h, 1)
+    hc = hexcol(r.get("halo", "#191919"))
+    for yy in range(h):
+        for xx in range(w):
+            a = min(1.0, halo[yy * w + xx])
+            blend_over(cv, x + xx, y + yy, [hc[0] / 255.0 * a, hc[1] / 255.0 * a, hc[2] / 255.0 * a, a])
+            if edge[yy * w + xx] > 0:
+                cv.put(x + xx, y + yy, (0, 0, 0, 255))
+            if (xx, yy) in col:
+                cv.put(x + xx, y + yy, col[(xx, yy)])
+
+
+def style_of(r):
+    return r.get("style", "shadow")
 
 
 def pick_char(font, ch):
@@ -312,14 +716,14 @@ def variants(recipes):
     for path in paths:
         entries = [i for i in recipes["images"] if i["path"] == path]
         langs = {i.get("lang", "es") for i in entries}
-        if "es" in langs:
-            yield path, "es", entries
+        for lang in [l for l in ("es", "fr", "de", "it") if l in langs] + sorted(langs - {"es", "fr", "de", "it", "any"}):
+            yield path, lang, [i for i in entries if i.get("lang", "es") in (lang, "any")]
         if "any" in langs:
             yield path, "any", [i for i in entries if i.get("lang", "es") == "any"]
 
 
 def out_file(path, lang):
-    return ("any_" if lang == "any" else "") + out_name(path)
+    return ("" if lang == "es" else lang + "_") + out_name(path)
 
 
 def run(game, recipes, out, buttons):

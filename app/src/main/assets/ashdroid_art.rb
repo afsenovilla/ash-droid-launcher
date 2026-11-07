@@ -70,7 +70,9 @@ module AshDroidArt
     end
   end
 
-  def self.apply_region(cv, r, fonts, buttons, loader)
+  def self.apply_region(cv, r, fonts, buttons, loader, ttf = nil)
+    return starburst(cv, r) if r["tips"]
+    return draw_halo(cv, r, fonts, buttons) if r["lines"]
     if r["image"] && loader
       src = loader.call(r["image"])
       if src
@@ -121,14 +123,22 @@ module AshDroidArt
     end
     shade = hexcol(r["shade"]) if r["shade"]
     fills = (r["fills"] || []).map { |c| hexcol(c) }
-    if ty1 < 0
+    if ty1 < 0 || r["anchor"] == "rect"
       ty0, ty1, tx0 = y, y + h - 1, x
     end
     if erase == "inpaint"
       ink = (r["ink"] || []).map { |c| rgb(hexcol(c)) }
+      keep = (r["bgset"] || []).map { |c| hexcol(c) }
       (y...y + h).each do |yy|
         row = ((x - w)...(x + 2 * w)).map { |xx| cv.get(xx, yy) }
-        is_ink = row.map { |c| ink.include?(rgb(c)) }
+        is_ink = if keep.empty?
+                   row.map { |c| ink.include?(rgb(c)) }
+                 else
+                   # anything not close to one of the background colours is old lettering
+                   row.map do |c|
+                     keep.all? { |k| [((c >> 24) - (k >> 24)).abs, (((c >> 16) & 255) - ((k >> 16) & 255)).abs, (((c >> 8) & 255) - ((k >> 8) & 255)).abs].max > 6 }
+                   end
+                 end
         (w...2 * w).each do |i|
           next unless is_ink[i]
           (1..w).each do |dd|
@@ -141,9 +151,22 @@ module AshDroidArt
           end
         end
       end
+    elsif erase == "lerp"
+      # gradient backgrounds: each row blends from the colour at bgx to the one at bgx2
+      bx2 = r["bgx2"]
+      (y...y + h).each do |yy|
+        ca, cb = cv.get(bgx, yy), cv.get(bx2, yy)
+        (x...x + w).each do |xx|
+          t = [[(xx - bgx) / (bx2 - bgx).to_f, 0.0].max, 1.0].min
+          ch = [24, 16, 8, 0].map { |sft| p0 = (ca >> sft) & 255; q0 = (cb >> sft) & 255; (p0 + (q0 - p0) * t + 0.5).floor }
+          cv.put(xx, yy, rgba(*ch))
+        end
+      end
     elsif erase != "none"
       (y...y + h).each { |yy| (x...x + w).each { |xx| cv.put(xx, yy, rowbg[yy]) } }
     end
+
+    return draw_ttf(cv, r, buttons, ttf, fill, shade) if r["ttf"]
 
     if r["bitmap"]
       ox, oy = x + (r["dx"] || 0), y + (r["dy"] || 0)
@@ -215,7 +238,7 @@ module AshDroidArt
               elsif pass == -1
                 [[-1, -1], [1, -1], [-1, 1], [1, 1]].each { |dx, dy| cv.put(xp + dx, yp + dy, corner) }
               elsif style == "shadow"
-                cv.put(xp + 1, yp + 1, shade)
+                cv.put(xp + (r["sdx"] || 1), yp + (r["sdy"] || 1), shade)
               elsif corner
                 [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]].each { |dx, dy| cv.put(xp + dx, yp + dy, shade) }
               else
@@ -229,15 +252,350 @@ module AshDroidArt
     end
   end
 
-  # Applies every recipe entry of `path` for `lang` ("es": all entries, "any": only "any" ones)
-  def self.relabel(img, entries, lang, fonts, buttons, loader)
+  # Applies the recipe entries of `path` for `lang`: those of that language ("es", "fr", "de"…)
+  # and the "any" ones (button names), in order; for "any", only the "any" ones.
+  # ttf: ->(font, size, text) { [w, h, alpha floats] } rasterising the game's TrueType fonts.
+  def self.relabel(img, entries, lang, fonts, buttons, loader, ttf = nil)
     img = Img.new(img.w, img.h, img.px.dup)
     entries.each do |e|
-      next if lang == "any" && (e["lang"] || "es") != "any"
+      el = e["lang"] || "es"
+      next unless el == "any" || el == lang
       cv = Canvas.new(img, e["grid"] || 1, e["offset"] || [0, 0], e["dot"] || 0)
-      e["regions"].each { |r| apply_region(cv, r, fonts, buttons, loader) }
+      e["regions"].each { |r| apply_region(cv, r, fonts, buttons, loader, ttf) }
     end
     img
+  end
+
+  # ------------------------------------------------------------- shared maths
+  # Same arithmetic as tools/art/relabel.py and ArtEngine.java. Premultiplied RGBA
+  # images are flat Float arrays, 4 values per pixel.
+
+  def self.lanczos(x)
+    return 1.0 if x == 0
+    return 0.0 unless x > -3.0 && x < 3.0
+    px = Math::PI * x
+    3.0 * Math.sin(px) * Math.sin(px / 3.0) / (px * px)
+  end
+
+  def self.lanczos_weights(sn, dn)
+    scale = sn / dn.to_f
+    fs = [scale, 1.0].max
+    support = 3.0 * fs
+    (0...dn).map do |i|
+      centre = (i + 0.5) * scale
+      lo = [0, (centre - support + 0.5).to_i].max
+      hi = [sn, (centre + support + 0.5).to_i].min
+      ws = (lo...hi).map { |j| lanczos((j - centre + 0.5) / fs) }
+      t = ws.sum
+      [lo, t != 0 ? ws.map { |v| v / t } : ws]
+    end
+  end
+
+  def self.lanczos_resample(src, sw, sh, dw, dh)
+    tmp = src
+    if dw != sw
+      wx = lanczos_weights(sw, dw)
+      tmp = Array.new(dw * sh * 4, 0.0)
+      sh.times do |y|
+        wx.each_with_index do |(lo, ws), i|
+          d = (y * dw + i) * 4
+          a0 = a1 = a2 = a3 = 0.0
+          ws.each_with_index do |wgt, k|
+            s = (y * sw + lo + k) * 4
+            a0 += src[s] * wgt; a1 += src[s + 1] * wgt; a2 += src[s + 2] * wgt; a3 += src[s + 3] * wgt
+          end
+          tmp[d] = a0; tmp[d + 1] = a1; tmp[d + 2] = a2; tmp[d + 3] = a3
+        end
+      end
+    end
+    out = tmp
+    if dh != sh
+      wy = lanczos_weights(sh, dh)
+      out = Array.new(dw * dh * 4, 0.0)
+      wy.each_with_index do |(lo, ws), j|
+        dw.times do |x|
+          d = (j * dw + x) * 4
+          a0 = a1 = a2 = a3 = 0.0
+          ws.each_with_index do |wgt, k|
+            s = ((lo + k) * dw + x) * 4
+            a0 += tmp[s] * wgt; a1 += tmp[s + 1] * wgt; a2 += tmp[s + 2] * wgt; a3 += tmp[s + 3] * wgt
+          end
+          out[d] = a0; out[d + 1] = a1; out[d + 2] = a2; out[d + 3] = a3
+        end
+      end
+    end
+    out.map { |v| v < 0.0 ? 0.0 : (v > 1.0 ? 1.0 : v) }
+  end
+
+  def self.dilate(m, w, h, rad)
+    return m if rad <= 0
+    tmp = Array.new(w * h, 0.0)
+    h.times { |y| w.times { |x| v = 0.0; ([0, x - rad].max...[w, x + rad + 1].min).each { |xx| e = m[y * w + xx]; v = e if e > v }; tmp[y * w + x] = v } }
+    out = Array.new(w * h, 0.0)
+    h.times { |y| w.times { |x| v = 0.0; ([0, y - rad].max...[h, y + rad + 1].min).each { |yy| e = tmp[yy * w + x]; v = e if e > v }; out[y * w + x] = v } }
+    out
+  end
+
+  def self.dilate_disc(m, w, h, rad)
+    return m if rad <= 0
+    offs = []
+    (-rad..rad).each { |dy| (-rad..rad).each { |dx| offs << [dx, dy] if dx * dx + dy * dy <= rad * rad } }
+    out = Array.new(w * h, 0.0)
+    h.times do |y|
+      w.times do |x|
+        v = 0.0
+        offs.each do |dx, dy|
+          xp, yp = x + dx, y + dy
+          next unless xp >= 0 && xp < w && yp >= 0 && yp < h
+          e = m[yp * w + xp]
+          v = e if e > v
+        end
+        out[y * w + x] = v
+      end
+    end
+    out
+  end
+
+  def self.blur(ch, w, h, sigma)
+    return ch if sigma <= 0
+    rad = [1, (sigma * 3 + 0.999).to_i].max
+    k = (-rad..rad).map { |i| Math.exp(-(i * i) / (2.0 * sigma * sigma)) }
+    t = k.sum
+    k = k.map { |v| v / t }
+    tmp = Array.new(w * h, 0.0)
+    h.times { |y| w.times { |x| s = 0.0; (-rad..rad).each { |i| s += ch[y * w + [[x + i, 0].max, w - 1].min] * k[i + rad] }; tmp[y * w + x] = s } }
+    out = Array.new(w * h, 0.0)
+    h.times { |y| w.times { |x| s = 0.0; (-rad..rad).each { |i| s += tmp[[[y + i, 0].max, h - 1].min * w + x] * k[i + rad] }; out[y * w + x] = s } }
+    out
+  end
+
+  def self.clamp_round(v) ((v < 0 ? 0 : (v > 255 ? 255 : v)) + 0.5).to_i end
+
+  # draws a premultiplied RGBA pixel (0..1 floats) over the canvas
+  def self.blend_over(cv, x, y, pr, pg, pb, pa)
+    return if pa <= 0.0
+    pa = 1.0 if pa > 1.0
+    u = cv.get(x, y)
+    ua = (u & 255) / 255.0
+    oa = pa + ua * (1 - pa)
+    return if oa <= 0
+    cv.put(x, y, rgba(clamp_round((pr * 255.0 + (u >> 24) * ua * (1 - pa)) / oa),
+                      clamp_round((pg * 255.0 + ((u >> 16) & 255) * ua * (1 - pa)) / oa),
+                      clamp_round((pb * 255.0 + ((u >> 8) & 255) * ua * (1 - pa)) / oa), (oa * 255 + 0.5).to_i))
+  end
+
+  # ----------------------------------------------------------------- TrueType
+
+  TTF_K = 4
+  H_BOX = {}
+
+  def self.ink_box(w, h, m)
+    x0, y0, x1, y1 = w, h, -1, -1
+    h.times do |y|
+      w.times do |x|
+        next unless m[y * w + x] > 0.0
+        x0 = x if x < x0
+        x1 = x if x > x1
+        y0 = y if y < y0
+        y1 = y if y > y1
+      end
+    end
+    x1 >= 0 ? [x0, y0, x1, y1] : nil
+  end
+
+  # Smooth lettering with one of the game's TrueType fonts (see relabel.py draw_ttf)
+  def self.draw_ttf(cv, r, buttons, ttf, fill, shade)
+    k = TTF_K
+    return unless ttf
+    text = (r["text"] || "").dup
+    buttons.each { |bk, v| text = text.gsub("{#{bk}}", v) }
+    return if text.empty?
+    x, y, w, h = r["rect"]
+    cap = r["cap"] || h - 2
+    size = hb = nil
+    (cap * k * 2).to_i.downto(6) do |s|
+      key = "#{r['ttf']}|#{s}"
+      unless H_BOX.key?(key)
+        ras = ttf.call(r["ttf"], s, "H")
+        return unless ras
+        H_BOX[key] = ink_box(*ras)
+      end
+      b = H_BOX[key]
+      if b && b[3] - b[1] + 1 <= cap * k
+        size, hb = s, b
+        break
+      end
+    end
+    return unless size
+    ras = ttf.call(r["ttf"], size, text)
+    return unless ras
+    tw_, th_, tm = ras
+    tb = ink_box(tw_, th_, tm)
+    return unless tb
+    fat = ((r["fat"] || 0) * k).to_i
+    gw = tb[2] - tb[0] + 1 + 2 * fat
+    bw, bh = gw + k, h * k + 2 * k
+    oy = (h * k - (hb[3] - hb[1] + 1)).div(2) - hb[1] + (r["dy"] || 0) * k
+    glyph = Array.new(bw * bh, 0.0)
+    th_.times do |yy|
+      yp = yy + oy
+      next unless yp >= 0 && yp < bh
+      (tb[0]..tb[2]).each do |xx|
+        v = tm[yy * tw_ + xx]
+        glyph[yp * bw + xx - tb[0] + fat] = v if v > 0
+      end
+    end
+    sh = Array.new(bw * bh, 0.0)
+    use_shade = shade && (r["style"] || "shadow") != "plain"
+    if use_shade
+      (bh - k).times { |yy| (bw - k).times { |xx| sh[(yy + k) * bw + xx + k] = glyph[yy * bw + xx] } }
+    end
+    glyph = dilate_disc(glyph, bw, bh, fat)
+    fr, fg, fb = (fill >> 24) / 255.0, ((fill >> 16) & 255) / 255.0, ((fill >> 8) & 255) / 255.0
+    sr, sg, sb = use_shade ? [(shade >> 24) / 255.0, ((shade >> 16) & 255) / 255.0, ((shade >> 8) & 255) / 255.0] : [0, 0, 0]
+    big = Array.new(bw * bh * 4, 0.0)
+    (bw * bh).times do |i|
+      fa = glyph[i]
+      sa = sh[i] * (1 - fa)
+      big[i * 4] = fr * fa + (sa != 0 ? sr * sa : 0)
+      big[i * 4 + 1] = fg * fa + (sa != 0 ? sg * sa : 0)
+      big[i * 4 + 2] = fb * fa + (sa != 0 ? sb * sa : 0)
+      big[i * 4 + 3] = fa + sa
+    end
+    maxw = (w - 2) * k
+    if bw > maxw
+      big = lanczos_resample(big, bw, bh, maxw, bh)
+      bw = maxw
+    end
+    dw, dh = [1, bw / k].max, [1, bh / k].max
+    small = lanczos_resample(big, bw, bh, dw, dh)
+    ox = (r["align"] == "left" ? x + 1 : x + (w - dw).div(2)) + (r["dx"] || 0)
+    dh.times do |yy|
+      dw.times do |xx|
+        i = (yy * dw + xx) * 4
+        blend_over(cv, ox + xx, y + yy, small[i], small[i + 1], small[i + 2], small[i + 3])
+      end
+    end
+  end
+
+  # ---------------------------------------------------------- star-burst badge
+
+  # Explosion star (see relabel.py starburst)
+  def self.starburst(cv, r)
+    k = TTF_K
+    x, y, w, h = r["rect"]
+    cx, cy = r["centre"] || [w / 2.0, h / 2.0]
+    tips = r["tips"].sort_by { |t| Math.atan2(t[1] - cy, t[0] - cx) }
+    rin = r["rin"]
+    bw, bh = w * k, h * k
+    n = bw * bh
+    base = hexcol(r["layers"][0][1])
+    rr = Array.new(n, (base >> 24) / 255.0)
+    gg = Array.new(n, ((base >> 16) & 255) / 255.0)
+    bb = Array.new(n, ((base >> 8) & 255) / 255.0)
+    aa = Array.new(n, 0.0)
+    r["layers"].each_with_index do |(sc, colh), li|
+      col = hexcol(colh)
+      cr, cg, cb = (col >> 24) / 255.0, ((col >> 16) & 255) / 255.0, ((col >> 8) & 255) / 255.0
+      pts = []
+      tips.each_with_index do |t, i|
+        nx = tips[(i + 1) % tips.size]
+        a1, a2 = Math.atan2(t[1] - cy, t[0] - cx), Math.atan2(nx[1] - cy, nx[0] - cx)
+        a2 += 2 * Math::PI if a2 < a1
+        am = (a1 + a2) / 2
+        pts << [(cx + (t[0] - cx) * sc) * k, (cy + (t[1] - cy) * sc) * k]
+        pts << [(cx + rin * sc * Math.cos(am)) * k, (cy + rin * sc * Math.sin(am)) * k]
+      end
+      np = pts.size
+      bh.times do |yy|
+        py = yy + 0.5
+        xs = []
+        np.times do |i|
+          x1, y1 = pts[i]
+          x2, y2 = pts[(i + 1) % np]
+          xs << x1 + (py - y1) * (x2 - x1) / (y2 - y1) if (y1 <= py) != (y2 <= py)
+        end
+        xs.sort!
+        j = 0
+        while j + 1 < xs.size
+          a0 = [0, (xs[j] - 0.5).ceil].max
+          b0 = [bw - 1, (xs[j + 1] - 0.5).ceil - 1].min
+          (a0..b0).each do |xx|
+            q = yy * bw + xx
+            rr[q] = cr; gg[q] = cg; bb[q] = cb
+            aa[q] = 1.0 if li == 0
+          end
+          j += 2
+        end
+      end
+    end
+    sig = (r["blur"] || 0) * k
+    rr = blur(rr, bw, bh, sig)
+    gg = blur(gg, bw, bh, sig)
+    bb = blur(bb, bw, bh, sig)
+    big = Array.new(n * 4)
+    n.times { |i| a = aa[i]; big[i * 4] = rr[i] * a; big[i * 4 + 1] = gg[i] * a; big[i * 4 + 2] = bb[i] * a; big[i * 4 + 3] = a }
+    small = lanczos_resample(big, bw, bh, w, h)
+    h.times do |yy|
+      w.times do |xx|
+        i = (yy * w + xx) * 4
+        al = small[i + 3]
+        if al <= 0
+          cv.put(x + xx, y + yy, CLEAR)
+        else
+          cv.put(x + xx, y + yy, rgba(clamp_round(small[i] / al * 255), clamp_round(small[i + 1] / al * 255),
+                                      clamp_round(small[i + 2] / al * 255), (al * 255 + 0.5).to_i))
+        end
+      end
+    end
+  end
+
+  # Pixel-font lettering with outline and soft halo (see relabel.py draw_halo)
+  def self.draw_halo(cv, r, fonts, buttons)
+    x, y, w, h = r["rect"]
+    font = fonts[r["font"] || "card"]
+    return unless font
+    fill = hexcol(r["fill"] || "#ffffff")
+    rcol = hexcol(r["rcol"] || r["fill"] || "#ffffff")
+    spacing = r["spacing"] || 1
+    col = {}
+    mask = Array.new(w * h, 0.0)
+    r["lines"].zip(r["tops"]).each do |line, top|
+      next unless top
+      line = line.dup
+      buttons.each { |bk, v| line = line.gsub("{#{bk}}", v) }
+      gs = line.each_char.map { |ch| font[:g][pick_char(font, ch)] }
+      return if gs.any?(&:nil?)
+      widths = gs.map { |g| g.map(&:size).max }
+      gx = (w - (widths.sum + spacing * (widths.size - 1))).div(2)
+      gs.each_with_index do |g, gi|
+        y0 = top - (g.size - font[:h])
+        g.each_with_index do |row, dy|
+          row.each_char.with_index do |c, dx|
+            next unless c == "#"
+            xp, yp = gx + dx, y0 + dy
+            next unless xp >= 0 && xp < w && yp >= 0 && yp < h
+            right = dx + 1 < row.size && row[dx + 1] == "#"
+            col[yp * w + xp] = right ? fill : rcol
+            mask[yp * w + xp] = 1.0
+          end
+        end
+        gx += widths[gi] + spacing
+      end
+    end
+    halo = blur(dilate(mask, w, h, 2), w, h, r["halo_blur"] || 0.8)
+    edge = dilate(mask, w, h, 1)
+    hc = hexcol(r["halo"] || "#191919")
+    hr, hg, hb = (hc >> 24) / 255.0, ((hc >> 16) & 255) / 255.0, ((hc >> 8) & 255) / 255.0
+    h.times do |yy|
+      w.times do |xx|
+        q = yy * w + xx
+        al = [halo[q], 1.0].min
+        blend_over(cv, x + xx, y + yy, hr * al, hg * al, hb * al, al)
+        cv.put(x + xx, y + yy, BLACK) if edge[q] > 0
+        cv.put(x + xx, y + yy, col[q]) if col[q]
+      end
+    end
   end
 
   # ------------------------------------------------ controls screen key caps
