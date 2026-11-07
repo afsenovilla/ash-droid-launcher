@@ -180,4 +180,5 @@
     <string name="signing_change_msg">Esta actualización usa una clave de firma nueva y no se puede instalar encima de esta versión.\n\n1. Exporta tus partidas.\n2. Desinstala esta app.\n3. Instala la versión nueva desde la página de la release.\n4. Importa el .zip del juego y después Importar partidas.</string>
     <string name="signing_change_open">Página de la release</string>
     <string name="err_zip_limits">El archivo es demasiado grande o tiene demasiados ficheros.</string>
+    <string name="update_bad_apk">La actualización descargada no es una versión válida y más nueva de esta app.</string>
 </resources>

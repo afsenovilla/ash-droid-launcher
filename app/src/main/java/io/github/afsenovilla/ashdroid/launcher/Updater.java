@@ -67,9 +67,11 @@ final class Updater
             if (tag.isEmpty() || compare(tag, currentVersion) <= 0) return null;
             JSONArray assets = o.optJSONArray("assets");
             if (assets == null) return null;
+            // Exactly the APK the release job publishes, never "the first .apk"
+            String expected = "ash-droid-launcher-" + tag + ".apk";
             for (int i = 0; i < assets.length(); i++) {
                 JSONObject a = assets.getJSONObject(i);
-                if (a.optString("name").endsWith(".apk")) {
+                if (a.optString("name").equals(expected)) {
                     return new Info(tag, a.optString("browser_download_url"), a.optLong("size", -1));
                 }
             }
@@ -78,8 +80,85 @@ final class Updater
         return null;
     }
 
-    /** Downloads the APK straight into a PackageInstaller session and commits it (system asks to confirm). */
+    /**
+     * Downloads the APK to app cache, checks that it is this app (same package),
+     * newer (higher versionCode) and signed with the same certificate as the
+     * installed one, then hands it to PackageInstaller (system asks to confirm).
+     */
     static void install(Context ctx, Info info, Progress progress) throws IOException
+    {
+        java.io.File apk = new java.io.File(ctx.getCacheDir(), "update.apk");
+        //noinspection ResultOfMethodCallIgnored
+        apk.delete();
+        try {
+            long total = download(info, apk, progress);
+            verify(ctx, apk);
+            commit(ctx, apk, total);
+        } finally {
+            //noinspection ResultOfMethodCallIgnored
+            apk.delete();
+        }
+    }
+
+    private static long download(Info info, java.io.File apk, Progress progress) throws IOException
+    {
+        HttpURLConnection c = open(info.apkUrl);
+        if (c.getResponseCode() != 200) throw new IOException("HTTP " + c.getResponseCode());
+        long total = c.getContentLengthLong() > 0 ? c.getContentLengthLong() : info.size;
+        long done = 0;
+        try (InputStream in = c.getInputStream(); OutputStream out = new java.io.FileOutputStream(apk)) {
+            byte[] buf = new byte[1 << 16];
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                out.write(buf, 0, n);
+                done += n;
+                progress.onProgress(done, total);
+            }
+        }
+        if (total > 0 && done != total) throw new IOException("Incomplete download");
+        return done;
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void verify(Context ctx, java.io.File apk) throws IOException
+    {
+        android.content.pm.PackageManager pm = ctx.getPackageManager();
+        int flags = Build.VERSION.SDK_INT >= 28
+                ? android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
+                : android.content.pm.PackageManager.GET_SIGNATURES;
+        android.content.pm.PackageInfo cand = pm.getPackageArchiveInfo(apk.getPath(), flags);
+        android.content.pm.PackageInfo mine;
+        try {
+            mine = pm.getPackageInfo(ctx.getPackageName(), flags);
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            throw new IOException(e.toString());
+        }
+        String bad = ctx.getString(io.github.afsenovilla.ashdroid.R.string.update_bad_apk);
+        if (cand == null || !ctx.getPackageName().equals(cand.packageName)) throw new IOException(bad + " (package)");
+        long cv = Build.VERSION.SDK_INT >= 28 ? cand.getLongVersionCode() : cand.versionCode;
+        long mv = Build.VERSION.SDK_INT >= 28 ? mine.getLongVersionCode() : mine.versionCode;
+        if (cv <= mv) throw new IOException(bad + " (version)");
+        if (!sameSigner(cand, mine)) throw new IOException(bad + " (signature)");
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean sameSigner(android.content.pm.PackageInfo a, android.content.pm.PackageInfo b)
+    {
+        android.content.pm.Signature[] sa, sb;
+        if (Build.VERSION.SDK_INT >= 28) {
+            if (a.signingInfo == null || b.signingInfo == null) return false;
+            sa = a.signingInfo.getApkContentsSigners();
+            sb = b.signingInfo.getApkContentsSigners();
+        } else {
+            sa = a.signatures;
+            sb = b.signatures;
+        }
+        if (sa == null || sb == null || sa.length == 0) return false;
+        return new java.util.HashSet<>(java.util.Arrays.asList(sa))
+                .equals(new java.util.HashSet<>(java.util.Arrays.asList(sb)));
+    }
+
+    private static void commit(Context ctx, java.io.File apk, long total) throws IOException
     {
         PackageInstaller pi = ctx.getPackageManager().getPackageInstaller();
         PackageInstaller.SessionParams params =
@@ -87,19 +166,11 @@ final class Updater
         params.setAppPackageName(ctx.getPackageName());
         int id = pi.createSession(params);
         try (PackageInstaller.Session s = pi.openSession(id)) {
-            HttpURLConnection c = open(info.apkUrl);
-            if (c.getResponseCode() != 200) throw new IOException("HTTP " + c.getResponseCode());
-            long total = c.getContentLengthLong() > 0 ? c.getContentLengthLong() : info.size;
-            try (InputStream in = c.getInputStream();
-                 OutputStream out = s.openWrite("update.apk", 0, total > 0 ? total : -1)) {
+            try (InputStream in = new java.io.FileInputStream(apk);
+                 OutputStream out = s.openWrite("update.apk", 0, total)) {
                 byte[] buf = new byte[1 << 16];
-                long done = 0;
                 int n;
-                while ((n = in.read(buf)) > 0) {
-                    out.write(buf, 0, n);
-                    done += n;
-                    progress.onProgress(done, total);
-                }
+                while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
                 s.fsync(out);
             }
             Intent i = new Intent(ctx, StatusReceiver.class).setAction(ACTION_STATUS);
