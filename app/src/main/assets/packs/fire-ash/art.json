@@ -5435,6 +5435,122 @@
      "dx": -1
     }
    ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#2860a8",
+      "#90b0d0",
+      "#b8d8f0",
+      "#a8c8f0"
+     ],
+     "text": "CARTE DRESSEUR",
+     "font": "card5",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#2860a8",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#2860a8",
+      "#90b0d0",
+      "#b8d8f0",
+      "#a8c8f0"
+     ],
+     "text": "TRAINERPASS",
+     "font": "card",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#2860a8",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card_f",
+   "lang": "fr",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#984040",
+      "#c8a0a0",
+      "#f0d8b0",
+      "#e8a8a8"
+     ],
+     "text": "CARTE DRESSEUR",
+     "font": "card5",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#984040",
+     "height": 10
+    }
+   ]
+  },
+  {
+   "path": "Graphics/Pictures/Trainer Card/card_f",
+   "lang": "de",
+   "grid": 2,
+   "regions": [
+    {
+     "rect": [
+      30,
+      17,
+      89,
+      11
+     ],
+     "erase": "inpaint",
+     "ink": [
+      "#f8f8f8",
+      "#984040",
+      "#c8a0a0",
+      "#f0d8b0",
+      "#e8a8a8"
+     ],
+     "text": "TRAINERPASS",
+     "font": "card",
+     "style": "shadow",
+     "fill": "#f8f8f8",
+     "shade": "#984040",
+     "height": 10
+    }
+   ]
   }
  ]
 }
