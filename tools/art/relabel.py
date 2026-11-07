@@ -171,7 +171,7 @@ def apply_region(cv, r, fonts, buttons, game=None):
     if r.get("shade"):
         shade = hexcol(r["shade"])
     fills = [hexcol(c) for c in r.get("fills", [])]
-    if ty1 < 0:
+    if ty1 < 0 or r.get("anchor") == "rect":
         ty0, ty1, tx0 = y, y + h - 1, x
     if erase == "inpaint":
         # Remove only the old lettering ("ink" colours): each such pixel takes the
