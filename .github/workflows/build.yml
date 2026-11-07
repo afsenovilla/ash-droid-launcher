@@ -117,9 +117,9 @@ jobs:
             app/jni/SDL2_sound
             app/jni/openssl
             app/jni/ruby
-          key: native-v2-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
+          key: native-v3-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
           restore-keys: |
-            native-v2-${{ env.NDK_VERSION }}-${{ env.ABI }}-
+            native-v3-${{ env.NDK_VERSION }}-${{ env.ABI }}-
 
       - name: Fetch native sources
         working-directory: app/jni
@@ -166,7 +166,7 @@ jobs:
             app/jni/SDL2_sound
             app/jni/openssl
             app/jni/ruby
-          key: native-v2-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
+          key: native-v3-${{ env.NDK_VERSION }}-${{ env.ABI }}-${{ hashFiles('app/jni/Makefile', 'app/jni/get_deps.sh') }}-${{ github.run_id }}
 
       - name: Generate embedded mkxp-z assets
         working-directory: app/jni/mkxp-z
