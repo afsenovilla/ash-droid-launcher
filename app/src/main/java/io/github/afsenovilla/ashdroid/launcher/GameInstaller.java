@@ -436,10 +436,15 @@ public final class GameInstaller
         count[0]++;
     }
 
+    /** Folder the multi-save plugin reads, relative to the game root. */
+    private static final String SAVE_DIR = "Save Files";
+
     /**
-     * Restores saves from a zip made by {@link #exportSaves}. Only save files are
-     * accepted (no game files, no scripts). Existing saves with the same name are
-     * replaced. Returns the number of files restored.
+     * Restores saves. Accepts either a zip (ours from {@link #exportSaves}, or one
+     * made by hand / on PC, with saves at any depth) or a single raw save file
+     * (Ruby Marshal, e.g. "Game2.rxdata" copied straight from a PC install).
+     * Only save files are accepted (no game files, no scripts). Existing saves
+     * with the same name are replaced. Returns the number of files restored.
      */
     public static int importSaves(Context ctx, Uri src) throws IOException
     {
@@ -450,35 +455,38 @@ public final class GameInstaller
             if (!stage.mkdirs()) throw new IOException(ctx.getString(R.string.err_tmp_dir));
             String stageCanonical = stage.getCanonicalPath() + File.separator;
             int count = 0;
-            long written = 0;
+            long[] written = { 0 };
             try {
                 InputStream raw = ctx.getContentResolver().openInputStream(src);
                 if (raw == null) throw new IOException(ctx.getString(R.string.err_open));
-                byte[] buf = new byte[1 << 16];
-                try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(raw, 1 << 16))) {
-                    ZipEntry e;
-                    while ((e = zis.getNextEntry()) != null) {
-                        String name = e.getName().replace('\\', '/');
-                        if (e.isDirectory()) continue;
-                        int slash = name.indexOf('/');
-                        String top = slash < 0 ? name : name.substring(0, slash);
-                        if (!isUserDataName(top, slash >= 0)) continue;
-                        File out = new File(stage, name);
-                        if (!out.getCanonicalPath().startsWith(stageCanonical)) {
-                            throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
-                        }
-                        File parent = out.getParentFile();
-                        if (parent != null) parent.mkdirs();
-                        try (OutputStream os = new FileOutputStream(out)) {
-                            int n;
-                            while ((n = zis.read(buf)) > 0) {
-                                written += n;
-                                if (written > MAX_SAVE_ZIP_BYTES) throw new IOException(ctx.getString(R.string.err_saves_too_big));
-                                os.write(buf, 0, n);
+                BufferedInputStream in = new BufferedInputStream(raw, 1 << 16);
+                try {
+                    in.mark(4);
+                    int b0 = in.read(), b1 = in.read();
+                    in.reset();
+                    if (b0 == 'P' && b1 == 'K') {
+                        try (ZipInputStream zis = new ZipInputStream(in)) {
+                            ZipEntry e;
+                            while ((e = zis.getNextEntry()) != null) {
+                                if (e.isDirectory()) continue;
+                                String rel = saveTargetPath(e.getName());
+                                if (rel == null) continue;
+                                File out = new File(stage, rel);
+                                if (!out.getCanonicalPath().startsWith(stageCanonical)) {
+                                    throw new IOException(ctx.getString(R.string.err_bad_entry, e.getName()));
+                                }
+                                copyLimited(ctx, zis, out, written);
+                                count++;
                             }
                         }
+                    } else if (b0 == 0x04 && b1 == 0x08) {
+                        // Raw Ruby Marshal 4.8 = an RGSS save file on its own.
+                        String name = safeSaveName(displayName(ctx, src));
+                        copyLimited(ctx, in, new File(stage, SAVE_DIR + "/" + name), written);
                         count++;
                     }
+                } finally {
+                    in.close();
                 }
                 if (count == 0) throw new IOException(ctx.getString(R.string.err_no_saves));
                 // Into the game if installed, otherwise parked for the next import.
@@ -491,6 +499,83 @@ public final class GameInstaller
                 return count;
             } finally {
                 Util.deleteRecursive(stage);
+            }
+        }
+    }
+
+    /**
+     * Maps a zip entry to its path under the game root, or null to skip it.
+     * "Pokemon Fire Ash/Save Files/Game2.rxdata" -> "Save Files/Game2.rxdata";
+     * a bare "Game2.rxdata" (at any depth) -> "Save Files/Game2.rxdata".
+     */
+    static String saveTargetPath(String entry)
+    {
+        String[] parts = entry.replace('\\', '/').split("/");
+        java.util.List<String> segs = new java.util.ArrayList<>();
+        for (String p : parts) {
+            if (p.isEmpty() || p.equals(".")) continue;
+            if (p.equals("..")) return null;
+            segs.add(p);
+        }
+        if (segs.isEmpty()) return null;
+        for (int i = 0; i < segs.size() - 1; i++) {
+            if (isUserDataName(segs.get(i), true)) {
+                String top = segs.get(i).equalsIgnoreCase(SAVE_DIR) ? SAVE_DIR : segs.get(i);
+                StringBuilder sb = new StringBuilder(top);
+                for (int j = i + 1; j < segs.size(); j++) sb.append('/').append(segs.get(j));
+                return sb.toString();
+            }
+        }
+        String leaf = segs.get(segs.size() - 1);
+        if (isGameSave(leaf)) return SAVE_DIR + "/" + leaf;
+        if (segs.size() == 1 && isUserDataName(leaf, false)) return leaf;
+        return null;
+    }
+
+    /** "Game.rxdata", "Game2.rxdata", "Game3.rxdata.bak"... (what the multi-save plugin writes). */
+    private static boolean isGameSave(String name)
+    {
+        return name.toLowerCase(java.util.Locale.ROOT).matches("game\\d*\\.rxdata(\\.bak)?");
+    }
+
+    /**
+     * Name for a loose save. Pickers / messengers often rename files
+     * ("644337b8-Game2.rxdata", "Game2 (1).rxdata"), so the GameN part is recovered.
+     */
+    static String safeSaveName(String display)
+    {
+        if (display != null) {
+            java.util.regex.Matcher m = java.util.regex.Pattern
+                    .compile("(?i)game\\s*(\\d*)\\s*(?:\\(\\d+\\))?\\.rxdata").matcher(display);
+            String last = null;
+            while (m.find()) last = m.group(1);
+            if (last != null) return "Game" + last + ".rxdata";
+        }
+        return "Game.rxdata";
+    }
+
+    private static String displayName(Context ctx, Uri uri)
+    {
+        try (Cursor c = ctx.getContentResolver().query(uri,
+                new String[] { OpenableColumns.DISPLAY_NAME }, null, null, null)) {
+            if (c != null && c.moveToFirst()) return c.getString(0);
+        } catch (Exception ignored) {
+            // fall through
+        }
+        return uri.getLastPathSegment();
+    }
+
+    private static void copyLimited(Context ctx, InputStream in, File out, long[] written) throws IOException
+    {
+        File parent = out.getParentFile();
+        if (parent != null) parent.mkdirs();
+        byte[] buf = new byte[1 << 16];
+        try (OutputStream os = new FileOutputStream(out)) {
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                written[0] += n;
+                if (written[0] > MAX_SAVE_ZIP_BYTES) throw new IOException(ctx.getString(R.string.err_saves_too_big));
+                os.write(buf, 0, n);
             }
         }
     }

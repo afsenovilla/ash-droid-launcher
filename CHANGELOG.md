@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-08
+
+### Fixed
+- **Save import**: "Import saves" now accepts a loose save file (e.g. `Game2.rxdata` copied from a PC
+  install, even if renamed by a messenger like `644337b8-Game2.rxdata`) and zips made by hand or on PC,
+  with the saves at any depth (`Pokemon Fire Ash/Save Files/Game2.rxdata`). Saves always land in
+  `Save Files/`, where the game reads them. Before, only the launcher's own export zip was accepted.
+
 ## [0.7.0] - 2026-11-07
 
 ### Added

@@ -581,9 +581,8 @@ public class LauncherActivity extends Activity
         if (operationRunning()) return;
         Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
+        // Any type: besides our zip, loose .rxdata saves (no registered MIME) are accepted.
         i.setType("*/*");
-        i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {
-                "application/zip", "application/x-zip-compressed", "application/octet-stream" });
         try {
             startActivityForResult(i, REQ_IMPORT_SAVES);
         } catch (Exception e) {
