@@ -152,6 +152,105 @@ RB_METHOD(androidInMultiWindow)
 	return rb_bool_new(winMode);
 }
 
+// ---- Second-screen battle companion (ash-droid-launcher) ----
+// The game talks to the activity with plain strings: JSON state out, short commands in.
+// Every call is safe when the activity has no such method (older launcher): the pending
+// exception is cleared and a neutral value returned.
+
+static jmethodID companionMethod(JNIEnv *env, jclass cls, const char *name, const char *sig)
+{
+	jmethodID mID = env->GetStaticMethodID(cls, name, sig);
+	if (!mID && env->ExceptionCheck())
+		env->ExceptionClear();
+	return mID;
+}
+
+RB_METHOD(androidCompanionActive)
+{
+	RB_UNUSED_PARAM;
+
+	JNIEnv *env = (JNIEnv *)SDL_AndroidGetJNIEnv();
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+	jclass cls = env->GetObjectClass(activity);
+
+	jboolean active = JNI_FALSE;
+	jmethodID mID = companionMethod(env, cls, "companionActive", "()Z");
+	if (mID)
+		active = env->CallStaticBooleanMethod(cls, mID);
+	if (env->ExceptionCheck()) {
+		env->ExceptionClear();
+		active = JNI_FALSE;
+	}
+
+	env->DeleteLocalRef(cls);
+	env->DeleteLocalRef(activity);
+
+	return rb_bool_new(active);
+}
+
+RB_METHOD(androidCompanionSend)
+{
+	RB_UNUSED_PARAM;
+
+	VALUE str;
+	rb_scan_args(argc, argv, "1", &str);
+	StringValue(str);
+
+	JNIEnv *env = (JNIEnv *)SDL_AndroidGetJNIEnv();
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+	jclass cls = env->GetObjectClass(activity);
+
+	jmethodID mID = companionMethod(env, cls, "companionState", "([B)V");
+	if (mID) {
+		// Bytes, not NewStringUTF: JNI wants "modified UTF-8", which breaks on some characters
+		jsize len = (jsize)RSTRING_LEN(str);
+		jbyteArray arr = env->NewByteArray(len);
+		if (arr) {
+			env->SetByteArrayRegion(arr, 0, len, (const jbyte *)RSTRING_PTR(str));
+			env->CallStaticVoidMethod(cls, mID, arr);
+			env->DeleteLocalRef(arr);
+		}
+	}
+	if (env->ExceptionCheck())
+		env->ExceptionClear();
+
+	env->DeleteLocalRef(cls);
+	env->DeleteLocalRef(activity);
+
+	return Qnil;
+}
+
+RB_METHOD(androidCompanionPoll)
+{
+	RB_UNUSED_PARAM;
+
+	JNIEnv *env = (JNIEnv *)SDL_AndroidGetJNIEnv();
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+	jclass cls = env->GetObjectClass(activity);
+
+	VALUE ret = Qnil;
+	jmethodID mID = companionMethod(env, cls, "companionPoll", "()[B");
+	if (mID) {
+		jbyteArray arr = (jbyteArray)env->CallStaticObjectMethod(cls, mID);
+		if (env->ExceptionCheck()) {
+			env->ExceptionClear();
+		} else if (arr) {
+			jsize len = env->GetArrayLength(arr);
+			jbyte *bytes = env->GetByteArrayElements(arr, 0);
+			if (bytes) {
+				ret = rb_utf8_str_new((const char *)bytes, len);
+				env->ReleaseByteArrayElements(arr, bytes, JNI_ABORT);
+			}
+			env->DeleteLocalRef(arr);
+		}
+	}
+
+	env->DeleteLocalRef(cls);
+	env->DeleteLocalRef(activity);
+
+	return ret;
+}
+
 void androidBindingInit()
 {
 	VALUE module = rb_define_module("Android");
@@ -171,4 +270,9 @@ void androidBindingInit()
 
 	// Multi-window (Android 7.0+)
 	_rb_define_module_function(module, "in_multiwindow?", androidInMultiWindow);
+
+	// Second-screen battle companion (dual-screen handhelds)
+	_rb_define_module_function(module, "companion_active?", androidCompanionActive);
+	_rb_define_module_function(module, "companion_send", androidCompanionSend);
+	_rb_define_module_function(module, "companion_poll", androidCompanionPoll);
 }

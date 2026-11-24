@@ -192,4 +192,8 @@
     <string name="import_cancelled_unverified">Import cancelled: the zip is not a verified official release.</string>
     <string name="game_verified">✓ %1$s (verified)</string>
     <string name="game_unverified">Game zip not verified</string>
+
+    <!-- Second-screen battle menus (dual-screen handhelds) -->
+    <string name="ds_top_menu_hidden">Battle menu on the game screen: hidden</string>
+    <string name="ds_top_menu_shown">Battle menu on the game screen: shown</string>
 </resources>

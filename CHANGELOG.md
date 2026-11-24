@@ -6,6 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+### Added
+- **Second-screen battle menus (beta, dual-screen handhelds such as the AYN Thor)**: while a battle menu is
+  open, the other screen shows it as touch buttons: Fight / Bag / Pokémon / Run, and the four moves with
+  type, PP and how effective each is against the opponent (single battles), plus Back and Mega Evolution.
+  The console's buttons keep working and the cursor is mirrored on both screens. A button on the second
+  screen hides the game's own menu for a cleaner battle screen (on by default) or shows it again.
+  Only enabled on known dual-screen models; nothing changes on other devices, PC or Steam Deck.
+  Not tested on hardware yet: test builds only, not part of a release.
+
 ## [0.7.1] - 2026-11-08
 
 ### Fixed

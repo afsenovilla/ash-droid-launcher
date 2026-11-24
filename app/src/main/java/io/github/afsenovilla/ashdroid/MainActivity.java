@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.libsdl.app.SDLActivity;
 
+import io.github.afsenovilla.ashdroid.companion.DsCompanion;
 import io.github.afsenovilla.ashdroid.gamepad.Gamepad;
 import io.github.afsenovilla.ashdroid.gamepad.GamepadConfig;
 import io.github.afsenovilla.ashdroid.launcher.ButtonMapping;
@@ -56,6 +57,11 @@ public class MainActivity extends SDLActivity
 
     // Physical button -> standard button remapping from the setup wizard
     private ButtonMapping mMapping;
+
+    // Battle menus on the second screen of dual-screen handhelds (null on every other device)
+    private DsCompanion mCompanion;
+    // The menus open only once the game window has had the focus, so they can't delay its start
+    private boolean mHadFocus = false;
 
     private void runSDLThread()
     {
@@ -109,13 +115,29 @@ public class MainActivity extends SDLActivity
         params.setMargins(16, 16, 0, 0);
         tvFps.setLayoutParams(params);
         mLayout.addView(tvFps);
+
+        if (DsCompanion.supportedDevice()) {
+            mCompanion = new DsCompanion(this);
+        }
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
     {
+        // A touch on the second-screen menus can take the window focus: the game is still in
+        // front on its own screen, so don't tell the engine it lost focus (it would drop the
+        // held buttons). Leaving the game for real is handled by onStop.
+        if (!hasFocus && mCompanion != null && mCompanion.isShowing()) {
+            return;
+        }
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) enterImmersive();
+        if (hasFocus) {
+            enterImmersive();
+            if (!mHadFocus) {
+                mHadFocus = true;
+                if (mCompanion != null) mCompanion.start();
+            }
+        }
     }
 
     /** True fullscreen: hide status and navigation bars, draw under the notch area too. */
@@ -144,6 +166,14 @@ public class MainActivity extends SDLActivity
     {
         super.onStart();
         runSDLThread();
+        if (mCompanion != null && mHadFocus) mCompanion.start();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        if (mCompanion != null) mCompanion.stop();
+        super.onStop();
     }
 
     @Override
@@ -267,6 +297,26 @@ public class MainActivity extends SDLActivity
     private static void vibrateStop()
     {
         mVibrator.cancel();
+    }
+
+    // Second-screen battle menus: see DsCompanion and jni/mkxp-z/binding/android-binding.cpp
+
+    @SuppressWarnings("unused")
+    private static boolean companionActive()
+    {
+        return DsCompanion.active();
+    }
+
+    @SuppressWarnings("unused")
+    private static void companionState(byte[] utf8)
+    {
+        DsCompanion.state(utf8);
+    }
+
+    @SuppressWarnings("unused")
+    private static byte[] companionPoll()
+    {
+        return DsCompanion.poll();
     }
 
     @SuppressWarnings("unused")

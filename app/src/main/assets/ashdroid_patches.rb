@@ -900,6 +900,288 @@ rescue StandardError
   # Never break the game because of a cosmetic patch
 end
 
+# Second-screen battle menus (BETA): on dual-screen Android handhelds (AYN Thor...) the launcher
+# shows the battle command and move menus on the other screen, as touch buttons, and the game's
+# own menus can be hidden for a cleaner battle screen. The game stays in charge: this only
+# reports what its menu shows (JSON through Android.companion_send) and turns a touch into the
+# same cursor move + button press the player would make (Android.companion_poll). Without that
+# engine API or without a second screen nothing here does anything.
+module AshDroidDS
+  ACTIVE_EVERY = 40 # frames between "is the second screen showing?" checks
+  IDLE = { "screen" => "idle" }.freeze
+  JSON_ESC = { '"' => '\\"', "\\" => "\\\\", "\n" => "\\n", "\r" => "\\r", "\t" => "\\t" }.freeze
+  BUTTONS = { use: [:USE, :C], back: [:BACK, :B], action: [:ACTION, :A] }.freeze
+  # Second-screen labels the game has no text for. Official terms; English for other languages.
+  LABELS = {
+    nil => { "back" => "Back", "mega" => "Mega Evolution",
+             "eff" => ["No effect", "Not very effective", "Super effective"] },
+    "es" => { "back" => "Atrás", "mega" => "Megaevolución",
+              "eff" => ["No afecta", "Poco eficaz", "Muy eficaz"] }
+  }.freeze
+
+  @stack = []
+  @hide = false
+  @active = nil
+  @tick = 0
+
+  def self.available?
+    if @available.nil?
+      @available = !!(defined?(::Android) && ::Android.respond_to?(:companion_send) &&
+                      ::Android.respond_to?(:companion_poll) && ::Android.respond_to?(:companion_active?))
+      AshDroidLog.log("ds: engine api #{@available ? 'found' : 'missing'}")
+    end
+    @available
+  rescue StandardError
+    @available = false
+  end
+
+  def self.active?
+    return false unless available?
+    @tick += 1
+    if @active.nil? || @tick >= ACTIVE_EVERY
+      @tick = 0
+      was = @active
+      @active = !!::Android.companion_active?
+      if @active != was
+        AshDroidLog.log("ds: second screen #{@active ? 'on' : 'off'}")
+        @last = nil            # a screen that just appeared needs the current state
+        @restore = !@active    # and a menu hidden for it must come back if it went away
+      end
+    end
+    @active
+  end
+
+  def self.hide?
+    @hide && @active
+  end
+
+  def self.json(v)
+    case v
+    when Hash then "{" + v.map { |k, x| json(k.to_s) + ":" + json(x) }.join(",") + "}"
+    when Array then "[" + v.map { |x| json(x) }.join(",") + "]"
+    when String
+      s = v.encoding == Encoding::UTF_8 ? v : v.dup.force_encoding("UTF-8")
+      s = s.scrub("?") unless s.valid_encoding?
+      '"' + s.gsub(/["\\\x00-\x1f]/) { |c| JSON_ESC[c] || format("\\u%04x", c.ord) } + '"'
+    when Integer then v.to_s
+    when true, false then v.to_s
+    when nil then "null"
+    else json(v.to_s)
+    end
+  end
+
+  def self.publish(state)
+    s = json(state)
+    return if s == @last
+    @last = s
+    ::Android.companion_send(s)
+  end
+
+  def self.labels
+    LABELS[AshDroidText.art_lang] || LABELS[nil]
+  rescue StandardError
+    LABELS[nil]
+  end
+
+  # ---- what the menus show ----
+
+  def self.enter(scene, mode, data)
+    return unless available?
+    @stack.clear unless @scene.equal?(scene)
+    @scene = scene
+    @stack.push(data.merge(mode: mode))
+  rescue StandardError => e
+    AshDroidLog.log("ds: enter #{e.class}: #{e.message}")
+  end
+
+  def self.leave(mode)
+    return unless available?
+    i = @stack.rindex { |d| d[:mode] == mode }
+    @stack.slice!(i..-1) if i
+    publish(IDLE) if @active && @stack.empty?
+  rescue StandardError
+  end
+
+  def self.window(scene, mode)
+    sprites = scene.instance_variable_get(:@sprites)
+    sprites.is_a?(Hash) ? sprites[mode == :fight ? "fightWindow" : "commandWindow"] : nil
+  end
+
+  def self.command_state(top, cw)
+    texts = Array(top[:texts]).map(&:to_s)
+    { "screen" => "command", "title" => texts[0].to_s, "items" => texts[1, 4] || [],
+      "index" => cw.index.to_i }
+  end
+
+  # 0 no effect, 1 not very effective, 2 super effective; nil for a normal hit, a status move,
+  # or more than one opponent
+  def self.effectiveness(battle, battler, move)
+    return nil if move.respond_to?(:statusMove?) && move.statusMove?
+    foes = battle.battlers.select { |b| b && !b.fainted? && b.opposes?(battler.index) }
+    return nil unless foes.length == 1
+    mod = move.pbCalcTypeMod(move.pbCalcType(battler), battler, foes[0])
+    return 0 if Effectiveness.ineffective?(mod)
+    return 1 if Effectiveness.not_very_effective?(mod)
+    return 2 if Effectiveness.super_effective?(mod)
+    nil
+  rescue StandardError, NameError
+    nil
+  end
+
+  def self.type_name(type)
+    GameData::Type.get(type).name.to_s
+  rescue StandardError, NameError
+    type.to_s
+  end
+
+  def self.moves(scene, idx_battler)
+    battle = scene.instance_variable_get(:@battle)
+    battler = battle.battlers[idx_battler]
+    list = []
+    battler.moves.each do |m|
+      break unless m && m.id
+      total = m.respond_to?(:total_pp) ? m.total_pp : (m.totalpp rescue 0)
+      list << { "name" => m.name.to_s, "type" => m.type.to_s, "typeName" => type_name(m.type),
+                "pp" => m.pp.to_i, "tpp" => total.to_i, "eff" => effectiveness(battle, battler, m) }
+    end
+    list
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: moves #{e.class}: #{e.message}")
+    []
+  end
+
+  def self.fight_state(scene, top, cw)
+    top[:moves] ||= moves(scene, top[:battler])
+    mode = (cw.respond_to?(:mode) ? cw.mode.to_i : 0)
+    { "screen" => "fight", "moves" => top[:moves], "index" => cw.index.to_i,
+      "mega" => (top[:mega] ? mode : 0), "labels" => labels }
+  end
+
+  # ---- every frame a battle menu is open ----
+
+  def self.frame(scene, cw)
+    unless active?
+      if @restore
+        @restore = false
+        cw.visible = true if cw && @stack.any? && !cw.visible
+      end
+      return
+    end
+    top = @scene.equal?(scene) ? @stack.last : nil
+    mine = top && cw && cw.equal?(window(scene, top[:mode]))
+    state = if !mine then IDLE
+            elsif top[:mode] == :fight then fight_state(scene, top, cw)
+            else command_state(top, cw)
+            end
+    publish(state)
+    8.times do
+      cmd = ::Android.companion_poll
+      break unless cmd
+      handle(cmd.to_s, mine ? cw : nil, state)
+    end
+    cw.visible = false if mine && @hide && cw.visible
+  rescue StandardError, NameError => e
+    @errors = (@errors || 0) + 1
+    AshDroidLog.log("ds: frame #{e.class}: #{e.message}") if @errors <= 3
+  end
+
+  def self.handle(cmd, cw, state)
+    case cmd
+    when "hello" then @last = nil
+    when /\Ahide:([01])\z/
+      @hide = $1 == "1"
+      cw.visible = true if cw && !@hide
+    when /\Asel:(\d)\z/
+      n = $1.to_i
+      count = (state["moves"] || state["items"] || []).length
+      return unless cw && n < count
+      cw.index = n if cw.index != n
+      force(:use)
+    when "back" then force(:back) if cw
+    when "act" then force(:action) if cw
+    end
+  end
+
+  # ---- a touch becomes the button press the menu is waiting for ----
+
+  def self.force(name)
+    b = BUTTONS[name].map { |c| Input.const_defined?(c) ? Input.const_get(c) : nil }.compact.first
+    @forced = [b, Graphics.frame_count] if b
+  end
+
+  def self.forced?(button)
+    f = @forced
+    return false unless f && f[0] == button
+    @forced = nil
+    (Graphics.frame_count - f[1]).abs <= 2
+  rescue StandardError
+    false
+  end
+
+  def self.forcing?
+    !@forced.nil?
+  end
+
+  module InputHook
+    def trigger?(button)
+      return true if AshDroidDS.forcing? && AshDroidDS.forced?(button)
+      super
+    end
+  end
+
+  # Prepended to the battle scene (PokeBattle_Scene / Battle::Scene)
+  module Scene
+    def pbCommandMenuEx(idxBattler, texts, *args)
+      AshDroidDS.enter(self, :command, texts: texts)
+      super
+    ensure
+      AshDroidDS.leave(:command)
+    end
+
+    def pbFightMenu(idxBattler, *args, &block)
+      AshDroidDS.enter(self, :fight, battler: idxBattler, mega: args[0] ? true : false)
+      super
+    ensure
+      AshDroidDS.leave(:fight)
+    end
+
+    def pbFrameUpdate(cw = nil)
+      super
+    ensure
+      AshDroidDS.frame(self, cw)
+    end
+
+    # The menu was just made visible: with "hide" on it never gets drawn on the game's screen
+    def pbShowWindow(windowType)
+      super
+    ensure
+      begin
+        if AshDroidDS.hide?
+          top = AshDroidDS.top_for(self)
+          w = top && AshDroidDS.window(self, top[:mode])
+          w.visible = false if w && w.visible
+        end
+      rescue StandardError
+      end
+    end
+  end
+
+  def self.top_for(scene)
+    @scene.equal?(scene) ? @stack.last : nil
+  end
+
+  def self.install(scene_class)
+    return unless available?
+    scene_class.prepend(Scene) unless scene_class.ancestors.include?(Scene)
+    unless Input.singleton_class.ancestors.include?(InputHook)
+      Input.singleton_class.prepend(InputHook)
+    end
+    AshDroidLog.log("ds: battle menus hooked (#{scene_class.name})")
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: install #{e.class}: #{e.message}")
+  end
+end
+
 # Spanish word order fixes in game classes, applied as each class is defined
 # (game scripts load after this file).
 module AshDroidFixes
@@ -1241,6 +1523,15 @@ module AshDroidFixes
     AshDroidLog.log("MessageTypes hook error: #{e.class}: #{e.message}")
   end
 
+  def self.hook_battle_scene(klass)
+    return if klass.ancestors.include?(BattleFightAfterSwitch)
+    klass.prepend(BattleFightAfterSwitch)
+    AshDroidLog.log("fix applied: #{klass.name}")
+    AshDroidDS.install(klass)
+  rescue StandardError => e
+    AshDroidLog.log("battle scene hook error: #{e.class}: #{e.message}")
+  end
+
   HOOKS = {
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
     "AbilitySplashBar" => AbilitySplashBarES,
@@ -1258,8 +1549,8 @@ module AshDroidFixes
         AshDroidLog.log("fix applied: Pokemon::MAX_NAME_SIZE = 12")
       end
     },
-    "PokeBattle_Scene" => BattleFightAfterSwitch, # Essentials v19
-    "Battle::Scene" => BattleFightAfterSwitch,    # Essentials v20+
+    "PokeBattle_Scene" => ->(m) { AshDroidFixes.hook_battle_scene(m) }, # Essentials v19
+    "Battle::Scene" => ->(m) { AshDroidFixes.hook_battle_scene(m) },    # Essentials v20+
     "PokemonSystem" => PokemonSystemLang,
     "Settings" => ->(m) { AshDroidFixes.add_language(m) if m.const_defined?(:LANGUAGES, false) },
   }
