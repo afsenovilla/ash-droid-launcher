@@ -128,7 +128,7 @@ final class DsView extends View
         mToggle.set(w * 0.60f, footTop, w - pad, footTop + footH);
         String toggle = getResources().getString(mOwner.hideTopMenu() ? R.string.ds_top_menu_hidden : R.string.ds_top_menu_shown);
         button(c, mToggle, PANEL, false, mPressed == 12);
-        label(c, toggle, mToggle.centerX(), mToggle.centerY(), mToggle.width() - pad * 2, footH * 0.30f, 0xFFB8C0CC);
+        label(c, toggle, mToggle.centerX(), mToggle.centerY(), mToggle.width() - pad * 2, footH * 0.34f, 0xFFB8C0CC);
 
         if (s.screen == DsState.IDLE) return;
 

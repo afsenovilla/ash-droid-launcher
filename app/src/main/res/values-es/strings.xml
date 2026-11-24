@@ -189,6 +189,6 @@
     <string name="game_unverified">ZIP del juego sin verificar</string>
 
     <!-- Second-screen battle menus (dual-screen handhelds) -->
-    <string name="ds_top_menu_hidden">Menú de combate en la pantalla del juego: oculto</string>
-    <string name="ds_top_menu_shown">Menú de combate en la pantalla del juego: visible</string>
+    <string name="ds_top_menu_hidden">Menú del juego: oculto</string>
+    <string name="ds_top_menu_shown">Menú del juego: visible</string>
 </resources>

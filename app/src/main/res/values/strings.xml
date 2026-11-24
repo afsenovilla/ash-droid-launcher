@@ -194,6 +194,6 @@
     <string name="game_unverified">Game zip not verified</string>
 
     <!-- Second-screen battle menus (dual-screen handhelds) -->
-    <string name="ds_top_menu_hidden">Battle menu on the game screen: hidden</string>
-    <string name="ds_top_menu_shown">Battle menu on the game screen: shown</string>
+    <string name="ds_top_menu_hidden">Game-screen menu: hidden</string>
+    <string name="ds_top_menu_shown">Game-screen menu: shown</string>
 </resources>
