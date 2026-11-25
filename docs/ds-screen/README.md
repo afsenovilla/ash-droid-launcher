@@ -197,11 +197,10 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   left, beside the home button (back to the battle commands) and VOLVER; it is greyed out when the Pokémon
   cannot fight or is already out.
 - Party, OBJETO (`ds_mock_party.py ... item`): the Pokémon's panel and USAR, DAR, and QUITAR when it holds
-  something. What it holds lives in the Pokémon's own panel, which grows by one line under its data: the
-  item's icon at 2x and its name in the panel's text style; the footer keeps a normal help line. The buttons
-  are slightly shorter here (24 art px, pitch 28) to make room. Tried and rejected: a cream strip under the
-  panel (odd shape, crowded the buttons) and the item at the bottom left in place of the help line (that
-  corner is for instructions on every other screen).
+  something, at the same size as the Pokémon's options. Where the game draws its generic held item mark by
+  the Pokémon icon, the item's own icon is drawn instead (2x), and the help line names it ("Equipado: Baya
+  Aranja", from the game's translations). Tried and rejected: a cream strip under the panel, the item at the
+  bottom left in place of the help line, and an extra line inside a taller panel.
 - Summary, moves (approved; `ds_mock_party.py ... moves`): the second screen shows the four moves at once in a 2x2
   grid, so nothing has to be touched to read them: name, the game's own type and category icons (`types.png`, `category.png`, at 3x) side by
   side, then power, accuracy and PP, labels and values at

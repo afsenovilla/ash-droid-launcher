@@ -115,20 +115,15 @@ def actions(options=None, line=None, held=False):
     stacked under it as wide medium buttons, back at the bottom."""
     CARD = 356; room = (CARD - 296) * 2 // U                       # panel width in logical px; extra content px
     s = backdrop(); x0 = (W - CARD) // 2
-    EXTRA = 45 if held else 0                                      # logical px the panel grows for the held item line
-    s.alpha_composite(repeat_row(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), 100, EXTRA), (x0, 8))
+    s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
     one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
     contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
-    if held:
-        # What it holds lives in the Pokémon's own panel, on a line under its data: the item's icon (2x) and name,
-        # in the panel's text style. The game's held item mark stays by the Pokémon icon, as in the game.
-        one.alpha_composite(big(img('Party/icon_item.png')), (x0 * 2 + 44 * U, 16 + 44 * U))
+    if held:                                                       # where the game puts its generic held item mark: the item's own icon (2x)
         icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((96, 96), Image.NEAREST)
-        one.alpha_composite(icon, (x0 * 2 + 16 * U, 16 + 80 * U))
-        text(d, held[1], x0 * 2 + 52 * U, 16 + 81 * U, WHITE, DARK)
+        one.alpha_composite(icon, (x0 * 2 + 48 * U, 16 + 40 * U))
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
-    top, pitch, high = (402, 28, 24) if held else (314, 31, 27)    # slightly shorter buttons make room for the taller panel
+    top, pitch, high = 314, 31, 27
     grid = Image.new('RGBA', (bw + 2, len(options) * pitch + 2), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(options):
         by = n * pitch
@@ -275,4 +270,4 @@ def drag():
 if __name__ == '__main__':
     if MODE == 'battle': SELECTED = 1                              # in battle: a Pokémon that is not out
     {'battle': battle_info, 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
-     'item': lambda: actions(ITEM_ACTIONS, '¿Qué hacer con el objeto?', held=('ORANBERRY', 'Baya Aranja'))}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
+     'item': lambda: actions(ITEM_ACTIONS, 'Equipado: Baya Aranja', held=('ORANBERRY', 'Baya Aranja'))}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
