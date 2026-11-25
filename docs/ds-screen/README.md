@@ -196,11 +196,15 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   icons at 3x. Ability, item and stats were tried and dropped: too much to read at a glance. CAMBIAR sits at the bottom
   left, beside the home button (back to the battle commands) and VOLVER; it is greyed out when the Pokémon
   cannot fight or is already out.
-- Party, OBJETO (`ds_mock_party.py ... item`): the Pokémon's panel and USAR, DAR, and QUITAR when it holds
-  something, at the same size as the Pokémon's options. Where the game draws its generic held item mark by
-  the Pokémon icon, the item's own icon is drawn instead (2x), and the help line names it ("Equipado: Baya
-  Aranja", from the game's translations). Tried and rejected: a cream strip under the panel, the item at the
-  bottom left in place of the help line, and an extra line inside a taller panel.
+- Party, OBJETO (`ds_mock_party.py ... item`), approved: the Pokémon's panel and USAR, DAR, and QUITAR when it
+  holds something, at the same size as the Pokémon's options. The help line names the item ("Equipado: Baya
+  Aranja", from the game's translations; "Sin objeto equipado" and no QUITAR when it holds nothing).
+- Held item icon, everywhere a party panel is drawn (party, its sub-screens, home list): where the game draws
+  its generic held item mark by the Pokémon icon, the item's own icon is drawn instead (2x; 72 px in the
+  compact home list).
+- Help line on the party screens: inside a window drawn with the game's menu frame (`Windowskins/choice 1`,
+  2x, dark text with grey shadow), bottom left, as the game's own party screen does. No window when there is
+  no line (moves screen).
 - Summary, moves (approved; `ds_mock_party.py ... moves`): the second screen shows the four moves at once in a 2x2
   grid, so nothing has to be touched to read them: name, the game's own type and category icons (`types.png`, `category.png`, at 3x) side by
   side, then power, accuracy and PP, labels and values at

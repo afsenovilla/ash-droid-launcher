@@ -86,11 +86,12 @@ HOUSE = ['.....#.....', '....###....', '...#####...', '..#######..', '.#########
 def footer(one, d, line, home=False):
     """Help line, the back button and, on screens more than one step away from home, a home button beside it."""
     # The help line sits in a window drawn with the game's own menu frame (2x), as on the game's party screen.
-    skin = Image.open(GAME + '/Graphics/Windowskins/choice 1.png').convert('RGBA')
-    bw, bh = (300 if home else 372), 64                            # in frame px; it ends before the buttons
-    box = repeat_row(repeat_col(skin, 24, bw - 48), 24, bh - 48).resize((bw * 2, bh * 2), Image.NEAREST)
-    one.alpha_composite(box, (12, H * 2 - bh * 2 - 12))
-    text(d, line, 12 + 36, H * 2 - 12 - bh - 52, (80, 80, 88), (160, 160, 168), font=HELP, k=2)
+    if line:
+        skin = Image.open(GAME + '/Graphics/Windowskins/choice 1.png').convert('RGBA')
+        bw, bh = (300 if home else 372), 64                            # in frame px; it ends before the buttons
+        box = repeat_row(repeat_col(skin, 24, bw - 48), 24, bh - 48).resize((bw * 2, bh * 2), Image.NEAREST)
+        one.alpha_composite(box, (12, H * 2 - bh * 2 - 12))
+        text(d, line, 12 + 36, H * 2 - 12 - bh - 52, (80, 80, 88), (160, 160, 168), font=HELP, k=2)
     m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
     key = Image.new('RGBA', (100, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
     m.button(kd, (29, 1, 98, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 63, 11, 1)
