@@ -22,7 +22,7 @@ ACTIONS = [('POKéMON', (248, 144, 200)), ('MOCHILA', (240, 168, 48)), ('MAPA', 
 
 def home():
     """Overworld home. Left: the party as six of the game's own party panels (its panel, ball, HP bar, level and
-    status images; the Pokémon's icon, the HP bar and the status icon at 3x, the rest at 2x; no HP numbers here), made wider by repeating a column and lower by leaving out lines of their two flat
+    status images; the HP bar and the status icon at 3x, the Pokémon's icon at 160 px, the rest at 2x; no HP numbers here), made wider by repeating a column and lower by leaving out lines of their two flat
     bands, so six fit in a column. Right: the five buttons, drawn by code. Needs the game folder (the one above
     the font's)."""
     import os
@@ -68,9 +68,11 @@ def home():
         if row is not None: marks.append((row, y))
         over.alpha_composite(pic('Pictures/Party/overlay_lv.png'), (12, y + 60)); text(od, str(lv), 34, y + 47, white, dark, f=small)
     col = col.resize((PW * 2, col.height * 2), Image.NEAREST); big.alpha_composite(col, (10, 102))
-    for n, y in mons:                                             # the Pokémon's icon at 3x
-        ic = pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)).resize((192, 192), Image.NEAREST)
-        big.alpha_composite(ic, (10 + 126 - 96, 102 + y * 2 + 66 - 96))
+    for n, y in mons:
+        # The game's icons are 32x32 drawings stored with doubled pixels, so they can be shown at 5 screen px per
+        # drawn pixel (160 px): between the file at 2x (128) and at 3x (192), and still pixel-perfect.
+        ic = pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)).resize((32, 32), Image.NEAREST).resize((160, 160), Image.NEAREST)
+        big.alpha_composite(ic, (10 + 124 - 80, 102 + y * 2 + 72 - 80))
     big.alpha_composite(over.resize((PW * 2, over.height * 2), Image.NEAREST), (10, 102))
     for y, faint, hp, tot in bars:                                # the game's HP bar at 3x
         x0, y0 = 10 + 212, 102 + y * 2 + 90
