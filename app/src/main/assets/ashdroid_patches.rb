@@ -1584,12 +1584,18 @@ module AshDroidDSUI
     party_backdrop(s.ops)
     mon = d[:mon]
     room = (CARD_W - PANEL_W) * 2 / U
-    cx0 = 20
-    panel(s.ops, panel_name(d[:slot].to_i, mon, true), cx0 / 2 + 32, 8, CARD_W - 256)
-    panel_contents(s.ops, d[:slot].to_i, mon, cx0 + 64, 16, true, room)
-    pw = 140
-    ph = 100
-    px = 16
+    panel(s.ops, panel_name(d[:slot].to_i, mon, true), 16, 8, CARD_W - 256)
+    panel_contents(s.ops, d[:slot].to_i, mon, 32, 16, true, room)
+    # previous / next Pokémon, beside its panel
+    [true, false].each do |lft|
+      usable = lft ? !d[:first] : !d[:last]
+      bx = lft ? 1 : 33
+      s.button(826, 52, [bx, 1, bx + 28, 27], usable ? BLUE : GREY, nil, usable ? (lft ? "mon:prev" : "mon:next") : nil, shadow: PARTY_SHADOW,
+               icon: arrow_icon(13, 10, lft), disabled: !usable)
+    end
+    pw = 202
+    ph = 66
+    px = (W - pw * S) / 2
     py = 300
     art = Art.new(px, py, pw, ph)
     box = [0, 0, pw - 1, ph - 1]
@@ -1598,44 +1604,46 @@ module AshDroidDSUI
     types = pic("types")
     left = px + 36
     right = px + pw * S - 36
+    mid = W / 2 + 12
     icon = ->(row, x, cy) { img(s.ops, types, 0, row.to_i * 28, 64, 28, x, cy - 42, 3) }
-    txt(s.ops, l(:type), left, 364, 65, INK, INK_SH, "l", "m")
-    (d[:types] || []).first(2).each_with_index { |row, n| icon.call(row, left + 210 + 204 * n, 364) }
-    txt(s.ops, l(:item), left, 452, 65, INK, INK_SH, "l", "m")
+    txt(s.ops, l(:type), left, 360, 65, INK, INK_SH, "l", "m")
+    (d[:types] || []).first(2).each_with_index { |row, n| icon.call(row, left + 168 + 198 * n, 360) }
+    txt(s.ops, l(:item), mid, 360, 65, INK, INK_SH, "l", "m")
     if mon[:item]
-      whole(s.ops, mon[:item], left + 204, 452 - 48, 2)
-      txt(s.ops, d[:item_name], left + 204 + 104, 452, 65, INK, INK_SH, "l", "m", { "fit" => right - left - 310 })
+      whole(s.ops, mon[:item], mid + 204, 360 - 48, 2)
+      txt(s.ops, d[:item_name], mid + 204 + 100, 360, 52, INK, INK_SH, "l", "m", { "fit" => right - mid - 304 })
     else
-      txt(s.ops, "-", left + 210, 452, 65, INK, INK_SH, "l", "m")
+      txt(s.ops, "-", mid + 210, 360, 65, INK, INK_SH, "l", "m")
     end
-    fill(s.ops, left, 502, right - left + 1, 6, [208, 208, 196])
-    4.times do |n|
-      y = 564 + 88 * n
+    fill(s.ops, left, 414, right - left + 1, 6, [208, 208, 196])
+    4.times do |n|                              # its moves, two by two: type, name, PP
+      x = n.even? ? left : mid
+      edge = n.even? ? mid - 36 : right
+      y = 486 + 100 * (n / 2)
       m = (d[:moves] || [])[n]
       if m
-        icon.call(m[:row], left, y)
-        txt(s.ops, m[:name], left + 210, y, 65, INK, INK_SH, "l", "m", { "fit" => right - left - 210 - 190 })
-        txt(s.ops, "#{m[:pp]}/#{m[:tpp]}", right, y, 65, INK, INK_SH, "r", "m")
+        icon.call(m[:row], x, y)
+        txt(s.ops, m[:name], x + 204, y - 22, 52, INK, INK_SH, "l", "m", { "fit" => edge - x - 204 })
+        txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", x + 204, y + 26, 39, [104, 104, 128], [200, 200, 220], "l", "m")
       else
-        txt(s.ops, "-", left + 210, y, 65, INK, INK_SH, "l", "m")
+        txt(s.ops, "-", x + 204, y, 65, INK, INK_SH, "l", "m")
       end
     end
-    # right column: previous / next Pokémon, then what the game offers for this one
-    colx = 876
-    [true, false].each do |lft|
-      usable = lft ? !d[:first] : !d[:last]
-      bx = lft ? 1 : 31
-      s.button(colx, 10, [bx, 1, bx + 26, 25], usable ? BLUE : GREY, nil, usable ? (lft ? "mon:prev" : "mon:next") : nil, shadow: PARTY_SHADOW,
-               icon: arrow_icon(12, 9, lft), disabled: !usable)
+    # what the game offers for this one: a row of up to three wide buttons, and a second row beside VOLVER
+    opts = (d[:options] || []).first(5)
+    top = opts.first(3)
+    k = [top.length, 1].max
+    bw = (204 - 2 * (k - 1)) / k
+    top.each_with_index do |o, n|
+      x = 1 + n * (bw + 2)
+      s.button(0, 704, [x, 1, x + bw - 1, 28], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW)
     end
-    opts = d[:options] || []
-    high, pitch = opts.length > 4 ? [21, 24] : [27, 31]
-    opts.first(6).each_with_index do |o, n|
-      by = 32 + n * pitch
-      s.button(colx, 10, [1, by, 57, by + high], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW,
-               center: [29, by + high / 2])
+    fy = H - 26 * S - 2
+    opts.drop(3).each_with_index do |o, n|
+      x = 2 + n * 66
+      s.button(2, fy, [x, 1, x + 63, 22], option_color(o), upper(o[:label]), o[:cmd], shadow: FOOT_SHADOW)
     end
-    footer(s, d[:help], false)
+    s.button(2, fy, [134, 1, 203, 22], BLUE, l(:back), "back", shadow: FOOT_SHADOW, center: [168, 11])
     s.result("id" => "sheet")
   end
 
