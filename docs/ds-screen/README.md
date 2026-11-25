@@ -130,7 +130,7 @@ Mock-ups: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> drag` and `
   kind. Buttons are 162 px tall; three fit at this size, with more the rows get lower.
 - The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens.
 
-## Summary remote (pending approval)
+## Summary remote (approved)
 
 Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> summary`.
 
@@ -148,7 +148,7 @@ Every screen more than one step away from the overworld home shows a round home 
 drawn by code) to the left of VOLVER. VOLVER goes up one level; home goes straight back to the overworld home.
 First-level screens (bag, party, map, profile) only show VOLVER, which already leads home.
 
-## Profile (pending approval)
+## Profile (approved)
 
 Mock-up: `ds_mock_profile.py <game folder> <pixelfonts.txt> <out.png>`.
 
@@ -159,3 +159,14 @@ Mock-up: `ds_mock_profile.py <game folder> <pixelfonts.txt> <out.png>`.
   the page image whole, labels and awards at `UI_GCCard`'s positions), wrapping around as the game does. In
   the game that card is opened with the GCCARD item, so those pages are only offered when the player has it;
   without it there are no arrows. Bottom left: which card is shown (`ds_mock_profile.py ... <out.png> 1-5`).
+
+## Save (pending approval)
+
+Mock-up: `ds_mock_save.py <pixelfonts.txt> <power green.ttf> <out.png> [done]`.
+
+- The game's save screen has no art of its own (a text window, then a yes/no question), so this one is drawn
+  by code in the style of the home and route screens: a panel with the place (green) and player, time, badges
+  and Pokédex (values in the game's blue), the question, and GUARDAR (large, green) beside VOLVER.
+- After saving, the line becomes "<player> guardó la partida." and only VOLVER stays. The game's warning
+  about overwriting a different save file is shown as a second confirmation before saving.
+- The home screen's GUARDAR button is greyed out while the game has saving disabled.
