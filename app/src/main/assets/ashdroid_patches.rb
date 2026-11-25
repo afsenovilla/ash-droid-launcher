@@ -1274,14 +1274,14 @@ module AshDroidDSUI
     # (px, py): where the mock-up pasted its art canvas; box: the button in it, in art pixels. bounce: it is
     # under the cursor, which shows as the game's "selected" button.
     def button(px, py, box, col, text, cmd, shadow: nil, r: 9, rim: 2, k: 1, center: nil, bounce: false, icon: nil,
-               into: @ops, disabled: false)
+               into: @ops, disabled: false, chosen: false)
       x0, y0, x1, y1 = box
       w = x1 - x0 + 1
       h = y1 - y0 + 1
       id = cmd && !disabled ? next_id : nil
       sx = px + x0 * S
       sy = py + y0 * S
-      AshDroidDSUI.game_box(into, sx, sy, w * S, h * S, id || bounce ? col : GREY, id, bounce)
+      AshDroidDSUI.game_box(into, sx, sy, w * S, h * S, id || bounce || chosen ? col : GREY, id, bounce, chosen)
       art = Art.new(px + (x0 - 1) * S, py + (y0 - 1) * S, w + 2, h + 2)
       cx, cy = center ? [center[0] - x0 + 1, center[1] - y0 + 1] : [(1 + w) / 2, (1 + h) / 2]
       art.label(text, cx, cy, k, w - 4) if text
@@ -1720,12 +1720,15 @@ module AshDroidDSUI
   # red border) while the finger is on it. selected: it is under the cursor, which keeps its colour and
   # bobs (decided: the cursor never changes a button's colour).
   # Screen px; the image is drawn at 2x.
-  def self.game_box(ops, x, y, w, h, col, id = nil, selected = false)
+  # chosen: the one that is on among several (a tab, a page): it shows the game's "selected" version all
+  # the time, so the others can keep their colour and still look like buttons.
+  def self.game_box(ops, x, y, w, h, col, id = nil, selected = false, chosen = false)
     lw = w / 2
     lh = h / 2
     ["", "_sel"].each do |suffix|
       pressed = suffix == "_sel"
-      next if pressed && !id
+      next if pressed && !id && !chosen
+      next if !pressed && chosen
       f = pic("Party/icon_cancel#{suffix}")
       fw, fh = size(f)
       next if fw <= 0
@@ -1744,7 +1747,7 @@ module AshDroidDSUI
         ys.instance_variable_set(:@segs, [[0, a, a], [fh - (lh - a), lh - a, lh - a]])
       end
       extra = {}
-      extra[pressed ? "dn_of" : "up_of"] = id if id
+      extra[pressed ? "dn_of" : "up_of"] = id if id && !chosen
       extra["bn"] = 1 if selected && !pressed
       tone = pressed ? col.map { |v| v + (255 - v) * 45 / 100 } : col
       extra["fx"] = "tint:#{hex(tone)}"
@@ -1792,8 +1795,8 @@ module AshDroidDSUI
     l(:pages).each_with_index do |label, n|
       by = 30 + n * 23
       on = n == d[:page].to_i
-      s.button(px, 8, [x0 + 1, by, x0 + 119, by + 20], on ? ORANGE : GREY, label, d[:egg] ? nil : "page:#{n}", shadow: PARTY_SHADOW,
-               center: [x0 + 60, by + 10], disabled: d[:egg] && !on)
+      s.button(px, 8, [x0 + 1, by, x0 + 119, by + 20], on ? ORANGE : BLUE, label, d[:egg] ? nil : "page:#{n}", shadow: PARTY_SHADOW,
+               center: [x0 + 60, by + 10], disabled: d[:egg] && !on, chosen: on)
     end
     footer(s, l(:sum_help), true)
     s.result("id" => "summary")
@@ -2116,8 +2119,8 @@ module AshDroidDSUI
     tabs.each_with_index do |t, i|
       x = 4 + i * (tw + 3)
       on = i == d[:tab].to_i
-      s.button(0, 0, [x, 17, x + tw - 1, 38], on ? (t[:col] || GREEN) : GREY, upper(t[:label]), "tab:#{i}", shadow: LAVENDER_SHADOW, rim: 1,
-               center: [x + tw / 2, 27])
+      s.button(0, 0, [x, 17, x + tw - 1, 38], t[:col] || GREEN, upper(t[:label]), "tab:#{i}", shadow: LAVENDER_SHADOW, rim: 1,
+               center: [x + tw / 2, 27], chosen: on)
     end
     rows = d[:rows] || []
     inner = []
