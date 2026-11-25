@@ -37,8 +37,11 @@ def home():
         m.pix_text(a, label, (b[0]+b[2])//2, (b[1]+b[3])//2, 1)
     big = m.up(a).convert('RGBA'); d = ImageDraw.Draw(big)
     m.ttf(d, 'RUTA 1', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
-    m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
+    x = (AW - 6) * S                                              # the clock, with air on both sides of the colon
+    for part in ('34', ':', '12'):
+        m.ttf(d, part, x, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm'); x -= int(ImageFont.truetype(m.TTF, 52).getlength(part)) + 8
     PW, PH, PITCH = 340, 80, 81
+    marks = []                                                    # status icons, pasted afterwards at 3x
     def compact(im):                                              # 256x98 -> PW x PH along lines where the image is flat
         top, mid, low = im.crop((0, 0, 256, 30)), im.crop((0, 39, 256, 70)), im.crop((0, 79, 256, 98))
         out = Image.new('RGBA', (256, PH)); out.paste(top, (0, 0)); out.paste(mid, (0, 30)); out.paste(low, (0, 61))
@@ -55,18 +58,21 @@ def home():
         if i >= len(PARTY): col.alpha_composite(compact(pic('Pictures/Party/panel_blank.png')), (0, y)); continue
         n, lv, hp, tot, st = PARTY[i]; faint = hp == 0
         col.alpha_composite(compact(pic('Pictures/Party/panel_rect%s.png' % ('_faint' if faint else ''))), (0, y))
-        col.alpha_composite(pic('Pictures/Party/overlay_hp_back%s.png' % ('_faint' if faint else '')), (96, y + 42))
+        col.alpha_composite(pic('Pictures/Party/overlay_hp_back%s.png' % ('_faint' if faint else '')), (106, y + 42))
         col.alpha_composite(pic('Pictures/Party/icon_ball.PNG'), (8, y + 2))
         col.alpha_composite(pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)), (28, y + 4))
-        text(cd, n, 96, y + 4, white, dark)
+        text(cd, n, 106, y + 4, white, dark)
         text(cd, '%d/%d' % (hp, tot), PW - 14, y + 36, white, dark, 1)
         if hp:
             w = int(round(hp * 96.0 / tot / 2)) * 2; zone = 2 if hp <= tot // 4 else 1 if hp <= tot // 2 else 0
-            col.alpha_composite(pic('Pictures/Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8)), (128, y + 44))
+            col.alpha_composite(pic('Pictures/Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8)), (138, y + 44))
         row = 5 if faint else {'PAR': 3}.get(st)                   # row of the game's statuses.png (example: paralysed; 5 = fainted)
-        if row is not None: col.alpha_composite(pic('Pictures/statuses.png').crop((0, 16 * row, 44, 16 * row + 16)), (PW - 58, y + 12))
+        if row is not None: marks.append((row, y))
         col.alpha_composite(pic('Pictures/Party/overlay_lv.png'), (12, y + 60)); text(cd, str(lv), 34, y + 47, white, dark, f=small)
     col = col.resize((PW * 2, col.height * 2), Image.NEAREST); big.alpha_composite(col, (10, 102))
+    for row, y in marks:
+        mark = pic('Pictures/statuses.png').crop((0, 16 * row, 44, 16 * row + 16)).resize((132, 48), Image.NEAREST)
+        big.alpha_composite(mark, (10 + PW * 2 - 132 - 24, 102 + y * 2 + 24))
     return big.convert('RGB')
 
 def topbar(d, AWd=AW):
