@@ -348,12 +348,14 @@ repeating a column and 80 px tall by leaving out lines of their two flat bands, 
 five buttons. Rule that follows: where the game has an image for something (status, HP bar, panels, type and
 category icons), that image is used; code-drawn elements are for what the game has no art for.
 
-## Reported on device, to fix (beta-ds-184)
+## Reported on device (beta-ds-184 / 185)
 
-- **Pokédex**: the picture of the game's entry page shows correctly, but the INFO / AREA / FORMS tabs at the
-  top of the second screen do nothing (confirmed by the user). Works in the simulator, so the cause is on the
-  game side: check the launcher log for "ds: dexshot" / "ds: dexframe" lines (an error drawing pages 2 and 3
-  off screen is the first suspect). Not started.
+- **Pokédex tabs**: not a bug. The INFO / AREA / FORMS tabs of the second screen work on the device. The
+  report was about touching the game's own screen (the list's scroll arrows on the top screen), which does
+  nothing: the game has no touch support of its own, and only the second screen is touch-driven.
+- **Pokédex layout**: the game's page already has its own INFO / AREA / FORMS strip, so the second screen's
+  tabs duplicate it, and the picture is smaller than the screen allows. To redo: drop our tabs, make the
+  game's strip inside the picture touchable, and decide the size (2x exact, or 2.5x like the trainer card).
 
 ## Idea for later: foldable phones (not started, nothing tested)
 
