@@ -108,7 +108,7 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
 
 - Replica of the game's party screen: its panels (round for the first slot, rect for the rest, faint and
   selected variants), ball, HP bar, level and status images, fonts, colours and the offsets used by `UI_Party`.
-- Panels keep their size and the 16 px drop of the right column, but are spread out (280 px column pitch,
-  138 px row pitch) to use the taller screen. The background is the game's, extended by repeating lines, with
+- Panels keep their size and the 16 px drop of the right column, but are spread out (280 px column pitch, 134 px row pitch) and made 126 px tall by repeating lines in each band,
+  to use the taller screen. The background is the game's, extended by repeating lines, with
   the sockets drawn on it filled with the frame colour.
 - Bottom band: help line and VOLVER.

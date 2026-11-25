@@ -1,7 +1,7 @@
 # Mock-up of the party screen on the second screen: a replica of the game's own party screen (same images,
 # fonts, colours and offsets inside each panel as UI_Party in the game's scripts), shown at 2x. The six panels
-# keep their size and the right column keeps its 16 px drop, but they are spread out to use the taller screen
-# and be easy touch targets. The game's 512x384 background is extended to 620x540 by repeating lines (never
+# keep their width and the right column keeps its 16 px drop, but they are spread out and made taller (lines
+# repeated in each of their two bands, never scaled) to use the taller screen and be easy touch targets. The game's 512x384 background is extended to 620x540 by repeating lines (never
 # scaled) and the panel sockets drawn on it are filled with the frame's own colour, since the panels no longer
 # sit on them. Bottom band: the help line and the back button (approved button style).
 # Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>
@@ -28,7 +28,7 @@ PARTY = [('Pikachu', 'PIKACHU', 5, 18, 18, 'm'), ('Pidgey', 'PIDGEY', 4, 9, 16, 
          ('Rattata', 'RATTATA', 3, 0, 13, 'm'), ('Caterpie', 'CATERPIE', 3, 12, 12, 'm')]
 SELECTED = 0
 SIDE, MID, BOTTOM = 54, 76, 80
-def slot_xy(i): return 42 + (i % 2) * 280, 14 + 16 * (i % 2) + 138 * (i // 2)
+def slot_xy(i): return 42 + (i % 2) * 280, 8 + 16 * (i % 2) + 134 * (i // 2)
 
 def repeat_col(im, x, n):
     out = Image.new('RGBA', (im.width + n, im.height)); out.paste(im.crop((0, 0, x, im.height)), (0, 0))
@@ -37,28 +37,32 @@ def repeat_row(im, y, n):
     out = Image.new('RGBA', (im.width, im.height + n)); out.paste(im.crop((0, 0, im.width, y)), (0, 0))
     out.paste(im.crop((0, y, im.width, y + 1)).resize((im.width, n)), (0, y)); out.paste(im.crop((0, y, im.width, im.height)), (0, y + n)); return out
 
+GROW = 14                                                          # extra rows in each of the panel's two bands
+def tall(im): return repeat_row(repeat_row(im, 60, GROW), 46, GROW)   # 98 -> 126 px, by repeating lines
+
 def panel(s, d, i, mon):
     x, y = slot_xy(i)
-    if not mon: s.alpha_composite(img('Party/panel_blank.png'), (x, y)); return
+    if not mon: s.alpha_composite(tall(img('Party/panel_blank.png')), (x, y)); return
     name, species, lv, hp, total, gender = mon
     kind = 'round' if i == 0 else 'rect'; sel = i == SELECTED; faint = hp == 0
-    s.alpha_composite(img('Party/panel_%s%s%s.png' % (kind, '_faint' if faint else '', '_sel' if sel else '')), (x, y))
-    s.alpha_composite(img('Party/overlay_hp_back%s.png' % ('_faint' if faint else '')), (x + 96, y + 50))
-    s.alpha_composite(img('Party/icon_ball%s.PNG' % ('_sel' if sel else '')), (x + 10, y))
+    s.alpha_composite(tall(img('Party/panel_%s%s%s.png' % (kind, '_faint' if faint else '', '_sel' if sel else ''))), (x, y))
+    up, low = y + GROW // 2, y + GROW + GROW // 2                  # contents of the upper and lower band, re-centred
+    s.alpha_composite(img('Party/overlay_hp_back%s.png' % ('_faint' if faint else '')), (x + 96, low + 50))
+    s.alpha_composite(img('Party/icon_ball%s.PNG' % ('_sel' if sel else '')), (x + 10, up))
     icon = Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64))
-    s.alpha_composite(icon, (x + 60 - 32, y + 40 - 32))
-    text(d, name, x + 96, y + 10, WHITE, DARK)
-    text(d, '%3d /%3d' % (hp, total), x + 224, y + 54, WHITE, DARK, 1)
+    s.alpha_composite(icon, (x + 60 - 32, up + 4 + 40 - 32))
+    text(d, name, x + 96, up + 10, WHITE, DARK)
+    text(d, '%3d /%3d' % (hp, total), x + 224, low + 54, WHITE, DARK, 1)
     if hp > 0:
         w = max(1, hp * 96.0 / total); w = int(round(w / 2)) * 2
         zone = 2 if hp <= total // 4 else 1 if hp <= total // 2 else 0
-        s.alpha_composite(img('Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8)), (x + 128, y + 52))
+        s.alpha_composite(img('Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8)), (x + 128, low + 52))
     else:
-        s.alpha_composite(img('statuses.png').crop((0, 16 * 5, 44, 16 * 6)), (x + 78, y + 68))
-    if gender == 'm': text(d, '♂', x + 224, y + 10, (0, 112, 248), (120, 184, 232))
-    else: text(d, '♀', x + 224, y + 10, (232, 32, 16), (248, 168, 184))
-    s.alpha_composite(img('Party/overlay_lv.png'), (x + 20, y + 70))
-    text(d, str(lv), x + 42, y + 57, WHITE, DARK, font=SMALL)
+        s.alpha_composite(img('statuses.png').crop((0, 16 * 5, 44, 16 * 6)), (x + 78, low + 68))
+    if gender == 'm': text(d, '♂', x + 224, up + 10, (0, 112, 248), (120, 184, 232))
+    else: text(d, '♀', x + 224, up + 10, (232, 32, 16), (248, 168, 184))
+    s.alpha_composite(img('Party/overlay_lv.png'), (x + 20, low + 70))
+    text(d, str(lv), x + 42, low + 57, WHITE, DARK, font=SMALL)
 
 def screen():
     s = repeat_row(repeat_row(repeat_col(repeat_col(img('Party/bg.PNG'), 511, SIDE), 0, SIDE), 370, BOTTOM), 320, MID)
