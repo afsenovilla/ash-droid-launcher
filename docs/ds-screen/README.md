@@ -77,3 +77,26 @@ repository or the APK.
 - Mock-ups must be judged at the screen's real resolution (1240x1080): halved previews show the 3x elements with
   uneven pixels.
 
+
+## Region map (approved for now)
+
+Mock-up: `ds_mock_map.py <game folder> <pixelfonts.txt> <out.png> [zoom]`.
+
+- Top bar: region and place on the left, "Estás aquí" on the right.
+- The map fills the area between the top bar and the buttons. Integer zoom only: 2x shows the whole region
+  and is the default; 3x and 4x are centred on the player and clamped to the map edges. `+` / `-` buttons sit
+  over the bottom right corner of the map; drag or D-pad to pan when zoomed in.
+- Buttons: POKéMON SALVAJES (opens the route sheet) and VOLVER.
+- The game's map image mixes pixel sizes (terrain at double pixels, buildings at single pixels) and carries the
+  region logo; both come from the player's file and are shown as they are.
+
+## Wild Pokémon sheet (pending approval)
+
+Mock-up: `ds_mock_route.py <game folder> <pixelfonts.txt> <out.png>`, with the real table of Route 1.
+
+- Fire Ash's `encounters.dat` only has Land, Cave, OldRod, GoodRod, SuperRod (and BugContest): no surfing and
+  no time-of-day tables. Tabs are therefore HIERBA or CUEVA, and PESCA (split by rod); only the ones the map
+  has are shown. No day/night tags.
+- Entries of the same species are merged: rates added, level range widened. Sorted by rate.
+- Each row: the game's icon at 2x, name, levels, rate bar and percentage. Five rows visible, the list scrolls.
+- Species not seen in the Pokédex: flat silhouette of the icon and "???" as the name; levels and rate stay.

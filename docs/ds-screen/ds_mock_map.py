@@ -2,11 +2,11 @@
 # The map fills a viewport between a top bar (region, place) and a bottom row of buttons, at an integer
 # zoom (2x shows the whole region, 3x and 4x are centred on the player and clamped to the map edges).
 # The game's 512x384 frame is extended by repeating lines where it is uniform (never scaled).
-# Needs the game folder. Usage: ds_mock_map.py <game folder> <pixelfonts.txt> <out.png> [zoom=3]
+# Needs the game folder. Usage: ds_mock_map.py <game folder> <pixelfonts.txt> <out.png> [zoom=2]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, FONTS_TXT, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
-ZOOM = int(sys.argv[4]) if len(sys.argv) > 4 else 3
+ZOOM = int(sys.argv[4]) if len(sys.argv) > 4 else 2
 sys.argv = [sys.argv[0], FONTS_TXT, GAME + '/Fonts/power green.ttf']
 import ds_mock as m                                               # approved button style and lettering
 G = GAME + '/Graphics/Pictures/'
