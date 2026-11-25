@@ -147,3 +147,11 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> summary`.
 Every screen more than one step away from the overworld home shows a round home button (green, house glyph
 drawn by code) to the left of VOLVER. VOLVER goes up one level; home goes straight back to the overworld home.
 First-level screens (bag, party, map, profile) only show VOLVER, which already leads home.
+
+## Profile (pending approval)
+
+Mock-up: `ds_mock_profile.py <game folder> <pixelfonts.txt> <out.png>`.
+
+- Replica of the game's trainer card (the one the pause menu opens): card image, player sprite, the five rows
+  and the ID with `UI_TrainerCard`'s positions and colours, and the badges of the current region. Shown whole
+  at 2x, centred, over the card's own background colour. VOLVER under it.
