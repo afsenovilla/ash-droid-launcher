@@ -16,43 +16,57 @@ def slot(a, d, box, filled):
     if filled:
         d.rounded_rectangle((x0+27, y0+15, x1-9, y0+20), 2, fill=(56, 56, 72))  # HP bar
 
-PARTY = [('Pikachu', 5, 18, 18, None), ('Pidgey', 4, 9, 16, None), ('Rattata', 3, 3, 13, 'ENV'), ('Caterpie', 3, 0, 12, None)]
+PARTY = [('Pikachu', 5, 18, 18, None), ('Pidgey', 4, 9, 16, None), ('Rattata', 3, 3, 13, 'PAR'), ('Caterpie', 3, 0, 12, None)]
 # The profile button carries the player's name, as the game's own menu does
 ACTIONS = [('POKéMON', (248, 144, 200)), ('MOCHILA', (240, 168, 48)), ('MAPA', (88, 200, 88)), ('ASH', (64, 184, 184)), ('GUARDAR', (56, 136, 232))]
 
 def home():
+    """Overworld home. Left: the party as six of the game's own party panels (its panel, ball, HP bar, level and
+    status images, at 2x), made wider by repeating a column and lower by leaving out lines of their two flat
+    bands, so six fit in a column. Right: the five buttons, drawn by code. Needs the game folder (the one above
+    the font's)."""
+    import os
+    from PIL import ImageFont
+    game = os.path.dirname(os.path.dirname(m.TTF)); pic = lambda p: Image.open(os.path.join(game, 'Graphics', p)).convert('RGBA')
+    font = ImageFont.truetype(m.TTF, 26); small = ImageFont.truetype(os.path.join(game, 'Fonts', 'power green small.ttf'), 26)
     a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); m.background(d)
     d.rectangle((0, 0, AW, 14), fill=(72, 72, 104)); d.line((0, 15, AW, 15), fill=(240, 240, 248))
-    cells = [(4, 20 + i*26, 108, 20 + i*26 + 23) for i in range(6)]
-    for i, b in enumerate(cells):
-        slot(a, d, b, i < len(PARTY))
-        if i < len(PARTY):
-            n, lv, hp, tot, st = PARTY[i]; x0, y0, x1, y1 = b; f = hp / tot
-            col = (96, 208, 96) if f > 0.5 else (240, 200, 64) if f > 0.2 else (240, 88, 72)
-            tag = (160, 96, 200) if st else (200, 72, 72) if hp == 0 else None
-            end = x1 - 34 if tag else x1 - 9                       # the status tag sits at the end of the HP bar's row, clear of the name
-            if tag: d.rectangle((end + 1, y0+14, x1-8, y0+21), fill=(232, 228, 248))
-            full = end - 1 - (x0 + 28)
-            if hp: d.rectangle((x0+28, y0+16, x0+28+int(full*f), y0+19), fill=col)
-            if tag:
-                d.rounded_rectangle((x1-31, y0+13, x1-9, y0+22), 3, fill=m.shade(tag, 0.6))
-                d.rounded_rectangle((x1-30, y0+14, x1-10, y0+21), 2, fill=tag)
-    btns = [(114, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]   # wide enough for SAUVEGARDER / SPEICHERN
+    btns = [(118, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]   # wide enough for SAUVEGARDER / SPEICHERN
     for (label, col), b in zip(ACTIONS, btns):
         m.button(d, b, col, 9)
         m.pix_text(a, label, (b[0]+b[2])//2, (b[1]+b[3])//2, 1)
     big = m.up(a).convert('RGBA'); d = ImageDraw.Draw(big)
     m.ttf(d, 'RUTA 1', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
     m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
-    import os
-    icons = os.path.join(os.path.dirname(os.path.dirname(m.TTF)), 'Graphics', 'Pokemon', 'Icons')   # the game folder is the one above the font's
-    for (n, lv, hp, tot, st), b in zip(PARTY, cells):
-        ic = Image.open(os.path.join(icons, n.upper() + '.png')).convert('RGBA').crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST)
-        if hp == 0: ic = Image.merge('RGBA', (*ic.convert('L').convert('RGB').split(), ic.getchannel('A')))   # fainted: grey
-        big.alpha_composite(ic, (int((b[0] + 14.5) * S) - 64, int((b[1] + 11.5) * S) - 64))
-        m.ttf(d, n, (b[0]+27)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
-        m.ttf(d, 'Nv' + str(lv), (b[2]-9)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
-        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-20)*S, (b[1]+17.5)*S, 39, (255, 255, 255), None, 'mm')
+    PW, PH, PITCH = 340, 80, 81
+    def compact(im):                                              # 256x98 -> PW x PH along lines where the image is flat
+        top, mid, low = im.crop((0, 0, 256, 30)), im.crop((0, 39, 256, 70)), im.crop((0, 79, 256, 98))
+        out = Image.new('RGBA', (256, PH)); out.paste(top, (0, 0)); out.paste(mid, (0, 30)); out.paste(low, (0, 61))
+        wide = Image.new('RGBA', (PW, PH)); wide.paste(out.crop((0, 0, 128, PH)), (0, 0))
+        wide.paste(out.crop((128, 0, 129, PH)).resize((PW - 256, PH)), (128, 0)); wide.paste(out.crop((128, 0, 256, PH)), (128 + PW - 256, 0)); return wide
+    def text(dd, t, x, y, base, shadow, align=0, f=font):
+        w = dd.textlength(t, font=f); x = x - w if align == 1 else x; y += 10
+        for dx, dy in ((2, 0), (0, 2), (2, 2)): dd.text((x + dx, y + dy), t, font=f, fill=shadow, anchor='la')
+        dd.text((x, y), t, font=f, fill=base, anchor='la')
+    col = Image.new('RGBA', (PW, 6 * PITCH), (0, 0, 0, 0)); cd = ImageDraw.Draw(col); cd.fontmode = '1'
+    white, dark = (248, 248, 248), (40, 40, 40)
+    for i in range(6):
+        y = i * PITCH
+        if i >= len(PARTY): col.alpha_composite(compact(pic('Pictures/Party/panel_blank.png')), (0, y)); continue
+        n, lv, hp, tot, st = PARTY[i]; faint = hp == 0
+        col.alpha_composite(compact(pic('Pictures/Party/panel_rect%s.png' % ('_faint' if faint else ''))), (0, y))
+        col.alpha_composite(pic('Pictures/Party/overlay_hp_back%s.png' % ('_faint' if faint else '')), (96, y + 42))
+        col.alpha_composite(pic('Pictures/Party/icon_ball.PNG'), (8, y + 2))
+        col.alpha_composite(pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)), (28, y + 4))
+        text(cd, n, 96, y + 4, white, dark)
+        text(cd, '%d/%d' % (hp, tot), PW - 14, y + 36, white, dark, 1)
+        if hp:
+            w = int(round(hp * 96.0 / tot / 2)) * 2; zone = 2 if hp <= tot // 4 else 1 if hp <= tot // 2 else 0
+            col.alpha_composite(pic('Pictures/Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8)), (128, y + 44))
+        row = 5 if faint else {'PAR': 3}.get(st)                   # row of the game's statuses.png (example: paralysed; 5 = fainted)
+        if row is not None: col.alpha_composite(pic('Pictures/statuses.png').crop((0, 16 * row, 44, 16 * row + 16)), (PW - 58, y + 12))
+        col.alpha_composite(pic('Pictures/Party/overlay_lv.png'), (12, y + 60)); text(cd, str(lv), 34, y + 47, white, dark, f=small)
+    col = col.resize((PW * 2, col.height * 2), Image.NEAREST); big.alpha_composite(col, (10, 102))
     return big.convert('RGB')
 
 def topbar(d, AWd=AW):

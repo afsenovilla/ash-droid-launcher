@@ -271,3 +271,12 @@ Left for implementation:
 - Home: status tags (ENV, DEB) still use small text inside their tag.
 - `overworld-map.png`, `overworld-route.png` and `screen-map.png` were removed: superseded by the scripts and by
   the screen map artifact.
+
+## Home screen party list (revised)
+
+The party on the home screen is no longer drawn by code. It is six of the game's own party panels (`panel_rect`,
+`panel_rect_faint`, `panel_blank`) with the game's ball, HP bar (`overlay_hp_back`, `overlay_hp`), level image and
+status icons (`statuses.png`), plus each Pokémon's icon, name and HP, all at 2x. The panels are made 340 px wide by
+repeating a column and 80 px tall by leaving out lines of their two flat bands, so six fit in a column beside the
+five buttons. Rule that follows: where the game has an image for something (status, HP bar, panels, type and
+category icons), that image is used; code-drawn elements are for what the game has no art for.
