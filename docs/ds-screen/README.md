@@ -216,3 +216,18 @@ labels at the same size as their values.
   This is separate from the bounce of the option selected with the D-pad.
 - Lists (bag items, wild Pokémon) scroll by dragging the list itself, and the bar on their right can be
   dragged to move fast; its arrows step one row and repeat while held.
+
+## Physical controls (rules)
+
+Every second-screen screen works with touch and with the buttons; nothing is touch-only.
+
+- Battle: as today. The D-pad, confirm and cancel drive the game's own menu and the second screen follows it
+  (the option under the cursor bounces); touching does the same thing through the game.
+- Overworld, home screen: the buttons belong to the game (walking, talking). The home screen is touch, plus the
+  entry point below.
+- Overworld, any other second-screen screen (bag, party, map, profile, save and what hangs from them): while it
+  is open the buttons belong to it and the game does not receive them. D-pad moves the cursor, confirm presses
+  the option under it, cancel is VOLVER / CANCELAR, the shoulder buttons change pocket, page or card where
+  there is one, and holding confirm picks up a Pokémon or a move to reorder it.
+- Entry point with the buttons: to be decided with the owner (the game's menu button could put the cursor on
+  the second screen's home buttons instead of opening the game's pause menu on the top screen).
