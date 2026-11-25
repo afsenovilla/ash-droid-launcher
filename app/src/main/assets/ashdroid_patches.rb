@@ -2156,40 +2156,10 @@ module AshDroidDSUI
 
   # ---- trainer cards ----
 
-  # The game's own card screens, captured as they are drawn. d: { shot: png file, page: 1.., total: }
+  # The game's own card screens, captured as they are drawn, with the card itself (without the margin of
+  # background around it) enlarged to the width of the screen: 2.5x, the largest that fits.
+  # d: { shot: png file, page: 1.., total: }
   def self.profile(d)
-    s = Screen.new
-    ops = s.ops
-    x0 = 54
-    y0 = 30
-    bg = pic("Trainer Card/bg")
-    bw, bh = size(bg)
-    if bw > 0
-      # tiled like the game's plane, lined up with the tiles inside the captured screen
-      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [(x0 % bw - bw) * 2, (y0 % bh - bh) * 2] }
-    else
-      fill(ops, 0, 0, W, H, [160, 208, 240])
-    end
-    whole(ops, d[:shot], x0 * 2, y0 * 2, 2) if d[:shot]
-    sh = [96, 124, 144]
-    total = d[:total].to_i
-    if total > 1
-      [true, false].each do |left|
-        px = left ? 2 : W - 17 * S - 2
-        s.button(px, (y0 + 192) * 2 - 120, [0, 0, 16, 38], BLUE, nil, left ? "card:prev" : "card:next", shadow: sh, r: 7, rim: 1,
-                 icon: arrow_icon(7, 16, left))
-      end
-      txt(ops, format(l(:card), d[:page].to_i, total), 48, H - 104, 52, WHITE, [72, 104, 136], "l", "a")
-    end
-    s.button(W - 72 * S - 8, H - 26 * S - 2, [1, 1, 70, 22], BLUE, l(:back), "back", shadow: sh, center: [35, 11])
-    s.result("id" => "profile")
-  end
-
-  # The trainer's own sheet, laid out for this screen instead of a picture of the game's card: the trainer,
-  # the card's data in a panel, and the badges of the region at 3x.
-  # d: { sprite: file, rows: [[label, value]...], badges: [true/false x8], badge_row: region, party: [icon files],
-  #      page:, total: }
-  def self.trainer(d)
     s = Screen.new
     ops = s.ops
     bg = pic("Trainer Card/bg")
@@ -2198,46 +2168,8 @@ module AshDroidDSUI
     else
       fill(ops, 0, 0, W, H, [160, 208, 240])
     end
-    # the trainer, on the box the game's card keeps for it
-    card = pic("Trainer Card/card")
-    bx = 24
-    by = 24
-    sheet(ops, card, Axis.new(512).crop(328, 472), Axis.new(384).crop(104, 264), bx, by, 3) if card
-    sw, sh = size(d[:sprite])
-    whole(ops, d[:sprite], bx + (432 - sw * 3) / 2, by + 480 - sh * 3 - 6, 3) if sw > 0
-    # its data
-    pw = 124
-    ph = 84
-    px = W - pw * S - 24
-    art = Art.new(px, by - 12, pw, ph)
-    box = [0, 0, pw - 1, ph - 1]
-    art.rr(box, 8, 0, [56, 56, 72]).rr(box, 8, 1, [240, 240, 248]).rr(box, 8, 3, [248, 248, 236])
-    ops << art.op
-    rows = (d[:rows] || []).first(6)
-    rows.each_with_index do |(label, value), n|
-      y = by + 36 + 78 * n
-      txt(ops, label, px + 36, y, 65, INK, INK_SH, "l", "m")
-      txt(ops, value, px + pw * S - 36, y, 65, INK, INK_SH, "r", "m", { "fit" => 400 })
-      fill(ops, px + 36, y + 36, pw * S - 72, 3, [216, 216, 204]) if n < rows.length - 1
-    end
-    # the badges: the card's own strip of eight slots at 2x across the screen, each badge at 3x on its slot
-    sy = 540
-    strip = Art.new(12, sy, 203, 30)
-    sb = [0, 0, 202, 29]
-    strip.rr(sb, 8, 0, [56, 56, 72]).rr(sb, 8, 1, [240, 240, 248]).rr(sb, 8, 3, [96, 152, 224])
-    ops << strip.op
-    badges = pic("Trainer Card/icon_badges")
-    8.times do |i|
-      cx = 12 + 18 + 76 + i * 148
-      slot = Art.new(cx - 66, sy + 24, 22, 22)
-      slot.el([1, 1, 20, 20], [72, 128, 208]).el([3, 3, 18, 18], [120, 168, 232])
-      ops << slot.op
-      next unless (d[:badges] || [])[i] && badges
-      img(ops, badges, i * 48, d[:badge_row].to_i * 48, 48, 48, cx - 72, sy + 18, 3)
-    end
-    # and the party, as on the game's save screen
-    (d[:party] || []).first(6).each_with_index do |icon, i|
-      img(ops, icon, 0, 0, 64, 64, 44 + i * 192, 728, 3) if icon
+    if d[:shot]
+      ops << { "o" => "img", "f" => d[:shot], "s" => [16, 16, 480, 352], "d" => [20, 14, 1200, 880] }
     end
     total = d[:total].to_i
     if total > 1
@@ -2246,7 +2178,7 @@ module AshDroidDSUI
       txt(ops, format(l(:card), d[:page].to_i, total), 500, 1006, 52, WHITE, [72, 104, 136], "l", "m")
     end
     game_button(s, 620 - 6 - 200, 472, 200, 62, l(:back), "back")
-    s.result("id" => "trainer")
+    s.result("id" => "profile")
   end
 
   # ---- save ----
