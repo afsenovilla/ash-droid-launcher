@@ -204,10 +204,10 @@ module AshDroidText
   RETRANS = [[/spanish/i, SPAIN_PACK_FILE], [/french/i, "ashdroid_fr.dat"], [/german/i, "ashdroid_de.dat"],
              [/italian/i, "ashdroid_it.dat"]]
 
-  # Italian isn't one of the game's languages: the patch adds "Italiano", which loads the
+  # Italian isn't one of the game's languages: the patch adds "Italian", which loads the
   # game's English file with every text replaced by the Italian pack. For the patch it
   # counts as the (virtual) language file "italian.dat".
-  ITALIAN_NAME = "Italiano"
+  ITALIAN_NAME = "Italian"
   ITALIAN_FILE = "italian.dat"
 
   def self.lang_file
@@ -3861,7 +3861,7 @@ module AshDroidFixes
     add_italian(settings)
   end
 
-  # "Italiano" at the end of the list (so no existing language changes index), loading the
+  # "Italian" at the end of the list (so no existing language changes index), loading the
   # game's English file; only when the Italian pack is there.
   def self.add_italian(settings)
     langs = settings::LANGUAGES
