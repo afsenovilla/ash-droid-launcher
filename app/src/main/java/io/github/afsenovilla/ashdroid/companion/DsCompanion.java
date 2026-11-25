@@ -284,6 +284,8 @@ public final class DsCompanion
 
         // The game's own images (null/empty when it didn't hand any: drawn plainly instead)
         Art bg;
+        /** The bar the game keeps behind its menus, if any: drawn behind them and gives the screen its colour. */
+        Art strip;
         Art[] buttons = new Art[0];
         Art[] extras = new Art[0];
         Art backBtn;
@@ -383,6 +385,7 @@ public final class DsCompanion
                     }
                 }
                 s.bg = Art.parse(o.optJSONObject("bg"));
+                s.strip = Art.parse(o.optJSONObject("strip"));
                 s.buttons = Art.parseAll(o.optJSONArray("buttons"));
                 s.extras = Art.parseAll(o.optJSONArray("extras"));
                 s.backBtn = Art.parse(o.optJSONObject("backBtn"));

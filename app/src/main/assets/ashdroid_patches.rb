@@ -1081,10 +1081,19 @@ module AshDroidDS
     { "base" => hex(const(cw, :TEXT_BASE_COLOR)), "shadow" => hex(const(cw, :TEXT_SHADOW_COLOR)) }
   end
 
-  def self.command_state(top, cw)
+  # The strip the game keeps behind its battle menus (its message bar), when it is showing one
+  def self.strip(scene)
+    sprites = scene.instance_variable_get(:@sprites)
+    bar = sprites.is_a?(Hash) ? sprites["messageBox"] : nil
+    bar && !bar.disposed? && bar.visible ? sprite(bar) : nil
+  rescue StandardError
+    nil
+  end
+
+  def self.command_state(scene, top, cw)
     texts = Array(top[:texts]).map(&:to_s)
     { "screen" => "command", "title" => texts[0].to_s, "items" => texts[1, 4] || [],
-      "index" => cw.index.to_i, "bg" => sprite(parts(cw)["background"]),
+      "index" => cw.index.to_i, "bg" => sprite(parts(cw)["background"]), "strip" => strip(scene),
       "buttons" => buttons(cw).first(4).map { |b| sprite(b) } }.merge(text_colors(cw))
   end
 
@@ -1192,7 +1201,7 @@ module AshDroidDS
     current = battler ? battler.moves[cw.index.to_i] : nil
     { "screen" => "fight", "moves" => list, "index" => cw.index.to_i,
       "mega" => (top[:mega] ? mode : 0), "labels" => labels,
-      "bg" => sprite(parts(cw)["background"]), "info" => move_info(cw, current),
+      "bg" => sprite(parts(cw)["background"]), "strip" => strip(scene), "info" => move_info(cw, current),
       "extras" => extra_buttons(cw), "backBtn" => back_button(scene) }.merge(text_colors(cw))
   end
 
@@ -1220,7 +1229,7 @@ module AshDroidDS
       @count = 0
       state = if !mine then IDLE
               elsif top[:mode] == :fight then fight_state(scene, top, cw)
-              else command_state(top, cw)
+              else command_state(scene, top, cw)
               end
       @count = (state["moves"] || state["items"] || []).length
       publish(state)

@@ -31,7 +31,7 @@ import io.github.afsenovilla.ashdroid.launcher.GameInstaller;
 @SuppressLint("ViewConstructor")
 final class DsView extends View
 {
-    private static final int BG = 0xFF181C24;
+    private static final int BG = 0xFF000000;
     private static final int PANEL = 0xFF2A303C;
     private static final int[] COMMAND_COLORS = { 0xFFD04038, 0xFFD89028, 0xFF48A048, 0xFF3870C8 };
     private static final int[] EFF_COLORS = { 0xFF9098A0, 0xFFF0A040, 0xFF70D860 };
@@ -70,10 +70,13 @@ final class DsView extends View
 
     /** The game's text size (Essentials) and the smallest gap between two enlarged buttons. */
     private static final float FONT_SIZE = 29f, MIN_GAP = 8f;
+    /** Where the game writes "What will X do?" inside its 512x96 menu panel. */
+    private static final float TEXT_X = 32f, TEXT_Y = 34f, LINE_H = 32f, TEXT_W = 200f;
     private final Paint mBmp = new Paint();
     private final Rect mSrc = new Rect();
     private final RectF mPanel = new RectF(), mTmp = new RectF();
     private final Map<String, Bitmap> mBitmaps = new HashMap<>();
+    private int mBackdrop = BG;
 
     DsView(Context ctx, DsCompanion owner)
     {
@@ -142,6 +145,17 @@ final class DsView extends View
         mExtraCount = 0;
         mBackShown = false;
 
+        // The screen takes the colour of the bar the game has behind its menus, so the buttons
+        // sit on the same colour as on the game screen; black (like the game's side bars) otherwise.
+        Bitmap bar = bitmap(s.strip);
+        if (bar != null) {
+            int px = Math.min(bar.getWidth() - 1, Math.max(0, s.strip.x + s.strip.w / 2));
+            int py = Math.min(bar.getHeight() - 1, Math.max(0, s.strip.y + s.strip.h / 2));
+            int col = bar.getPixel(px, py);
+            if (Color.alpha(col) == 255) mBackdrop = col;
+        }
+        c.drawColor(mBackdrop);
+
         // Bottom-right corner: the launcher's own switch for the menu on the game screen
         final float stripH = h * 0.07f;
         mToggle.set(w * 0.62f, h - stripH - pad * 0.5f, w - pad * 0.5f, h - pad * 0.5f);
@@ -159,10 +173,12 @@ final class DsView extends View
     private void drawCommand(Canvas c, DsState s, float w, float h, float top, float bottom, float pad)
     {
         float ts;
-        if (bitmap(s.bg) != null) {
+        boolean box = bitmap(s.bg) != null;
+        if (box) {
             int so = Math.max(1, (int) Math.floor(w / s.bg.w));
             float hw = s.bg.w * so, hh = s.bg.h * so;
             mPanel.set((w - hw) / 2f, top, (w + hw) / 2f, top + hh);
+            drawStrip(c, s, so);
             draw(c, s.bg, mPanel);
             ts = so;
         } else {
@@ -171,12 +187,16 @@ final class DsView extends View
             c.drawRoundRect(mPanel, pad * 0.5f, pad * 0.5f, mFill);
             ts = mPanel.height() / 96f;
         }
+        // The question goes where the game writes it: left-aligned in the box at the left of the
+        // panel, first line near the top (TEXT_X / TEXT_Y / LINE_H are the game's own layout).
         String[] lines = s.title.split("\n");
-        float lineH = 32f * ts;
-        float y = mPanel.centerY() - (lines.length - 1) * lineH / 2f;
-        for (String line : lines) {
-            gameText(c, line.trim(), w / 2f, y, mPanel.width() - 32f * ts, FONT_SIZE * ts, s.base, s.shadow, 2f * ts);
-            y += lineH;
+        for (int i = 0; i < lines.length; i++) {
+            float y = mPanel.top + (TEXT_Y + LINE_H * i) * ts;
+            if (box) {
+                gameText(c, lines[i].trim(), mPanel.left + TEXT_X * ts, y, TEXT_W * ts, FONT_SIZE * ts, s.base, s.shadow, 2f * ts, 0f);
+            } else {
+                gameText(c, lines[i].trim(), w / 2f, y, mPanel.width() - 32f * ts, FONT_SIZE * ts, s.base, s.shadow, 2f * ts, 0.5f);
+            }
         }
 
         mGridCount = Math.min(4, s.items.length);
@@ -212,6 +232,7 @@ final class DsView extends View
             int so = Math.max(1, (int) Math.floor(w / s.bg.w));
             float fw = s.bg.w * so, fh = s.bg.h * so;
             mPanel.set((w - fw) / 2f, bottom - fh, (w + fw) / 2f, bottom);
+            drawStrip(c, s, so);
             draw(c, s.bg, mPanel);
             fs = so;
         } else {
@@ -229,10 +250,10 @@ final class DsView extends View
             draw(c, s.typeIcon, mTmp);
         } else if (current != null) {
             gameText(c, current.typeName, mPanel.right - 64f * fs, mPanel.top + 32f * fs, 110f * fs, FONT_SIZE * fs,
-                    s.base, s.shadow, 2f * fs);
+                    s.base, s.shadow, 2f * fs, 0.5f);
         }
         String pp = !s.ppText.isEmpty() ? s.ppText : current != null ? "PP: " + current.pp + "/" + current.totalPp : "";
-        gameText(c, pp, mPanel.right - 64f * fs, mPanel.top + 62f * fs, 120f * fs, FONT_SIZE * fs, s.ppBase, s.ppShadow, 2f * fs);
+        gameText(c, pp, mPanel.right - 64f * fs, mPanel.top + 62f * fs, 120f * fs, FONT_SIZE * fs, s.ppBase, s.ppShadow, 2f * fs, 0.5f);
 
         // Back, then the game's toggle buttons, from the left end of the panel
         mBackShown = true;
@@ -287,7 +308,7 @@ final class DsView extends View
             RectF r = cell(i, gx, gy, cw, ch, gapX, gapY);
             if (draw(c, m.art, r)) {
                 int col = m.nameColor != 0 ? m.nameColor : s.base;
-                gameText(c, m.name, r.centerX(), r.top + ch * 0.47f, (bw - 16f) * sc, FONT_SIZE * sc, col, s.shadow, 2f * sc);
+                gameText(c, m.name, r.centerX(), r.top + ch * 0.47f, (bw - 16f) * sc, FONT_SIZE * sc, col, s.shadow, 2f * sc, 0.5f);
             } else {
                 Integer col = TYPE_COLORS.get(m.type.toUpperCase(Locale.ROOT));
                 button(c, r, col == null ? 0xFF808890 : col, s.index == i, false);
@@ -327,14 +348,26 @@ final class DsView extends View
         return true;
     }
 
+    /** The game's bar behind the menu panel (same place and size as on the game screen). */
+    private void drawStrip(Canvas c, DsState s, int scale)
+    {
+        if (bitmap(s.strip) == null) return;
+        float sw = s.strip.w * scale, sh = s.strip.h * scale;
+        mTmp.set(mPanel.centerX() - sw / 2f, mPanel.bottom - sh, mPanel.centerX() + sw / 2f, mPanel.bottom);
+        draw(c, s.strip, mTmp);
+    }
+
     private void dim(Canvas c, RectF r)
     {
         mFill.setColor(0x50000000);
         c.drawRect(r, mFill);
     }
 
-    /** Centred text the way the game draws it: base colour over a shadow to the right and below. */
-    private void gameText(Canvas c, String text, float cx, float cy, float maxWidth, float size, int base, int shadow, float off)
+    /**
+     * Text the way the game draws it: base colour over a shadow to the right and below.
+     * align 0 starts it at x, 0.5 centres it on x.
+     */
+    private void gameText(Canvas c, String text, float ax, float cy, float maxWidth, float size, int base, int shadow, float off, float align)
     {
         if (text == null || text.isEmpty()) return;
         mText.setTextSize(size);
@@ -344,7 +377,7 @@ final class DsView extends View
             tw = mText.measureText(text);
         }
         Paint.FontMetrics fm = mText.getFontMetrics();
-        float x = cx - tw / 2f, y = cy - (fm.ascent + fm.descent) / 2f;
+        float x = ax - tw * align, y = cy - (fm.ascent + fm.descent) / 2f;
         mText.setColor(shadow);
         c.drawText(text, x + off, y, mText);
         c.drawText(text, x, y + off, mText);
