@@ -226,7 +226,8 @@ def battle_info():
     L, R = 224, 1016
     def icon(row, x, cy):                                          # the game's type icon at 3x
         one.alpha_composite(big(types.crop((0, row * 28, 64, row * 28 + 28))), (x, cy - 42))
-    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 204 * n, 372)
+    m.ttf(d, 'Tipo:', L, 372, 65, ink, shd, 'lm')
+    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 210 + 204 * n, 372)
     d.rectangle((L, 432, R, 437), fill=(208, 208, 196))
     for n in range(4):                                             # its moves: type, name, PP
         y = 498 + 100 * n
