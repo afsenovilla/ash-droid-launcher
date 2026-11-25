@@ -30,12 +30,14 @@ def home():
         if i < len(PARTY):
             n, lv, hp, tot, st = PARTY[i]; x0, y0, x1, y1 = b; f = hp / tot
             col = (96, 208, 96) if f > 0.5 else (240, 200, 64) if f > 0.2 else (240, 88, 72)
-            full = x1 - 10 - (x0 + 28)
-            if hp: d.rectangle((x0+28, y0+16, x0+28+int(full*f), y0+19), fill=col)
             tag = (160, 96, 200) if st else (200, 72, 72) if hp == 0 else None
+            end = x1 - 34 if tag else x1 - 9                       # the status tag sits at the end of the HP bar's row, clear of the name
+            if tag: d.rectangle((end + 1, y0+14, x1-8, y0+21), fill=(232, 228, 248))
+            full = end - 1 - (x0 + 28)
+            if hp: d.rectangle((x0+28, y0+16, x0+28+int(full*f), y0+19), fill=col)
             if tag:
-                d.rounded_rectangle((x1-48, y0+3, x1-28, y0+12), 3, fill=m.shade(tag, 0.6))
-                d.rounded_rectangle((x1-47, y0+4, x1-29, y0+11), 2, fill=tag)
+                d.rounded_rectangle((x1-31, y0+12, x1-9, y0+21), 3, fill=m.shade(tag, 0.6))
+                d.rounded_rectangle((x1-30, y0+13, x1-10, y0+20), 2, fill=tag)
     btns = [(114, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]   # wide enough for SAUVEGARDER / SPEICHERN
     for (label, col), b in zip(ACTIONS, btns):
         m.button(d, b, col, 9)
@@ -46,7 +48,7 @@ def home():
     for (n, lv, hp, tot, st), b in zip(PARTY, cells):
         m.ttf(d, n, (b[0]+27)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
         m.ttf(d, 'Nv' + str(lv), (b[2]-9)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
-        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-38)*S, (b[1]+7.5)*S, 39, (255, 255, 255), None, 'mm')
+        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-20)*S, (b[1]+16.5)*S, 39, (255, 255, 255), None, 'mm')
     return big
 
 def topbar(d, AWd=AW):
