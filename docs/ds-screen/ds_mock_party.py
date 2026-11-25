@@ -115,14 +115,20 @@ def actions(options=None, line=None, held=False):
     stacked under it as wide medium buttons, back at the bottom."""
     CARD = 356; room = (CARD - 296) * 2 // U                       # panel width in logical px; extra content px
     s = backdrop(); x0 = (W - CARD) // 2
-    s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
+    EXTRA = 45 if held else 0                                      # logical px the panel grows for the held item line
+    s.alpha_composite(repeat_row(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), 100, EXTRA), (x0, 8))
     one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
     contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
-    if held:                                                       # the game's held item mark, by the icon as in the game
+    if held:
+        # What it holds lives in the Pokémon's own panel, on a line under its data: the item's icon (2x) and name,
+        # in the panel's text style. The game's held item mark stays by the Pokémon icon, as in the game.
         one.alpha_composite(big(img('Party/icon_item.png')), (x0 * 2 + 44 * U, 16 + 44 * U))
+        icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((96, 96), Image.NEAREST)
+        one.alpha_composite(icon, (x0 * 2 + 16 * U, 16 + 80 * U))
+        text(d, held[1], x0 * 2 + 52 * U, 16 + 81 * U, WHITE, DARK)
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
-    top, pitch, high = 314, 31, 27
+    top, pitch, high = (402, 28, 24) if held else (314, 31, 27)    # slightly shorter buttons make room for the taller panel
     grid = Image.new('RGBA', (bw + 2, len(options) * pitch + 2), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(options):
         by = n * pitch
@@ -130,15 +136,7 @@ def actions(options=None, line=None, held=False):
         m.pix_text(grid, label, (bw + 1) // 2, by + (high + 1) // 2, 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
     one.paste(grid, ((W * 2 - grid.width) // 2, top), grid)
-    footer(one, d, '' if held else (line or '¿Qué hacer con %s?' % PARTY[SELECTED][0]), home=True)
-    if held:
-        # Which item it holds goes where the help line was, bottom left: the item's own icon (3x) and its name,
-        # white with a dark shadow like the other texts on this background.
-        icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((144, 144), Image.NEAREST)
-        one = one.convert('RGBA'); one.alpha_composite(icon, (16, H * 2 - 170)); d = ImageDraw.Draw(one); d.fontmode = '1'
-        f = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 65)
-        for dx, dy in ((5, 0), (0, 5), (5, 5)): d.text((168 + dx, H * 2 - 96 + dy), held[1], font=f, fill=DARK, anchor='lm')
-        d.text((168, H * 2 - 96), held[1], font=f, fill=WHITE, anchor='lm')
+    footer(one, d, line or '¿Qué hacer con %s?' % PARTY[SELECTED][0], home=True)
     return one.convert('RGB')
 
 PAGES = ['INFORMACIÓN', 'NOTAS', 'HABILIDADES', 'MOVIMIENTOS', 'CINTAS']   # the game's five summary pages
@@ -277,4 +275,4 @@ def drag():
 if __name__ == '__main__':
     if MODE == 'battle': SELECTED = 1                              # in battle: a Pokémon that is not out
     {'battle': battle_info, 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
-     'item': lambda: actions(ITEM_ACTIONS, held=('ORANBERRY', 'Baya Aranja'))}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
+     'item': lambda: actions(ITEM_ACTIONS, '¿Qué hacer con el objeto?', held=('ORANBERRY', 'Baya Aranja'))}.get(MODE, screen)().save(OUT)   # real size: 1240x1080

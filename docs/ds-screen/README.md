@@ -196,10 +196,12 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   icons at 3x. Ability, item and stats were tried and dropped: too much to read at a glance. CAMBIAR sits at the bottom
   left, beside the home button (back to the battle commands) and VOLVER; it is greyed out when the Pokémon
   cannot fight or is already out.
-- Party, OBJETO (`ds_mock_party.py ... item`): the Pokémon's card and USAR, DAR, and QUITAR when it holds
-  something, at the same size as the Pokémon's options. What it holds is shown at the bottom left, where the
-  help line would be: the item's own icon at 3x and its name (white with a dark shadow), as the moves screen
-  does with the Pokémon. A cream strip under the card was tried and rejected (odd shape, crowded the buttons).
+- Party, OBJETO (`ds_mock_party.py ... item`): the Pokémon's panel and USAR, DAR, and QUITAR when it holds
+  something. What it holds lives in the Pokémon's own panel, which grows by one line under its data: the
+  item's icon at 2x and its name in the panel's text style; the footer keeps a normal help line. The buttons
+  are slightly shorter here (24 art px, pitch 28) to make room. Tried and rejected: a cream strip under the
+  panel (odd shape, crowded the buttons) and the item at the bottom left in place of the help line (that
+  corner is for instructions on every other screen).
 - Summary, moves (approved; `ds_mock_party.py ... moves`): the second screen shows the four moves at once in a 2x2
   grid, so nothing has to be touched to read them: name, the game's own type and category icons (`types.png`, `category.png`, at 3x) side by
   side, then power, accuracy and PP, labels and values at
