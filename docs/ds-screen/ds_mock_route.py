@@ -33,16 +33,16 @@ def screen():
     rowsdata = merged(LAND); shown = rowsdata[:5]
     a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); m.background(d); o.topbar(d)
     for i, (t, col, on) in enumerate([('HIERBA', (88, 200, 88), True), ('PESCA', (64, 184, 184), False)]):
-        b = (4 + i * 100, 17, 4 + i * 100 + 97, 34)
-        m.button(d, b, col if on else (168, 168, 196), 8, rim=1); m.pix_text(a, t, (b[0] + b[2]) // 2, (b[1] + b[3]) // 2, 1)
-    rows = [(4, 38 + i * 23, 196, 38 + i * 23 + 21) for i in range(5)]
+        b = (4 + i * 100, 17, 4 + i * 100 + 97, 38)
+        m.button(d, b, col if on else (168, 168, 196), 9, rim=1); m.pix_text(a, t, (b[0] + b[2]) // 2, (b[1] + b[3]) // 2, 1)
+    rows = [(4, 41 + i * 23, 196, 41 + i * 23 + 21) for i in range(5)]
     for (sp, pct, lo, hi), b in zip(shown, rows):
-        o.panel(a, d, b)
+        o.panel(a, d, b, r=9)
         d.rounded_rectangle((b[0] + 112, b[1] + 8, b[0] + 154, b[1] + 14), 2, fill=(56, 56, 72))
         d.rectangle((b[0] + 113, b[1] + 9, b[0] + 113 + max(1, int(40 * pct / 100)), b[1] + 13), fill=(96, 208, 96))
-    d.rounded_rectangle((199, 38, 202, 151), 1, fill=(168, 168, 196))                       # scroll bar: 5 of 7 rows
-    d.rounded_rectangle((199, 38, 202, 38 + int(113 * 5 / len(rowsdata))), 1, fill=(88, 88, 120))
-    m.button(d, (134, 155, 201, 177), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 166, 1)
+    d.rounded_rectangle((199, 43, 202, 152), 1, fill=(168, 168, 196))                       # scroll bar: 5 of 7 rows
+    d.rounded_rectangle((199, 43, 202, 43 + int(109 * 5 / len(rowsdata))), 1, fill=(88, 88, 120))
+    m.button(d, (134, 157, 201, 178), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 167, 1)
     big = m.up(a); d = ImageDraw.Draw(big)
     m.ttf(d, 'RUTA 1', 6 * S, 7 * S, 52, (255, 255, 255), (40, 40, 64), 'lm')
     m.ttf(d, 'Pokémon salvajes', (AW - 6) * S, 7 * S, 52, (255, 255, 255), (40, 40, 64), 'rm')
@@ -54,7 +54,7 @@ def screen():
         m.ttf(d, name, (b[0] + 26) * S, (b[1] + 7) * S, 52, (64, 64, 80), (176, 176, 200), 'lm')
         m.ttf(d, lv, (b[0] + 26) * S, (b[1] + 16) * S, 39, (112, 112, 136), None, 'lm')
         m.ttf(d, str(pct) + '%', (b[2] - 6) * S, (b[1] + 11) * S, 52, (64, 64, 80), (176, 176, 200), 'rm')
-    m.ttf(d, '??? = aún no lo has visto', 8 * S, 166 * S, 39, (112, 112, 136), None, 'lm')
+    m.ttf(d, '??? = aún no lo has visto', 8 * S, 168 * S, 39, (112, 112, 136), None, 'lm')
     return big
 
 if __name__ == '__main__':
