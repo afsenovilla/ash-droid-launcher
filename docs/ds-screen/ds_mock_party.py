@@ -40,6 +40,7 @@ def repeat_row(im, y, n):
 PARTY = [('Pikachu', 'PIKACHU', 5, 18, 18, 'm'), ('Pidgey', 'PIDGEY', 4, 9, 16, 'f'),
          ('Rattata', 'RATTATA', 3, 0, 13, 'm'), ('Caterpie', 'CATERPIE', 3, 12, 12, 'm')]
 SELECTED = 0
+HELD = {0: ('ORANBERRY', 'Baya Aranja')}                         # party slot -> the game's item icon file, its name
 SIDE, MID, BOTTOM = 54, 90, 66
 WIDE, GROW = 40, 20                                               # panel: 256x98 -> 296x138
 def tall(im, wide=WIDE): return repeat_col(repeat_row(repeat_row(im, 60, GROW), 46, GROW), 128, wide)
@@ -69,6 +70,9 @@ def contents(one, d, i, mon, pos=None, swap=False, room=0):     # room: extra co
     text(d, '%d/%d' % (hp, total), *at(190 + room, 50), WHITE, DARK, 1)
     one.alpha_composite(big(img('Party/overlay_lv.png')), at(6, 68))
     text(d, str(lv), *at(28, 55), WHITE, DARK, font=SMALL)
+    if i in HELD:                                                  # instead of the game's generic held item mark: the item's own icon (2x)
+        item = Image.open(GAME + '/Graphics/Items/' + HELD[i][0] + '.png').convert('RGBA')
+        one.alpha_composite(item.resize((96, 96), Image.NEAREST), at(46, 46))
 
 def backdrop():
     s = repeat_row(repeat_row(repeat_col(repeat_col(img('Party/bg.PNG'), 511, SIDE), 0, SIDE), 370, BOTTOM), 320, MID)
@@ -81,7 +85,12 @@ HOUSE = ['.....#.....', '....###....', '...#####...', '..#######..', '.#########
          '.#########.', '.###...###.', '.###...###.', '.###...###.']
 def footer(one, d, line, home=False):
     """Help line, the back button and, on screens more than one step away from home, a home button beside it."""
-    text(d, line, 48, H * 2 - 124, WHITE, DARK, font=HELP, k=2)
+    # The help line sits in a window drawn with the game's own menu frame (2x), as on the game's party screen.
+    skin = Image.open(GAME + '/Graphics/Windowskins/choice 1.png').convert('RGBA')
+    bw, bh = (300 if home else 372), 64                            # in frame px; it ends before the buttons
+    box = repeat_row(repeat_col(skin, 24, bw - 48), 24, bh - 48).resize((bw * 2, bh * 2), Image.NEAREST)
+    one.alpha_composite(box, (12, H * 2 - bh * 2 - 12))
+    text(d, line, 12 + 36, H * 2 - 12 - bh - 52, (80, 80, 88), (160, 160, 168), font=HELP, k=2)
     m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
     key = Image.new('RGBA', (100, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
     m.button(kd, (29, 1, 98, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 63, 11, 1)
@@ -118,9 +127,6 @@ def actions(options=None, line=None, held=False):
     s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
     one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
     contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
-    if held:                                                       # where the game puts its generic held item mark: the item's own icon (2x)
-        icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((96, 96), Image.NEAREST)
-        one.alpha_composite(icon, (x0 * 2 + 48 * U, 16 + 40 * U))
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
     top, pitch, high = 314, 31, 27
@@ -270,4 +276,4 @@ def drag():
 if __name__ == '__main__':
     if MODE == 'battle': SELECTED = 1                              # in battle: a Pokémon that is not out
     {'battle': battle_info, 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
-     'item': lambda: actions(ITEM_ACTIONS, 'Equipado: Baya Aranja', held=('ORANBERRY', 'Baya Aranja'))}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
+     'item': lambda: actions(ITEM_ACTIONS, 'Equipado: Baya Aranja', held=True)}.get(MODE, screen)().save(OUT)   # real size: 1240x1080

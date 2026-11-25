@@ -16,6 +16,7 @@ def slot(a, d, box, filled):
     if filled:
         d.rounded_rectangle((x0+27, y0+15, x1-9, y0+20), 2, fill=(56, 56, 72))  # HP bar
 
+HELD = {'Pikachu': 'ORANBERRY'}
 PARTY = [('Pikachu', 5, 18, 18, None), ('Pidgey', 4, 9, 16, None), ('Rattata', 3, 3, 13, 'PAR'), ('Caterpie', 3, 0, 12, None)]
 # The profile button carries the player's name, as the game's own menu does
 ACTIONS = [('POKéMON', (248, 144, 200)), ('MOCHILA', (240, 168, 48)), ('MAPA', (88, 200, 88)), ('ASH', (64, 184, 184)), ('GUARDAR', (56, 136, 232))]
@@ -73,6 +74,9 @@ def home():
         # drawn pixel (160 px): between the file at 2x (128) and at 3x (192), and still pixel-perfect.
         ic = pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)).resize((32, 32), Image.NEAREST).resize((160, 160), Image.NEAREST)
         big.alpha_composite(ic, (10 + 124 - 80, 102 + y * 2 + 72 - 80))
+        if n in HELD:                                             # held item: the item's own icon, 3 screen px per drawn pixel
+            it = pic('Items/%s.png' % HELD[n]).resize((24, 24), Image.NEAREST).resize((72, 72), Image.NEAREST)
+            big.alpha_composite(it, (10 + 148, 102 + y * 2 + 82))
     big.alpha_composite(over.resize((PW * 2, over.height * 2), Image.NEAREST), (10, 102))
     for y, faint, hp, tot in bars:                                # the game's HP bar at 3x
         x0, y0 = 10 + 212, 102 + y * 2 + 90
