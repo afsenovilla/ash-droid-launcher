@@ -23,6 +23,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
     drives them: touch a Pokémon or an item, pick one of the options the game offers, drag a Pokémon onto
     another to swap them, change pocket and turn the summary's pages.
     Any other list of choices the game shows (yes / no, the pause menu...) appears as buttons too.
+    The list of languages shows a small flag per language.
   - **Town Map**: while the game's Town Map is open (from the bag, the Pokégear...), the region map with the
     player's position, dragged with a finger and with three zoom levels, and the wild Pokémon of the place
     per encounter method, with levels and encounter rate; species not seen yet show as a silhouette.

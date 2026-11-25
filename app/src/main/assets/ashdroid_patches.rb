@@ -2207,6 +2207,50 @@ module AshDroidDSUI
   # ---- any other list of choices the game shows ----
 
   # d: { help:, options: [{label:, cmd:}], index: }
+  FLAG_W = 18
+  FLAG_H = 12
+  FLAG_INK = { "B" => [0, 56, 168], "W" => [248, 248, 248], "R" => [208, 32, 48], "G" => [0, 144, 72], "K" => [32, 32, 32],
+               "Y" => [248, 200, 0], "N" => [16, 40, 120] }.freeze
+
+  # Small flags drawn by code, one letter per art pixel
+  def self.flag_rows(code)
+    @flag_rows ||= {}
+    @flag_rows[code] ||= (0...FLAG_H).map do |y|
+      (0...FLAG_W).map do |x|
+        case code
+        when :fr then "BWR"[x / 6]
+        when :it then "GWR"[x / 6]
+        when :de then "KRY"[y / 4]
+        when :es then y < 3 || y > 8 ? "R" : "Y"
+        else
+          cx = x - 8.5
+          cy = y - 5.5
+          diag = [(cy * 1.5 - cx).abs, (cy * 1.5 + cx).abs].min
+          if cx.abs < 1 || cy.abs < 1 then "R"
+          elsif cx.abs < 2 || cy.abs < 2 || diag < 1.3 then "W"
+          else "N"
+          end
+        end
+      end.join
+    end
+  end
+
+  def self.flag_icon(x, y, code)
+    rows = flag_rows(code)
+    proc do |art, into, off|
+      art.rc([x - 1, y - 1 + off, x + FLAG_W, y + FLAG_H + off], [48, 48, 64], into)
+      rows.each_with_index do |row, r|
+        c = 0
+        while c < row.length
+          e = c
+          e += 1 while e + 1 < row.length && row[e + 1] == row[c]
+          art.rc([x + c, y + r + off, x + e, y + r + off], FLAG_INK[row[c]], into)
+          c = e + 1
+        end
+      end
+    end
+  end
+
   def self.choice(d)
     s = Screen.new
     stripes(s.ops)
@@ -2228,7 +2272,11 @@ module AshDroidDSUI
       y = y0 + r * pitch
       col = [PINK, ORANGE, GREEN, TEAL, BLUE, PURPLE][i % 6]
       col = BLUE if o[:kind] == :cancel
-      s.button(0, 0, [x, y, x + bw - 1, y + high], col, upper(o[:label]), o[:cmd], shadow: LAVENDER_SHADOW, bounce: i == d[:index].to_i)
+      flag = d[:flags] && d[:flags][i]
+      col = d[:flag_col] || col if flag
+      icon = flag ? flag_icon(7, (high + 3 - FLAG_H) / 2, flag) : nil
+      s.button(0, 0, [x, y, x + bw - 1, y + high], col, upper(o[:label]), o[:cmd], shadow: LAVENDER_SHADOW, bounce: i == d[:index].to_i,
+               icon: icon, center: flag ? [x + (bw + FLAG_W + 4) / 2, y + (high + 1) / 2] : nil)
     end
     if d[:help] && !d[:help].to_s.empty?
       txt(s.ops, d[:help], 48, H - 150, 52, INK, [176, 176, 200], "l", "a", { "ww" => 700, "lh" => 60, "ml" => 2 })
@@ -3173,9 +3221,22 @@ module AshDroidDS
 
   def self.choice_state(cw)
     labels = commands_of(cw).map { |c| label_of(c) }
+    flags = language_flags(labels)
     screen(:choice, [cw.object_id, cw.index, labels]) do
-      ui.choice(help: "", options: options_of(cw), index: cw.index.to_i)
+      ui.choice(help: "", options: options_of(cw), index: cw.index.to_i, flags: flags, flag_col: ui::TEAL)
     end
+  end
+
+  LANGUAGE_FLAGS = { "English" => :en, "French" => :fr, "Spanish (Spain)" => :es, "German" => :de }.freeze
+
+  # The game's list of languages gets a flag per entry instead of a colour per button
+  def self.language_flags(labels)
+    names = Settings::LANGUAGES.map { |l| l[0].to_s }
+    return nil if names.length < 2 || labels.first(names.length) != names
+    flags = names.map { |n| n == AshDroidText::ITALIAN_NAME ? :it : LANGUAGE_FLAGS[n] }
+    flags.all? ? flags : nil
+  rescue StandardError, NameError
+    nil
   end
 
   # ---- overworld ----
