@@ -160,7 +160,7 @@ Mock-up: `ds_mock_profile.py <game folder> <pixelfonts.txt> <out.png>`.
   the game that card is opened with the GCCARD item, so those pages are only offered when the player has it;
   without it there are no arrows. Bottom left: which card is shown (`ds_mock_profile.py ... <out.png> 1-5`).
 
-## Save (pending approval)
+## Save (approved)
 
 Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 
