@@ -208,3 +208,11 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 Small text is never drawn bare on a coloured background: on the Thor it reads too thin. Text in the game's font
 goes at 52 px or more, dark with its grey shadow on a cream or light panel (or white with a dark shadow on dark),
 labels at the same size as their values.
+
+## Touch feedback and scrolling (rules)
+
+- Every button has a pressed state while the finger is on it, the one approved for the bag's pocket buttons: it
+  sinks two pixels, gets darker and loses its shadow; it acts on release, and sliding the finger off cancels.
+  This is separate from the bounce of the option selected with the D-pad.
+- Lists (bag items, wild Pokémon) scroll by dragging the list itself, and the bar on their right can be
+  dragged to move fast; its arrows step one row and repeat while held.
