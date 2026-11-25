@@ -2157,22 +2157,26 @@ module AshDroidDSUI
 
   # ---- trainer cards ----
 
-  # The game's own card screens, captured as they are drawn, at 2x: the largest whole factor that fits (3x is
-  # wider than the screen, and pixels are never enlarged by a fraction).
-  # d: { shot: png file, page: 1.., total: }
+  # The game's own card screens, captured as they are drawn (without the trainer's portrait), with the card
+  # itself enlarged to the width of the screen: 2.5x, which is exact for the card's frame, bars and texts
+  # (drawn with doubled pixels) and uneven only for its few one-pixel lines (decided: accepted). The
+  # portrait has one-pixel detail everywhere, so it is drawn apart at a whole 3x, standing on its box.
+  # d: { shot: png file, trainer: file of the portrait, page: 1.., total: }
   def self.profile(d)
     s = Screen.new
     ops = s.ops
     bg = pic("Trainer Card/bg")
-    bw, bh = size(bg)
-    x0 = 54
-    y0 = 38
-    if bw > 0                                   # tiled like the game's plane, lined up with the tiles in the picture
-      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [(x0 % bw - bw) * 2, (y0 % bh - bh) * 2] }
+    if size(bg)[0] > 0
+      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [0, 0] }
     else
       fill(ops, 0, 0, W, H, [160, 208, 240])
     end
-    whole(ops, d[:shot], x0 * 2, y0 * 2, 2) if d[:shot]
+    if d[:shot]
+      ops << { "o" => "img", "f" => d[:shot], "s" => [16, 16, 480, 352], "d" => [20, 14, 1200, 880] }
+      tw, th = size(d[:trainer])
+      # centred on its box (x 400 of the game's screen) and standing near the box's lower edge (y 264)
+      whole(ops, d[:trainer], 20 + (400 - 16) * 5 / 2 - tw * 3 / 2, 14 + (264 - 16) * 5 / 2 + 10 - th * 3, 3) if tw > 0
+    end
     total = d[:total].to_i
     if total > 1
       game_button(s, 6, 472, 112, 62, nil, "card:prev", nil, glyph: arrow_icon(16, 6, true))
@@ -3501,6 +3505,9 @@ module AshDroidDS
       scene = GCCard_Scene.new
       scene.send(%i[pbDrawGCCardOne pbDrawGCCardTwo pbDrawGCCardThree pbDrawGCCardFour][page - 2])
     end
+    portrait = scene.instance_variable_get(:@sprites)
+    portrait = portrait.is_a?(Hash) ? portrait["trainer"] : nil
+    portrait.visible = false if portrait && !portrait.disposed?   # drawn apart on the second screen, at 3x
     cover.visible = false
     shot = Graphics.snap_to_bitmap
     cover.visible = true
@@ -3536,7 +3543,12 @@ module AshDroidDS
     shots = {}
     modal(:cards) do |cmd|
       shots[page] ||= card_shot(page) || ""
-      @modal_view = -> { screen(:cards, [page, shots[page]]) { ui.profile(shot: shots[page].to_s.empty? ? nil : shots[page], page: page, total: total) } }
+      @modal_view = lambda do
+        screen(:cards, [page, shots[page]]) do
+          ui.profile(shot: shots[page].to_s.empty? ? nil : shots[page], page: page, total: total,
+                     trainer: (ui.file(GameData::TrainerType.player_front_sprite_filename($Trainer.trainer_type)) rescue nil))
+        end
+      end
       next :done if cmd == "back"
       if total > 1
         if cmd == "card:next" || Input.trigger?(Input::RIGHT) then page = page % total + 1; pbPlayCursorSE

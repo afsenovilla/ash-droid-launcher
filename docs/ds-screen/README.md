@@ -39,8 +39,9 @@ Changes after the first build on the device (2026-11-25), which replace what the
 - **Party on the overworld**: the game's party screen is on the game screen and the second screen shows the
   sheet of the Pokémon under its cursor (icon and name with previous / next, types, held item, moves with PP)
   and one grid with what the game offers for it plus VOLVER. Reordering uses the game's own "Switch".
-- **Pixels are always perfect** (rule): the game's art is only ever enlarged by a whole factor, on every
-  screen, even if that leaves room unused (the trainer cards stay at 2x).
+- **Pixels are always perfect** (rule): the game's art is only ever enlarged by a whole factor. One decided
+  exception: the trainer cards are shown at 2.5x to fill the screen, which is exact for their doubled-pixel
+  art and uneven only for a few one-pixel lines; the trainer's portrait is drawn apart at 3x.
 - **Wild Pokémon**: one tab per method; inside fishing, a heading per rod.
 - **Save**: after saving, the button stays, greyed, saying it is done.
 - **Home**: the buttons stay lit while walking.
