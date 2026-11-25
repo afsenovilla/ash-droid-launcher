@@ -359,6 +359,19 @@ category icons), that image is used; code-drawn elements are for what the game h
   whole-factor rule as the trainer card; previous / next and VOLVER sit in a strip below. The touch zones were
   measured on the English page background; the localized ones may place the words slightly differently.
 
+## Reported, to investigate: music does not loop seamlessly
+
+Reported on the AYN Thor (2026-11-26): battle and overworld music plays to its end, goes silent for a moment
+and starts again, instead of looping without a seam; noticed "recently". Nothing found yet. What is known:
+
+- The launcher has not changed anything in the audio path: the engine's audio code is untouched since
+  0.4.x, and the patch only swaps the intro songs for their dubbed versions.
+- The engine loops Ogg Vorbis files at their LOOPSTART / LOOPLENGTH tags when they have them; any other
+  file (or an Ogg without tags) is replayed from the start when it ends, so a fade or silence at the end
+  of the file is heard.
+- To check with the game files at hand: the format and tags of the tracks that show it, whether it also
+  happens on PC and on the official 0.7.1 build, and whether the game update to 3.7.1 changed the music.
+
 ## Idea for later: foldable phones (not started, nothing tested)
 
 To look at only once the beta is solid on the AYN Thor. All figures below are estimates from typical screen
