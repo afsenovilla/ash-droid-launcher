@@ -141,7 +141,7 @@ if __name__ == '__main__':
             m.button(cd, (ox + 1, n * 27 + 1, ox + BW, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
             m.pix_text(col, label, ox + (BW + 1) // 2, n * 27 + 12 - (1 if n == 0 else 0), 1)
         m.button(cd, (1, 106, CW, 130), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', (CW + 1) // 2, 118, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
-        col = col.resize((col.width * 6, col.height * 6), Image.NEAREST); one.alpha_composite(col, ((pw2 - col.width) // 2, 14))
+        col = col.resize((col.width * 6, col.height * 6), Image.NEAREST); one.alpha_composite(col, ((pw2 - col.width) // 2, 2))
     one = one.convert('RGB')
     one.save(OUT.replace('.png', '-1to1.png'))                    # the screen pixel for pixel (1240x1080)
     out = Image.new('RGB', (W * 2 + 40, H * 2 + 40), (0, 0, 0)); out.paste(one, (20, 20))
