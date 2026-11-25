@@ -10,8 +10,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - **Second-screen battle menus (beta, dual-screen handhelds such as the AYN Thor)**: while a battle menu is
   open, the other screen shows it as touch buttons: Fight / Bag / Pokémon / Run, and the four moves with
   type, PP and how effective each is against the opponent (single battles), plus Back and Mega Evolution.
-  The console's buttons keep working and the cursor is mirrored on both screens. A button on the second
-  screen hides the game's own menu for a cleaner battle screen (on by default) or shows it again.
+  The console's buttons keep working and the cursor is mirrored on both screens. While the second screen
+  shows the menus, the game hides its own for a cleaner battle screen.
   The second screen is built from the game's own menu images as the game is showing them (its command
   and move buttons, menu panels, type icons, Mega Evolution/Shift buttons, already translated), enlarged
   pixel-sharp, with the game's font and text colours; nothing of the game ships in the APK.

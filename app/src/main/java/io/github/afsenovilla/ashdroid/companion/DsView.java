@@ -61,12 +61,11 @@ final class DsView extends View
     private final RectF[] mGrid = { new RectF(), new RectF(), new RectF(), new RectF() };
     private int mGridCount;
     private final RectF mBack = new RectF();
-    private final RectF mToggle = new RectF();
     private final RectF[] mExtra = { new RectF(), new RectF(), new RectF() };
     private final String[] mExtraCmd = new String[3];
     private int mExtraCount;
     private boolean mBackShown;
-    /** What the finger went down on: 0-3 grid, 10 back, 12 toggle, 20+ extra buttons, -1 nothing. */
+    /** What the finger went down on: 0-3 grid, 10 back, 20+ extra buttons, 30 bag (prototype), -1 nothing. */
     private int mPressed = -1;
 
     /** The game's text size (Essentials) and the smallest gap between two enlarged buttons. */
@@ -164,24 +163,16 @@ final class DsView extends View
         }
         c.drawColor(mBackdrop);
 
-        // Bottom-right corner: the launcher's own switch for the menu on the game screen
-        final float stripH = h * 0.07f;
-        mToggle.set(w * 0.62f, h - stripH - pad * 0.5f, w - pad * 0.5f, h - pad * 0.5f);
-        String toggle = getResources().getString(mOwner.hideTopMenu() ? R.string.ds_top_menu_hidden : R.string.ds_top_menu_shown);
-        button(c, mToggle, PANEL, false, mPressed == 12);
-        label(c, toggle, mToggle.centerX(), mToggle.centerY(), mToggle.width() - pad, stripH * 0.40f, 0xFFB8C0CC);
-
         if (s.screen == DsState.IDLE) return;
         if (s.screen == DsState.WORLD || s.screen == DsState.MIRROR) {
             // Prototype screens, not the approved overworld design (docs/ds-screen): one plain
             // button to try the game's own bag mirrored here, and the mirrored frame itself.
             c.drawColor(0xFF000000);
-            mToggle.setEmpty();
             if (s.screen == DsState.WORLD) drawWorld(c, s, w, h, pad);
             else drawMirror(c, s, w, h);
             return;
         }
-        final float top = pad * 0.5f, bottom = mToggle.top - pad * 0.5f;
+        final float top = pad * 0.5f, bottom = h - pad * 0.5f;
         if (s.screen == DsState.COMMAND) drawCommand(c, s, w, h, top, bottom, pad);
         else drawFight(c, s, w, h, top, bottom, pad);
     }
@@ -506,7 +497,6 @@ final class DsView extends View
         if (mBackShown && mBack.contains(x, y)) return 10;
         for (int i = 0; i < mExtraCount; i++) if (mExtra[i].contains(x, y)) return 20 + i;
         if (mBagShown && mBag.contains(x, y)) return 30;
-        if (mToggle.contains(x, y)) return 12;
         return -1;
     }
 
@@ -524,7 +514,6 @@ final class DsView extends View
                 if (target >= 0 && target == mPressed) {
                     if (target < 4) mOwner.send("sel:" + target);
                     else if (target == 10) mOwner.send("back");
-                    else if (target == 12) mOwner.toggleHideTopMenu();
                     else if (target == 30) mOwner.send("open:bag");
                     else if (target >= 20 && target - 20 < mExtraCount) mOwner.send(mExtraCmd[target - 20]);
                 }

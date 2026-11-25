@@ -1282,13 +1282,6 @@ module AshDroidDS
     !@forced.nil?
   end
 
-  module InputHook
-    def trigger?(button)
-      return true if AshDroidDS.forcing? && AshDroidDS.forced?(button)
-      super
-    end
-  end
-
   # Prepended to the battle scene (PokeBattle_Scene / Battle::Scene)
   module Scene
     def pbCommandMenuEx(idxBattler, texts, *args)
@@ -1432,28 +1425,33 @@ module AshDroidDS
     AshDroidLog.log("ds: capture #{e.class}: #{e.message}") if @capture_errors <= 3
   end
 
-  module GraphicsHook
-    def update(*args)
-      AshDroidDS.capture if AshDroidDS.mirroring?
-      super
-    end
-  end
-
-  # Prepended to the map scene (Scene_Map)
-  module World
-    def update(*args)
-      super
-    ensure
-      AshDroidDS.world_frame
-    end
-  end
-
+  # Both hooks are alias chains, not prepended modules: the game's own scripts (and plugins) wrap
+  # Graphics.update and Scene_Map#update with "alias old update" later on, and an alias taken after
+  # a prepend points back at the prepended method, which recurses forever on the first frame.
   def self.install_world(scene_class)
     return unless available?
-    return if scene_class.ancestors.include?(World)
-    scene_class.prepend(World)
-    Graphics.singleton_class.prepend(GraphicsHook) unless Graphics.singleton_class.ancestors.include?(GraphicsHook)
-    AshDroidLog.log("ds: map scene hooked (mirror #{mirror_ready? ? 'ready' : 'unavailable'})")
+    return unless scene_class.method_defined?(:update)   # class body not finished yet: next time
+    unless scene_class.method_defined?(:ashdroid_ds_update)
+      scene_class.class_eval do
+        alias_method :ashdroid_ds_update, :update
+        def update(*args)
+          ashdroid_ds_update(*args)
+        ensure
+          AshDroidDS.world_frame
+        end
+      end
+    end
+    graphics = Graphics.singleton_class
+    unless graphics.method_defined?(:ashdroid_ds_update)
+      graphics.class_eval do
+        alias_method :ashdroid_ds_update, :update
+        def update(*args)
+          AshDroidDS.capture if AshDroidDS.mirroring?
+          ashdroid_ds_update(*args)
+        end
+      end
+      AshDroidLog.log("ds: map scene hooked (mirror #{mirror_ready? ? 'ready' : 'unavailable'})")
+    end
   rescue StandardError, NameError => e
     AshDroidLog.log("ds: install_world #{e.class}: #{e.message}")
   end
@@ -1461,8 +1459,15 @@ module AshDroidDS
   def self.install(scene_class)
     return unless available?
     scene_class.prepend(Scene) unless scene_class.ancestors.include?(Scene)
-    unless Input.singleton_class.ancestors.include?(InputHook)
-      Input.singleton_class.prepend(InputHook)
+    input = Input.singleton_class
+    unless input.method_defined?(:ashdroid_ds_trigger?)
+      input.class_eval do
+        alias_method :ashdroid_ds_trigger?, :trigger?
+        def trigger?(button)
+          return true if AshDroidDS.forcing? && AshDroidDS.forced?(button)
+          ashdroid_ds_trigger?(button)
+        end
+      end
     end
     AshDroidLog.log("ds: battle menus hooked (#{scene_class.name})")
   rescue StandardError, NameError => e

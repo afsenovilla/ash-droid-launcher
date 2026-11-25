@@ -3,7 +3,6 @@ package io.github.afsenovilla.ashdroid.companion;
 import android.app.Activity;
 import android.app.Presentation;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,8 +38,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public final class DsCompanion
 {
     private static final String TAG = "AshDroid[DS]";
-    private static final String PREFS = "ashdroid_ds";
-    private static final String PREF_HIDE = "hide_top_menu";
 
     /** Devices with a second built-in screen. A TV or a cast target must never get the menus. */
     private static final String DUAL_SCREEN_MODELS = ".*(thor|pocket ?ds|dual ?screen).*";
@@ -51,12 +48,10 @@ public final class DsCompanion
     private final DisplayManager mDisplays;
     private final Handler mMain = new Handler(Looper.getMainLooper());
     private final ConcurrentLinkedQueue<String> mCommands = new ConcurrentLinkedQueue<>();
-    private final SharedPreferences mPrefs;
 
     private volatile Screen mScreen;
     private volatile boolean mShowing;
     private boolean mStarted;
-    private boolean mHideTopMenu;
 
     private final DisplayManager.DisplayListener mListener = new DisplayManager.DisplayListener() {
         @Override public void onDisplayAdded(int id) { refresh(); }
@@ -74,8 +69,6 @@ public final class DsCompanion
     {
         mActivity = activity;
         mDisplays = (DisplayManager) activity.getSystemService(Context.DISPLAY_SERVICE);
-        mPrefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        mHideTopMenu = mPrefs.getBoolean(PREF_HIDE, true);
     }
 
     /** Call from Activity.onStart(). */
@@ -131,7 +124,8 @@ public final class DsCompanion
                 mShowing = true;
                 mCommands.clear();
                 mCommands.add("hello");
-                mCommands.add(mHideTopMenu ? "hide:1" : "hide:0");
+                // The battle menus live on this screen, so the game hides its own (no switch for it here)
+                mCommands.add("hide:1");
                 Log.i(TAG, "Battle menus on display " + target.getDisplayId() + " (" + target.getName() + ")");
             } catch (RuntimeException e) {
                 // WindowManager.InvalidDisplayException and friends: stay on one screen
@@ -158,18 +152,6 @@ public final class DsCompanion
     void send(String command)
     {
         mCommands.add(command);
-    }
-
-    boolean hideTopMenu()
-    {
-        return mHideTopMenu;
-    }
-
-    void toggleHideTopMenu()
-    {
-        mHideTopMenu = !mHideTopMenu;
-        mPrefs.edit().putBoolean(PREF_HIDE, mHideTopMenu).apply();
-        send(mHideTopMenu ? "hide:1" : "hide:0");
     }
 
     // ---- Bridge: called on the game thread ----

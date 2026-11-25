@@ -189,8 +189,6 @@
     <string name="game_unverified">ZIP del juego sin verificar</string>
 
     <!-- Second-screen battle menus (dual-screen handhelds) -->
-    <string name="ds_top_menu_hidden">Menú del juego: oculto</string>
-    <string name="ds_top_menu_shown">Menú del juego: visible</string>
     <string name="ds_bag">MOCHILA</string>
     <string name="ds_prototype">Prototipo: la mochila del propio juego, en esta pantalla. Se maneja con los botones de la consola.</string>
     <string name="ds_no_mirror">Esta versión del motor no puede traer aquí los menús del juego.</string>
