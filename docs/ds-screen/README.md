@@ -115,12 +115,16 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
   and name at 3x. A straight 3x copy of the game's layout needs 768 px per panel.
 - Bottom band: help line and VOLVER.
 
-## Party actions (pending approval)
+## Party: reordering and actions (pending approval)
 
-Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> actions`.
+Mock-ups: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> drag` and `... actions`.
 
-- After touching a Pokémon: its panel alone at the top, and under it the options the game gives for it
-  (Summary, its field moves, Switch, Item or Mail) as a two-column grid of medium buttons in the approved
-  style: smaller than the battle ones, one colour per kind. Rows are added as needed.
-- The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens; the help line asks
-  what to do with that Pokémon.
+- Reordering is done on the party screen by dragging a panel onto another one; there is no "Switch" button.
+  While dragging, the held panel follows the finger with a shadow under it and uses the game's own
+  "switching" panel images, as does the panel under it; its own slot shows the blank panel. Letting go swaps
+  the two; letting go anywhere else puts it back. With the buttons: hold the confirm button on a Pokémon to
+  pick it up, move with the D-pad, confirm to drop.
+- A short touch (no drag) opens that Pokémon's actions: its panel alone at the top, and under it the options
+  the game gives for it except Switch (Summary, its field moves, Item or Mail) as a two-column grid of medium
+  buttons in the approved style, one colour per kind. Rows are added as needed.
+- The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens.

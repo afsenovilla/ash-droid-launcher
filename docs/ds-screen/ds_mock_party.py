@@ -6,7 +6,7 @@
 #   panels 768 px wide, which does not fit two columns on a 1240 px screen.
 # - The game's 512x384 background is extended to 620x540 by repeating lines; the panel sockets drawn on it are
 #   filled with the frame's own colour. Bottom band: help line and the back button (approved button style).
-# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions]
+# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions|drag]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, FONTS_TXT, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -48,12 +48,12 @@ def kind(i, mon):
     if not mon: return 'Party/panel_blank.png'
     return 'Party/panel_%s%s%s.png' % ('round' if i == 0 else 'rect', '_faint' if mon[3] == 0 else '', '_sel' if i == SELECTED else '')
 
-def contents(one, d, i, mon):                                     # positions in content pixels (1 = U screen px)
-    x, y = slot_xy(i); x, y = x * 2, y * 2
+def contents(one, d, i, mon, pos=None, swap=False):               # positions in content pixels (1 = U screen px)
+    x, y = pos or tuple(v * 2 for v in slot_xy(i))
     def at(cx, cy): return x + cx * U, y + cy * U
     name, species, lv, hp, total, gender = mon
     faint = hp == 0
-    one.alpha_composite(big(img('Party/overlay_hp_back%s.png' % ('_faint' if faint else ''))), at(52, 36))
+    one.alpha_composite(big(img('Party/overlay_hp_back%s.png' % ('_swap' if swap else '_faint' if faint else ''))), at(52, 36))
     one.alpha_composite(big(img('Party/icon_ball%s.PNG' % ('_sel' if i == SELECTED else ''))), at(1, 0))
     icon = Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64))
     one.alpha_composite(big(icon), at(10, 2))
@@ -96,7 +96,8 @@ def screen():
     return one.convert('RGB')
 
 # What the game offers for a Pokémon: Summary, its field moves, Switch, Item (or Mail), Cancel.
-ACTIONS = [('DATOS', (56, 136, 232)), ('MOVER', (88, 200, 88)), ('OBJETO', (240, 168, 48)), ('DESTELLO', (64, 184, 184))]
+# Switch is not a button: the order is changed by dragging on the party screen (see drag()).
+ACTIONS = [('DATOS', (56, 136, 232)), ('OBJETO', (240, 168, 48)), ('DESTELLO', (64, 184, 184))]
 def actions():
     """After touching a Pokémon: its panel alone on top, a grid of medium buttons under it, back at the bottom."""
     global slot_xy
@@ -116,5 +117,23 @@ def actions():
     footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0])
     return one.convert('RGB')
 
+def drag():
+    """Reordering by dragging: the held panel follows the finger with a shadow under it, its slot stays empty and
+    the panel under it takes the game's own 'switching' colours. Letting go swaps the two."""
+    s = backdrop(); held, over = 1, 0
+    mons = [PARTY[i] if i < len(PARTY) else None for i in range(6)]
+    for i, mon in enumerate(mons):
+        name = 'Party/panel_blank.png' if i == held else 'Party/panel_round_swap_sel.png' if i == over else kind(i, mon)
+        s.alpha_composite(tall(img(name)), slot_xy(i))
+    one = s.resize((W * 2, H * 2), Image.NEAREST).convert('RGBA'); d = ImageDraw.Draw(one); d.fontmode = '1'
+    for i, mon in enumerate(mons):
+        if mon and i != held: contents(one, d, i, mon, swap=(i == over))
+    pos = (300, 150); panel = tall(img('Party/panel_rect_swap_sel2.png')); panel = panel.resize((panel.width * 2, panel.height * 2), Image.NEAREST)
+    shade = Image.new('RGBA', panel.size, (0, 40, 48, 110)); shade.putalpha(panel.getchannel('A').point(lambda v: 110 if v else 0))
+    one.alpha_composite(shade, (pos[0] + 16, pos[1] + 20)); one.alpha_composite(panel, pos)
+    d = ImageDraw.Draw(one); d.fontmode = '1'; contents(one, d, held, mons[held], pos=pos, swap=True)
+    footer(one, d, 'Suelta para cambiar.')
+    return one.convert('RGB')
+
 if __name__ == '__main__':
-    (actions() if MODE == 'actions' else screen()).save(OUT)   # real size: 1240x1080
+    {'actions': actions, 'drag': drag}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
