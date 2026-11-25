@@ -237,3 +237,12 @@ Every second-screen screen works with touch and with the buttons; nothing is tou
 - Entry point with the buttons (decided): on the overworld the game's menu button no longer opens the game's
   pause menu on the top screen; it puts the cursor on the second screen's home buttons. Cancel from there gives
   the buttons back to the game.
+
+## Bag out of battle, new layout (pending approval)
+
+`ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt> world|item`. Proposed to replace the two-column
+bag (`ds_mock_bag.py`): the layout approved for the battle bag (pockets in a row on top, list as wide as the
+screen with each item's icon, seven taller rows), with the description and VOLVER at the foot. Touching an item
+swaps the description for that item's options in one row (USAR, DAR, TIRAR, or REGISTRAR / LEER when they
+apply) and CANCELAR, which brings the description back. The bag picture, the pocket name, the big item box and
+the CERRAR MOCHILA entry go away.
