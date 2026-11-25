@@ -1457,7 +1457,8 @@ module AshDroidDSUI
       end
       cx = x + w / 2
       eff = m[:eff]
-      ny, iy = eff ? [84, 150] : [108, 198]
+      ny = 88                                   # the same places on every button, with or without the
+      iy = 156                                  # effectiveness line, so the four always line up
       txt(s.ops, m[:name], cx, y + ny, 78, INK, INK_SH, "m", "m", bn.merge("fit" => w - 96))
       img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx - 201, y + iy, 3, bn) if types
       txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", cx + 197, y + iy + 42, 52, INK, INK_SH, "r", "m", bn)
