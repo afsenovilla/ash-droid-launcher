@@ -106,9 +106,10 @@ Mock-up: `ds_mock_route.py <game folder> <pixelfonts.txt> <out.png>`, with the r
 
 Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
 
-- Replica of the game's party screen: its panels (round for the first slot, rect for the rest, faint and
-  selected variants), ball, HP bar, level and status images, fonts, colours and the offsets used by `UI_Party`.
-- Panels keep their size and the 16 px drop of the right column, but are spread out (280 px column pitch, 134 px row pitch) and made 126 px tall by repeating lines in each band,
-  to use the taller screen. The background is the game's, extended by repeating lines, with
-  the sockets drawn on it filled with the frame colour.
+- Built from the game's party images (round panel for the first slot, rect for the rest, faint and selected
+  variants, ball, HP bar, level and status images), the Pokémon icons and fonts, with `UI_Party`'s colours.
+- Panels: widened to 296 px and made 138 px tall by repeating lines of the image, shown at 2x, two columns
+  with the right one 16 px lower as in the game.
+- Contents: everything inside a panel is shown at 3x and re-laid out (name on top, HP bar under it, level,
+  status and HP numbers on the bottom row). A straight 3x copy of the game's layout needs 768 px per panel.
 - Bottom band: help line and VOLVER.
