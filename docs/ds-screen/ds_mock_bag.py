@@ -7,11 +7,12 @@
 # With a third argument, the state after touching an item: the left panel gives way to that item's options
 # (the ones the game offers for it) as stacked buttons in the approved style, and CANCELAR to drop the
 # selection and get the pockets back. 'item' = out of battle, 'battle' = in battle (the game only offers Use there).
-# Needs the game folder. Usage: ds_mock_bag.py <game folder> <out.png> [item|battle <pixelfonts.txt>]
+# Needs the game folder. Usage: ds_mock_bag.py <game folder> <out.png> [item|battle <pixelfonts.txt> [pressed option]]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, OUT = sys.argv[1], sys.argv[2]
 MODE = sys.argv[3] if len(sys.argv) > 3 else ''
+PRESS = int(sys.argv[5]) if len(sys.argv) > 5 else -1         # option shown while being touched
 FONTS_TXT = sys.argv[4] if len(sys.argv) > 4 else ''
 G = GAME + '/Graphics/'
 def img(p): return Image.open(G + p).convert('RGBA')
@@ -138,6 +139,11 @@ if __name__ == '__main__':
         CW = 76                                                    # CANCELAR: a little wider, its word is longer
         col = Image.new('RGBA', (CW + 2, 134), (0, 0, 0, 0)); ox = (CW - BW) // 2; cd = ImageDraw.Draw(col)
         for n, (label, colour) in enumerate(options):
+            if n == PRESS:                                         # under the finger: sunk one art pixel, darker, no shadow
+                keep = m.SHADOW; m.SHADOW = ORANGE[:3]
+                m.button(cd, (ox + 1, n * 31 + 2, ox + BW, n * 31 + 29), m.shade(colour, 0.72), 9); m.SHADOW = keep
+                m.pix_text(col, label, ox + (BW + 1) // 2, n * 31 + 15, 1, ink=(200, 200, 200))
+                continue
             m.button(cd, (ox + 1, n * 31 + 1, ox + BW, n * 31 + 28), colour, 9, selected=(n == 0))   # drawn at rest: evenly spaced (the selected one bounces when animated)
             m.pix_text(col, label, ox + (BW + 1) // 2, n * 31 + 14, 1)
         m.button(cd, (1, 107, CW, 131), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', (CW + 1) // 2, 119, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
