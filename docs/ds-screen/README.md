@@ -129,3 +129,15 @@ Mock-ups: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> drag` and `
   moves, Item or Mail) stacked as medium buttons as wide as the panel, in the approved style, one colour per
   kind. Buttons are 162 px tall; three fit at this size, with more the rows get lower.
 - The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens.
+
+## Summary remote (pending approval)
+
+Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> summary`.
+
+- DATOS opens the game's own summary screen on the top screen, untouched. The second screen is its remote:
+  previous / next Pokémon (arrows beside its icon and name), one button per page of the summary (the current
+  one in colour, the rest grey) and VOLVER.
+- Page labels will follow the game's own page titles. Not designed yet: move details on the moves page.
+- OBJETO: a second level with the same stacked buttons (USAR, DAR, and QUITAR when holding something); USAR and
+  DAR open the bag to pick the item. Field moves: the menu closes, the second screen goes back to home and the
+  move runs on the top screen with the game's own messages.

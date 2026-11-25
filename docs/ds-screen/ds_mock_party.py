@@ -6,7 +6,7 @@
 #   panels 768 px wide, which does not fit two columns on a 1240 px screen.
 # - The game's 512x384 background is extended to 620x540 by repeating lines; the panel sockets drawn on it are
 #   filled with the frame's own colour. Bottom band: help line and the back button (approved button style).
-# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions|drag]
+# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions|drag|summary]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, FONTS_TXT, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -118,6 +118,33 @@ def actions():
     footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0])
     return one.convert('RGB')
 
+PAGES = ['INFORMACIÓN', 'NOTAS', 'HABILIDADES', 'MOVIMIENTOS', 'CINTAS']   # the game's five summary pages
+def summary(page=0):
+    """DATOS: the game's own summary screen is shown on the top screen; the second screen is its remote:
+    which Pokémon (previous / next), which page, and back."""
+    s = backdrop(); one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
+    m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
+    name, species = PARTY[SELECTED][0], PARTY[SELECTED][1]
+    icon = big(Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64)))
+    w = icon.width + int(d.textlength(name, font=FONT)); x = (W * 2 - w) // 2
+    one.alpha_composite(icon, (x, -6)); text(d, name, x + icon.width, 30, (64, 64, 80), (176, 200, 200))
+    UW, X0 = 145, 13                                               # arrows at the ends, page buttons centred
+    ui = Image.new('RGBA', (UW + 2, 30 + 5 * 23), (0, 0, 0, 0)); ud = ImageDraw.Draw(ui)
+    for left in (True, False):                                     # previous / next Pokémon
+        bx = 1 if left else UW - 25; usable = not (left and SELECTED == 0)
+        m.button(ud, (bx, 1, bx + 24, 25), (56, 136, 232) if usable else (168, 168, 196), 9)
+        for k in range(5):                                         # arrowhead
+            xx = bx + 10 + k if left else bx + 14 - k
+            for col, o in (((48, 48, 64), 1), ((255, 255, 255), 0)): ud.line((xx + o, 13 - k + o, xx + o, 13 + k + o), fill=col)
+    for n, label in enumerate(PAGES):
+        by = 30 + n * 23
+        m.button(ud, (X0 + 1, by, X0 + 119, by + 20), (240, 168, 48) if n == page else (168, 168, 196), 9, selected=(n == page), lift=(1 if n == page else 0))
+        m.pix_text(ui, label, X0 + 60, by + 10 - (1 if n == page else 0), 1)
+    ui = ui.resize((ui.width * 6, ui.height * 6), Image.NEAREST)
+    one.paste(ui, ((W * 2 - ui.width) // 2, 8), ui)
+    footer(one, d, 'Los datos se ven arriba.')
+    return one.convert('RGB')
+
 def drag():
     """Reordering by dragging: the held panel follows the finger with a shadow under it, its slot stays empty and
     the panel under it takes the game's own 'switching' colours. Letting go swaps the two."""
@@ -137,4 +164,4 @@ def drag():
     return one.convert('RGB')
 
 if __name__ == '__main__':
-    {'actions': actions, 'drag': drag}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
+    {'actions': actions, 'drag': drag, 'summary': summary}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
