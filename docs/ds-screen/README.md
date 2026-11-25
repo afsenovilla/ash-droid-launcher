@@ -186,7 +186,7 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 - Bag in battle (`... battle <pixelfonts.txt>`): the same screen; the game only offers Use there.
 - Party in battle (`ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
   Pokémon shows its data on the second screen itself, with no trip to the summary: its card, then its types
-  (the game's icons), ability, held item, stats and moves with their PP, all at 2x. CAMBIAR sits at the bottom
+  (the game's icons), ability, held item, stats and moves with their PP, all at 2x on a cream panel like the move cards. CAMBIAR sits at the bottom
   left, beside the home button (back to the battle commands) and VOLVER; it is greyed out when the Pokémon
   cannot fight or is already out.
 - Party, OBJETO (`ds_mock_party.py ... item`): USAR, DAR, and QUITAR when the Pokémon holds something (the
@@ -199,3 +199,9 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   screen keeps the game's moves page. Dragging a card onto another swaps the moves, as the game's move page
   allows (same gesture as reordering the party; with the buttons: hold confirm, move with the D-pad, confirm
   to drop). Not in battle, where the game does not allow it either.
+
+## Text weight (rule)
+
+Small text is never drawn bare on a coloured background: on the Thor it reads too thin. Text in the game's font
+goes at 52 px or more, dark with its grey shadow on a cream or light panel (or white with a dark shadow on dark),
+labels at the same size as their values.

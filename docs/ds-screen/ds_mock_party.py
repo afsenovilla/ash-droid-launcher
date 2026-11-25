@@ -218,21 +218,25 @@ def battle_info():
     s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
     one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
     contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
-    types = img('types.png'); ink, shd, soft = (64, 64, 80), (176, 200, 200), (72, 112, 120)
-    L, R = 204, 1036
+    # cream panel for the data, as on the move cards: dark text with a grey shadow reads heavier on it
+    pw, ph = 146, 96; outer = m.rounded((pw, ph), 8); panel = Image.new('RGBA', (pw, ph), (0, 0, 0, 0))
+    panel.paste((56, 56, 72), (0, 0), outer); panel.paste((240, 240, 248), (0, 0), m.inset(outer, 1)); panel.paste((248, 248, 236), (0, 0), m.inset(outer, 3))
+    panel = panel.resize((pw * 6, ph * 6), Image.NEAREST); one.paste(panel, ((W * 2 - pw * 6) // 2, 300), panel)
+    types = img('types.png'); ink, shd, soft = (64, 64, 80), (168, 168, 192), (72, 112, 120)
+    L, R = 212, 1028
     def icon(row, x, cy): 
         t = types.crop((0, row * 28, 64, row * 28 + 28)).resize((128, 56), Image.NEAREST); one.alpha_composite(t, (x, cy - 28))
-    def rule(y): d.rectangle((L, y, R, y + 3), fill=(120, 192, 192))
-    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 136 * n, 336)
+    def rule(y): d.rectangle((L, y, R, y + 3), fill=(208, 208, 196))
+    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 136 * n, 350)
     for n, (label, value) in enumerate((('Habilidad', BATTLE_INFO['ability']), ('Objeto', BATTLE_INFO['item']))):
-        m.ttf(d, label, L, 396 + 58 * n, 52, ink, shd, 'lm'); m.ttf(d, value, R, 396 + 58 * n, 52, ink, shd, 'rm')
-    rule(488)
+        m.ttf(d, label, L, 408 + 56 * n, 52, ink, shd, 'lm'); m.ttf(d, value, R, 408 + 56 * n, 52, ink, shd, 'rm')
+    rule(496)
     for n, (label, value) in enumerate(BATTLE_INFO['stats']):
-        cx0 = L + 290 * (n % 3); y = 526 + 58 * (n // 3)
-        m.ttf(d, label, cx0, y, 52, ink, shd, 'lm'); m.ttf(d, value, cx0 + 252, y, 52, ink, shd, 'rm')
-    rule(618)
+        cx0 = L + 284 * (n % 3); y = 532 + 56 * (n // 3)
+        m.ttf(d, label, cx0, y, 52, ink, shd, 'lm'); m.ttf(d, value, cx0 + 248, y, 52, ink, shd, 'rm')
+    rule(620)
     for n in range(4):
-        y = 656 + 60 * n
+        y = 658 + 58 * n
         if n < len(BATTLE_INFO['moves']):
             name, row, pp = BATTLE_INFO['moves'][n]
             icon(row, L, y); m.ttf(d, name, L + 144, y, 52, ink, shd, 'lm'); m.ttf(d, 'PP ' + pp, R, y, 52, ink, shd, 'rm')
