@@ -183,7 +183,8 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   the left panel (bag picture, pocket name, pocket buttons) for the options the game gives for that item,
   stacked in the approved style (USAR, DAR, TIRAR; REGISTRAR and LEER when they apply), with CANCELAR under
   them to drop the selection and get the pockets back. Leaving the bag is always the list's CERRAR MOCHILA
-  entry, as in the game; the two are named differently on purpose. Up to four options fit.
+  entry, as in the game; the two are named differently on purpose. Option buttons are 408 px wide and 168 px tall, evenly spaced; CANCELAR is 456 px
+  wide. Three options fit at that height; with four or five they get lower.
 - Bag in battle (`... battle <pixelfonts.txt>`): the same screen; the game only offers Use there.
 - Party in battle (approved; `ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
   Pokémon shows on the second screen itself, with no trip to the summary, only what matters to decide a switch:
