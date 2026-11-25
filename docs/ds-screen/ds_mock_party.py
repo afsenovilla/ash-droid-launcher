@@ -199,7 +199,10 @@ def moves():
         for n, (label, value) in enumerate((('Potencia', power), ('Precisión', acc), ('PP', pp))):
             y = (y0 + 42.5 + 8.5 * n) * S
             m.ttf(d, label, (x0 + 11) * S, y, 52, ink, shd, 'lm'); m.ttf(d, value, (x1 - 10) * S, y, 52, ink, shd, 'rm')
-    m.ttf(d, 'Pikachu', 48, 1080 - 96, 52, ink, (176, 176, 200), 'lm')
+    name, species = PARTY[SELECTED][0], PARTY[SELECTED][1]         # whose moves these are: icon and name at 3x
+    icon = big(Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64)))
+    one.alpha_composite(icon, (12, 1080 - 198))
+    m.ttf(d, name, 12 + icon.width + 6, 1080 - 96, 78, ink, (176, 176, 200), 'lm')
     return one.convert('RGB')
 
 def drag():
