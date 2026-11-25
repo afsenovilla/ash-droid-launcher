@@ -185,7 +185,7 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   them to drop the selection and get the pockets back. Leaving the bag is always the list's CERRAR MOCHILA
   entry, as in the game; the two are named differently on purpose. Option buttons are 408 px wide and 168 px tall, evenly spaced; CANCELAR is 456 px
   wide. Three options fit at that height; with four or five they get lower.
-- Bag in battle (`ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt>`): its own layout, for choosing
+- Bag in battle (approved; `ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt>`): its own layout, for choosing
   fast. The pockets in one row at the top (the approved round buttons), the item list as wide as the screen
   with each item's own icon (2x) before its name and taller rows (seven visible), and at the foot the
   description of the item under the cursor with USAR and VOLVER beside it. No big item box, no CERRAR MOCHILA
