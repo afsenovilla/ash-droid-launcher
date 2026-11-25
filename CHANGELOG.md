@@ -12,6 +12,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   type, PP and how effective each is against the opponent (single battles), plus Back and Mega Evolution.
   The console's buttons keep working and the cursor is mirrored on both screens. A button on the second
   screen hides the game's own menu for a cleaner battle screen (on by default) or shows it again.
+  The second screen is built from the game's own menu images as the game is showing them (its command
+  and move buttons, menu panels, type icons, Mega Evolution/Shift buttons, already translated), enlarged
+  pixel-sharp, with the game's font and text colours; nothing of the game ships in the APK.
   Only enabled on known dual-screen models; nothing changes on other devices, PC or Steam Deck.
   Not tested on hardware yet: test builds only, not part of a release.
 

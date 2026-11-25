@@ -282,6 +282,59 @@ public final class DsCompanion
         String megaLabel = "Mega Evolution";
         String[] eff = { "No effect", "Not very effective", "Super effective" };
 
+        // The game's own images (null/empty when it didn't hand any: drawn plainly instead)
+        Art bg;
+        Art[] buttons = new Art[0];
+        Art[] extras = new Art[0];
+        Art backBtn;
+        Art typeIcon;
+        String ppText = "";
+        int base = 0xFF505058, shadow = 0xFFA0A0A8;
+        int ppBase = 0xFF505058, ppShadow = 0xFFA0A0A8;
+
+        /** A piece of one of the game's images: file, source rectangle and, for extras, its command. */
+        static final class Art
+        {
+            String img = "";
+            int x, y, w, h;
+            String cmd = "act";
+
+            static Art parse(JSONObject o)
+            {
+                if (o == null) return null;
+                JSONArray r = o.optJSONArray("r");
+                String img = o.optString("img", "");
+                if (r == null || r.length() != 4 || img.isEmpty()) return null;
+                Art a = new Art();
+                a.img = img;
+                a.x = r.optInt(0);
+                a.y = r.optInt(1);
+                a.w = r.optInt(2);
+                a.h = r.optInt(3);
+                a.cmd = o.optString("cmd", "act");
+                return a.w > 0 && a.h > 0 ? a : null;
+            }
+
+            static Art[] parseAll(JSONArray list)
+            {
+                if (list == null) return new Art[0];
+                Art[] out = new Art[list.length()];
+                for (int i = 0; i < out.length; i++) out[i] = parse(list.optJSONObject(i));
+                return out;
+            }
+        }
+
+        static int color(JSONObject o, String key, int fallback)
+        {
+            String v = o.isNull(key) ? "" : o.optString(key, "");
+            if (v.isEmpty()) return fallback;
+            try {
+                return android.graphics.Color.parseColor(v);
+            } catch (IllegalArgumentException e) {
+                return fallback;
+            }
+        }
+
         static final class Move
         {
             String name = "";
@@ -290,6 +343,9 @@ public final class DsCompanion
             int pp, totalPp;
             /** 0 no effect, 1 not very effective, 2 super effective, -1 nothing to say. */
             int eff = -1;
+            /** The game's button for this move and the colour it gives the name (0 = none). */
+            Art art;
+            int nameColor;
         }
 
         static DsState parse(String json)
@@ -320,9 +376,26 @@ public final class DsCompanion
                             mv.pp = m.optInt("pp", 0);
                             mv.totalPp = m.optInt("tpp", 0);
                             mv.eff = m.isNull("eff") ? -1 : m.optInt("eff", -1);
+                            mv.art = Art.parse(m);
+                            mv.nameColor = color(m, "col", 0);
                         }
                         s.moves[i] = mv;
                     }
+                }
+                s.bg = Art.parse(o.optJSONObject("bg"));
+                s.buttons = Art.parseAll(o.optJSONArray("buttons"));
+                s.extras = Art.parseAll(o.optJSONArray("extras"));
+                s.backBtn = Art.parse(o.optJSONObject("backBtn"));
+                s.base = color(o, "base", s.base);
+                s.shadow = color(o, "shadow", s.shadow);
+                s.ppBase = s.base;
+                s.ppShadow = s.shadow;
+                JSONObject info = o.optJSONObject("info");
+                if (info != null) {
+                    s.typeIcon = Art.parse(info.optJSONObject("icon"));
+                    s.ppText = info.isNull("pp") ? "" : info.optString("pp", "");
+                    s.ppBase = color(info, "base", s.base);
+                    s.ppShadow = color(info, "shadow", s.shadow);
                 }
                 JSONObject labels = o.optJSONObject("labels");
                 if (labels != null) {

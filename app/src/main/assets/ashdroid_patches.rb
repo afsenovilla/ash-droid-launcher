@@ -910,7 +910,10 @@ module AshDroidDS
   ACTIVE_EVERY = 40 # frames between "is the second screen showing?" checks
   IDLE = { "screen" => "idle" }.freeze
   JSON_ESC = { '"' => '\\"', "\\" => "\\\\", "\n" => "\\n", "\r" => "\\r", "\t" => "\\t" }.freeze
-  BUTTONS = { use: [:USE, :C], back: [:BACK, :B], action: [:ACTION, :A] }.freeze
+  BUTTONS = { use: [:USE, :C], back: [:BACK, :B], action: [:ACTION, :A], special: [:SPECIAL] }.freeze
+  # The game's own menu images are handed to the second screen as PNG files in this folder
+  # (rewritten every battle), so it shows exactly the buttons the game is showing.
+  ART_DIR = "ashdroid_ds"
   # Second-screen labels the game has no text for. Official terms; English for other languages.
   LABELS = {
     nil => { "back" => "Back", "mega" => "Mega Evolution",
@@ -987,7 +990,10 @@ module AshDroidDS
 
   def self.enter(scene, mode, data)
     return unless available?
-    @stack.clear unless @scene.equal?(scene)
+    unless @scene.equal?(scene)
+      @stack.clear
+      reset_art
+    end
     @scene = scene
     @stack.push(data.merge(mode: mode))
   rescue StandardError => e
@@ -1007,10 +1013,133 @@ module AshDroidDS
     sprites.is_a?(Hash) ? sprites[mode == :fight ? "fightWindow" : "commandWindow"] : nil
   end
 
+  # ---- the game's own images ----
+
+  def self.reset_art
+    @sheets = {}
+    @pixels = {}
+    @battle_n = (@battle_n || 0) + 1
+    Dir.glob(File.join(ART_DIR, "*.png")).each { |f| File.delete(f) rescue nil }
+  rescue StandardError
+  end
+
+  # PNG copy of a bitmap the game has loaded (so already redrawn/translated); nil if it can't be made
+  def self.sheet(bitmap)
+    return nil unless bitmap && !bitmap.disposed? && bitmap.respond_to?(:to_file)
+    @sheets ||= {}
+    key = bitmap.object_id
+    return @sheets[key] || nil if @sheets.key?(key)
+    @sheets[key] = false
+    Dir.mkdir(ART_DIR) unless File.directory?(ART_DIR)
+    path = File.expand_path(File.join(ART_DIR, "b#{@battle_n.to_i}_#{@sheets.length}.png"))
+    bitmap.to_file(path)
+    @sheets[key] = path
+  rescue StandardError => e
+    AshDroidLog.log("ds: image #{e.class}: #{e.message}")
+    nil
+  end
+
+  # Which part of which image a sprite of the menu is showing
+  def self.sprite(spr)
+    return nil unless spr && !spr.disposed? && spr.bitmap
+    path = sheet(spr.bitmap)
+    return nil unless path
+    r = spr.src_rect
+    { "img" => path, "r" => [r.x.to_i, r.y.to_i, r.width.to_i, r.height.to_i] }
+  rescue StandardError
+    nil
+  end
+
+  def self.hex(color)
+    format("#%02x%02x%02x%02x", color.alpha.to_i, color.red.to_i, color.green.to_i, color.blue.to_i)
+  rescue StandardError
+    nil
+  end
+
+  def self.const(cw, name)
+    cw.class.const_defined?(name) ? cw.class.const_get(name) : nil
+  rescue StandardError
+    nil
+  end
+
+  def self.parts(cw)
+    s = cw.instance_variable_get(:@sprites)
+    s.is_a?(Hash) ? s : {}
+  end
+
+  def self.buttons(cw)
+    b = cw.instance_variable_get(:@buttons)
+    b.is_a?(Array) ? b : []
+  end
+
+  def self.shown?(cw, key)
+    v = cw.instance_variable_get(:@visibility)
+    !v.is_a?(Hash) || v[key] != false
+  end
+
+  def self.text_colors(cw)
+    { "base" => hex(const(cw, :TEXT_BASE_COLOR)), "shadow" => hex(const(cw, :TEXT_SHADOW_COLOR)) }
+  end
+
   def self.command_state(top, cw)
     texts = Array(top[:texts]).map(&:to_s)
     { "screen" => "command", "title" => texts[0].to_s, "items" => texts[1, 4] || [],
-      "index" => cw.index.to_i }
+      "index" => cw.index.to_i, "bg" => sprite(parts(cw)["background"]),
+      "buttons" => buttons(cw).first(4).map { |b| sprite(b) } }.merge(text_colors(cw))
+  end
+
+  # The colour the game gives a move's name: a pixel of its button
+  def self.name_color(button)
+    y = button.src_rect.y.to_i
+    @pixels ||= {}
+    @pixels[[button.bitmap.object_id, y]] ||= hex(button.bitmap.get_pixel(10, y + 34))
+  rescue StandardError
+    nil
+  end
+
+  def self.move_info(cw, move)
+    return nil unless move
+    info = { "icon" => shown?(cw, "typeIcon") ? sprite(parts(cw)["typeIcon"]) : nil }
+    total = move.respond_to?(:total_pp) ? move.total_pp.to_i : 0
+    if total > 0
+      info["pp"] = _INTL("PP: {1}/{2}", move.pp, total)
+      colors = const(cw, :PP_COLORS)
+      if colors.is_a?(Array) && colors.length >= 8
+        f = [(4.0 * move.pp / total).ceil, 3].min
+        info["base"] = hex(colors[f * 2])
+        info["shadow"] = hex(colors[f * 2 + 1])
+      end
+    end
+    info
+  rescue StandardError, NameError
+    nil
+  end
+
+  # The "Cancel" button of the game's command menu, to use as Back
+  def self.back_button(scene)
+    cmd = window(scene, :command)
+    bmp = cmd && cmd.instance_variable_get(:@buttonBitmap)
+    bmp = bmp.bitmap if bmp.respond_to?(:bitmap)
+    bh = (const(cmd, :BUTTON_HEIGHT) || 46).to_i
+    return nil unless bmp && !bmp.disposed? && bmp.height >= bh * 10
+    path = sheet(bmp)
+    path ? { "img" => path, "r" => [0, bh * 9, bmp.width / 2, bh] } : nil
+  rescue StandardError
+    nil
+  end
+
+  # Mega Evolution, Shift and whatever other toggle buttons the game's menu is showing
+  def self.extra_buttons(cw)
+    list = []
+    parts(cw).each do |key, spr|
+      next unless key.to_s =~ /Button\z/ && shown?(cw, key)
+      info = sprite(spr)
+      next unless info
+      list << info.merge("cmd" => (key.to_s =~ /shift/i ? "shift" : "act"))
+    end
+    list
+  rescue StandardError
+    []
   end
 
   # 0 no effect, 1 not very effective, 2 super effective; nil for a normal hit, a status move,
@@ -1053,8 +1182,24 @@ module AshDroidDS
   def self.fight_state(scene, top, cw)
     top[:moves] ||= moves(scene, top[:battler])
     mode = (cw.respond_to?(:mode) ? cw.mode.to_i : 0)
-    { "screen" => "fight", "moves" => top[:moves], "index" => cw.index.to_i,
-      "mega" => (top[:mega] ? mode : 0), "labels" => labels }
+    btns = buttons(cw)
+    list = top[:moves].each_with_index.map do |m, i|
+      b = btns[i]
+      art = b && shown?(cw, "button_#{i}") ? sprite(b) : nil
+      art ? m.merge(art).merge("col" => name_color(b)) : m
+    end
+    battler = cw.respond_to?(:battler) ? cw.battler : nil
+    current = battler ? battler.moves[cw.index.to_i] : nil
+    { "screen" => "fight", "moves" => list, "index" => cw.index.to_i,
+      "mega" => (top[:mega] ? mode : 0), "labels" => labels,
+      "bg" => sprite(parts(cw)["background"]), "info" => move_info(cw, current),
+      "extras" => extra_buttons(cw), "backBtn" => back_button(scene) }.merge(text_colors(cw))
+  end
+
+  # The state is only rebuilt when something the second screen shows may have changed
+  def self.state_key(top, cw)
+    [top.object_id, cw.index, (cw.respond_to?(:mode) ? cw.mode : 0),
+     (cw.respond_to?(:shiftMode) ? cw.shiftMode : 0)]
   end
 
   # ---- every frame a battle menu is open ----
@@ -1069,15 +1214,21 @@ module AshDroidDS
     end
     top = @scene.equal?(scene) ? @stack.last : nil
     mine = top && cw && cw.equal?(window(scene, top[:mode]))
-    state = if !mine then IDLE
-            elsif top[:mode] == :fight then fight_state(scene, top, cw)
-            else command_state(top, cw)
-            end
-    publish(state)
+    key = mine ? state_key(top, cw) : nil
+    if @last.nil? || key != @key
+      @key = key
+      @count = 0
+      state = if !mine then IDLE
+              elsif top[:mode] == :fight then fight_state(scene, top, cw)
+              else command_state(top, cw)
+              end
+      @count = (state["moves"] || state["items"] || []).length
+      publish(state)
+    end
     8.times do
       cmd = ::Android.companion_poll
       break unless cmd
-      handle(cmd.to_s, mine ? cw : nil, state)
+      handle(cmd.to_s, mine ? cw : nil)
     end
     cw.visible = false if mine && @hide && cw.visible
   rescue StandardError, NameError => e
@@ -1085,7 +1236,7 @@ module AshDroidDS
     AshDroidLog.log("ds: frame #{e.class}: #{e.message}") if @errors <= 3
   end
 
-  def self.handle(cmd, cw, state)
+  def self.handle(cmd, cw)
     case cmd
     when "hello" then @last = nil
     when /\Ahide:([01])\z/
@@ -1093,12 +1244,12 @@ module AshDroidDS
       cw.visible = true if cw && !@hide
     when /\Asel:(\d)\z/
       n = $1.to_i
-      count = (state["moves"] || state["items"] || []).length
-      return unless cw && n < count
+      return unless cw && n < @count.to_i
       cw.index = n if cw.index != n
       force(:use)
     when "back" then force(:back) if cw
     when "act" then force(:action) if cw
+    when "shift" then force(:special) if cw
     end
   end
 
