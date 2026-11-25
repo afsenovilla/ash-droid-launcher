@@ -1606,8 +1606,8 @@ module AshDroidDSUI
     kids << { "o" => "img", "f" => mon[:icon], "s" => [0, 0, 64, 64], "d" => [0, -6, 192, 192] } if mon[:icon]
     kids << { "o" => "txt", "s" => mon[:name].to_s, "x" => 0, "y" => 60, "z" => 78, "c" => hex(INK), "k" => hex([176, 200, 200]), "a" => "l", "v" => "a" }
     s.ops << { "o" => "hb", "cx" => W / 2, "ops" => kids }
-    game_button(s, 6, 12, 112, 76, "<", d[:first] ? nil : "mon:prev")
-    game_button(s, 620 - 118, 12, 112, 76, ">", d[:last] ? nil : "mon:next")
+    game_button(s, 6, 12, 112, 76, nil, d[:first] ? nil : "mon:prev", nil, glyph: arrow_icon(16, 8, true))
+    game_button(s, 620 - 118, 12, 112, 76, nil, d[:last] ? nil : "mon:next", nil, glyph: arrow_icon(16, 8, false))
     pw = 202
     ph = 97
     px = (W - pw * S) / 2
@@ -1642,7 +1642,7 @@ module AshDroidDSUI
       end
     end
     # what the game offers for this one and VOLVER: one grid of the game's own buttons, VOLVER always last
-    cells = (d[:options] || []).first(5) + [{ label: d[:back] || l(:back).capitalize, cmd: "back", kind: :cancel }]
+    cells = (d[:options] || []).first(5) + [{ label: l(:back), cmd: "back", kind: :cancel }]
     t = cells.length
     cols = t <= 3 ? t : t == 4 ? 2 : 3
     rows = (t / cols.to_f).ceil
@@ -1652,29 +1652,42 @@ module AshDroidDSUI
     y0 = 540 - 6 - rows * bh - (rows - 1) * gap
     cells.each_with_index do |o, n|
       n = cols * rows - 1 if n == t - 1
-      game_button(s, 6 + (n % cols) * (bw + gap), y0 + (n / cols) * (bh + gap), bw, bh, o[:label], o[:cmd])
+      game_button(s, 6 + (n % cols) * (bw + gap), y0 + (n / cols) * (bh + gap), bw, bh, o[:label], o[:cmd],
+                  o[:kind] == :cancel ? nil : option_color(o))
     end
     s.result("id" => "sheet")
   end
 
-  # A button made of the game's own button image (the one of its party screen), widened and heightened by
-  # repeating its flat lines, with the label in the game's font. Under the finger or the cursor it is the
-  # game's "selected" version of that image. Logical px (x2 on screen).
-  def self.game_button(s, lx, ly, lw, lh, label, cmd, selected = false)
+  # A button in the game's own button style: the button image of its party screen, widened and heightened by
+  # repeating its flat lines and repainted in the colour of what it does, with the label in the button
+  # lettering. Under the finger or the cursor it is the game's "selected" version of that image.
+  # Logical px (x2 on screen). col nil: the image's own blue.
+  def self.game_button(s, lx, ly, lw, lh, label, cmd, col = nil, selected = false, glyph: nil)
     id = cmd ? s.next_id : nil
-    { "" => "up_of", "_sel" => "dn_of" }.each do |suffix, key|
-      next if suffix == "_sel" && !id && !selected
+    col = GREY unless cmd || selected              # nothing to do with it right now
+    ["", "_sel"].each do |suffix|
+      pressed = suffix == "_sel"
+      next if pressed && !id && !selected
+      next if !pressed && selected
       f = pic("Party/icon_cancel#{suffix}")
       fw, fh = size(f)
       next if fw <= 0
       xs = Axis.new(fw).repeat(fw / 2, [lw - fw, 0].max)
       ys = Axis.new(fh).repeat(fh * 3 / 4, [(lh - fh) / 2, 0].max).repeat(fh / 4, [lh - fh - (lh - fh) / 2, 0].max)
-      extra = selected ? nil : (id ? { key => id } : nil)
-      next if selected && suffix == ""
-      extra = (extra || {}).merge("a" => 110) unless cmd || selected     # nothing to do with it right now
+      extra = {}
+      extra[pressed ? "dn_of" : "up_of"] = id if id && !selected
+      extra["fx"] = "tint:#{hex(col)}" if col
       sheet(s.ops, f, xs, ys, lx * 2, ly * 2, 2, extra)
     end
-    txt(s.ops, label.to_s, (lx + lw / 2) * 2, (ly + lh / 2) * 2 - 2, 52, cmd || selected ? WHITE : [200, 216, 240], DARK, "m", "m", { "fit" => (lw - 16) * 2 })
+    aw = lw * 2 / S
+    ah = lh * 2 / S
+    art = Art.new(lx * 2 + (lw * 2 - aw * S) / 2, ly * 2 + (lh * 2 - ah * S) / 2, aw, ah)
+    if glyph
+      glyph.call(art, art.items, 0)
+    else
+      art.label(upper(label), aw / 2, ah / 2, 1, aw - 6)
+    end
+    s.ops << art.op
     s.ops << { "o" => "hit", "r" => [lx * 2, ly * 2, lw * 2, lh * 2], "cmd" => cmd, "art" => id } if id
   end
 

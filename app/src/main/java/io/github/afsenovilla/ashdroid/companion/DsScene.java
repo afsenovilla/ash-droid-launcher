@@ -568,7 +568,68 @@ public final class DsScene
 
     // ---- image effects shared by both platforms ----
 
+    private static float[] hsv(int c)
+    {
+        float r = ((c >> 16) & 255) / 255f, g = ((c >> 8) & 255) / 255f, b = (c & 255) / 255f;
+        float max = Math.max(r, Math.max(g, b)), min = Math.min(r, Math.min(g, b)), d = max - min, h = 0;
+        if (d > 0) {
+            if (max == r) h = ((g - b) / d) % 6f;
+            else if (max == g) h = (b - r) / d + 2f;
+            else h = (r - g) / d + 4f;
+            h *= 60f;
+            if (h < 0) h += 360f;
+        }
+        return new float[] { h, max == 0 ? 0 : d / max, max };
+    }
+
+    private static int rgb(float h, float s, float v)
+    {
+        float c = v * s, x = c * (1 - Math.abs((h / 60f) % 2 - 1)), m = v - c, r, g, b;
+        if (h < 60) { r = c; g = x; b = 0; }
+        else if (h < 120) { r = x; g = c; b = 0; }
+        else if (h < 180) { r = 0; g = c; b = x; }
+        else if (h < 240) { r = 0; g = x; b = c; }
+        else if (h < 300) { r = x; g = 0; b = c; }
+        else { r = c; g = 0; b = x; }
+        return (Math.round((r + m) * 255) << 16) | (Math.round((g + m) * 255) << 8) | Math.round((b + m) * 255);
+    }
+
     /**
+     * Repaints an image in another colour: every pixel of the image's own main hue takes the target's hue, and
+     * its saturation and brightness keep their proportion to the image's main colour, so shading survives.
+     * Greys (outlines) and other hues (a red selection border) are left alone.
+     */
+    private static void tint(int[] px, int target)
+    {
+        Map<Integer, Integer> count = new HashMap<>();
+        for (int p : px) {
+            if ((p >>> 24) < 200) continue;
+            float[] c = hsv(p);
+            if (c[1] < 0.25f || c[2] < 0.2f) continue;
+            Integer n = count.get(p & 0xFFFFFF);
+            count.put(p & 0xFFFFFF, n == null ? 1 : n + 1);
+        }
+        int main = -1, best = 0;
+        for (Map.Entry<Integer, Integer> e : count.entrySet()) {
+            if (e.getValue() > best) { best = e.getValue(); main = e.getKey(); }
+        }
+        if (main < 0) return;
+        float[] ref = hsv(main), to = hsv(target);
+        for (int i = 0; i < px.length; i++) {
+            int p = px[i];
+            if ((p >>> 24) == 0) continue;
+            float[] c = hsv(p);
+            float dh = Math.abs(c[0] - ref[0]);
+            if (dh > 180) dh = 360 - dh;
+            if (c[1] < 0.15f || dh > 40) continue;
+            float s2 = Math.min(1f, c[1] * to[1] / Math.max(0.05f, ref[1]));
+            float v2 = Math.min(1f, c[2] * to[2] / Math.max(0.05f, ref[2]));
+            px[i] = (p & 0xFF000000) | rgb(to[0], s2, v2);
+        }
+    }
+
+    /**
+     * fx "tint:#rrggbb": the image repainted in that colour (see {@link #tint}).
      * fx "sil:#rrggbb": every visible pixel becomes that colour (silhouette).
      * fx "keep:#rrggbb,#rrggbb...": only pixels of those colours stay (a drawing without its background).
      * fx "dark:NN": colours multiplied by NN percent. Effects can be chained with ';'.
@@ -589,6 +650,8 @@ public final class DsScene
                     for (int k : keep) if ((px[i] & 0xFFFFFF) == k && (px[i] >>> 24) != 0) { ok = true; break; }
                     if (!ok) px[i] = 0;
                 }
+            } else if (one.startsWith("tint:")) {
+                tint(px, DsJson.color(one.substring(5), 0xFF2888E0));
             } else if (one.startsWith("dark:")) {
                 int pct;
                 try { pct = Integer.parseInt(one.substring(5)); } catch (NumberFormatException e) { continue; }
