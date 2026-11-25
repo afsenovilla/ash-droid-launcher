@@ -115,7 +115,7 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
   and name at 3x. A straight 3x copy of the game's layout needs 768 px per panel.
 - Bottom band: help line and VOLVER.
 
-## Party: reordering and actions (pending approval)
+## Party: reordering and actions (approved)
 
 Mock-ups: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> drag` and `... actions`.
 
@@ -127,5 +127,5 @@ Mock-ups: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> drag` and `
 - A short touch (no drag) opens that Pokémon's actions: its panel alone at the top, widened to 356 px so the
   HP bar clears the icon, and under it the options the game gives for it except Switch (Summary, its field
   moves, Item or Mail) stacked as medium buttons as wide as the panel, in the approved style, one colour per
-  kind. Three fit at this size; with more, the rows get closer.
+  kind. Buttons are 162 px tall; three fit at this size, with more the rows get lower.
 - The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens.
