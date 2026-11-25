@@ -165,12 +165,12 @@ Mock-up: `ds_mock_profile.py <game folder> <pixelfonts.txt> <out.png>`.
 Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 
 - The game's save screen is only a text window, so this screen is built from the game's load screen: its
-  background (`loadbg`, at 2x from the top left, extended to the right by repeating its last column) and its
-  selected "Continue" panel (`loadPanels`) with the player's walking sprite, the party's icons and `UI_Load`'s
-  texts, colours and positions: place, name, badges, Pokédex, time. What is shown before saving is the card
-  found when loading.
-- A bar drawn by code under it holds the question, GUARDAR (large, green) and VOLVER.
-- After saving, the panel's title becomes "Partida guardada", the line becomes "<player> guardó la partida."
-  and only VOLVER stays. The game's warning about overwriting a different save file is shown as a second
-  confirmation before saving.
+  background (`loadbg`) and its selected "Continue" panel (`loadPanels`) with the player's walking sprite, the
+  party's icons and `UI_Load`'s texts and colours. What is shown before saving is the card found when loading.
+- Background and card are shown at 3x, so the card spans the screen. The card is made 64 px taller by
+  repeating one of its lines; it carries more than the game's: ID under the name, badges, Pokédex as
+  owned/seen, time, money and start date, and a looser party grid.
+- The question is the card's title ("¿Guardar la partida?", then "Partida guardada"). A bar drawn by code
+  under it holds GUARDAR (large, green) and VOLVER; after saving only VOLVER stays. The game's warning about
+  overwriting a different save file is shown as a second confirmation before saving.
 - The home screen's GUARDAR button is greyed out while the game has saving disabled.
