@@ -5,17 +5,20 @@
 # background and widened by repeating lines.
 # The same layout serves the bag out of battle: 'world' shows the description with VOLVER; 'item' is the state
 # after touching an item, where the foot shows that item's options in a row (USAR, DAR, TIRAR...) and CANCELAR.
-# Needs the game folder. Usage: ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt> [battle|world|item]
+# Needs the game folder. Usage: ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt> [battle|world|item [es|en|fr|de]]
 import sys
 from PIL import Image, ImageDraw
-import ds_mock_bag as b
 GAME, OUT, FONTS_TXT = sys.argv[1], sys.argv[2], sys.argv[3]
 STATE = sys.argv[4] if len(sys.argv) > 4 else 'battle'
+LANG = sys.argv[5] if len(sys.argv) > 5 else 'es'
+sys.argv = sys.argv[:3]                                          # ds_mock_bag reads its own arguments on import
+import ds_mock_bag as b
 sys.argv = [sys.argv[0], FONTS_TXT, GAME + '/Fonts/power green.ttf']
 import ds_mock as m
 W, H = 620, 540
 CUT, TOP, ROW = 180, 92, 43                                       # background cut, room for the pockets, row pitch
 GROW_LIST, GROW_DESC = 44, 24
+if STATE == 'item': GROW_LIST, GROW_DESC = GROW_LIST - ROW, GROW_DESC + ROW   # the options take the last row's room: two rows of buttons
 ITEMS = [('POTION', 'Poción', 5), ('SUPERPOTION', 'Superpoción', 2), ('ANTIDOTE', 'Antídoto', 3), ('PARALYZEHEAL', 'Antiparalizador', 1),
          ('AWAKENING', 'Despertar', 2), ('BURNHEAL', 'Antiquemar', 1), ('ICEHEAL', 'Antihielo', 1)]
 DESC = ['Medicina en espray que', 'restaura 20 PS de un', 'Pokémon.']   # wrapped to the room left by the buttons
@@ -37,7 +40,7 @@ def screen():
     lx, ly, lw = 6, TOP + 10, W - 6 - 52                           # inside of the list frame
     cur = b.img('Pictures/Bag/cursor.png'); cur = b.repeat_col(cur, 141, lw - cur.width + 8)
     s.alpha_composite(cur, (lx - 2, ly - 12 + ROW * b.SEL))   # the image has 12 px of empty margin above its frame
-    for i, (icon, name, qty) in enumerate(ITEMS):
+    for i, (icon, name, qty) in enumerate(ITEMS[:6] if STATE == 'item' else ITEMS):
         y = ly + ROW * i
         s.alpha_composite(b.img('Items/%s.png' % icon), (lx + 12, y - 3))
         b.text(d, name, lx + 68, y + 3, INK, INK_SH); b.text(d, 'x%3d' % qty, lx + lw - 24, y + 3, INK, INK_SH, 1)
@@ -55,15 +58,25 @@ def screen():
     m.SHADOW = (72, 76, 84)
     green, blue = (88, 200, 88), (56, 136, 232)
     row = {'battle': [('USAR', green, 44), ('VOLVER', blue, 48)], 'world': [('VOLVER', blue, 48)],
-           'item': [('USAR', green, 42), ('DAR', (160, 112, 232), 42), ('TIRAR', (232, 96, 96), 42), ('CANCELAR', blue, 62)]}[STATE]
-    width = sum(w for _, _, w in row) + 4 * (len(row) - 1)
-    key = Image.new('RGBA', (width + 2, 34), (0, 0, 0, 0)); kd = ImageDraw.Draw(key); x = 1
-    for n, (label, colour, w) in enumerate(row):
-        m.button(kd, (x, 1, x + w - 1, 29), colour, 9, selected=(n == 0 and STATE != 'world')); m.pix_text(key, label, x + w // 2, 15, 1)
-        x += w + 4
-    key = key.resize((key.width * 6, 34 * 6), Image.NEAREST)
-    kx = (W * 2 - key.width) // 2 if STATE == 'item' else W * 2 - key.width - 56
-    one.alpha_composite(key, (kx, top * 2 + 34))
+           'item': []}[STATE]
+    if STATE == 'item':
+        # Options in a 2x2 grid of equal buttons, wide enough for the longest word of the game's four languages
+        # (German REGISTRIEREN, French ENREGISTRER), so the layout is the same in all of them.
+        words = {'es': ('USAR', 'DAR', 'TIRAR', 'CANCELAR'), 'de': ('BENUTZEN', 'GEBEN', 'WEGWERFEN', 'ABBRECHEN'),
+                 'fr': ('UTILISER', 'DONNER', 'JETER', 'ANNULER'), 'en': ('USE', 'GIVE', 'TOSS', 'CANCEL')}[LANG]
+        cols = (green, (160, 112, 232), (232, 96, 96), blue)
+        key = Image.new('RGBA', (202, 56), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
+        for n in range(4):
+            x, y = 2 + (n % 2) * 100, 1 + (n // 2) * 27
+            m.button(kd, (x, y, x + 97, y + 23), cols[n], 9, selected=(n == 0)); m.pix_text(key, words[n], x + 49, y + 12, 1)
+        key = key.resize((202 * 6, 56 * 6), Image.NEAREST); one.alpha_composite(key, (14, top * 2 + 12))
+    else:
+        width = sum(w for _, _, w in row) + 4 * (len(row) - 1)
+        key = Image.new('RGBA', (width + 2, 34), (0, 0, 0, 0)); kd = ImageDraw.Draw(key); x = 1
+        for n, (label, colour, w) in enumerate(row):
+            m.button(kd, (x, 1, x + w - 1, 29), colour, 9, selected=(n == 0 and STATE != 'world')); m.pix_text(key, label, x + w // 2, 15, 1)
+            x += w + 4
+        key = key.resize((key.width * 6, 34 * 6), Image.NEAREST); one.alpha_composite(key, (W * 2 - key.width - 56, top * 2 + 34))
     return one.convert('RGB')
 
 if __name__ == '__main__':

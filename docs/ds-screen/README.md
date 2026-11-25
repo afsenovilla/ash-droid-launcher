@@ -243,6 +243,15 @@ Every second-screen screen works with touch and with the buttons; nothing is tou
 `ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt> world|item`. Proposed to replace the two-column
 bag (`ds_mock_bag.py`): the layout approved for the battle bag (pockets in a row on top, list as wide as the
 screen with each item's icon, seven taller rows), with the description and VOLVER at the foot. Touching an item
-swaps the description for that item's options in one row (USAR, DAR, TIRAR, or REGISTRAR / LEER when they
-apply) and CANCELAR, which brings the description back. The bag picture, the pocket name, the big item box and
+opens that item's options at the foot in a 2x2 grid of equal buttons (USAR, DAR, TIRAR, or REGISTRAR / LEER
+when they apply, and CANCELAR, which brings the description back); the foot grows over the last row of the
+list to hold them. One row of four was dropped: it does not fit in German or French. The bag picture, the pocket name, the big item box and
 the CERRAR MOCHILA entry go away.
+
+## Languages (rule)
+
+The game ships in English, French, Spanish and German (`Settings::LANGUAGES`). Button labels are the game's own
+translated strings, never hard-coded Spanish, and every button is sized for the longest of the four words
+(for instance REGISTRIEREN / ENREGISTRER, WEGWERFEN, ABBRECHEN, SAUVEGARDER). Where a row of buttons cannot
+hold the longest words, the layout changes for every language (as in the bag's item options), not per language.
+To check when implementing: the home screen's save button and the map's wild Pokémon button.
