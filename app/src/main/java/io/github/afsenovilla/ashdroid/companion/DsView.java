@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -77,6 +78,12 @@ final class DsView extends View
     private final RectF mPanel = new RectF(), mTmp = new RectF();
     private final Map<String, Bitmap> mBitmaps = new HashMap<>();
     private int mBackdrop = BG;
+
+    // Prototype: the game's own menus mirrored here
+    private final Object mFrameLock = new Object();
+    private Bitmap mFrame;
+    private final RectF mBag = new RectF();
+    private boolean mBagShown;
 
     DsView(Context ctx, DsCompanion owner)
     {
@@ -144,6 +151,7 @@ final class DsView extends View
         mGridCount = 0;
         mExtraCount = 0;
         mBackShown = false;
+        mBagShown = false;
 
         // The screen takes the colour of the bar the game has behind its menus, so the buttons
         // sit on the same colour as on the game screen; black (like the game's side bars) otherwise.
@@ -164,9 +172,62 @@ final class DsView extends View
         label(c, toggle, mToggle.centerX(), mToggle.centerY(), mToggle.width() - pad, stripH * 0.40f, 0xFFB8C0CC);
 
         if (s.screen == DsState.IDLE) return;
+        if (s.screen == DsState.WORLD || s.screen == DsState.MIRROR) {
+            // Prototype screens, not the approved overworld design (docs/ds-screen): one plain
+            // button to try the game's own bag mirrored here, and the mirrored frame itself.
+            c.drawColor(0xFF000000);
+            mToggle.setEmpty();
+            if (s.screen == DsState.WORLD) drawWorld(c, s, w, h, pad);
+            else drawMirror(c, s, w, h);
+            return;
+        }
         final float top = pad * 0.5f, bottom = mToggle.top - pad * 0.5f;
         if (s.screen == DsState.COMMAND) drawCommand(c, s, w, h, top, bottom, pad);
         else drawFight(c, s, w, h, top, bottom, pad);
+    }
+
+    private void drawWorld(Canvas c, DsState s, float w, float h, float pad)
+    {
+        mBag.set(w * 0.2f, h * 0.36f, w * 0.8f, h * 0.64f);
+        boolean on = s.free && s.canMirror;
+        button(c, mBag, on ? 0xFFD89028 : 0xFF505058, false, mPressed == 30);
+        label(c, getResources().getString(R.string.ds_bag), mBag.centerX(), mBag.centerY(), mBag.width() - pad * 2,
+                mBag.height() * 0.30f, on ? Color.WHITE : 0xFFA0A0A8);
+        label(c, getResources().getString(s.canMirror ? R.string.ds_prototype : R.string.ds_no_mirror), w / 2f, h * 0.74f,
+                w - pad * 2, h * 0.032f, 0xFFB8C0CC);
+        mBagShown = on;
+    }
+
+    /** The game's own menu, as rendered by the game, enlarged by a whole factor without smoothing. */
+    private void drawMirror(Canvas c, DsState s, float w, float h)
+    {
+        synchronized (mFrameLock) {
+            if (mFrame != null) {
+                int fw = mFrame.getWidth(), fh = mFrame.getHeight();
+                int sc = Math.max(1, (int) Math.floor(Math.min(w / fw, h / fh)));
+                float dw = fw * sc, dh = fh * sc;
+                mTmp.set((w - dw) / 2f, (h - dh) / 2f, (w + dw) / 2f, (h + dh) / 2f);
+                c.drawBitmap(mFrame, null, mTmp, mBmp);
+            }
+        }
+        if (s.mirrorTenths > 0) {
+            String cost = String.format(Locale.ROOT, "%.1f ms", s.mirrorTenths / 10f);
+            label(c, cost, w * 0.92f, h * 0.972f, w * 0.14f, h * 0.026f, 0xFF8890A0);
+        }
+    }
+
+    /** Called on the game thread with a new frame (RGBA, top row first). */
+    void setFrame(int width, int height, byte[] rgba)
+    {
+        if (width <= 0 || height <= 0 || rgba.length < width * height * 4) return;
+        synchronized (mFrameLock) {
+            if (mFrame == null || mFrame.getWidth() != width || mFrame.getHeight() != height) {
+                mFrame = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                mFrame.setHasAlpha(false);
+            }
+            mFrame.copyPixelsFromBuffer(ByteBuffer.wrap(rgba, 0, width * height * 4));
+        }
+        postInvalidateOnAnimation();
     }
 
     /** "What will X do?" in the game's menu box, then its four command buttons, enlarged. */
@@ -444,6 +505,7 @@ final class DsView extends View
         for (int i = 0; i < mGridCount; i++) if (mGrid[i].contains(x, y)) return i;
         if (mBackShown && mBack.contains(x, y)) return 10;
         for (int i = 0; i < mExtraCount; i++) if (mExtra[i].contains(x, y)) return 20 + i;
+        if (mBagShown && mBag.contains(x, y)) return 30;
         if (mToggle.contains(x, y)) return 12;
         return -1;
     }
@@ -463,6 +525,7 @@ final class DsView extends View
                     if (target < 4) mOwner.send("sel:" + target);
                     else if (target == 10) mOwner.send("back");
                     else if (target == 12) mOwner.toggleHideTopMenu();
+                    else if (target == 30) mOwner.send("open:bag");
                     else if (target >= 20 && target - 20 < mExtraCount) mOwner.send(mExtraCmd[target - 20]);
                 }
                 mPressed = -1;

@@ -320,6 +320,12 @@ public class MainActivity extends SDLActivity
     }
 
     @SuppressWarnings("unused")
+    private static void companionFrame(int width, int height, byte[] rgba)
+    {
+        DsCompanion.frame(width, height, rgba);
+    }
+
+    @SuppressWarnings("unused")
     private static boolean inMultiWindow(Activity activity)
     {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode();

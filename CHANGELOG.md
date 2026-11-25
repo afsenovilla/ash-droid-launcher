@@ -16,7 +16,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   and move buttons, menu panels, type icons, Mega Evolution/Shift buttons, already translated), enlarged
   pixel-sharp, with the game's font and text colours; nothing of the game ships in the APK.
   Only enabled on known dual-screen models; nothing changes on other devices, PC or Steam Deck.
-  Not tested on hardware yet: test builds only, not part of a release.
+  Test builds only, not part of a release.
+- **Second screen, overworld prototype**: a BAG button on the second screen opens the game's own bag there: the
+  game screen keeps showing the world while every frame of the real, fully working menu is sent to the second
+  screen (new `Android.companion_frame` engine call). Driven with the console's buttons; the cost per frame is
+  shown in a corner to measure it on hardware. Plain placeholder visuals: the approved designs are in
+  `docs/ds-screen/` and are not implemented yet.
 
 ## [0.7.1] - 2026-11-08
 

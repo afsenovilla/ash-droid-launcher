@@ -53,7 +53,7 @@ public final class DsCompanion
     private final ConcurrentLinkedQueue<String> mCommands = new ConcurrentLinkedQueue<>();
     private final SharedPreferences mPrefs;
 
-    private Screen mScreen;
+    private volatile Screen mScreen;
     private volatile boolean mShowing;
     private boolean mStarted;
     private boolean mHideTopMenu;
@@ -192,6 +192,14 @@ public final class DsCompanion
         });
     }
 
+    /** A frame of one of the game's own menus (RGBA, top row first) to show on this screen. */
+    public static void frame(int width, int height, byte[] rgba)
+    {
+        DsCompanion c = sInstance;
+        Screen screen = c == null ? null : c.mScreen;
+        if (screen != null && screen.mView != null && rgba != null) screen.mView.setFrame(width, height, rgba);
+    }
+
     public static byte[] poll()
     {
         DsCompanion c = sInstance;
@@ -269,7 +277,12 @@ public final class DsCompanion
 
     static final class DsState
     {
-        static final int IDLE = 0, COMMAND = 1, FIGHT = 2;
+        static final int IDLE = 0, COMMAND = 1, FIGHT = 2, WORLD = 3, MIRROR = 4;
+
+        /** WORLD: the player can open a menu right now, and the engine can mirror it here. */
+        boolean free, canMirror;
+        /** MIRROR: average cost of sending a frame, in tenths of a millisecond (0 = not measured yet). */
+        int mirrorTenths;
 
         int screen = IDLE;
         int index;
@@ -356,7 +369,11 @@ public final class DsCompanion
                 JSONObject o = new JSONObject(json);
                 DsState s = new DsState();
                 String screen = o.optString("screen", "idle");
-                s.screen = "command".equals(screen) ? COMMAND : "fight".equals(screen) ? FIGHT : IDLE;
+                s.screen = "command".equals(screen) ? COMMAND : "fight".equals(screen) ? FIGHT
+                        : "world".equals(screen) ? WORLD : "mirror".equals(screen) ? MIRROR : IDLE;
+                s.free = o.optBoolean("free", false);
+                s.canMirror = o.optBoolean("mirror", false);
+                s.mirrorTenths = o.optInt("ms", 0);
                 s.index = o.optInt("index", 0);
                 s.title = o.optString("title", "");
                 s.mega = o.optInt("mega", 0);

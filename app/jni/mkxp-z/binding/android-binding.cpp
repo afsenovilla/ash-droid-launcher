@@ -1,4 +1,11 @@
 #include "binding-util.h"
+#include "binding-types.h"
+#include "bitmap.h"
+#include "exception.h"
+#include "graphics.h"
+#include "sharedstate.h"
+
+#include <vector>
 
 #include <SDL.h>
 #include <jni.h>
@@ -251,6 +258,65 @@ RB_METHOD(androidCompanionPoll)
 	return ret;
 }
 
+// Sends the pixels of a Bitmap (a captured frame of the game) to the second screen.
+// The Java array is kept between calls so a frame costs two copies and no allocation.
+RB_METHOD(androidCompanionFrame)
+{
+	RB_UNUSED_PARAM;
+
+	VALUE bitmapObj;
+	rb_scan_args(argc, argv, "1", &bitmapObj);
+	Bitmap *b = getPrivateDataCheck<Bitmap>(bitmapObj, BitmapType);
+	if (!b)
+		return Qfalse;
+
+	int w = b->width(), h = b->height();
+	jsize size = (jsize)(w * h * 4);
+	if (size <= 0)
+		return Qfalse;
+
+	static std::vector<char> pixels;
+	pixels.resize(size);
+	GFX_GUARD_EXC(b->getRaw(pixels.data(), size););
+
+	JNIEnv *env = (JNIEnv *)SDL_AndroidGetJNIEnv();
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+	jclass cls = env->GetObjectClass(activity);
+
+	static jbyteArray frame = NULL;
+	static jsize frameSize = 0;
+	if (!frame || frameSize != size) {
+		if (frame)
+			env->DeleteGlobalRef(frame);
+		frame = NULL;
+		jbyteArray local = env->NewByteArray(size);
+		if (local) {
+			frame = (jbyteArray)env->NewGlobalRef(local);
+			env->DeleteLocalRef(local);
+		}
+		if (env->ExceptionCheck())
+			env->ExceptionClear();
+		frameSize = size;
+	}
+
+	bool sent = false;
+	jmethodID mID = frame ? companionMethod(env, cls, "companionFrame", "(II[B)V") : NULL;
+	if (mID) {
+		env->SetByteArrayRegion(frame, 0, size, (const jbyte *)pixels.data());
+		env->CallStaticVoidMethod(cls, mID, (jint)w, (jint)h, frame);
+		sent = true;
+	}
+	if (env->ExceptionCheck()) {
+		env->ExceptionClear();
+		sent = false;
+	}
+
+	env->DeleteLocalRef(cls);
+	env->DeleteLocalRef(activity);
+
+	return rb_bool_new(sent);
+}
+
 void androidBindingInit()
 {
 	VALUE module = rb_define_module("Android");
@@ -275,4 +341,5 @@ void androidBindingInit()
 	_rb_define_module_function(module, "companion_active?", androidCompanionActive);
 	_rb_define_module_function(module, "companion_send", androidCompanionSend);
 	_rb_define_module_function(module, "companion_poll", androidCompanionPoll);
+	_rb_define_module_function(module, "companion_frame", androidCompanionFrame);
 }

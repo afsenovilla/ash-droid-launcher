@@ -1330,6 +1330,134 @@ module AshDroidDS
     @scene.equal?(scene) ? @stack.last : nil
   end
 
+  # ---- overworld (prototype): the game's own menu screens, shown on the second screen ----
+  # The engine draws one screen only, but it can render a frame without showing it. While a
+  # menu opened from the second screen is up, a picture of the world covers it on the game
+  # screen and every frame of the menu (rendered without that cover) is sent to the second
+  # screen. The menu is the game's real one, fully working, driven by the console's buttons.
+
+  def self.mirror_ready?
+    available? && ::Android.respond_to?(:companion_frame)
+  end
+
+  def self.mirroring?
+    @mirror == true
+  end
+
+  def self.player_free?
+    return false if $game_temp.in_menu || $game_temp.in_battle || $game_temp.message_window_showing
+    return false if $game_system.map_interpreter.running? || $game_system.menu_disabled
+    return false if $game_player.moving? || $game_player.move_route_forcing
+    true
+  rescue StandardError, NameError
+    false
+  end
+
+  # Called every frame of the map scene
+  def self.world_frame
+    return unless active? && !@mirror
+    @key = :world
+    publish("screen" => "world", "free" => player_free?, "mirror" => mirror_ready?)
+    4.times do
+      cmd = ::Android.companion_poll
+      break unless cmd
+      case cmd.to_s
+      when "hello" then @last = nil
+      when /\Ahide:([01])\z/ then @hide = $1 == "1"
+      when "open:bag" then open_bag if mirror_ready? && player_free?
+      end
+    end
+  rescue StandardError, NameError => e
+    @world_errors = (@world_errors || 0) + 1
+    AshDroidLog.log("ds: world #{e.class}: #{e.message}") if @world_errors <= 3
+  end
+
+  def self.open_bag
+    item = nil
+    $game_temp.in_menu = true
+    mirror do
+      pbFadeOutIn {
+        scene = PokemonBag_Scene.new
+        bag = (defined?($bag) && $bag) ? $bag : $PokemonBag
+        item = PokemonBagScreen.new(scene, bag).pbStartScreen
+      }
+    end
+    $game_temp.in_menu = false
+    pbUseKeyItemInField(item) if item
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: bag #{e.class}: #{e.message}")
+  ensure
+    $game_temp.in_menu = false rescue nil
+  end
+
+  def self.mirror
+    @cover_vp = Viewport.new(0, 0, Graphics.width, Graphics.height)
+    @cover_vp.z = 9_999_999
+    @cover = Sprite.new(@cover_vp)
+    @cover.bitmap = Graphics.snap_to_bitmap
+    @mirror = true
+    @mirror_time = 0.0
+    @mirror_n = 0
+    publish("screen" => "mirror", "ms" => 0)
+    AshDroidLog.log("ds: mirror on")
+    yield
+  ensure
+    @mirror = false
+    [(@cover.bitmap rescue nil), @cover, @cover_vp].each { |o| o.dispose if o && !o.disposed? rescue nil }
+    @cover = @cover_vp = nil
+    @last = nil
+  end
+
+  # One frame of the menu for the second screen: rendered without the cover, never shown here
+  def self.capture
+    return unless @cover && !@cover.disposed?
+    t = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    @cover.visible = false
+    shot = Graphics.snap_to_bitmap
+    @cover.visible = true
+    ::Android.companion_frame(shot)
+    shot.dispose
+    @mirror_time += Process.clock_gettime(Process::CLOCK_MONOTONIC) - t
+    @mirror_n += 1
+    if @mirror_n >= 60                       # average cost per frame, in tenths of a millisecond
+      tenths = (@mirror_time / @mirror_n * 10_000).round
+      publish("screen" => "mirror", "ms" => tenths)
+      AshDroidLog.log("ds: mirror #{tenths / 10.0} ms/frame") if (@mirror_logs = (@mirror_logs || 0) + 1) <= 5
+      @mirror_time = 0.0
+      @mirror_n = 0
+    end
+  rescue StandardError => e
+    @cover.visible = true if @cover && !@cover.disposed?
+    @capture_errors = (@capture_errors || 0) + 1
+    AshDroidLog.log("ds: capture #{e.class}: #{e.message}") if @capture_errors <= 3
+  end
+
+  module GraphicsHook
+    def update(*args)
+      AshDroidDS.capture if AshDroidDS.mirroring?
+      super
+    end
+  end
+
+  # Prepended to the map scene (Scene_Map)
+  module World
+    def update(*args)
+      super
+    ensure
+      AshDroidDS.world_frame
+    end
+  end
+
+  def self.install_world(scene_class)
+    return unless available?
+    return if scene_class.ancestors.include?(World)
+    scene_class.prepend(World)
+    Graphics.singleton_class.prepend(GraphicsHook) unless Graphics.singleton_class.ancestors.include?(GraphicsHook)
+    AshDroidLog.log("ds: map scene hooked (mirror #{mirror_ready? ? 'ready' : 'unavailable'})")
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: install_world #{e.class}: #{e.message}")
+  end
+
   def self.install(scene_class)
     return unless available?
     scene_class.prepend(Scene) unless scene_class.ancestors.include?(Scene)
@@ -1693,6 +1821,7 @@ module AshDroidFixes
   end
 
   HOOKS = {
+    "Scene_Map" => ->(m) { AshDroidDS.install_world(m) },
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
