@@ -110,6 +110,7 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
   variants, ball, HP bar, level and status images), the Pokémon icons and fonts, with `UI_Party`'s colours.
 - Panels: widened to 296 px and made 138 px tall by repeating lines of the image, shown at 2x, two columns
   with the right one 16 px lower as in the game.
-- Contents: everything inside a panel is shown at 3x and re-laid out (name on top, HP bar under it, level,
-  status and HP numbers on the bottom row). A straight 3x copy of the game's layout needs 768 px per panel.
+- Contents (variant under review): the Pokémon's icon and name at 3x; ball, gender, HP bar and numbers, level
+  and status at 2x like the panel. An all-3x variant was also tried; a straight 3x copy of the game's layout
+  needs 768 px per panel.
 - Bottom band: help line and VOLVER.

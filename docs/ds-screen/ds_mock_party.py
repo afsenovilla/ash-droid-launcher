@@ -1,9 +1,9 @@
 # Mock-up of the party screen on the second screen, built from the game's own party images and fonts
 # (Graphics/Pictures/Party, the Pokémon icons, Power Green), with the colours used by UI_Party.
 # - The panels are widened and made taller by repeating lines of the image (never scaled) and shown at 2x.
-# - What goes inside them (ball, icon, name, HP bar and numbers, level, status) is shown at 3x, all of it at
-#   the same scale, re-laid out for the panel's new shape. A full 3x copy of the game's layout would need
-#   panels 768 px wide, which does not fit two columns on a 1240 px screen.
+# - Inside them, the Pokémon's icon and name are shown at 3x; ball, gender, HP bar and numbers, level and
+#   status stay at 2x like the panel. A full 3x copy of the game's layout would need panels 768 px wide,
+#   which does not fit two columns on a 1240 px screen.
 # - The game's 512x384 background is extended to 620x540 by repeating lines; the panel sockets drawn on it are
 #   filled with the frame's own colour. Bottom band: help line and the back button (approved button style).
 # Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>
@@ -18,6 +18,7 @@ U = 3                                                             # screen px pe
 FONT = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 26 * U)
 SMALL = ImageFont.truetype(GAME + '/Fonts/power green small.ttf', 26 * U)
 HELP = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 52)
+SMALL2 = ImageFont.truetype(GAME + '/Fonts/power green small.ttf', 52)
 W, H = 620, 540
 WHITE, DARK = (248, 248, 248), (40, 40, 40)
 
@@ -47,27 +48,28 @@ def kind(i, mon):
     if not mon: return 'Party/panel_blank.png'
     return 'Party/panel_%s%s%s.png' % ('round' if i == 0 else 'rect', '_faint' if mon[3] == 0 else '', '_sel' if i == SELECTED else '')
 
-def contents(one, d, i, mon):                                     # positions in content pixels (1 = U screen px)
+def contents(one, d, i, mon):                                     # positions in screen px inside the panel (592x276)
     x, y = slot_xy(i); x, y = x * 2, y * 2
-    def at(cx, cy): return x + cx * U, y + cy * U
+    def at(px, py): return x + px, y + py
+    def x2(im): return im.resize((im.width * 2, im.height * 2), Image.NEAREST)
     name, species, lv, hp, total, gender = mon
     faint = hp == 0
-    one.alpha_composite(big(img('Party/overlay_hp_back%s.png' % ('_faint' if faint else ''))), at(52, 36))
-    one.alpha_composite(big(img('Party/icon_ball%s.PNG' % ('_sel' if i == SELECTED else ''))), at(1, 0))
+    one.alpha_composite(x2(img('Party/overlay_hp_back%s.png' % ('_faint' if faint else ''))), at(292, 150))
+    one.alpha_composite(x2(img('Party/icon_ball%s.PNG' % ('_sel' if i == SELECTED else ''))), at(20, 0))
     icon = Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64))
-    one.alpha_composite(big(icon), at(10, 2))
-    text(d, name, *at(80, 1), WHITE, DARK)
+    one.alpha_composite(big(icon), at(44, 4))                     # 3x
+    text(d, name, *at(244, 12), WHITE, DARK)                      # 3x
     g = ('♂', (0, 112, 248), (120, 184, 232)) if gender == 'm' else ('♀', (232, 32, 16), (248, 168, 184))
-    text(d, g[0], *at(190, 1), g[1], g[2], 1)
+    text(d, g[0], *at(572, 26), g[1], g[2], 1, font=HELP, k=2)
     if hp > 0:
         w = max(1, hp * 96.0 / total); w = int(round(w / 2)) * 2
         zone = 2 if hp <= total // 4 else 1 if hp <= total // 2 else 0
-        one.alpha_composite(big(img('Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8))), at(84, 38))
+        one.alpha_composite(x2(img('Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8))), at(356, 154))
     else:
-        one.alpha_composite(big(img('statuses.png').crop((0, 16 * 5, 44, 16 * 6))), at(50, 66))
-    text(d, '%d/%d' % (hp, total), *at(190, 50), WHITE, DARK, 1)
-    one.alpha_composite(big(img('Party/overlay_lv.png')), at(6, 68))
-    text(d, str(lv), *at(28, 55), WHITE, DARK, font=SMALL)
+        one.alpha_composite(x2(img('statuses.png').crop((0, 16 * 5, 44, 16 * 6))), at(140, 214))
+    text(d, '%3d /%3d' % (hp, total), *at(568, 158), WHITE, DARK, 1, font=HELP, k=2)
+    one.alpha_composite(x2(img('Party/overlay_lv.png')), at(24, 218))
+    text(d, str(lv), *at(68, 192), WHITE, DARK, font=SMALL2, k=2)
 
 def screen():
     s = repeat_row(repeat_row(repeat_col(repeat_col(img('Party/bg.PNG'), 511, SIDE), 0, SIDE), 370, BOTTOM), 320, MID)
