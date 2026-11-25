@@ -185,7 +185,12 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   them to drop the selection and get the pockets back. Leaving the bag is always the list's CERRAR MOCHILA
   entry, as in the game; the two are named differently on purpose. Option buttons are 408 px wide and 168 px tall, evenly spaced; CANCELAR is 456 px
   wide. Three options fit at that height; with four or five they get lower.
-- Bag in battle (`... battle <pixelfonts.txt>`): the same screen; the game only offers Use there.
+- Bag in battle (`ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt>`): its own layout, for choosing
+  fast. The pockets in one row at the top (the approved round buttons), the item list as wide as the screen
+  with each item's own icon (2x) before its name and taller rows (seven visible), and at the foot the
+  description of the item under the cursor with USAR and VOLVER beside it. No big item box, no CERRAR MOCHILA
+  entry and no separate "item options" step: the game only offers Use in battle. The list's frame and arrows
+  are the game's, cut from its background and widened by repeating lines.
 - Party in battle (approved; `ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
   Pokémon shows on the second screen itself, with no trip to the summary, only what matters to decide a switch:
   its card (HP, status, level), its types (after a "Tipo:" label) and its moves with their PP, on a cream panel, with the game's type
@@ -229,5 +234,6 @@ Every second-screen screen works with touch and with the buttons; nothing is tou
   is open the buttons belong to it and the game does not receive them. D-pad moves the cursor, confirm presses
   the option under it, cancel is VOLVER / CANCELAR, the shoulder buttons change pocket, page or card where
   there is one, and holding confirm picks up a Pokémon or a move to reorder it.
-- Entry point with the buttons: to be decided with the owner (the game's menu button could put the cursor on
-  the second screen's home buttons instead of opening the game's pause menu on the top screen).
+- Entry point with the buttons (decided): on the overworld the game's menu button no longer opens the game's
+  pause menu on the top screen; it puts the cursor on the second screen's home buttons. Cancel from there gives
+  the buttons back to the game.
