@@ -2185,6 +2185,70 @@ module AshDroidDSUI
     s.result("id" => "profile")
   end
 
+  # The trainer's own sheet, laid out for this screen instead of a picture of the game's card: the trainer,
+  # the card's data in a panel, and the badges of the region at 3x.
+  # d: { sprite: file, rows: [[label, value]...], badges: [true/false x8], badge_row: region, party: [icon files],
+  #      page:, total: }
+  def self.trainer(d)
+    s = Screen.new
+    ops = s.ops
+    bg = pic("Trainer Card/bg")
+    if size(bg)[0] > 0
+      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [0, 0] }
+    else
+      fill(ops, 0, 0, W, H, [160, 208, 240])
+    end
+    # the trainer, on the box the game's card keeps for it
+    card = pic("Trainer Card/card")
+    bx = 24
+    by = 24
+    sheet(ops, card, Axis.new(512).crop(328, 472), Axis.new(384).crop(104, 264), bx, by, 3) if card
+    sw, sh = size(d[:sprite])
+    whole(ops, d[:sprite], bx + (432 - sw * 3) / 2, by + 480 - sh * 3 - 6, 3) if sw > 0
+    # its data
+    pw = 124
+    ph = 84
+    px = W - pw * S - 24
+    art = Art.new(px, by - 12, pw, ph)
+    box = [0, 0, pw - 1, ph - 1]
+    art.rr(box, 8, 0, [56, 56, 72]).rr(box, 8, 1, [240, 240, 248]).rr(box, 8, 3, [248, 248, 236])
+    ops << art.op
+    rows = (d[:rows] || []).first(6)
+    rows.each_with_index do |(label, value), n|
+      y = by + 36 + 78 * n
+      txt(ops, label, px + 36, y, 65, INK, INK_SH, "l", "m")
+      txt(ops, value, px + pw * S - 36, y, 65, INK, INK_SH, "r", "m", { "fit" => 400 })
+      fill(ops, px + 36, y + 36, pw * S - 72, 3, [216, 216, 204]) if n < rows.length - 1
+    end
+    # the badges: the card's own strip of eight slots at 2x across the screen, each badge at 3x on its slot
+    sy = 540
+    strip = Art.new(12, sy, 203, 30)
+    sb = [0, 0, 202, 29]
+    strip.rr(sb, 8, 0, [56, 56, 72]).rr(sb, 8, 1, [240, 240, 248]).rr(sb, 8, 3, [96, 152, 224])
+    ops << strip.op
+    badges = pic("Trainer Card/icon_badges")
+    8.times do |i|
+      cx = 12 + 18 + 76 + i * 148
+      slot = Art.new(cx - 66, sy + 24, 22, 22)
+      slot.el([1, 1, 20, 20], [72, 128, 208]).el([3, 3, 18, 18], [120, 168, 232])
+      ops << slot.op
+      next unless (d[:badges] || [])[i] && badges
+      img(ops, badges, i * 48, d[:badge_row].to_i * 48, 48, 48, cx - 72, sy + 18, 3)
+    end
+    # and the party, as on the game's save screen
+    (d[:party] || []).first(6).each_with_index do |icon, i|
+      img(ops, icon, 0, 0, 64, 64, 44 + i * 192, 728, 3) if icon
+    end
+    total = d[:total].to_i
+    if total > 1
+      game_button(s, 6, 472, 112, 62, nil, "card:prev", nil, glyph: arrow_icon(16, 6, true))
+      game_button(s, 124, 472, 112, 62, nil, "card:next", nil, glyph: arrow_icon(16, 6, false))
+      txt(ops, format(l(:card), d[:page].to_i, total), 500, 1006, 52, WHITE, [72, 104, 136], "l", "m")
+    end
+    game_button(s, 620 - 6 - 200, 472, 200, 62, l(:back), "back")
+    s.result("id" => "trainer")
+  end
+
   # ---- save ----
 
   # d: { done:, place:, name:, male:, id:, rows: [[label, value]...], party: [icon files], char: file }
