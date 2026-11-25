@@ -14,7 +14,6 @@ def slot(a, d, box, filled):
     a.paste((240, 240, 248), (x0, y0), m.inset(outer, 1))
     a.paste((232, 228, 248) if filled else (196, 196, 222), (x0, y0), m.inset(outer, 2))
     if filled:
-        d.ellipse((x0+6, y0+3, x0+23, y0+20), fill=(200, 196, 232))            # icon placeholder
         d.rounded_rectangle((x0+27, y0+15, x1-9, y0+20), 2, fill=(56, 56, 72))  # HP bar
 
 PARTY = [('Pikachu', 5, 18, 18, None), ('Pidgey', 4, 9, 16, None), ('Rattata', 3, 3, 13, 'ENV'), ('Caterpie', 3, 0, 12, None)]
@@ -42,14 +41,19 @@ def home():
     for (label, col), b in zip(ACTIONS, btns):
         m.button(d, b, col, 9)
         m.pix_text(a, label, (b[0]+b[2])//2, (b[1]+b[3])//2, 1)
-    big = m.up(a); d = ImageDraw.Draw(big)
+    big = m.up(a).convert('RGBA'); d = ImageDraw.Draw(big)
     m.ttf(d, 'RUTA 1', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
     m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
+    import os
+    icons = os.path.join(os.path.dirname(os.path.dirname(m.TTF)), 'Graphics', 'Pokemon', 'Icons')   # the game folder is the one above the font's
     for (n, lv, hp, tot, st), b in zip(PARTY, cells):
+        ic = Image.open(os.path.join(icons, n.upper() + '.png')).convert('RGBA').crop((0, 0, 64, 64)).resize((128, 128), Image.NEAREST)
+        if hp == 0: ic = Image.merge('RGBA', (*ic.convert('L').convert('RGB').split(), ic.getchannel('A')))   # fainted: grey
+        big.alpha_composite(ic, (int((b[0] + 14.5) * S) - 64, int((b[1] + 11.5) * S) - 64))
         m.ttf(d, n, (b[0]+27)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
         m.ttf(d, 'Nv' + str(lv), (b[2]-9)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
         if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-20)*S, (b[1]+17.5)*S, 39, (255, 255, 255), None, 'mm')
-    return big
+    return big.convert('RGB')
 
 def topbar(d, AWd=AW):
     d.rectangle((0, 0, AW, 14), fill=(72, 72, 104)); d.line((0, 15, AW, 15), fill=(240, 240, 248))
