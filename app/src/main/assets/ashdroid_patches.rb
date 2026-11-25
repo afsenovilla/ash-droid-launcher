@@ -1270,29 +1270,25 @@ module AshDroidDSUI
       @id += 1
     end
 
-    # A button on its own canvas. (px, py): where the mock-up pasted its art canvas; box: the button in it.
-    def button(px, py, box, col, text, cmd, shadow:, r: 9, rim: 2, k: 1, center: nil, bounce: false, icon: nil,
+    # A button in the game's own style (see AshDroidDSUI.game_box) with its label in the button lettering.
+    # (px, py): where the mock-up pasted its art canvas; box: the button in it, in art pixels. bounce: it is
+    # under the cursor, which shows as the game's "selected" button.
+    def button(px, py, box, col, text, cmd, shadow: nil, r: 9, rim: 2, k: 1, center: nil, bounce: false, icon: nil,
                into: @ops, disabled: false)
       x0, y0, x1, y1 = box
       w = x1 - x0 + 1
       h = y1 - y0 + 1
-      art = Art.new(px + (x0 - 1) * S, py + (y0 - 1) * S, w + 2, h + 6)
-      local = [1, 1, w, h]
-      c = center ? [center[0] - x0 + 1, center[1] - y0 + 1] : nil
-      if bounce            # the shadow stays on the ground while the button bobs
-        sh = Art.new(px + (x0 - 1) * S, py + (y0 - 1) * S, w + 2, h + 6)
-        sh.shadow(local, r, shadow)
-        into << sh.op
-        art.button(local, col, r, nil, text, c, rim: rim, k: k, icon: icon)
-        art.bounce = true
-      else
-        art.button(local, col, r, shadow, text, c, rim: rim, k: k, icon: icon)
-      end
       id = cmd && !disabled ? next_id : nil
-      into << art.op(id)
-      if id
-        into << { "o" => "hit", "r" => [px + x0 * S, py + y0 * S, w * S, (h + 3) * S], "cmd" => cmd, "art" => id }
-      end
+      sx = px + x0 * S
+      sy = py + y0 * S
+      AshDroidDSUI.game_box(into, sx, sy, w * S, h * S, id || bounce ? col : GREY, id, bounce)
+      art = Art.new(px + (x0 - 1) * S, py + (y0 - 1) * S, w + 2, h + 2)
+      cx, cy = center ? [center[0] - x0 + 1, center[1] - y0 + 1] : [(1 + w) / 2, (1 + h) / 2]
+      art.label(text, cx, cy, k, w - 4) if text
+      icon.call(art, art.items, 0) if icon
+      art.bounce = bounce
+      into << art.op unless art.items.empty?
+      into << { "o" => "hit", "r" => [sx, sy, w * S, h * S], "cmd" => cmd, "art" => id } if id
     end
 
     def result(extra = nil)
@@ -1653,32 +1649,54 @@ module AshDroidDSUI
     cells.each_with_index do |o, n|
       n = cols * rows - 1 if n == t - 1
       game_button(s, 6 + (n % cols) * (bw + gap), y0 + (n / cols) * (bh + gap), bw, bh, o[:label], o[:cmd],
-                  o[:kind] == :cancel ? nil : option_color(o))
+                  option_color(o))
     end
     s.result("id" => "sheet")
   end
 
-  # A button in the game's own button style: the button image of its party screen, widened and heightened by
-  # repeating its flat lines and repainted in the colour of what it does, with the label in the button
-  # lettering. Under the finger or the cursor it is the game's "selected" version of that image.
-  # Logical px (x2 on screen). col nil: the image's own blue.
-  def self.game_button(s, lx, ly, lw, lh, label, cmd, col = nil, selected = false, glyph: nil)
-    id = cmd ? s.next_id : nil
-    col = GREY unless cmd || selected              # nothing to do with it right now
+  # The body of a button in the game's own style: the button image of its party screen, made as wide and as
+  # tall as needed by repeating (or leaving out) its flat lines, and repainted in the colour of what the
+  # button does. With an id, the launcher swaps it for the game's "selected" version of that image (lighter,
+  # red border) while the finger is on it. selected: it is under the cursor, which keeps its colour and
+  # bobs (decided: the cursor never changes a button's colour).
+  # Screen px; the image is drawn at 2x.
+  def self.game_box(ops, x, y, w, h, col, id = nil, selected = false)
+    lw = w / 2
+    lh = h / 2
     ["", "_sel"].each do |suffix|
       pressed = suffix == "_sel"
-      next if pressed && !id && !selected
-      next if !pressed && selected
+      next if pressed && !id
       f = pic("Party/icon_cancel#{suffix}")
       fw, fh = size(f)
       next if fw <= 0
-      xs = Axis.new(fw).repeat(fw / 2, [lw - fw, 0].max)
-      ys = Axis.new(fh).repeat(fh * 3 / 4, [(lh - fh) / 2, 0].max).repeat(fh / 4, [lh - fh - (lh - fh) / 2, 0].max)
+      xs = Axis.new(fw)
+      if lw >= fw
+        xs.repeat(fw / 2, lw - fw)
+      else                                       # narrower than the image: its two ends, without the middle
+        a = lw / 2
+        xs.instance_variable_set(:@segs, [[0, a, a], [fw - (lw - a), lw - a, lw - a]])
+      end
+      ys = Axis.new(fh)
+      if lh >= fh
+        ys.repeat(fh * 3 / 4, (lh - fh) / 2).repeat(fh / 4, lh - fh - (lh - fh) / 2)
+      else
+        a = lh / 2
+        ys.instance_variable_set(:@segs, [[0, a, a], [fh - (lh - a), lh - a, lh - a]])
+      end
       extra = {}
-      extra[pressed ? "dn_of" : "up_of"] = id if id && !selected
-      extra["fx"] = "tint:#{hex(col)}" if col
-      sheet(s.ops, f, xs, ys, lx * 2, ly * 2, 2, extra)
+      extra[pressed ? "dn_of" : "up_of"] = id if id
+      extra["bn"] = 1 if selected && !pressed
+      tone = pressed ? col.map { |v| v + (255 - v) * 45 / 100 } : col
+      extra["fx"] = "tint:#{hex(tone)}"
+      sheet(ops, f, xs, ys, x, y, 2, extra)
     end
+  end
+
+  # A game-style button given in logical px (x2 on screen), with a label or a drawn glyph
+  def self.game_button(s, lx, ly, lw, lh, label, cmd, col = nil, selected = false, glyph: nil)
+    id = cmd ? s.next_id : nil
+    col = cmd || selected ? (col || BLUE) : GREY   # grey: nothing to do with it right now
+    game_box(s.ops, lx * 2, ly * 2, lw * 2, lh * 2, col, id, selected)
     aw = lw * 2 / S
     ah = lh * 2 / S
     art = Art.new(lx * 2 + (lw * 2 - aw * S) / 2, ly * 2 + (lh * 2 - ah * S) / 2, aw, ah)
@@ -2585,6 +2603,22 @@ module AshDroidDS
         force(:use)
       end
     when /\Aswap:(\d+):(\d+)\z/ then swap_party($1.to_i, $2.to_i)
+    when /\Ado:(\d+)\z/                         # an action of the sheet: choose the Pokémon, then that option
+      o = @ctx == :sheet && @sheet_options ? @sheet_options[$1.to_i] : nil
+      if o && live(:party)
+        @auto = [o[:label], @tickn + 45]
+        force(:use)
+      end
+    when "mon:prev", "mon:next"
+      scene = live(:party)
+      if scene && @ctx == :sheet
+        party = scene.instance_variable_get(:@party) || []
+        n = scene.instance_variable_get(:@activecmd).to_i + (cmd == "mon:next" ? 1 : -1)
+        if n >= 0 && n < party.length
+          scene.pbSelect(n)
+          pbPlayCursorSE
+        end
+      end
     when /\Amswap:(\d+):(\d+)\z/ then swap_moves($1.to_i, $2.to_i)
     when /\Apocket:(\d+)\z/ then @goal = [:pocket, $1.to_i, 10] if live(:bag)
     when /\Aitem:(\d+)\z/ then pick_item($1.to_i)
@@ -2923,11 +2957,59 @@ module AshDroidDS
 
   # ---- party ----
 
+  # What the game's party menu offers for a Pokémon, as its "Do what with X?" list will (see pbPokemonScreen)
+  def self.party_options(party, pkmn)
+    list = [{ label: _INTL("Summary"), kind: :summary }]
+    unless pkmn.egg?
+      pkmn.moves.each do |m|
+        next unless m && m.id
+        next unless [:MILKDRINK, :SOFTBOILED].include?(m.id) || HiddenMoveHandlers.hasHandler(m.id)
+        list << { label: m.name.to_s }
+      end
+    end
+    list << { label: _INTL("Switch"), kind: :switch } if party.length > 1
+    unless pkmn.egg?
+      if pkmn.mail
+        list << { label: _INTL("Mail") }
+      elsif !($game_switches[675] rescue false)
+        list << { label: _INTL("Item"), kind: :item }
+      end
+    end
+    list.each_with_index { |o, i| o[:cmd] = "do:#{i}" }
+    @sheet_options = list
+  rescue StandardError, NameError => e
+    log_once("options", e)
+    @sheet_options = []
+  end
+
+  def self.switching?(scene)
+    spr = sprites_of(scene)["pokemon0"]
+    spr && spr.instance_variable_get(:@switching) ? true : false
+  rescue StandardError
+    false
+  end
+
+  # On the overworld the game's party screen is on the game screen: the second screen shows the sheet of
+  # the Pokémon under its cursor
+  def self.sheet_state(scene, party, sel)
+    pkmn = party[sel]
+    key = [scene.object_id, sel, party.length, mon_digest(pkmn), pkmn.moves.map { |m| m && [m.id, m.pp] }]
+    screen(:sheet, key) do
+      ui.party_sheet(mon: mon_data(pkmn).merge(item: item_icon(pkmn.item)), slot: sel, first: sel <= 0, last: sel >= party.length - 1,
+                     types: (pkmn.egg? ? [] : (pkmn.types rescue [])).map { |t| type_row(t) },
+                     item_name: pkmn.item ? GameData::Item.get(pkmn.item).name.to_s : "",
+                     moves: pkmn.egg? ? [] : pkmn.moves.compact.map { |m| move_data(m) }, options: party_options(party, pkmn))
+    end
+  end
+
   def self.party_state(scene)
     party = scene.instance_variable_get(:@party) || []
     sel = scene.instance_variable_get(:@activecmd).to_i
+    if @party_free && !$game_temp.in_battle && party[sel] && window_text(scene, "messagebox").empty? && !switching?(scene)
+      return sheet_state(scene, party, sel)
+    end
     help = help_text(scene)
-    drag = @party_free && !$game_temp.in_battle
+    drag = false
     message = !window_text(scene, "messagebox").empty?
     key = [scene.object_id, sel, help, drag, message, party.map { |p| mon_digest(p) }]
     screen(:party, key) do
@@ -2946,7 +3028,7 @@ module AshDroidDS
     drag = @party_free && !in_battle
     key = [scene.object_id, cw.object_id, cw.index, slot, mon_digest(pkmn), commands_of(cw).map { |c| label_of(c) }, in_battle]
     screen(:actions, key) do
-      opts = options_of(cw, drag ? [:cancel, :switch] : [:cancel])
+      opts = options_of(cw, [:cancel])
       mon = mon_data(pkmn)
       sw = opts.find { |o| o[:kind] == :switch_in }
       if in_battle && (sw || opts.all? { |o| o[:kind] == :summary })

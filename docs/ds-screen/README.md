@@ -26,6 +26,23 @@ All the screens below are built. How the pieces fit:
   `javac -d out app/src/main/java/.../companion/Ds{Json,Art,Scene}.java docs/ds-screen/preview/Preview.java`,
   then `java -cp out Preview <pixelfonts.txt> <state.json> <out.png>`.
 
+Changes after the first build on the device (2026-11-25), which replace what the sections below say:
+
+- **Buttons**: every button is the game's own button image (the one of its party screen), widened by
+  repeating lines and repainted in the colour of what it does, with the label in the button lettering. The
+  game's "selected" version of that image is the pressed look. The cursor never changes a button's colour: the
+  button under it bobs.
+- **Battle colours** come from the game's own command and move buttons, read at run time.
+- **Images with words** (HP/PS, Lv/Nv, type names) are the launcher's translated copies, as on the game screen.
+- **Bag (battle and overworld) and party in battle**: the game screen keeps showing the battle or the map; the
+  game's messages and questions appear on the second screen.
+- **Party on the overworld**: the game's party screen is on the game screen and the second screen shows the
+  sheet of the Pokémon under its cursor (icon and name with previous / next, types, held item, moves with PP)
+  and one grid with what the game offers for it plus VOLVER. Reordering uses the game's own "Switch".
+- **Wild Pokémon**: one tab per method; inside fishing, a heading per rod.
+- **Save**: after saving, the button stays, greyed, saying it is done.
+- **Home**: the buttons stay lit while walking.
+
 Differences from the mock-ups, to review on the device:
 
 - Party, bag and summary: the game's own screen stays on the game screen while the second screen drives it
