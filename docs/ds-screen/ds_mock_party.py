@@ -159,24 +159,38 @@ def summary(page=0):
     footer(one, d, 'Los datos se ven arriba.', home=True)
     return one.convert('RGB')
 
-MOVES = [('IMPACTRUENO', (248, 208, 48)), ('ATAQUE RÁPIDO', (168, 168, 120)), ('LÁTIGO', (168, 168, 120)), ('ONDA TRUENO', (248, 208, 48))]
+# name, type row and category row in the game's types.png / category.png, power, accuracy, PP, description
+MOVES = [('Impactrueno', 13, 1, '40', '100%', '30/30', ['Una descarga eléctrica cae sobre el objetivo.', 'Puede paralizarlo.']),
+         ('Ataque Rápido', 0, 0, '40', '100%', '30/30', ['Ataque de extrema rapidez que golpea siempre primero.']),
+         ('Látigo', 0, 2, '---', '100%', '30/30', ['Menea la cola con gracia para bajar la Defensa del rival.']),
+         ('Onda Trueno', 13, 2, '---', '90%', '20/20', ['Una ligera descarga que paraliza al objetivo.'])]
 def moves():
-    """MOVIMIENTOS page of the summary: touching the page's button again lists the Pokémon's moves, each in its
-    type's colour. Touching one shows its details on the top screen (the game's own move detail view)."""
-    s = backdrop(); one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
-    m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
-    name, species = PARTY[SELECTED][0], PARTY[SELECTED][1]
-    icon = big(Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64)))
-    w = icon.width + int(d.textlength(name, font=FONT)); x = (W * 2 - w) // 2
-    one.alpha_composite(icon, (x, -6)); text(d, name, x + icon.width, 30, (64, 64, 80), (176, 200, 200))
-    ui = Image.new('RGBA', (121, 4 * 29 + 2), (0, 0, 0, 0)); ud = ImageDraw.Draw(ui)
-    for n, (label, col) in enumerate(MOVES):
-        by = n * 29 + 2                                             # room for the selected button's lift
-        m.button(ud, (1, by, 119, by + 25), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
-        m.pix_text(ui, label, 60, by + 12 - (1 if n == 0 else 0), 1)
-    ui = ui.resize((ui.width * 6, ui.height * 6), Image.NEAREST)
-    one.paste(ui, ((W * 2 - ui.width) // 2, 166), ui)
-    footer(one, d, 'Elige un movimiento.', home=True)
+    """MOVIMIENTOS: everything about the Pokémon's four moves at once, so nothing has to be touched to read it:
+    the game's type and category icons (3x), name, power, accuracy, PP and description. Cards are drawn by code
+    in the style of the route sheet. Dragging one onto another swaps them."""
+    import ds_mock_overworld as o
+    a = Image.new('RGB', (m.AW, m.AH)); d = ImageDraw.Draw(a); m.SHADOW = (124, 124, 168); m.background(d)
+    tops = [1 + 37 * n for n in range(4)]
+    for t in tops: o.panel(a, d, (3, t, 202, t + 35), r=9)
+    m.button(d, (134, 155, 201, 177), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 166, 1)
+    m.button(d, (106, 155, 129, 177), (88, 200, 88), 9)
+    for col, off in (((48, 48, 64), 1), ((255, 255, 255), 0)):
+        for r, row in enumerate(HOUSE):
+            for c, v in enumerate(row):
+                if v == '#': d.point((112 + c + off, 161 + r + off), fill=col)
+    one = m.up(a).convert('RGBA'); d = ImageDraw.Draw(one)
+    types, cats = img('types.png'), img('category.png')
+    ink, soft, sh = (64, 64, 80), (112, 112, 136), (176, 176, 200)
+    for t, (name, ty, cat, power, acc, pp, desc) in zip(tops, MOVES):
+        y = t * 6
+        one.alpha_composite(big(types.crop((0, ty * 28, 64, ty * 28 + 28))), (42, y + 10))
+        one.alpha_composite(big(cats.crop((0, cat * 28, 64, cat * 28 + 28))), (1240 - 42 - 192, y + 10))
+        m.ttf(d, name, 252, y + 52, 78, ink, sh, 'lm')
+        m.ttf(d, 'Potencia ' + power, 60, y + 106, 39, ink, None, 'lm')
+        m.ttf(d, 'Precisión ' + acc, 420, y + 106, 39, ink, None, 'lm')
+        m.ttf(d, 'PP ' + pp, 1240 - 60, y + 106, 39, ink, None, 'rm')
+        for n, line in enumerate(desc): m.ttf(d, line, 60, y + 140 + 34 * n, 39, soft, None, 'lm')
+    m.ttf(d, 'Pikachu', 48, 1080 - 96, 52, (64, 64, 80), (176, 176, 200), 'lm')
     return one.convert('RGB')
 
 def drag():
