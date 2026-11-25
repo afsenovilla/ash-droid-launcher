@@ -19,6 +19,7 @@ FONT = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 26)   # the game asks
 W, H = 620, 540                                                   # x2 = 1240x1080
 DX_LEFT, DX_LIST, DY_TOP, DY_DESC = 64, 44, 124, 32
 BOX = 88                                                          # item icon box (64 in the game)
+IX = 36                                                           # its left edge: clear of the screen edge (16 in the game)
 
 def repeat_col(im, x, n):
     out = Image.new('RGBA', (im.width + n, im.height)); out.paste(im.crop((0, 0, x, im.height)), (0, 0))
@@ -104,10 +105,10 @@ def bag():
     d.rectangle((16, top, 19, H - 1), fill=(80, 88, 88)); d.rectangle((20, top, 79, H - 1), fill=(144, 144, 152))
     box = repeat_row(repeat_col(src.crop((16, 304, 80, 368)), 32, BOX - 64), 32, BOX - 64)
     by = top + (H - top - BOX) // 2
-    s.alpha_composite(box, (16, by))
-    for i, line in enumerate(DESC): text(d, line, 16 + BOX + 12, top + 8 + 32 * i, (248, 248, 248), (0, 0, 0))
+    s.alpha_composite(box, (IX, by))
+    for i, line in enumerate(DESC): text(d, line, IX + BOX + 20, top + 8 + 32 * i, (248, 248, 248), (0, 0, 0))
     assert s.size == (W, H), s.size
-    return s, (16 + 4 + (BOX - 8) // 2, by + 4 + (BOX - 8) // 2)
+    return s, (IX + 4 + (BOX - 8) // 2, by + 4 + (BOX - 8) // 2)
 
 if __name__ == '__main__':
     one, centre = bag()
@@ -133,11 +134,12 @@ if __name__ == '__main__':
         pw2 = (186 + DX_LEFT) * 2; d = ImageDraw.Draw(one)
         d.rectangle((0, 0, pw2 - 3, (288 + DY_TOP) * 2 - 17), fill=ORANGE[:3])
         m.SHADOW = (176, 88, 48)
-        col = Image.new('RGBA', (82, 132), (0, 0, 0, 0)); cd = ImageDraw.Draw(col)
+        BW = 68                                                    # option buttons: narrower than the panel
+        col = Image.new('RGBA', (BW + 2, 132), (0, 0, 0, 0)); cd = ImageDraw.Draw(col)
         for n, (label, colour) in enumerate(options):
-            m.button(cd, (1, n * 27 + 1, 80, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
-            m.pix_text(col, label, 41, n * 27 + 12 - (1 if n == 0 else 0), 1)
-        m.button(cd, (1, 108, 80, 128), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', 41, 118, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
+            m.button(cd, (1, n * 27 + 1, BW, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+            m.pix_text(col, label, (BW + 1) // 2, n * 27 + 12 - (1 if n == 0 else 0), 1)
+        m.button(cd, (1, 108, BW, 128), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', (BW + 1) // 2, 118, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
         col = col.resize((col.width * 6, col.height * 6), Image.NEAREST); one.alpha_composite(col, ((pw2 - col.width) // 2, 14))
     one = one.convert('RGB')
     one.save(OUT.replace('.png', '-1to1.png'))                    # the screen pixel for pixel (1240x1080)
