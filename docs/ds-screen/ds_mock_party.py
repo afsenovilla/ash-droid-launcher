@@ -211,8 +211,8 @@ BATTLE_INFO = {'types': [0, 2], 'ability': 'Vista Lince', 'item': 'Ninguno',
                'moves': [('Placaje', 0, '35/35'), ('Ataque Arena', 4, '15/15')]}
 def battle_info():
     """In battle, touching a Pokémon of the party shows its data right here instead of opening the summary:
-    its card, then types, ability, held item, stats and moves with their PP, all at 2x (the game's font and its
-    type icons). CAMBIAR sits at the bottom beside home and VOLVER; it is greyed out if it cannot fight."""
+    its card, then only what matters to decide a switch: its types and its moves with their PP (the game's
+    type icons at 3x). CAMBIAR sits at the bottom beside home and VOLVER; it is greyed out if it cannot fight."""
     CARD = 356; room = (CARD - 296) * 2 // U
     s = backdrop(); x0 = (W - CARD) // 2
     s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
@@ -222,25 +222,18 @@ def battle_info():
     pw, ph = 146, 96; outer = m.rounded((pw, ph), 8); panel = Image.new('RGBA', (pw, ph), (0, 0, 0, 0))
     panel.paste((56, 56, 72), (0, 0), outer); panel.paste((240, 240, 248), (0, 0), m.inset(outer, 1)); panel.paste((248, 248, 236), (0, 0), m.inset(outer, 3))
     panel = panel.resize((pw * 6, ph * 6), Image.NEAREST); one.paste(panel, ((W * 2 - pw * 6) // 2, 300), panel)
-    types = img('types.png'); ink, shd, soft = (64, 64, 80), (168, 168, 192), (72, 112, 120)
-    L, R = 212, 1028
-    def icon(row, x, cy): 
-        t = types.crop((0, row * 28, 64, row * 28 + 28)).resize((128, 56), Image.NEAREST); one.alpha_composite(t, (x, cy - 28))
-    def rule(y): d.rectangle((L, y, R, y + 3), fill=(208, 208, 196))
-    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 136 * n, 350)
-    for n, (label, value) in enumerate((('Habilidad', BATTLE_INFO['ability']), ('Objeto', BATTLE_INFO['item']))):
-        m.ttf(d, label, L, 408 + 56 * n, 52, ink, shd, 'lm'); m.ttf(d, value, R, 408 + 56 * n, 52, ink, shd, 'rm')
-    rule(496)
-    for n, (label, value) in enumerate(BATTLE_INFO['stats']):
-        cx0 = L + 284 * (n % 3); y = 532 + 56 * (n // 3)
-        m.ttf(d, label, cx0, y, 52, ink, shd, 'lm'); m.ttf(d, value, cx0 + 248, y, 52, ink, shd, 'rm')
-    rule(620)
-    for n in range(4):
-        y = 658 + 58 * n
+    types = img('types.png'); ink, shd = (64, 64, 80), (168, 168, 192)
+    L, R = 224, 1016
+    def icon(row, x, cy):                                          # the game's type icon at 3x
+        one.alpha_composite(big(types.crop((0, row * 28, 64, row * 28 + 28))), (x, cy - 42))
+    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 204 * n, 372)
+    d.rectangle((L, 432, R, 437), fill=(208, 208, 196))
+    for n in range(4):                                             # its moves: type, name, PP
+        y = 498 + 100 * n
         if n < len(BATTLE_INFO['moves']):
             name, row, pp = BATTLE_INFO['moves'][n]
-            icon(row, L, y); m.ttf(d, name, L + 144, y, 52, ink, shd, 'lm'); m.ttf(d, 'PP ' + pp, R, y, 52, ink, shd, 'rm')
-        else: m.ttf(d, '-', L + 144, y, 52, ink, shd, 'lm')
+            icon(row, L, y); m.ttf(d, name, L + 210, y, 65, ink, shd, 'lm'); m.ttf(d, pp, R, y, 65, ink, shd, 'rm')
+        else: m.ttf(d, '-', L + 210, y, 65, ink, shd, 'lm')
     m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
     key = Image.new('RGBA', (206, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
     m.button(kd, (2, 1, 100, 22), (88, 200, 88), 9, selected=True, lift=1); m.pix_text(key, 'CAMBIAR', 51, 10, 1)
