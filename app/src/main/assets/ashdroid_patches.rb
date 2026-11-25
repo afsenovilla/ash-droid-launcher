@@ -2059,23 +2059,24 @@ module AshDroidDSUI
     mw, mh = size(d[:map])
     px = -8 + d[:pos][0].to_i * 16
     py = -8 + d[:pos][1].to_i * 16
-    window = lambda do |sz, view, centre|
-      next [0, (view - sz) / 2] if sz <= view
-      [[0, [sz - view, centre - view / 2].min].max, 0]
-    end
-    cx, ox = window.call(mw * zoom, vw - 8, (px + 16) * zoom)
-    cy, oy = window.call(mh * zoom, vh - 8, (py + 16) * zoom)
-    pw = [mw * zoom - cx, vw - 8].min
-    phh = [mh * zoom - cy, vh - 8].min
+    # the map can be moved with the finger; it starts centred on the player. Smaller than the view (the whole
+    # region fits): it sits centred inside the game's frame.
+    cw = mw * zoom
+    ch = mh * zoom
+    pw = [cw, vw - 8].min
+    phh = [ch, vh - 8].min
+    ox = (vw - 8 - pw) / 2
+    oy = (vh - 8 - phh) / 2
     whole_map = pw != vw - 8 || phh != vh - 8
     fill(ops, 0, top, vw, vh, whole_map ? [24, 40, 136] : [0, 0, 0])
     fill(ops, ox, top + oy, pw + 8, phh + 8, [0, 0, 0]) if whole_map
-    view = { "o" => "scroll", "key" => "map", "r" => [4 + ox, top + 4 + oy, pw, phh], "ch" => phh, "ops" => [] }
+    view = { "o" => "pan", "key" => "map#{zoom}", "r" => [4 + ox, top + 4 + oy, pw, phh], "cw" => cw, "ch" => ch,
+             "x0" => [[(px + 16) * zoom - pw / 2, cw - pw].min, 0].max, "y0" => [[(py + 16) * zoom - phh / 2, ch - phh].min, 0].max, "ops" => [] }
     inner = view["ops"]
-    whole(inner, d[:map], -cx, -cy, zoom) if mw > 0
-    whole(inner, d[:marker], px * zoom - cx, py * zoom - cy, zoom) if d[:marker]
+    whole(inner, d[:map], 0, 0, zoom) if mw > 0
+    whole(inner, d[:marker], px * zoom, py * zoom, zoom) if d[:marker]
     cursor = pic("mapCursor")
-    img(inner, cursor, 0, 0, 32, 32, px * zoom - cx, py * zoom - cy, zoom) if cursor
+    img(inner, cursor, 0, 0, 32, 32, px * zoom, py * zoom, zoom) if cursor
     ops << view
     sh = [16, 24, 96]
     zx = W - 24 * S - 6

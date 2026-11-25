@@ -50,6 +50,10 @@ public final class DsScene
     private List<Object> ops = new ArrayList<>();
     private final Map<String, Integer> scroll = new HashMap<>();
     private final Map<String, String> seen = new HashMap<>();
+    /** Where each draggable view (the map) has been moved to: key -> {x, y} of its content at the view's corner. */
+    private final Map<String, int[]> pans = new HashMap<>();
+    private Map<String, Object> panOp;
+    private boolean panning;
     private final Map<String, int[]> artCache = new LinkedHashMap<String, int[]>(64, 0.75f, true) {
         @Override protected boolean removeEldestEntry(Map.Entry<String, int[]> e) { return size() > 160; }
     };
@@ -189,6 +193,16 @@ public final class DsScene
                 case "scroll":
                     if (!onlyDragged) drawScroll(g, op);
                     break;
+                case "pan": {
+                    List<Object> r = DsJson.list(op.get("r"));
+                    List<Object> kids = DsJson.list(op.get("ops"));
+                    if (r == null || kids == null) break;
+                    int[] at = panAt(op);
+                    g.clip(DsJson.at(r, 0, 0), DsJson.at(r, 1, 0), DsJson.at(r, 2, 0), DsJson.at(r, 3, 0));
+                    drawOps(g, kids, DsJson.at(r, 0, 0) - at[0], DsJson.at(r, 1, 0) - at[1], -1, false);
+                    g.unclip();
+                    break;
+                }
                 case "hit":
                     if (pressed != null && pressed.op == op && !moved && DsJson.flag(op, "dim")) {
                         g.fill(pressed.x, pressed.y, pressed.w, pressed.h, 0x48000000);
@@ -421,6 +435,33 @@ public final class DsScene
         }
     }
 
+    // ---- views moved with the finger in both directions (the map) ----
+
+    private int[] panAt(Map<String, Object> op)
+    {
+        String key = DsJson.str(op, "key", "");
+        List<Object> r = DsJson.list(op.get("r"));
+        int maxX = Math.max(0, DsJson.num(op, "cw", 0) - DsJson.at(r, 2, 0));
+        int maxY = Math.max(0, DsJson.num(op, "ch", 0) - DsJson.at(r, 3, 0));
+        int[] at = pans.get(key);
+        if (at == null) {
+            at = new int[] { DsJson.num(op, "x0", 0), DsJson.num(op, "y0", 0) };
+            pans.put(key, at);
+        }
+        at[0] = Math.max(0, Math.min(maxX, at[0]));
+        at[1] = Math.max(0, Math.min(maxY, at[1]));
+        return at;
+    }
+
+    private Map<String, Object> panAtPoint(int x, int y)
+    {
+        for (Object o : ops) {
+            Map<String, Object> op = DsJson.map(o);
+            if (op != null && "pan".equals(DsJson.str(op, "o", "")) && inside(DsJson.list(op.get("r")), x, y, 0, 0)) return op;
+        }
+        return null;
+    }
+
     private Map<String, Object> findScroll(String key)
     {
         for (Object o : ops) {
@@ -514,6 +555,8 @@ public final class DsScene
         }
         pressed = hitAt(x, y, null);
         scrollOp = scrollAt(x, y, false);
+        panOp = pressed == null ? panAtPoint(x, y) : null;
+        panning = false;
     }
 
     public void touchMove(int x, int y)
@@ -526,7 +569,14 @@ public final class DsScene
         if (!moved && (Math.abs(x - downX) > SLOP || Math.abs(y - downY) > SLOP)) {
             moved = true;
             if (pressed != null && pressed.op.get("drag") != null) dragging = true;
+            else if (panOp != null) panning = true;
             else if (scrollOp != null && maxScroll(scrollOp) > 0) scrolling = true;
+        }
+        if (panning) {
+            int[] at = panAt(panOp);
+            at[0] -= x - lastX;
+            at[1] -= y - lastY;
+            panAt(panOp);
         }
         if (scrolling) {
             String key = DsJson.str(scrollOp, "key", "");
@@ -554,16 +604,18 @@ public final class DsScene
             cmd = DsJson.str(state, "tap", null);
         }
         pressed = null;
-        dragging = scrolling = barDrag = moved = false;
+        dragging = scrolling = barDrag = moved = panning = false;
         scrollOp = null;
+        panOp = null;
         return cmd;
     }
 
     public void touchCancel()
     {
         pressed = null;
-        dragging = scrolling = barDrag = moved = false;
+        dragging = scrolling = barDrag = moved = panning = false;
         scrollOp = null;
+        panOp = null;
     }
 
     // ---- image effects shared by both platforms ----
