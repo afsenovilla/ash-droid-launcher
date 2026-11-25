@@ -1734,6 +1734,8 @@ module AshDroidDSUI
     else
       fill(s.ops, sx, sy, 1024, 768, [248, 248, 236])
       txt(s.ops, d[:seen] ? "" : l(:dex_unseen), W / 2, sy + 384, 78, INK, INK_SH, "m", "m")
+      # a page the game could not draw: the reason, to report it
+      txt(s.ops, d[:error], sx + 40, sy + 60, 39, INK, nil, "l", "a", { "ww" => 944, "lh" => 52, "ml" => 12 }) if d[:error]
     end
     game_button(s, 6, 472, 112, 62, nil, d[:first] ? nil : "dex:prev", nil, glyph: arrow_icon(16, 6, true))
     game_button(s, 124, 472, 112, 62, nil, d[:last] ? nil : "dex:next", nil, glyph: arrow_icon(16, 6, false))
@@ -2716,6 +2718,7 @@ module AshDroidDS
     when "dex:prev" then dex_step(-1) if @ctx == :dex
     when "dex:next" then dex_step(1) if @ctx == :dex
     when /\Adexpage:([123])\z/
+      AshDroidLog.log("ds: dex tab #{$1} (ctx #{@ctx})")
       if @ctx == :dex
         @dex_page = $1.to_i
         @key = nil
@@ -3232,6 +3235,7 @@ module AshDroidDS
     key = [species, @dex_page]
     return if @dex_shots[key]
     @dex_shots[key] = dex_shot(list, index, region, @dex_page) || ""
+    AshDroidLog.log("ds: dex #{species} page #{@dex_page} -> #{@dex_shots[key].empty? ? 'failed' : 'ok'}")
     @key = nil
   rescue StandardError, NameError => e
     log_once("dexframe", e)
@@ -3247,7 +3251,8 @@ module AshDroidDS
     # while the cursor moves, the last page stays; its picture comes when the cursor rests
     return @state if seen && shot.nil? && @ctx == :dex && @state
     screen(:dex, [scene.object_id, species, @dex_page, shot, seen]) do
-      ui.dex(shot: shot.to_s.empty? ? nil : shot, page: @dex_page, seen: seen, first: index <= 0, last: index >= list.length - 1)
+      ui.dex(shot: shot.to_s.empty? ? nil : shot, page: @dex_page, seen: seen, first: index <= 0, last: index >= list.length - 1,
+             error: seen && shot.to_s.empty? ? "#{species} #{@dex_page}: #{@dex_error}" : nil)
     end
   end
 
@@ -3304,7 +3309,8 @@ module AshDroidDS
     shot.dispose
     path
   rescue StandardError, NameError => e
-    log_once("dexshot", e)
+    @dex_error = "#{e.class}: #{e.message} @ #{(e.backtrace || []).first(3).join(' < ')}"
+    AshDroidLog.log("ds: dexshot #{@dex_error}")
     dex_drop(false)
     nil
   ensure
