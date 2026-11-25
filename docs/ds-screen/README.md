@@ -102,7 +102,7 @@ Mock-up: `ds_mock_route.py <game folder> <pixelfonts.txt> <out.png>`, with the r
 - Species not seen in the Pokédex: flat silhouette of the icon and "???" as the name; levels and rate stay visible (decided).
 - Rows are capsules with the same corner radius as the buttons; tab labels keep clear of the rim.
 
-## Party (pending approval)
+## Party (approved)
 
 Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
 
@@ -110,7 +110,7 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
   variants, ball, HP bar, level and status images), the Pokémon icons and fonts, with `UI_Party`'s colours.
 - Panels: widened to 296 px and made 138 px tall by repeating lines of the image, shown at 2x, two columns
   with the right one 16 px lower as in the game.
-- Contents (variant under review): the Pokémon's icon and name at 3x; ball, gender, HP bar and numbers, level
-  and status at 2x like the panel. An all-3x variant was also tried; a straight 3x copy of the game's layout
-  needs 768 px per panel.
+- Contents: everything inside a panel is shown at 3x and re-laid out (name on top, HP bar under it, level,
+  status and HP numbers on the bottom row; HP written without spaces). Chosen over a variant with only icon
+  and name at 3x. A straight 3x copy of the game's layout needs 768 px per panel.
 - Bottom band: help line and VOLVER.
