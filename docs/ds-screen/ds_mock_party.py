@@ -169,13 +169,13 @@ def moves():
     icon = big(Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64)))
     w = icon.width + int(d.textlength(name, font=FONT)); x = (W * 2 - w) // 2
     one.alpha_composite(icon, (x, -6)); text(d, name, x + icon.width, 30, (64, 64, 80), (176, 200, 200))
-    ui = Image.new('RGBA', (121, 4 * 29), (0, 0, 0, 0)); ud = ImageDraw.Draw(ui)
+    ui = Image.new('RGBA', (121, 4 * 29 + 2), (0, 0, 0, 0)); ud = ImageDraw.Draw(ui)
     for n, (label, col) in enumerate(MOVES):
-        by = n * 29
+        by = n * 29 + 2                                             # room for the selected button's lift
         m.button(ud, (1, by, 119, by + 25), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
         m.pix_text(ui, label, 60, by + 12 - (1 if n == 0 else 0), 1)
     ui = ui.resize((ui.width * 6, ui.height * 6), Image.NEAREST)
-    one.paste(ui, ((W * 2 - ui.width) // 2, 178), ui)
+    one.paste(ui, ((W * 2 - ui.width) // 2, 166), ui)
     footer(one, d, 'Elige un movimiento.', home=True)
     return one.convert('RGB')
 
