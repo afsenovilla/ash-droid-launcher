@@ -6,10 +6,11 @@
 #   panels 768 px wide, which does not fit two columns on a 1240 px screen.
 # - The game's 512x384 background is extended to 620x540 by repeating lines; the panel sockets drawn on it are
 #   filled with the frame's own colour. Bottom band: help line and the back button (approved button style).
-# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>
+# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, FONTS_TXT, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+MODE = sys.argv[4] if len(sys.argv) > 4 else ''
 sys.argv = [sys.argv[0], FONTS_TXT, GAME + '/Fonts/power green.ttf']
 import ds_mock as m
 P = GAME + '/Graphics/Pictures/'
@@ -69,23 +70,51 @@ def contents(one, d, i, mon):                                     # positions in
     one.alpha_composite(big(img('Party/overlay_lv.png')), at(6, 68))
     text(d, str(lv), *at(28, 55), WHITE, DARK, font=SMALL)
 
-def screen():
+def backdrop():
     s = repeat_row(repeat_row(repeat_col(repeat_col(img('Party/bg.PNG'), 511, SIDE), 0, SIDE), 370, BOTTOM), 320, MID)
     assert s.size == (W, H), s.size
     edge = s.crop((0, 330, W, 331))                               # one clean line of the frame, sides included
     for y in range(0, 330): s.paste(edge, (0, y))
+    return s
+
+def footer(one, d, line):
+    text(d, line, 48, H * 2 - 124, WHITE, DARK, font=HELP, k=2)
+    m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
+    key = Image.new('RGBA', (72, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
+    m.button(kd, (1, 1, 70, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 35, 11, 1)
+    key = key.resize((72 * 6, 26 * 6), Image.NEAREST); one.paste(key, (W * 2 - 72 * 6 - 8, H * 2 - 26 * 6 - 2), key)
+
+def screen():
+    s = backdrop()
     mons = [PARTY[i] if i < len(PARTY) else None for i in range(6)]
     for i, mon in enumerate(mons): s.alpha_composite(tall(img(kind(i, mon))), slot_xy(i))
     one = s.resize((W * 2, H * 2), Image.NEAREST)
     d = ImageDraw.Draw(one); d.fontmode = '1'
     for i, mon in enumerate(mons):
         if mon: contents(one, d, i, mon)
-    text(d, 'Elige un Pokémon.', 48, H * 2 - 124, WHITE, DARK, font=HELP, k=2)
-    m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
-    key = Image.new('RGBA', (72, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
-    m.button(kd, (1, 1, 70, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 35, 11, 1)
-    key = key.resize((72 * 6, 26 * 6), Image.NEAREST); one.paste(key, (W * 2 - 72 * 6 - 8, H * 2 - 26 * 6 - 2), key)
+    footer(one, d, 'Elige un Pokémon.')
+    return one.convert('RGB')
+
+# What the game offers for a Pokémon: Summary, its field moves, Switch, Item (or Mail), Cancel.
+ACTIONS = [('DATOS', (56, 136, 232)), ('MOVER', (88, 200, 88)), ('OBJETO', (240, 168, 48)), ('DESTELLO', (64, 184, 184))]
+def actions():
+    """After touching a Pokémon: its panel alone on top, a grid of medium buttons under it, back at the bottom."""
+    global slot_xy
+    s = backdrop(); keep = slot_xy; slot_xy = lambda i: ((W - 296) // 2, 8)
+    s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED]))), slot_xy(SELECTED))
+    one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
+    contents(one, d, SELECTED, PARTY[SELECTED]); slot_xy = keep
+    m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
+    rows = (len(ACTIONS) + 1) // 2
+    grid = Image.new('RGBA', (160, rows * 30), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
+    for n, (label, col) in enumerate(ACTIONS):
+        bx, by = (n % 2) * 82, (n // 2) * 30
+        m.button(gd, (bx + 1, by + 1, bx + 77, by + 25), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+        m.pix_text(grid, label, bx + 39, by + 13 - (1 if n == 0 else 0), 1)
+    grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
+    one.paste(grid, ((W * 2 - 160 * 6) // 2 + 6, 330), grid)
+    footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0])
     return one.convert('RGB')
 
 if __name__ == '__main__':
-    screen().save(OUT)                                            # real size: 1240x1080
+    (actions() if MODE == 'actions' else screen()).save(OUT)   # real size: 1240x1080

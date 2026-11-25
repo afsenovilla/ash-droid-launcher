@@ -114,3 +114,13 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
   status and HP numbers on the bottom row; HP written without spaces). Chosen over a variant with only icon
   and name at 3x. A straight 3x copy of the game's layout needs 768 px per panel.
 - Bottom band: help line and VOLVER.
+
+## Party actions (pending approval)
+
+Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> actions`.
+
+- After touching a Pokémon: its panel alone at the top, and under it the options the game gives for it
+  (Summary, its field moves, Switch, Item or Mail) as a two-column grid of medium buttons in the approved
+  style: smaller than the battle ones, one colour per kind. Rows are added as needed.
+- The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens; the help line asks
+  what to do with that Pokémon.
