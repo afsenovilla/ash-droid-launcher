@@ -187,8 +187,8 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 - Party, OBJETO (`ds_mock_party.py ... item`): USAR, DAR, and QUITAR when the Pokémon holds something (the
   game's held item mark is shown by its icon). USAR and DAR open the bag to pick the item.
 - Summary, moves (`ds_mock_party.py ... moves`): the second screen shows the four moves at once in a 2x2
-  grid, so nothing has to be touched to read them: name, type tag and category tag, then power, accuracy and
-  PP. No description (decided). Cards are buttons in the approved style with a thin frame in the type's colour
+  grid, so nothing has to be touched to read them: name, the game's own type and category icons (`types.png`, `category.png`, at 3x) side by
+  side, then power, accuracy and PP. No description (decided). Cards are buttons in the approved style with a thin frame in the type's colour
   around a cream panel; the thick frame of the battle move buttons was rejected here. The top
   screen keeps the game's moves page. Dragging a card onto another swaps the moves, as the game's move page
   allows (same gesture as reordering the party; with the buttons: hold confirm, move with the D-pad, confirm

@@ -168,7 +168,7 @@ MOVES = [('Impactrueno', 'Eléctrico', 'Especial', '40', '100%', '30/30', 'Una d
          ('Onda Trueno', 'Eléctrico', 'Estado', '---', '90%', '20/20', 'Una ligera descarga que paraliza al objetivo.')]
 MOVE_CELLS = [(4, 3, 101, 74), (105, 3, 202, 74), (4, 78, 101, 149), (105, 78, 202, 149)]
 def moves():
-    """MOVIMIENTOS: the Pokémon's four moves at once in a 2x2 grid: name, type and category tags, power,
+    """MOVIMIENTOS: the Pokémon's four moves at once in a 2x2 grid: name, the game's type and category icons, power,
     accuracy and PP (no description). Cards are buttons in the approved style with a thin frame in the type's
     colour around a cream panel. Dragging one onto another swaps them."""
     S = m.S; sh = m.shade
@@ -179,27 +179,28 @@ def moves():
         a.paste((56, 56, 72), (x0, y0), outer); a.paste((240, 240, 248), (x0, y0), m.inset(outer, 1))
         a.paste(sh(col, 0.6), (x0, y0), m.inset(outer, 3)); a.paste(col, (x0, y0), m.inset(outer, 4))
         a.paste((248, 248, 236), (x0, y0), m.inset(outer, 6))
-        for tx0, tx1, c in ((x0 + 9, x0 + 47, col), (x0 + 50, x1 - 9, MOVE_CATS[cat])):            # type and category tags
-            d.rounded_rectangle((tx0, y0 + 22, tx1, y0 + 35), 4, fill=sh(c, 0.6)); d.rounded_rectangle((tx0 + 1, y0 + 23, tx1 - 1, y0 + 34), 3, fill=c)
     m.button(d, (134, 155, 201, 177), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 166, 1)
     m.button(d, (106, 155, 129, 177), (88, 200, 88), 9)
     for c2, off in (((48, 48, 64), 1), ((255, 255, 255), 0)):
         for r, row in enumerate(HOUSE):
             for c, v in enumerate(row):
                 if v == '#': d.point((112 + c + off, 161 + r + off), fill=c2)
-    one = m.up(a); d = ImageDraw.Draw(one)
+    one = m.up(a).convert('RGBA'); d = ImageDraw.Draw(one)
     ink, shd = (64, 64, 80), (168, 168, 192)
+    types, cats = img('types.png'), img('category.png')              # the game's own type and category icons, at 3x
+    TYPE_ROW, CAT_ROW = {'Normal': 0, 'Eléctrico': 13}, {'Físico': 0, 'Especial': 1, 'Estado': 2}
     for (name, ty, cat, power, acc, pp, desc), (x0, y0, x1, y1) in zip(MOVES, MOVE_CELLS):
         cx = (x0 + x1 + 1) / 2 * S; size = 78
         while ImageFont.truetype(GAME + '/Fonts/power green.ttf', size).getlength(name) > (x1 - x0 - 20) * S: size -= 13
         m.ttf(d, name, cx, (y0 + 13.5) * S, size, ink, shd)
-        m.ttf(d, ty, (x0 + 28.5) * S, (y0 + 29) * S, 52, (255, 255, 255), sh(MOVE_TYPES[ty], 0.42))
-        m.ttf(d, cat, (x0 + 50 + (x1 - 9 - x0 - 50) / 2 + 0.5) * S, (y0 + 29) * S, 52, (255, 255, 255), sh(MOVE_CATS[cat], 0.42))
+        tr, cr = TYPE_ROW[ty] * 28, CAT_ROW[cat] * 28
+        one.alpha_composite(big(types.crop((0, tr, 64, tr + 28))), (int(cx) - 192 - 9, (y0 + 22) * S))
+        one.alpha_composite(big(cats.crop((0, cr, 64, cr + 28))), (int(cx) + 9, (y0 + 22) * S))
         for n, (label, value) in enumerate((('Potencia', power), ('Precisión', acc), ('PP', pp))):
             y = (y0 + 42.5 + 8.5 * n) * S
             m.ttf(d, label, (x0 + 11) * S, y, 39, (104, 104, 124), None, 'lm'); m.ttf(d, value, (x1 - 10) * S, y, 52, ink, shd, 'rm')
     m.ttf(d, 'Pikachu', 48, 1080 - 96, 52, ink, (176, 176, 200), 'lm')
-    return one
+    return one.convert('RGB')
 
 def drag():
     """Reordering by dragging: the held panel follows the finger with a shadow under it, its slot stays empty and
