@@ -90,7 +90,7 @@ Mock-up: `ds_mock_map.py <game folder> <pixelfonts.txt> <out.png> [zoom]`.
 - The game's map image mixes pixel sizes (terrain at double pixels, buildings at single pixels) and carries the
   region logo; both come from the player's file and are shown as they are.
 
-## Wild Pokémon sheet (pending approval)
+## Wild Pokémon sheet (approved)
 
 Mock-up: `ds_mock_route.py <game folder> <pixelfonts.txt> <out.png>`, with the real table of Route 1.
 
@@ -99,4 +99,16 @@ Mock-up: `ds_mock_route.py <game folder> <pixelfonts.txt> <out.png>`, with the r
   has are shown. No day/night tags.
 - Entries of the same species are merged: rates added, level range widened. Sorted by rate.
 - Each row: the game's icon at 2x, name, levels, rate bar and percentage. Five rows visible, the list scrolls.
-- Species not seen in the Pokédex: flat silhouette of the icon and "???" as the name; levels and rate stay.
+- Species not seen in the Pokédex: flat silhouette of the icon and "???" as the name; levels and rate stay visible (decided).
+- Rows are capsules with the same corner radius as the buttons; tab labels keep clear of the rim.
+
+## Party (pending approval)
+
+Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png>`.
+
+- Replica of the game's party screen: its panels (round for the first slot, rect for the rest, faint and
+  selected variants), ball, HP bar, level and status images, fonts, colours and the offsets used by `UI_Party`.
+- Panels keep their size and the 16 px drop of the right column, but are spread out (280 px column pitch,
+  138 px row pitch) to use the taller screen. The background is the game's, extended by repeating lines, with
+  the sockets drawn on it filled with the frame colour.
+- Bottom band: help line and VOLVER.
