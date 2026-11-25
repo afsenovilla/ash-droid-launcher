@@ -187,4 +187,6 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 - Party, OBJETO (`ds_mock_party.py ... item`): USAR, DAR, and QUITAR when the Pokémon holds something (the
   game's held item mark is shown by its icon). USAR and DAR open the bag to pick the item.
 - Summary, moves (`ds_mock_party.py ... moves`): touching MOVIMIENTOS again lists the Pokémon's moves, each in
-  its type's colour; touching one shows the game's own move detail on the top screen.
+  its type's colour; touching one shows the game's own move detail on the top screen. Dragging one onto
+  another swaps them, as the game's move page allows (same gesture as reordering the party; with the buttons:
+  hold confirm, move with the D-pad, confirm to drop). Not in battle, where the game does not allow it either.
