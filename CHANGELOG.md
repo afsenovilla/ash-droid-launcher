@@ -16,14 +16,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
     party opened from a battle get their own layouts (item list with icons and USE; the Pokémon's types and
     moves with SWITCH).
   - **Overworld home**: the party (the game's own panels, icons, HP bars and status icons), the place and the
-    time, and POKéMON, BAG, MAP, the trainer's name and SAVE. The menu button puts the cursor on these
-    buttons instead of opening the pause menu (the other face buttons still open the game's own menu).
+    time, and the entries of the game's own menu in its order: Pokédex, Pokémon, Bag, Pokégear (once owned),
+    the trainer's name, Save and Options. The menu button puts the cursor on these buttons instead of opening
+    the pause menu (the other face buttons still open the game's own menu).
   - **Party, bag and summary**: the game's own screens keep running on the game screen and the second screen
     drives them: touch a Pokémon or an item, pick one of the options the game offers, drag a Pokémon onto
     another to swap them, change pocket, turn the summary's pages, and see or reorder the four moves at once.
     Any other list of choices the game shows (yes / no, the pause menu...) appears as buttons too.
-  - **Map**: the region map with the player's position and three zoom levels, and the wild Pokémon of the
-    place per encounter method, with levels and encounter rate; species not seen yet show as a silhouette.
   - **Trainer cards and save**: the game's card screens as the game draws them, and a save screen with the
     save's details.
   - The game stays in charge: a touch becomes the same cursor move and button press the player would make,

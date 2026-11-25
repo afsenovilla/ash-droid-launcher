@@ -2028,11 +2028,15 @@ module AshDroidDSUI
       end
     end
     free = d[:free]
-    labels = [["POKéMON", PINK, "open:party"], [upper(d[:bag_label]), ORANGE, "open:bag"], [upper(d[:map_label]), GREEN, "open:map"],
-              [upper(d[:trainer]), TEAL, "open:card"], [upper(d[:save_label]), BLUE, "open:save"]]
-    labels.each_with_index do |(label, col, cmd), i|
-      on = free && !(d[:off] || []).include?(i)
-      s.button(0, 0, [118, 20 + i * 31, 201, 20 + i * 31 + 27], on ? col : GREY, label, on ? cmd : nil, shadow: LAVENDER_SHADOW,
+    # the entries of the game's own menu, in its order; up to five at full height, lower with more
+    list = d[:buttons] || []
+    n = [list.length, 1].max
+    pitch = n <= 5 ? 31 : 156 / n
+    high = pitch - 4
+    list.each_with_index do |b, i|
+      on = free && b[:on] != false
+      y = 20 + i * pitch
+      s.button(0, 0, [118, y, 201, y + high], b[:col] || BLUE, upper(b[:label]), on ? b[:cmd] : nil, shadow: LAVENDER_SHADOW,
                bounce: on && d[:cursor] == i, disabled: !on)
     end
     s.result("id" => "home", "tap" => free ? nil : "a")
@@ -3251,18 +3255,33 @@ module AshDroidDS
     false
   end
 
+  # The entries of the game's pause menu, in its order and under its conditions (see pbStartPokemonMenu)
+  def self.home_buttons
+    list = []
+    if $Trainer.has_pokedex && $Trainer.pokedex.accessible_dexes.length > 0
+      list << { label: _INTL("Pokédex"), col: ui::RED, cmd: "open:pokedex" }
+    end
+    list << { label: _INTL("Pokémon"), col: ui::COMMAND_COLORS[2][0], cmd: "open:party", on: !$Trainer.party.empty? }
+    list << { label: _INTL("Bag"), col: ui::ORANGE, cmd: "open:bag", on: !((pbInBugContest? rescue false) || ($game_switches[675] rescue false)) }
+    list << { label: _INTL("Pokégear"), col: ui::PINK, cmd: "open:pokegear" } if ($Trainer.has_pokegear rescue false)
+    list << { label: $Trainer.name.to_s, col: ui::TEAL, cmd: "open:card" }
+    list << { label: _INTL("Save"), col: ui::BLUE, cmd: "open:save", on: !$game_system.save_disabled }
+    list << { label: _INTL("Options"), col: ui::PURPLE, cmd: "open:options" }
+    @home_buttons = list
+  rescue StandardError, NameError => e
+    log_once("buttons", e)
+    @home_buttons ||= []
+  end
+
   def self.home_state(cursor = nil)
     party = $Trainer.party
     free = cursor ? true : home_usable?
-    off = []
-    off << 0 if party.empty?
-    off << 1 if (pbInBugContest? rescue false) || ($game_switches[675] rescue false)
-    off << 4 if $game_system.save_disabled
+    buttons = home_buttons
     time = (pbGetTimeNow.strftime("%H:%M") rescue Time.now.strftime("%H:%M"))
-    key = [$game_map.map_id, time, free, cursor, off, party.map { |p| mon_digest(p) }]
+    key = [$game_map.map_id, time, free, cursor, buttons.map { |b| [b[:cmd], b[:on]] }, party.map { |p| mon_digest(p) }]
     screen(:home, key) do
-      ui.home(place: $game_map.name.to_s, time: time, mons: party.first(6).map { |p| mon_data(p) }, trainer: $Trainer.name.to_s,
-              free: free, off: off, cursor: cursor, save_label: _INTL("Save"), bag_label: _INTL("Bag"), map_label: _INTL("Map"))
+      ui.home(place: $game_map.name.to_s, time: time, mons: party.first(6).map { |p| mon_data(p) }, free: free, cursor: cursor,
+              buttons: buttons)
     end
   end
 
@@ -3320,6 +3339,26 @@ module AshDroidDS
       $game_temp.in_menu = false
       pbUseKeyItemInField(item) if item
     when :map then modal_map
+    when :pokedex
+      pbPlayDecisionSE
+      $game_temp.in_menu = true
+      if Settings::USE_CURRENT_REGION_DEX || $Trainer.pokedex.accessible_dexes.length == 1
+        $PokemonGlobal.pokedexDex = $Trainer.pokedex.accessible_dexes[0] unless Settings::USE_CURRENT_REGION_DEX
+        pbFadeOutIn { PokemonPokedexScreen.new(PokemonPokedex_Scene.new).pbStartScreen }
+      else
+        pbFadeOutIn { PokemonPokedexMenuScreen.new(PokemonPokedexMenu_Scene.new).pbStartScreen }
+      end
+    when :pokegear
+      pbPlayDecisionSE
+      $game_temp.in_menu = true
+      pbFadeOutIn { PokemonPokegearScreen.new(PokemonPokegear_Scene.new).pbStartScreen }
+    when :options
+      pbPlayDecisionSE
+      $game_temp.in_menu = true
+      pbFadeOutIn {
+        PokemonOptionScreen.new(PokemonOption_Scene.new).pbStartScreen
+        pbUpdateSceneMap
+      }
     when :card then modal_cards
     when :save then modal_save unless $game_system.save_disabled
     end
@@ -3347,9 +3386,13 @@ module AshDroidDS
     choice = nil
     modal(:home) do |cmd|
       @modal_view = -> { home_state(cursor) }
-      if Input.trigger?(Input::UP) then cursor = (cursor - 1) % 5; pbPlayCursorSE
-      elsif Input.trigger?(Input::DOWN) then cursor = (cursor + 1) % 5; pbPlayCursorSE
-      elsif Input.trigger?(Input::USE) then choice = %i[party bag map card save][cursor]
+      list = @home_buttons || []
+      count = [list.length, 1].max
+      if Input.trigger?(Input::UP) then cursor = (cursor - 1) % count; pbPlayCursorSE
+      elsif Input.trigger?(Input::DOWN) then cursor = (cursor + 1) % count; pbPlayCursorSE
+      elsif Input.trigger?(Input::USE)
+        b = list[cursor]
+        choice = b[:cmd].to_s.sub("open:", "").to_sym if b && b[:on] != false
       elsif Input.trigger?(Input::ACTION) || Input.trigger?(Input::SPECIAL) then choice = :menu
       elsif cmd =~ /\Aopen:(\w+)\z/ then choice = $1.to_sym
       end
