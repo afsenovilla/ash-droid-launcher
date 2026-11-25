@@ -125,8 +125,8 @@ def actions(options=None, line=None, held=False):
     grid = Image.new('RGBA', (bw + 2, len(options) * 31), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(options):
         by = n * 31
-        m.button(gd, (1, by + 1, bw, by + 27), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
-        m.pix_text(grid, label, (bw + 1) // 2, by + 14 - (1 if n == 0 else 0), 1)
+        m.button(gd, (1, by + 1, bw, by + 27), col, 9, selected=(n == 0), lift=0)
+        m.pix_text(grid, label, (bw + 1) // 2, by + 14, 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
     one.paste(grid, ((W * 2 - grid.width) // 2, 314), grid)
     footer(one, d, line or '¿Qué hacer con %s?' % PARTY[SELECTED][0], home=True)
@@ -152,8 +152,8 @@ def summary(page=0):
             for col, o in (((48, 48, 64), 1), ((255, 255, 255), 0)): ud.line((xx + o, 13 - k + o, xx + o, 13 + k + o), fill=col)
     for n, label in enumerate(PAGES):
         by = 30 + n * 23
-        m.button(ud, (X0 + 1, by, X0 + 119, by + 20), (240, 168, 48) if n == page else (168, 168, 196), 9, selected=(n == page), lift=(1 if n == page else 0))
-        m.pix_text(ui, label, X0 + 60, by + 10 - (1 if n == page else 0), 1)
+        m.button(ud, (X0 + 1, by, X0 + 119, by + 20), (240, 168, 48) if n == page else (168, 168, 196), 9, selected=(n == page), lift=0)
+        m.pix_text(ui, label, X0 + 60, by + 10, 1)
     ui = ui.resize((ui.width * 6, ui.height * 6), Image.NEAREST)
     one.paste(ui, ((W * 2 - ui.width) // 2, 8), ui)
     footer(one, d, 'Los datos se ven arriba.', home=True)
@@ -237,7 +237,7 @@ def battle_info():
         else: m.ttf(d, '-', L + 210, y, 65, ink, shd, 'lm')
     m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
     key = Image.new('RGBA', (206, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
-    m.button(kd, (2, 1, 100, 22), (88, 200, 88), 9, selected=True, lift=1); m.pix_text(key, 'CAMBIAR', 51, 10, 1)
+    m.button(kd, (2, 1, 100, 22), (88, 200, 88), 9, selected=True); m.pix_text(key, 'CAMBIAR', 51, 11, 1)
     m.button(kd, (106, 1, 129, 22), (88, 200, 88), 9)
     for col, o in (((48, 48, 64), 1), ((255, 255, 255), 0)):
         for r, row in enumerate(HOUSE):

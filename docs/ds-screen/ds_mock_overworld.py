@@ -24,7 +24,7 @@ ACTIONS = [('POKéMON', (248, 144, 200)), ('MOCHILA', (240, 168, 48)), ('MAPA', 
 def home():
     a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); m.background(d)
     d.rectangle((0, 0, AW, 14), fill=(72, 72, 104)); d.line((0, 15, AW, 15), fill=(240, 240, 248))
-    cells = [(4, 20 + i*26, 116, 20 + i*26 + 23) for i in range(6)]
+    cells = [(4, 20 + i*26, 108, 20 + i*26 + 23) for i in range(6)]
     for i, b in enumerate(cells):
         slot(a, d, b, i < len(PARTY))
         if i < len(PARTY):
@@ -36,7 +36,7 @@ def home():
             if tag:
                 d.rounded_rectangle((x1-44, y0+3, x1-24, y0+12), 3, fill=m.shade(tag, 0.6))
                 d.rounded_rectangle((x1-43, y0+4, x1-25, y0+11), 2, fill=tag)
-    btns = [(122, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]
+    btns = [(114, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]   # wide enough for SAUVEGARDER / SPEICHERN
     for (label, col), b in zip(ACTIONS, btns):
         m.button(d, b, col, 9)
         m.pix_text(a, label, (b[0]+b[2])//2, (b[1]+b[3])//2, 1)
@@ -45,7 +45,7 @@ def home():
     m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
     for (n, lv, hp, tot, st), b in zip(PARTY, cells):
         m.ttf(d, n, (b[0]+27)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
-        m.ttf(d, 'Nv' + str(lv), (b[2]-6)*S, (b[1]+8)*S, 39, (64, 64, 80), (176, 176, 200), 'rm')
+        m.ttf(d, 'Nv' + str(lv), (b[2]-6)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
         if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-34)*S, (b[1]+7.5)*S, 39, (255, 255, 255), None, 'mm')
     return big
 

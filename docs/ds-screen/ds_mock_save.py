@@ -51,7 +51,7 @@ def screen(done=DONE):
     m.SHADOW = (40, 40, 64)
     key = Image.new('RGBA', (206, 32), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
     if not done:
-        m.button(kd, (3, 1, 128, 28), (88, 200, 88), 9, selected=True, lift=1); m.pix_text(key, 'GUARDAR', 65, 13, 1)
+        m.button(kd, (3, 1, 128, 28), (88, 200, 88), 9, selected=True); m.pix_text(key, 'GUARDAR', 65, 14, 1)
     m.button(kd, (134, 6, 203, 28), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 168, 17, 1)
     key = key.resize((206 * 6, 32 * 6), Image.NEAREST); one.paste(key, (2, 1080 - 32 * 6 + 2), key)
     return one

@@ -18,7 +18,7 @@ import ds_mock as m
 W, H = 620, 540
 CUT, TOP, ROW = 180, 92, 43                                       # background cut, room for the pockets, row pitch
 GROW_LIST, GROW_DESC = 44, 24
-if STATE == 'item': GROW_LIST, GROW_DESC = GROW_LIST - ROW, GROW_DESC + ROW   # the options take the last row's room: two rows of buttons
+if STATE in ('item', 'battle'): GROW_LIST, GROW_DESC = GROW_LIST - ROW, GROW_DESC + ROW   # the options take the last row's room: two rows of buttons
 ITEMS = [('POTION', 'Poción', 5), ('SUPERPOTION', 'Superpoción', 2), ('ANTIDOTE', 'Antídoto', 3), ('PARALYZEHEAL', 'Antiparalizador', 1),
          ('AWAKENING', 'Despertar', 2), ('BURNHEAL', 'Antiquemar', 1), ('ICEHEAL', 'Antihielo', 1)]
 DESC = ['Medicina en espray que', 'restaura 20 PS de un', 'Pokémon.']   # wrapped to the room left by the buttons
@@ -40,12 +40,12 @@ def screen():
     lx, ly, lw = 6, TOP + 10, W - 6 - 52                           # inside of the list frame
     cur = b.img('Pictures/Bag/cursor.png'); cur = b.repeat_col(cur, 141, lw - cur.width + 8)
     s.alpha_composite(cur, (lx - 2, ly - 12 + ROW * b.SEL))   # the image has 12 px of empty margin above its frame
-    for i, (icon, name, qty) in enumerate(ITEMS[:6] if STATE == 'item' else ITEMS):
+    for i, (icon, name, qty) in enumerate(ITEMS[:6] if STATE in ('item', 'battle') else ITEMS):
         y = ly + ROW * i
         s.alpha_composite(b.img('Items/%s.png' % icon), (lx + 12, y - 3))
         b.text(d, name, lx + 68, y + 3, INK, INK_SH); b.text(d, 'x%3d' % qty, lx + lw - 24, y + 3, INK, INK_SH, 1)
     top = TOP + (288 - 4) + GROW_LIST
-    lines = {'battle': DESC, 'world': ['Medicina en espray que restaura 20 PS', 'de un Pokémon.'], 'item': []}[STATE]
+    lines = {'battle': ['Medicina en espray que restaura 20 PS de un', 'Pokémon.'], 'world': ['Medicina en espray que restaura 20 PS', 'de un Pokémon.'], 'item': []}[STATE]
     for i, line in enumerate(lines): b.text(d, line, 24, top + 10 + 32 * i, (248, 248, 248), (0, 0, 0))
     one = s.resize((W * 2, H * 2), Image.NEAREST)
     sheet = b.img('Pictures/Bag/icon_pocket.png')                 # pocket emblems at 3x, as on the bag
@@ -57,9 +57,14 @@ def screen():
         one.alpha_composite(e.resize((84, 84), Image.NEAREST), (cx * 2 - 42, cy * 2 - 42))
     m.SHADOW = (72, 76, 84)
     green, blue = (88, 200, 88), (56, 136, 232)
-    row = {'battle': [('USAR', green, 44), ('VOLVER', blue, 48)], 'world': [('VOLVER', blue, 48)],
+    row = {'battle': [], 'world': [('VOLVER', blue, 48)],
            'item': []}[STATE]
-    if STATE == 'item':
+    if STATE == 'battle':                                         # description on top, then one row of two wide buttons
+        key = Image.new('RGBA', (202, 28), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
+        m.button(kd, (2, 1, 99, 24), green, 9, selected=True); m.pix_text(key, 'USAR', 51, 13, 1)
+        m.button(kd, (102, 1, 199, 24), blue, 9); m.pix_text(key, 'VOLVER', 151, 13, 1)
+        key = key.resize((202 * 6, 28 * 6), Image.NEAREST); one.alpha_composite(key, (14, top * 2 + 12 + 27 * 6))
+    elif STATE == 'item':
         # Options in a 2x2 grid of equal buttons, wide enough for the longest word of the game's four languages
         # (German REGISTRIEREN, French ENREGISTRER), so the layout is the same in all of them.
         words = {'es': ('USAR', 'DAR', 'TIRAR', 'CANCELAR'), 'de': ('BENUTZEN', 'GEBEN', 'WEGWERFEN', 'ABBRECHEN'),

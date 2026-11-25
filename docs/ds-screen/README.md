@@ -185,12 +185,11 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   them to drop the selection and get the pockets back. Leaving the bag is always the list's CERRAR MOCHILA
   entry, as in the game; the two are named differently on purpose. Option buttons are 408 px wide and 168 px tall, evenly spaced; CANCELAR is 456 px
   wide. Three options fit at that height; with four or five they get lower.
-- Bag in battle (approved; `ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt>`): its own layout, for choosing
-  fast. The pockets in one row at the top (the approved round buttons), the item list as wide as the screen
-  with each item's own icon (2x) before its name and taller rows (seven visible), and at the foot the
-  description of the item under the cursor with USAR and VOLVER beside it. No big item box, no CERRAR MOCHILA
-  entry and no separate "item options" step: the game only offers Use in battle. The list's frame and arrows
-  are the game's, cut from its background and widened by repeating lines.
+- Bag in battle (approved; `ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt> battle`): the same
+  layout as the bag out of battle (pockets in a row on top, list as wide as the screen with each item's icon).
+  The foot always shows the description of the item under the cursor and, under it, one row with USAR and
+  VOLVER, both as wide as half the screen so any language fits. No "item options" step: the game only offers
+  Use in battle.
 - Party in battle (approved; `ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
   Pokémon shows on the second screen itself, with no trip to the summary, only what matters to decide a switch:
   its card (HP, status, level), its types (after a "Tipo:" label) and its moves with their PP, on a cream panel, with the game's type
@@ -238,7 +237,7 @@ Every second-screen screen works with touch and with the buttons; nothing is tou
   pause menu on the top screen; it puts the cursor on the second screen's home buttons. Cancel from there gives
   the buttons back to the game.
 
-## Bag out of battle, new layout (pending approval)
+## Bag out of battle, new layout (approved; replaces the two-column bag)
 
 `ds_mock_bag_battle.py <game folder> <out.png> <pixelfonts.txt> world|item`. Proposed to replace the two-column
 bag (`ds_mock_bag.py`): the layout approved for the battle bag (pockets in a row on top, list as wide as the
@@ -255,3 +254,20 @@ translated strings, never hard-coded Spanish, and every button is sized for the 
 (for instance REGISTRIEREN / ENREGISTRER, WEGWERFEN, ABBRECHEN, SAUVEGARDER). Where a row of buttons cannot
 hold the longest words, the layout changes for every language (as in the bag's item options), not per language.
 To check when implementing: the home screen's save button and the map's wild Pokémon button.
+
+## Audit of the approved screens against the rules (2026-11-25)
+
+Fixed in the mock-ups:
+- Battle bag: USAR was too narrow for BENUTZEN / UTILISER and left the description three short lines; foot redone.
+- Home: buttons widened (SAUVEGARDER, SPEICHERN); party levels at the same size as the names.
+- Route sheet: levels and the "???" note were small unshadowed text; now 52 px with shadow.
+- Party options, held item options, summary remote, battle party, save: the selected button was drawn lifted,
+  which made the gaps uneven; static mock-ups now draw every button at rest.
+
+Left for implementation:
+- The `cmd` lettering has Á Â Ä È É Ê Í Ó Ö Ü; it lacks Ñ Ú À Ç Î Ô Û Ù. Add the glyphs any label needs.
+- Save card: "label: value" rows share 204 px; German "Gestartet:" with a full date and French time labels may not
+  fit. Use the game's own strings and shorten the date format, or let the value wrap under the label.
+- Home: status tags (ENV, DEB) still use small text inside their tag.
+- `overworld-map.png`, `overworld-route.png` and `screen-map.png` were removed: superseded by the scripts and by
+  the screen map artifact.

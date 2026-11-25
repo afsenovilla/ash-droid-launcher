@@ -51,10 +51,10 @@ def screen():
         ic = icon(sp, seen); big.paste(ic, ((b[0] + 2) * S, b[1] * S - 2), ic)
         name = NAMES.get(sp, sp.capitalize()) if seen else '???'
         lv = 'Nv %d' % lo if lo == hi else 'Nv %d-%d' % (lo, hi)
-        m.ttf(d, name, (b[0] + 26) * S, (b[1] + 7) * S, 52, (64, 64, 80), (176, 176, 200), 'lm')
-        m.ttf(d, lv, (b[0] + 26) * S, (b[1] + 16) * S, 39, (112, 112, 136), None, 'lm')
+        m.ttf(d, name, (b[0] + 26) * S, (b[1] + 6.5) * S, 52, (64, 64, 80), (176, 176, 200), 'lm')
+        m.ttf(d, lv, (b[0] + 26) * S, (b[1] + 15) * S, 52, (104, 104, 128), (200, 200, 220), 'lm')
         m.ttf(d, str(pct) + '%', (b[2] - 6) * S, (b[1] + 11) * S, 52, (64, 64, 80), (176, 176, 200), 'rm')
-    m.ttf(d, '??? = aún no lo has visto', 8 * S, 168 * S, 39, (112, 112, 136), None, 'lm')
+    m.ttf(d, '??? = sin ver', 8 * S, 168 * S, 52, (64, 64, 80), (176, 176, 200), 'lm')
     return big
 
 if __name__ == '__main__':
