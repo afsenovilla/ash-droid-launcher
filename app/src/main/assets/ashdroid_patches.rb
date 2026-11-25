@@ -939,7 +939,7 @@ module AshDroidDSUI
     "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", unseen: "??? = not seen", lv: "Lv",
               wild_title: "Wild Pokémon", card: "Card %d of %d", save_q: "Save the game?", saved: "Game saved",
               save: "SAVE", saved_button: "SAVED", held: "Held: %s", no_held: "No held item", type: "Type:", item: "Item:", power: "Power",
-              accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], sum_help: "Details are shown above.",
+              accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], dex_pages: %w[INFO AREA FORMS], dex_unseen: "Not seen yet.", sum_help: "Details are shown above.",
               drop: "Let go to swap.", grass: "GRASS", fishing: "FISHING", cave: "CAVE", change: "SWITCH", mega: "MEGA",
               eff: ["No effect", "Not very effective", "Super effective"], badges: "Badges:", pokedex: "Pokédex:",
               time: "Time:", money: "Money:", started: "Started:", no_wild: "No wild Pokémon here.",
@@ -948,7 +948,7 @@ module AshDroidDSUI
               wild_title: "Pokémon salvajes", card: "Tarjeta %d de %d", save_q: "¿Guardar la partida?",
               saved: "Partida guardada", save: "GUARDAR", saved_button: "GUARDADO", held: "Equipado: %s", no_held: "Sin objeto equipado",
               type: "Tipo:", item: "Objeto:", power: "Potencia", accuracy: "Precisión",
-              pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], sum_help: "Los datos se ven arriba.",
+              pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], dex_pages: %w[INFO ÁREA FORMAS], dex_unseen: "Aún no lo has visto.", sum_help: "Los datos se ven arriba.",
               drop: "Suelta para cambiar.", grass: "HIERBA", fishing: "PESCA", cave: "CUEVA", change: "CAMBIAR", mega: "MEGA",
               eff: ["No afecta", "Poco eficaz", "Muy eficaz"], badges: "Medallas:", pokedex: "Pokédex:",
               time: "Tiempo:", money: "Dinero:", started: "Inicio:", no_wild: "Aquí no hay Pokémon salvajes.",
@@ -957,7 +957,7 @@ module AshDroidDSUI
               wild_title: "Pokémon sauvages", card: "Carte %d sur %d", save_q: "Sauvegarder la partie ?",
               saved: "Partie sauvegardée", save: "SAUVEGARDER", saved_button: "SAUVEGARDÉ", held: "Tenu : %s", no_held: "Aucun objet tenu",
               type: "Type :", item: "Objet :", power: "Puissance", accuracy: "Précision",
-              pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], sum_help: "Les données sont en haut.",
+              pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], dex_pages: %w[INFOS ZONE FORMES], dex_unseen: "Pas encore vu.", sum_help: "Les données sont en haut.",
               drop: "Relâchez pour échanger.", grass: "HERBE", fishing: "PÊCHE", cave: "GROTTE", change: "CHANGER", mega: "MÉGA",
               eff: ["Sans effet", "Peu efficace", "Super efficace"], badges: "Badges :", pokedex: "Pokédex :",
               time: "Temps :", money: "Argent :", started: "Début :", no_wild: "Aucun Pokémon sauvage ici.",
@@ -966,7 +966,7 @@ module AshDroidDSUI
               wild_title: "Wilde Pokémon", card: "Karte %d von %d", save_q: "Spiel speichern?",
               saved: "Spiel gespeichert", save: "SPEICHERN", saved_button: "GESPEICHERT", held: "Trägt: %s", no_held: "Trägt kein Item",
               type: "Typ:", item: "Item:", power: "Stärke", accuracy: "Genauigkeit",
-              pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], sum_help: "Die Daten stehen oben.",
+              pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], dex_pages: %w[INFO GEBIET FORMEN], dex_unseen: "Noch nicht gesehen.", sum_help: "Die Daten stehen oben.",
               drop: "Loslassen zum Tauschen.", grass: "GRAS", fishing: "ANGELN", cave: "HÖHLE", change: "WECHSELN", mega: "MEGA",
               eff: ["Wirkungslos", "Nicht sehr effektiv", "Sehr effektiv"], badges: "Orden:", pokedex: "Pokédex:",
               time: "Spielzeit:", money: "Geld:", started: "Beginn:", no_wild: "Hier gibt es keine wilden Pokémon.",
@@ -1712,6 +1712,33 @@ module AshDroidDSUI
                   option_color(o))
     end
     s.result("id" => "sheet")
+  end
+
+  # The Pokédex is open: the pages of the game's own entry for the species under its cursor, as the game
+  # draws them (a picture of its screen at 2x), so nothing has to be opened to read them.
+  # d: { shot: png file or nil, page: 1..3, seen:, first:, last: }
+  def self.dex(d)
+    s = Screen.new
+    stripes(s.ops)
+    l(:dex_pages).each_with_index do |label, n|
+      on = n + 1 == d[:page].to_i
+      x = 2 + n * 68
+      s.button(0, 0, [x, 2, x + 65, 21], [GREEN, ORANGE, PURPLE][n], label, d[:seen] ? "dexpage:#{n + 1}" : nil, shadow: LAVENDER_SHADOW,
+               disabled: !d[:seen], chosen: on && d[:seen])
+    end
+    sx = (W - 1024) / 2
+    sy = 144
+    fill(s.ops, sx - 6, sy - 6, 1036, 780, [56, 56, 72])
+    if d[:shot]
+      s.ops << { "o" => "img", "f" => d[:shot], "s" => [0, 0, 512, 384], "d" => [sx, sy, 1024, 768] }
+    else
+      fill(s.ops, sx, sy, 1024, 768, [248, 248, 236])
+      txt(s.ops, d[:seen] ? "" : l(:dex_unseen), W / 2, sy + 384, 78, INK, INK_SH, "m", "m")
+    end
+    game_button(s, 6, 472, 112, 62, nil, d[:first] ? nil : "dex:prev", nil, glyph: arrow_icon(16, 6, true))
+    game_button(s, 124, 472, 112, 62, nil, d[:last] ? nil : "dex:next", nil, glyph: arrow_icon(16, 6, false))
+    game_button(s, 620 - 6 - 200, 472, 200, 62, l(:back), "back")
+    s.result("id" => "dex")
   end
 
   # The body of a button in the game's own style: the button image of its party screen, made as wide and as
@@ -2640,6 +2667,7 @@ module AshDroidDS
     elsif cw && bag then bag_state(bag, cw)
     elsif cw then choice_state(cw)
     elsif (map = live(:map)) && !cw then map_state(map)
+    elsif !cw && (dx = live(:dexinfo) || live(:dex)) && dex_state(dx) then @state
     elsif summary then summary_state(summary)
     elsif bag then bag_state(bag, nil)
     elsif party then party_state(party)
@@ -2685,6 +2713,14 @@ module AshDroidDS
         force(:back)
       end
     when /\Azoom:(\d)\z/ then @zoom = [[$1.to_i, 2].max, 4].min if @ctx == :map
+    when "dex:prev" then dex_step(-1) if @ctx == :dex
+    when "dex:next" then dex_step(1) if @ctx == :dex
+    when /\Adexpage:([123])\z/
+      if @ctx == :dex
+        @dex_page = $1.to_i
+        @key = nil
+        pbPlayCursorSE
+      end
     when "wild"
       if @ctx == :map && @map_tabs && !@map_tabs.empty?
         @map_wild = true
@@ -3152,6 +3188,153 @@ module AshDroidDS
     scene.pbSelect(b)
     pbSEPlay("GUI party switch") rescue nil
     @key = nil
+  end
+
+  # ---- Pokédex ----
+
+  @dex_page = 1
+  @dex_shots = {}
+
+  # [list, index, region] of what the game's Pokédex is pointing at, or nil while it is busy with something
+  # else (its search)
+  def self.dex_target(scene)
+    if scene.is_a?(PokemonPokedexInfo_Scene)
+      return [scene.instance_variable_get(:@dexlist), scene.instance_variable_get(:@index).to_i, scene.instance_variable_get(:@region)]
+    end
+    win = sprites_of(scene)["pokedex"]
+    return nil unless win && !win.disposed? && win.visible && win.active
+    region = -1
+    unless Settings::USE_CURRENT_REGION_DEX
+      names = Settings.pokedex_names
+      at = scene.pbGetSavePositionIndex
+      region = names[at][1] if names[at].is_a?(Array)
+    end
+    [scene.instance_variable_get(:@dexlist), win.index.to_i, region]
+  end
+
+  # Called from the game's own loop while one of its Pokédex screens runs: once the cursor rests on a
+  # species, takes the picture of the page the second screen is showing
+  def self.dex_frame(scene, kind)
+    return if @dex_busy || scene.equal?(@dex_hidden)
+    mark(kind, scene)
+    return unless @active
+    list, index, region = dex_target(scene)
+    entry = list && list[index]
+    return unless entry
+    want = [scene.object_id, index]
+    if @dex_want != want
+      @dex_want = want
+      @dex_since = @tickn
+    end
+    return if @tickn - @dex_since.to_i < 6
+    species = entry[0]
+    return unless $Trainer.seen?(species)
+    key = [species, @dex_page]
+    return if @dex_shots[key]
+    @dex_shots[key] = dex_shot(list, index, region, @dex_page) || ""
+    @key = nil
+  rescue StandardError, NameError => e
+    log_once("dexframe", e)
+  end
+
+  def self.dex_state(scene)
+    list, index, _region = dex_target(scene)
+    entry = list && list[index]
+    return nil unless entry
+    species = entry[0]
+    seen = $Trainer.seen?(species)
+    shot = seen ? @dex_shots[[species, @dex_page]] : nil
+    # while the cursor moves, the last page stays; its picture comes when the cursor rests
+    return @state if seen && shot.nil? && @ctx == :dex && @state
+    screen(:dex, [scene.object_id, species, @dex_page, shot, seen]) do
+      ui.dex(shot: shot.to_s.empty? ? nil : shot, page: @dex_page, seen: seen, first: index <= 0, last: index >= list.length - 1)
+    end
+  end
+
+  def self.dex_step(by)
+    scene = live(:dexinfo)
+    return force(by < 0 ? :up : :down) if scene
+    scene = live(:dex)
+    target = scene && dex_target(scene)
+    return unless target
+    list, index, = target
+    n = index + by
+    return if n < 0 || n >= list.length
+    win = sprites_of(scene)["pokedex"]
+    win.index = n
+    unless scene.instance_variable_get(:@searchResults)
+      $PokemonGlobal.pokedexIndex[scene.pbGetSavePositionIndex] = n
+    end
+    scene.pbRefresh
+    pbPlayCursorSE
+  rescue StandardError, NameError => e
+    log_once("dexstep", e)
+  end
+
+  # A picture of one page of the game's entry for a species. The game's entry screen is kept ready but
+  # hidden while the Pokédex is open; it is only shown for the instant of the picture, between two frames,
+  # so the game screen never shows it.
+  def self.dex_shot(list, index, region, page)
+    Dir.mkdir(SHOT_DIR) unless File.directory?(SHOT_DIR)
+    @dex_busy = true
+    dex_drop(false) if @dex_hidden && @dex_region != region
+    h = @dex_hidden
+    if h
+      h.instance_variable_set(:@dexlist, list)
+      h.instance_variable_set(:@index, index)
+      h.pbUpdateDummyPokemon
+      h.instance_variable_set(:@available, h.pbGetAvailableForms)
+    else
+      h = PokemonPokedexInfo_Scene.new
+      @dex_hidden = h
+      @dex_region = region
+      h.pbStartScene(list, index, region)
+    end
+    h.instance_variable_set(:@page, page)
+    h.instance_variable_set(:@checkingNumberBattled, false)
+    h.drawPage(page)
+    glow = sprites_of(h)["areahighlight"]
+    glow.opacity = 255 if glow && !glow.disposed?
+    vp = h.instance_variable_get(:@viewport)
+    vp.visible = true
+    shot = Graphics.snap_to_bitmap
+    vp.visible = false
+    path = File.expand_path(File.join(SHOT_DIR, "dex_#{list[index][0]}_#{page}_#{Graphics.frame_count}.png"))
+    shot.to_file(path)
+    shot.dispose
+    path
+  rescue StandardError, NameError => e
+    log_once("dexshot", e)
+    dex_drop(false)
+    nil
+  ensure
+    @dex_busy = false
+    begin
+      vp = @dex_hidden && @dex_hidden.instance_variable_get(:@viewport)
+      vp.visible = false if vp && !vp.disposed?
+    rescue StandardError
+    end
+  end
+
+  # The Pokédex closed: the hidden entry screen and its pictures go
+  def self.dex_drop(files = true)
+    h = @dex_hidden
+    @dex_hidden = nil
+    if h
+      sprites = h.instance_variable_get(:@sprites)
+      pbDisposeSpriteHash(sprites) if sprites
+      tb = h.instance_variable_get(:@typebitmap)
+      tb.dispose if tb
+      vp = h.instance_variable_get(:@viewport)
+      vp.dispose if vp && !vp.disposed?
+    end
+    if files
+      @dex_shots = {}
+      @dex_page = 1
+      Dir.glob(File.join(SHOT_DIR, "dex_*.png")).each { |f| File.delete(f) rescue nil }
+    end
+  rescue StandardError, NameError => e
+    log_once("dexdrop", e)
   end
 
   # ---- summary ----
@@ -3721,6 +3904,10 @@ module AshDroidDS
     when "PokemonBag_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:bag, s) }
     when "PokemonSummary_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:summary, s) }
     when "PokemonRegionMap_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:map, s) }
+    when "PokemonPokedex_Scene"
+      after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.dex_frame(s, :dex) }
+      after(klass, :pbEndScene, "pbEndScene") { |_s| AshDroidDS.dex_drop }
+    when "PokemonPokedexInfo_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.dex_frame(s, :dexinfo) }
     when "Window_CommandPokemon", "Window_AdvancedCommandPokemon"
       after(klass, :update, "update_#{klass.name.downcase}") { |w| AshDroidDS.mark(:cmd, w) if w.visible && (!w.respond_to?(:active) || w.active) }
     when "PokemonPartyScreen"
@@ -4106,6 +4293,8 @@ module AshDroidFixes
     "PokemonBag_Scene" => ->(m) { AshDroidDS.install_menu(m) },
     "PokemonSummary_Scene" => ->(m) { AshDroidDS.install_menu(m) },
     "PokemonRegionMap_Scene" => ->(m) { AshDroidDS.install_menu(m) },
+    "PokemonPokedex_Scene" => ->(m) { AshDroidDS.install_menu(m) },
+    "PokemonPokedexInfo_Scene" => ->(m) { AshDroidDS.install_menu(m) },
     "Window_CommandPokemon" => ->(m) { AshDroidDS.install_menu(m) },
     "Window_AdvancedCommandPokemon" => ->(m) { AshDroidDS.install_menu(m) },
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },

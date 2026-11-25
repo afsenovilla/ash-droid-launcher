@@ -27,6 +27,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   - **Town Map**: while the game's Town Map is open (from the bag, the Pokégear...), the region map with the
     player's position, dragged with a finger and with three zoom levels, and the wild Pokémon of the place
     per encounter method, with levels and encounter rate; species not seen yet show as a silhouette.
+  - **Pokédex**: while the game's Pokédex list is open, the pages of the game's own entry (info, area, forms)
+    for the species under the cursor, as the game draws them, without opening the entry.
   - **Trainer cards and save**: the game's card screens as the game draws them, and a save screen with the
     save's details.
   - The game stays in charge: a touch becomes the same cursor move and button press the player would make,

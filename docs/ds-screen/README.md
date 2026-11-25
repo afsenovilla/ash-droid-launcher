@@ -50,6 +50,10 @@ Changes after the first build on the device (2026-11-25), which replace what the
   entry in that menu (the Town Map is an item in the bag).
 - **Map and wild Pokémon**: they follow the game's own Town Map. While it is open (bag, Pokégear, Fly), the
   second screen shows the draggable region map and the wild Pokémon button; VOLVER closes the game's map.
+- **Pokédex**: while the list is open the second screen shows a picture of the game's own entry page for
+  the species under the cursor (2x), with INFO / AREA / FORMS tabs, previous / next and VOLVER. The game's
+  entry screen is kept hidden and only shown for the instant of each picture; the picture is taken once the
+  cursor rests (6 frames). Unseen species show a "not seen yet" panel. The search stays on the buttons.
 - **Summary**: the MOVES button only turns the game's page, like the other page buttons. The 2x2 moves
   screen with drag-to-swap is removed (it was designed for a case that cannot happen).
 
