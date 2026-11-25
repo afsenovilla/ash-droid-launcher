@@ -8,14 +8,14 @@ S, AW, AH = m.S, m.AW, m.AH
 
 def slot(a, d, box, filled):
     x0, y0, x1, y1 = box; w, h = x1-x0+1, y1-y0+1
-    outer = m.rounded((w, h), 6)
-    d.rounded_rectangle((x0+1, y0+2, x1-1, y1+2), 6, fill=m.SHADOW)
+    outer = m.rounded((w, h), 10)                                   # capsule, like the buttons and the route sheet rows
+    d.rounded_rectangle((x0+1, y0+2, x1-1, y1+2), 10, fill=m.SHADOW)
     a.paste((56, 56, 72), (x0, y0), outer)
     a.paste((240, 240, 248), (x0, y0), m.inset(outer, 1))
     a.paste((232, 228, 248) if filled else (196, 196, 222), (x0, y0), m.inset(outer, 2))
     if filled:
-        d.ellipse((x0+5, y0+4, x0+22, y0+21), fill=(200, 196, 232))            # icon placeholder
-        d.rounded_rectangle((x0+27, y0+15, x1-6, y0+20), 2, fill=(56, 56, 72))  # HP bar
+        d.ellipse((x0+6, y0+3, x0+23, y0+20), fill=(200, 196, 232))            # icon placeholder
+        d.rounded_rectangle((x0+27, y0+15, x1-9, y0+20), 2, fill=(56, 56, 72))  # HP bar
 
 PARTY = [('Pikachu', 5, 18, 18, None), ('Pidgey', 4, 9, 16, None), ('Rattata', 3, 3, 13, 'ENV'), ('Caterpie', 3, 0, 12, None)]
 # The profile button carries the player's name, as the game's own menu does
@@ -30,12 +30,12 @@ def home():
         if i < len(PARTY):
             n, lv, hp, tot, st = PARTY[i]; x0, y0, x1, y1 = b; f = hp / tot
             col = (96, 208, 96) if f > 0.5 else (240, 200, 64) if f > 0.2 else (240, 88, 72)
-            full = x1 - 7 - (x0 + 28)
+            full = x1 - 10 - (x0 + 28)
             if hp: d.rectangle((x0+28, y0+16, x0+28+int(full*f), y0+19), fill=col)
             tag = (160, 96, 200) if st else (200, 72, 72) if hp == 0 else None
             if tag:
-                d.rounded_rectangle((x1-44, y0+3, x1-24, y0+12), 3, fill=m.shade(tag, 0.6))
-                d.rounded_rectangle((x1-43, y0+4, x1-25, y0+11), 2, fill=tag)
+                d.rounded_rectangle((x1-48, y0+3, x1-28, y0+12), 3, fill=m.shade(tag, 0.6))
+                d.rounded_rectangle((x1-47, y0+4, x1-29, y0+11), 2, fill=tag)
     btns = [(114, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]   # wide enough for SAUVEGARDER / SPEICHERN
     for (label, col), b in zip(ACTIONS, btns):
         m.button(d, b, col, 9)
@@ -45,8 +45,8 @@ def home():
     m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
     for (n, lv, hp, tot, st), b in zip(PARTY, cells):
         m.ttf(d, n, (b[0]+27)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
-        m.ttf(d, 'Nv' + str(lv), (b[2]-6)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
-        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-34)*S, (b[1]+7.5)*S, 39, (255, 255, 255), None, 'mm')
+        m.ttf(d, 'Nv' + str(lv), (b[2]-9)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
+        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-38)*S, (b[1]+7.5)*S, 39, (255, 255, 255), None, 'mm')
     return big
 
 def topbar(d, AWd=AW):
