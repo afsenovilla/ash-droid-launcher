@@ -1931,13 +1931,15 @@ module AshDroidDSUI
       end
       return s.result("id" => "bag", "tap" => opts.empty? ? "a" : nil)
     end
+    # the game's list ends with its "close bag" entry: with the cursor there, VOLVER is what bobs
+    on_back = !talking && d[:index].to_i >= (d[:items] || []).length
     case state
     when :battle
       txt(ops, desc, 48, (foot + 20) * 2, 52, WHITE, [0, 0, 0], "l", "a", { "ww" => W - 96, "lh" => 64, "ml" => 2 })
       py = foot * 2 + 12 + 27 * S
       can = d[:can_use]
       s.button(14, py, [2, 1, 99, 24], can ? GREEN : GREY, upper(d[:use_label]), can ? "use" : nil, shadow: sh, center: [51, 13], disabled: !can)
-      s.button(14, py, [102, 1, 199, 24], BLUE, l(:back), "back", shadow: sh, center: [151, 13])
+      s.button(14, py, [102, 1, 199, 24], BLUE, l(:back), "back", shadow: sh, center: [151, 13], bounce: on_back)
     when :item
       cols = opts.length > 4 ? 3 : 2
       bw = cols == 3 ? 64 : 98
@@ -1950,7 +1952,7 @@ module AshDroidDSUI
     else
       txt(ops, desc, 48, (foot + 20) * 2, 52, WHITE, [0, 0, 0], "l", "a", { "ww" => 820, "lh" => 64, "ml" => 3 })
       kw = 50
-      s.button(W - kw * S - 56, foot * 2 + 34, [1, 1, 48, 29], BLUE, l(:back), "back", shadow: sh, center: [25, 15])
+      s.button(W - kw * S - 56, foot * 2 + 34, [1, 1, 48, 29], BLUE, l(:back), "back", shadow: sh, center: [25, 15], bounce: on_back)
     end
     s.result("id" => "bag")
   end
