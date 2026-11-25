@@ -11,6 +11,10 @@ on:
         description: 'Publish a stable release with this version (e.g. 0.2.0). Needs a "## [x.y.z]" section in CHANGELOG.md. Leave empty to only build. A push to main whose CHANGELOG.md has a new "## [X.Y.Z]" section (no vX.Y.Z tag yet) also releases X.Y.Z.'
         required: false
         default: ''
+      beta:
+        description: 'Publish this build as a pre-release (a test build to install from GitHub; never "latest", never offered by the in-app updater) under this label, e.g. "ds". Leave empty to only build.'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -275,6 +279,42 @@ jobs:
           path: dist/*.zip
 
   # Stable release (tag vX.Y.Z, or "Run workflow" with a version): APK + Windows + Steam Deck/Linux + H700 handhelds
+  # Test builds to install from GitHub: a pre-release with only the APK, replacing the previous one
+  # with the same label. Stable releases stay "latest" and the in-app updater ignores pre-releases.
+  beta:
+    needs: apk
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.beta != '' && needs.apk.outputs.release != 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      VERSION_NAME: ${{ needs.apk.outputs.version }}
+      BETA: ${{ github.event.inputs.beta }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: dist
+      - name: Publish pre-release
+        run: |
+          [[ "$BETA" =~ ^[a-z0-9]{1,16}$ ]] || { echo "::error::Invalid beta label '$BETA' (lowercase letters and digits)"; exit 1; }
+          tag="beta-${BETA}-${GITHUB_RUN_NUMBER}"
+          apk="dist/ash-droid-launcher-beta-${BETA}.apk"
+          cp "dist/ash-droid-launcher-${VERSION_NAME}.apk" "$apk"
+          {
+            echo "Test build (\`${BETA}\`), version \`${VERSION_NAME}\`, from \`${GITHUB_REF_NAME}\` at ${GITHUB_SHA::7}."
+            echo
+            echo "**Not a release.** Work in progress, published only so it can be installed on a console for testing."
+            echo "It installs over the stable version and keeps its data; the in-app updater ignores it."
+          } > dist/notes.md
+          gh release create "$tag" "$apk" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --latest=false --title "Beta ${BETA} (test build ${GITHUB_RUN_NUMBER})" --notes-file dist/notes.md
+          # Keep only the newest pre-release of this label
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName,isPrerelease \
+            -q ".[] | select(.isPrerelease and (.tagName | startswith(\"beta-${BETA}-\")) and .tagName != \"$tag\") | .tagName" |
+            while read -r old; do gh release delete "$old" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes || true; done
+
   release:
     needs: [apk, pc-packages]
     if: needs.apk.outputs.release == 'true'
