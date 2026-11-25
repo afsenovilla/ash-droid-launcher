@@ -354,3 +354,21 @@ category icons), that image is used; code-drawn elements are for what the game h
   top of the second screen do nothing (confirmed by the user). Works in the simulator, so the cause is on the
   game side: check the launcher log for "ds: dexshot" / "ds: dexframe" lines (an error drawing pages 2 and 3
   off screen is the first suspect). Not started.
+
+## Idea for later: foldable phones (not started, nothing tested)
+
+To look at only once the beta is solid on the AYN Thor. All figures below are estimates from typical screen
+sizes, not measured on any device.
+
+- **What carries over**: the game describes each screen and the launcher draws it and sends touches back.
+  None of that knows about the Thor.
+- **What has to be built**: today the second screen is a `Presentation` on a second physical display. A
+  foldable is one folded display, so the window has to be split in two halves (game above, menus below),
+  following the hinge and the half-open posture.
+- **Book type first** (Galaxy Fold, Pixel Fold): each half is around 1800x1100 px, so the 1240x1080 layout
+  fits unscaled, with about 280 px free on each side. Those strips would hold the touch controls (d-pad left,
+  buttons right). They are narrow (about 2 cm) for a d-pad; the layout need not always be centred, e.g. the
+  home screen, the only one where the player walks, could leave more room for the controls.
+- **Clamshell type last** (Galaxy Flip, Razr): the game itself fits at exactly 2x (1024x768) in a half about
+  1080 px wide, roughly the size of a DS Lite screen, but the menu layout needs 1240 px, so it would need a
+  second, narrower layout, and there are no side strips for the controls.
