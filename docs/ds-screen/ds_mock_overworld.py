@@ -1,0 +1,86 @@
+# Second-screen overworld mock-ups. Usage: ds_mock_overworld.py <pixelfonts.txt> <game font .ttf> <out.png> [home|map]
+# 'home' was approved as an MVP on 2026-11-25; 'map' is a proposal.
+# Pokémon icons are placeholders here: on the device they are the game's own party icons.
+import sys
+from PIL import Image, ImageDraw, ImageFont
+import ds_mock as m
+S, AW, AH = m.S, m.AW, m.AH
+
+def slot(a, d, box, filled):
+    x0, y0, x1, y1 = box; w, h = x1-x0+1, y1-y0+1
+    outer = m.rounded((w, h), 6)
+    d.rounded_rectangle((x0+1, y0+2, x1-1, y1+2), 6, fill=m.SHADOW)
+    a.paste((56, 56, 72), (x0, y0), outer)
+    a.paste((240, 240, 248), (x0, y0), m.inset(outer, 1))
+    a.paste((232, 228, 248) if filled else (196, 196, 222), (x0, y0), m.inset(outer, 2))
+    if filled:
+        d.ellipse((x0+5, y0+4, x0+22, y0+21), fill=(200, 196, 232))            # icon placeholder
+        d.rounded_rectangle((x0+27, y0+15, x1-6, y0+20), 2, fill=(56, 56, 72))  # HP bar
+
+PARTY = [('Pikachu', 5, 18, 18, None), ('Pidgey', 4, 9, 16, None), ('Rattata', 3, 3, 13, 'ENV'), ('Caterpie', 3, 0, 12, None)]
+# The profile button carries the player's name, as the game's own menu does
+ACTIONS = [('POKéMON', (248, 144, 200)), ('MOCHILA', (240, 168, 48)), ('MAPA', (88, 200, 88)), ('ASH', (64, 184, 184)), ('GUARDAR', (56, 136, 232))]
+
+def home():
+    a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); m.background(d)
+    d.rectangle((0, 0, AW, 14), fill=(72, 72, 104)); d.line((0, 15, AW, 15), fill=(240, 240, 248))
+    cells = [(4, 20 + i*26, 116, 20 + i*26 + 23) for i in range(6)]
+    for i, b in enumerate(cells):
+        slot(a, d, b, i < len(PARTY))
+        if i < len(PARTY):
+            n, lv, hp, tot, st = PARTY[i]; x0, y0, x1, y1 = b; f = hp / tot
+            col = (96, 208, 96) if f > 0.5 else (240, 200, 64) if f > 0.2 else (240, 88, 72)
+            full = x1 - 7 - (x0 + 28)
+            if hp: d.rectangle((x0+28, y0+16, x0+28+int(full*f), y0+19), fill=col)
+            tag = (160, 96, 200) if st else (200, 72, 72) if hp == 0 else None
+            if tag:
+                d.rounded_rectangle((x1-44, y0+3, x1-24, y0+12), 3, fill=m.shade(tag, 0.6))
+                d.rounded_rectangle((x1-43, y0+4, x1-25, y0+11), 2, fill=tag)
+    btns = [(122, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]
+    for (label, col), b in zip(ACTIONS, btns):
+        m.button(d, b, col, 9)
+        m.pix_text(a, label, (b[0]+b[2])//2, (b[1]+b[3])//2, 1)
+    big = m.up(a); d = ImageDraw.Draw(big)
+    m.ttf(d, 'RUTA 1', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
+    m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
+    for (n, lv, hp, tot, st), b in zip(PARTY, cells):
+        m.ttf(d, n, (b[0]+27)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
+        m.ttf(d, 'Nv' + str(lv), (b[2]-6)*S, (b[1]+8)*S, 39, (64, 64, 80), (176, 176, 200), 'rm')
+        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-34)*S, (b[1]+7.5)*S, 39, (255, 255, 255), None, 'mm')
+    return big
+
+def topbar(d, AWd=AW):
+    d.rectangle((0, 0, AW, 14), fill=(72, 72, 104)); d.line((0, 15, AW, 15), fill=(240, 240, 248))
+
+def region_map():
+    """Map view. The map drawn here is an invented placeholder: on the device it is the game's own region map
+    image, enlarged by a whole factor, with the marker on the player's position."""
+    a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); m.background(d); topbar(d)
+    x0, y0, x1, y1 = 22, 21, 183, 129                       # 162x109 art px: a 480x320 map at 2x on the Thor
+    d.rounded_rectangle((x0-2, y0, x1+2, y1+5), 4, fill=m.SHADOW)
+    d.rectangle((x0-2, y0-2, x1+2, y1+2), fill=(56, 56, 72)); d.rectangle((x0-1, y0-1, x1+1, y1+1), fill=(240, 240, 248))
+    d.rectangle((x0, y0, x1, y1), fill=(104, 168, 232))
+    land = [(30, 40), (60, 28), (100, 30), (120, 24), (160, 34), (176, 60), (170, 100), (140, 122), (96, 116), (70, 124), (40, 110), (28, 80)]
+    d.polygon(land, fill=(120, 200, 112)); d.polygon([(60, 50), (90, 44), (104, 60), (84, 74), (62, 68)], fill=(96, 176, 96))
+    route = (232, 216, 152)
+    for p, q in [((48, 100), (48, 60)), ((48, 60), (96, 60)), ((96, 60), (96, 100)), ((96, 100), (150, 100)), ((150, 100), (150, 50)), ((96, 60), (150, 50))]:
+        d.line((p, q), fill=route, width=3)
+    for tx, ty in [(48, 100), (48, 60), (96, 60), (96, 100), (150, 100), (150, 50)]:
+        d.rectangle((tx-3, ty-3, tx+3, ty+3), fill=(56, 56, 72)); d.rectangle((tx-2, ty-2, tx+2, ty+2), fill=(232, 80, 72))
+    px, py = 48, 80                                          # player marker (bounces like the battle cursor)
+    d.ellipse((px-4, py-9, px+4, py-1), fill=(56, 56, 72)); d.ellipse((px-3, py-8, px+3, py-2), fill=(248, 248, 255)); d.ellipse((px-1, py-6, px+1, py-4), fill=(232, 80, 72))
+    d.polygon([(px-2, py-2), (px+2, py-2), (px, py+1)], fill=(56, 56, 72))
+    panel = (4, 138, 128, 174); w, h = panel[2]-panel[0]+1, panel[3]-panel[1]+1; outer = m.rounded((w, h), 6)
+    d.rounded_rectangle((panel[0]+1, panel[1]+2, panel[2]-1, panel[3]+2), 6, fill=m.SHADOW)
+    a.paste((56, 56, 72), panel[:2], outer); a.paste((240, 240, 248), panel[:2], m.inset(outer, 1)); a.paste((232, 228, 248), panel[:2], m.inset(outer, 2))
+    m.button(d, (134, 140, 201, 172), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 156, 1)
+    big = m.up(a); d = ImageDraw.Draw(big)
+    m.ttf(d, 'MAPA', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
+    m.ttf(d, 'KANTO', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
+    m.ttf(d, 'RUTA 1', 12*S, 149*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
+    m.ttf(d, 'Estás aquí', 12*S, 164*S, 39, (112, 112, 136), None, 'lm')
+    return big
+
+if __name__ == '__main__':
+    h = (region_map if (sys.argv + ['home'])[4] == 'map' else home)(); out = Image.new('RGB', (h.width + 40, h.height + 40), (0, 0, 0)); out.paste(h, (20, 20))
+    out.resize((out.width//2, out.height//2), Image.NEAREST).save(sys.argv[3])
