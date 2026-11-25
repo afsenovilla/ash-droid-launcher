@@ -2777,7 +2777,7 @@ module AshDroidDS
           pbPlayCursorSE
         end
       end
-    when /\Apocket:(\d+)\z/ then @goal = [:pocket, $1.to_i, 10] if live(:bag)
+    when /\Apocket:(\d+)\z/ then pick_pocket($1.to_i)
     when /\Aitem:(\d+)\z/ then pick_item($1.to_i)
     when "use"
       if @ctx == :bag && live(:bag)
@@ -3422,6 +3422,30 @@ module AshDroidDS
              opt_index: cw ? (opts.index { |o| o[:at] == cw.index.to_i } || -1) : -1,
              can_use: !current.nil?, use_label: _INTL("Use"), message: message)
     end
+  end
+
+  # A touched pocket opens at once, however far it is: the list is put on the pocket just before it and
+  # the game is given one press to the right, so the last step (and all its bookkeeping) is the game's own.
+  # Pressing right once per pocket took a moment per pocket and tripped over a second touch.
+  def self.pick_pocket(target)
+    scene = live(:bag)
+    win = scene && sprites_of(scene)["itemlist"]
+    return unless win && !win.disposed? && !usable_window?(live(:cmd))
+    return if win.respond_to?(:sorting) && win.sorting
+    n = (PokemonBag.numPockets rescue 8)
+    return if target < 1 || target > n || win.pocket == target
+    if scene.instance_variable_get(:@choosing)      # choosing an item: the game skips the empty pockets
+      filter = scene.instance_variable_get(:@filterlist)
+      bag = scene.instance_variable_get(:@bag)
+      list = filter ? filter[target] : bag.pockets[target]
+      return if list.nil? || list.empty?
+    end
+    before = target == 1 ? n : target - 1
+    win.pocket = before unless win.pocket == before
+    @goal = nil
+    force(:right)
+  rescue StandardError, NameError => e
+    log_once("pocket", e)
   end
 
   def self.pick_item(i)
