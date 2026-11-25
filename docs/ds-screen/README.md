@@ -184,9 +184,9 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   stacked in the approved style (USAR, DAR, TIRAR; REGISTRAR and LEER when they apply), with VOLVER under them
   to get the pockets back. Up to four options fit.
 - Bag in battle (`... battle <pixelfonts.txt>`): the same screen; the game only offers Use there.
-- Party in battle (`ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
+- Party in battle (approved; `ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
   Pokémon shows on the second screen itself, with no trip to the summary, only what matters to decide a switch:
-  its card (HP, status, level), its types and its moves with their PP, on a cream panel, with the game's type
+  its card (HP, status, level), its types (after a "Tipo:" label) and its moves with their PP, on a cream panel, with the game's type
   icons at 3x. Ability, item and stats were tried and dropped: too much to read at a glance. CAMBIAR sits at the bottom
   left, beside the home button (back to the battle commands) and VOLVER; it is greyed out when the Pokémon
   cannot fight or is already out.
