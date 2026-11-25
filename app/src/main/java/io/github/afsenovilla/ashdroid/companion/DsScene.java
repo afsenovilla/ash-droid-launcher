@@ -137,6 +137,10 @@ public final class DsScene
             String kind = DsJson.str(op, "o", "");
             boolean inGroup = dragGroup >= 0 && DsJson.num(op, "g", -1) == dragGroup;
             if (onlyDragged != inGroup) continue;
+            // pieces shown only while a touch area is (or is not) under the finger: the pressed look of buttons
+            // made of the game's images
+            if (op.get("dn_of") != null && !isDown(DsJson.num(op, "dn_of", -1))) continue;
+            if (op.get("up_of") != null && isDown(DsJson.num(op, "up_of", -1))) continue;
             switch (kind) {
                 case "fill": {
                     List<Object> r = DsJson.list(op.get("r"));
@@ -194,6 +198,11 @@ public final class DsScene
                     break;
             }
         }
+    }
+
+    private boolean isDown(int id)
+    {
+        return pressed != null && !moved && !dragging && id == DsJson.num(pressed.op, "art", -2);
     }
 
     private void drawImage(Gfx g, Map<String, Object> op, int ox, int oy)

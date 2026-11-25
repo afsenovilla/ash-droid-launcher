@@ -992,6 +992,24 @@ module AshDroidDSUI
   def self.file(rel)
     return nil if rel.nil? || rel.to_s.empty?
     rel = rel.to_s
+    ckey = "#{@lang}|#{rel}"
+    return @files[ckey] if @files.key?(ckey)
+    @files[ckey] = localized(rel) || plain_file(rel)
+  rescue StandardError
+    @files[ckey] = nil
+  end
+
+  # The launcher's translated copy of an image with words drawn in it (HP -> PS, Lv -> Nv, the type names...),
+  # the same one the game itself shows in the current language; nil if there is none
+  def self.localized(rel)
+    return nil unless defined?(AshDroidGfx) && rel =~ /\AGraphics\//i
+    alt = AshDroidGfx.redirect(rel)
+    alt && File.file?(alt) ? File.expand_path(alt) : nil
+  rescue StandardError, NameError
+    nil
+  end
+
+  def self.plain_file(rel)
     return @files[rel] if @files.key?(rel)
     base = @root || Dir.pwd
     path = File.absolute_path?(rel) ? rel : File.join(base, rel)
@@ -1583,67 +1601,81 @@ module AshDroidDSUI
     s = Screen.new
     party_backdrop(s.ops)
     mon = d[:mon]
-    room = (CARD_W - PANEL_W) * 2 / U
-    panel(s.ops, panel_name(d[:slot].to_i, mon, true), 16, 8, CARD_W - 256)
-    panel_contents(s.ops, d[:slot].to_i, mon, 32, 16, true, room)
-    # previous / next Pokémon, beside its panel
-    [true, false].each do |lft|
-      usable = lft ? !d[:first] : !d[:last]
-      bx = lft ? 1 : 33
-      s.button(826, 52, [bx, 1, bx + 28, 27], usable ? BLUE : GREY, nil, usable ? (lft ? "mon:prev" : "mon:next") : nil, shadow: PARTY_SHADOW,
-               icon: arrow_icon(13, 10, lft), disabled: !usable)
-    end
+    # whose sheet this is: icon and name, with previous / next at the sides
+    kids = []
+    kids << { "o" => "img", "f" => mon[:icon], "s" => [0, 0, 64, 64], "d" => [0, -6, 192, 192] } if mon[:icon]
+    kids << { "o" => "txt", "s" => mon[:name].to_s, "x" => 0, "y" => 60, "z" => 78, "c" => hex(INK), "k" => hex([176, 200, 200]), "a" => "l", "v" => "a" }
+    s.ops << { "o" => "hb", "cx" => W / 2, "ops" => kids }
+    game_button(s, 6, 12, 112, 76, "<", d[:first] ? nil : "mon:prev")
+    game_button(s, 620 - 118, 12, 112, 76, ">", d[:last] ? nil : "mon:next")
     pw = 202
-    ph = 66
+    ph = 97
     px = (W - pw * S) / 2
-    py = 300
+    py = 196
     art = Art.new(px, py, pw, ph)
     box = [0, 0, pw - 1, ph - 1]
     art.rr(box, 8, 0, [56, 56, 72]).rr(box, 8, 1, [240, 240, 248]).rr(box, 8, 3, [248, 248, 236])
     s.ops << art.op
     types = pic("types")
-    left = px + 36
-    right = px + pw * S - 36
-    mid = W / 2 + 12
+    left = px + 42
+    right = px + pw * S - 42
     icon = ->(row, x, cy) { img(s.ops, types, 0, row.to_i * 28, 64, 28, x, cy - 42, 3) }
-    txt(s.ops, l(:type), left, 360, 65, INK, INK_SH, "l", "m")
-    (d[:types] || []).first(2).each_with_index { |row, n| icon.call(row, left + 168 + 198 * n, 360) }
-    txt(s.ops, l(:item), mid, 360, 65, INK, INK_SH, "l", "m")
+    txt(s.ops, l(:type), left, py + 66, 65, INK, INK_SH, "l", "m")
+    (d[:types] || []).first(2).each_with_index { |row, n| icon.call(row, left + 250 + 204 * n, py + 66) }
+    txt(s.ops, l(:item), left, py + 152, 65, INK, INK_SH, "l", "m")
     if mon[:item]
-      whole(s.ops, mon[:item], mid + 204, 360 - 48, 2)
-      txt(s.ops, d[:item_name], mid + 204 + 100, 360, 52, INK, INK_SH, "l", "m", { "fit" => right - mid - 304 })
+      whole(s.ops, mon[:item], left + 244, py + 152 - 48, 2)
+      txt(s.ops, d[:item_name], left + 244 + 104, py + 152, 65, INK, INK_SH, "l", "m", { "fit" => right - left - 350 })
     else
-      txt(s.ops, "-", mid + 210, 360, 65, INK, INK_SH, "l", "m")
+      txt(s.ops, "-", left + 250, py + 152, 65, INK, INK_SH, "l", "m")
     end
-    fill(s.ops, left, 414, right - left + 1, 6, [208, 208, 196])
-    4.times do |n|                              # its moves, two by two: type, name, PP
-      x = n.even? ? left : mid
-      edge = n.even? ? mid - 36 : right
-      y = 486 + 100 * (n / 2)
+    fill(s.ops, left, py + 202, right - left + 1, 6, [208, 208, 196])
+    4.times do |n|
+      y = py + 258 + 86 * n
       m = (d[:moves] || [])[n]
       if m
-        icon.call(m[:row], x, y)
-        txt(s.ops, m[:name], x + 204, y - 22, 52, INK, INK_SH, "l", "m", { "fit" => edge - x - 204 })
-        txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", x + 204, y + 26, 39, [104, 104, 128], [200, 200, 220], "l", "m")
+        icon.call(m[:row], left, y)
+        txt(s.ops, m[:name], left + 210, y, 65, INK, INK_SH, "l", "m", { "fit" => right - left - 210 - 230 })
+        txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", right, y, 65, INK, INK_SH, "r", "m")
       else
-        txt(s.ops, "-", x + 204, y, 65, INK, INK_SH, "l", "m")
+        txt(s.ops, "-", left + 210, y, 65, INK, INK_SH, "l", "m")
       end
     end
-    # what the game offers for this one and VOLVER, as one grid of equal buttons (VOLVER always last, bottom
-    # right): one row up to three, 2x2 for four, 3x2 for five or six
-    cells = (d[:options] || []).first(5) + [{ label: l(:back), cmd: "back", kind: :cancel }]
+    # what the game offers for this one and VOLVER: one grid of the game's own buttons, VOLVER always last
+    cells = (d[:options] || []).first(5) + [{ label: d[:back] || l(:back).capitalize, cmd: "back", kind: :cancel }]
     t = cells.length
     cols = t <= 3 ? t : t == 4 ? 2 : 3
     rows = (t / cols.to_f).ceil
-    bw = (204 - 2 * (cols - 1)) / cols
-    y0 = rows == 1 ? 890 : 704
+    gap = 6
+    bw = (620 - 12 - gap * (cols - 1)) / cols
+    bh = 62
+    y0 = 540 - 6 - rows * bh - (rows - 1) * gap
     cells.each_with_index do |o, n|
-      n = cols * rows - 1 if n == t - 1         # VOLVER takes the last cell
-      x = 1 + (n % cols) * (bw + 2)
-      y = 1 + (n / cols) * 31
-      s.button(0, y0, [x, y, x + bw - 1, y + 27], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW)
+      n = cols * rows - 1 if n == t - 1
+      game_button(s, 6 + (n % cols) * (bw + gap), y0 + (n / cols) * (bh + gap), bw, bh, o[:label], o[:cmd])
     end
     s.result("id" => "sheet")
+  end
+
+  # A button made of the game's own button image (the one of its party screen), widened and heightened by
+  # repeating its flat lines, with the label in the game's font. Under the finger or the cursor it is the
+  # game's "selected" version of that image. Logical px (x2 on screen).
+  def self.game_button(s, lx, ly, lw, lh, label, cmd, selected = false)
+    id = cmd ? s.next_id : nil
+    { "" => "up_of", "_sel" => "dn_of" }.each do |suffix, key|
+      next if suffix == "_sel" && !id && !selected
+      f = pic("Party/icon_cancel#{suffix}")
+      fw, fh = size(f)
+      next if fw <= 0
+      xs = Axis.new(fw).repeat(fw / 2, [lw - fw, 0].max)
+      ys = Axis.new(fh).repeat(fh * 3 / 4, [(lh - fh) / 2, 0].max).repeat(fh / 4, [lh - fh - (lh - fh) / 2, 0].max)
+      extra = selected ? nil : (id ? { key => id } : nil)
+      next if selected && suffix == ""
+      extra = (extra || {}).merge("a" => 110) unless cmd || selected     # nothing to do with it right now
+      sheet(s.ops, f, xs, ys, lx * 2, ly * 2, 2, extra)
+    end
+    txt(s.ops, label.to_s, (lx + lw / 2) * 2, (ly + lh / 2) * 2 - 2, 52, cmd || selected ? WHITE : [200, 216, 240], DARK, "m", "m", { "fit" => (lw - 16) * 2 })
+    s.ops << { "o" => "hit", "r" => [lx * 2, ly * 2, lw * 2, lh * 2], "cmd" => cmd, "art" => id } if id
   end
 
   # ---- summary ----
