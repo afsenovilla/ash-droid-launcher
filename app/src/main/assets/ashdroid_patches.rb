@@ -2550,7 +2550,7 @@ module AshDroidDS
     return unless win && !win.disposed?
     box.visible = true if box && !box.disposed? && !box.visible
     win.visible = true unless win.visible
-    if @prompt != [win.object_id, title]
+    if @prompt != [win.object_id, title] || win.text.to_s.empty?
       @prompt = [win.object_id, title]
       win.text = title
     end
