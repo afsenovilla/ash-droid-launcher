@@ -122,14 +122,26 @@ def actions(options=None, line=None, held=False):
         one.alpha_composite(big(img('Party/icon_item.png')), (x0 * 2 + 44 * U, 16 + 44 * U))
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
-    grid = Image.new('RGBA', (bw + 2, len(options) * 31), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
+    top, pitch, high = 314, 31, 27
+    if held:
+        # Which item it holds: a cream strip under the card with the item's own icon (2x) and its name. It takes
+        # the place of the help line, and the buttons get a little lower to make room.
+        strip = Image.new('RGBA', (bw + 2, 17), (0, 0, 0, 0)); outer = m.rounded((bw, 16), 7)
+        strip.paste((56, 56, 72), (1, 0), outer); strip.paste((240, 240, 248), (1, 0), m.inset(outer, 1)); strip.paste((248, 248, 236), (1, 0), m.inset(outer, 3))
+        strip = strip.resize((strip.width * 6, strip.height * 6), Image.NEAREST); sx = (W * 2 - strip.width) // 2
+        one.paste(strip, (sx, 302), strip)
+        icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((96, 96), Image.NEAREST)
+        one.alpha_composite(icon, (sx + 30, 302))
+        m.ttf(d, 'Lleva', sx + 140, 350, 52, (64, 64, 80), (168, 168, 192), 'lm'); m.ttf(d, held[1], sx + strip.width - 36, 350, 52, (64, 64, 80), (168, 168, 192), 'rm')
+        top, pitch, high = 410, 26, 23
+    grid = Image.new('RGBA', (bw + 2, len(options) * pitch + 2), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(options):
-        by = n * 31
-        m.button(gd, (1, by + 1, bw, by + 27), col, 9, selected=(n == 0), lift=0)
-        m.pix_text(grid, label, (bw + 1) // 2, by + 14, 1)
+        by = n * pitch
+        m.button(gd, (1, by + 1, bw, by + high), col, 9, selected=(n == 0), lift=0)
+        m.pix_text(grid, label, (bw + 1) // 2, by + (high + 1) // 2, 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
-    one.paste(grid, ((W * 2 - grid.width) // 2, 314), grid)
-    footer(one, d, line or '¿Qué hacer con %s?' % PARTY[SELECTED][0], home=True)
+    one.paste(grid, ((W * 2 - grid.width) // 2, top), grid)
+    footer(one, d, '' if held else (line or '¿Qué hacer con %s?' % PARTY[SELECTED][0]), home=True)
     return one.convert('RGB')
 
 PAGES = ['INFORMACIÓN', 'NOTAS', 'HABILIDADES', 'MOVIMIENTOS', 'CINTAS']   # the game's five summary pages
@@ -268,4 +280,4 @@ def drag():
 if __name__ == '__main__':
     if MODE == 'battle': SELECTED = 1                              # in battle: a Pokémon that is not out
     {'battle': battle_info, 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
-     'item': lambda: actions(ITEM_ACTIONS, '¿Qué hacer con el objeto?', True)}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
+     'item': lambda: actions(ITEM_ACTIONS, held=('ORANBERRY', 'Baya Aranja'))}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
