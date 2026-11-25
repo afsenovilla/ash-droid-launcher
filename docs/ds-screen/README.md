@@ -20,7 +20,7 @@ on the left, move menu on the right). The move menu uses the game's type icons, 
 - **Command menu**: FIGHT large on top (no extra frame around it), BAG and POKéMON below at the sides, RUN smaller
   between them. A row of dots on top shows the state of the player's party (green ok, yellow status, grey fainted)
   and the opponent's on the right.
-- **Move menu** (revised): four buttons with a thin frame in the colour of the move's type around a cream panel,
+- **Move menu** (revised and approved): four buttons with a thin frame in the colour of the move's type around a cream panel,
   the same card as the moves screen of the summary. Name on top; below it, the game's own type icon (`types.png`,
   at 3x) with the PP to its right; elements spread out vertically. Effectiveness is a band at the foot of the card
   (green super effective, orange not very effective, grey no effect), only when there is something to say. CANCEL is
