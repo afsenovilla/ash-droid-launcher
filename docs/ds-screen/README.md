@@ -122,9 +122,10 @@ Mock-ups: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> drag` and `
 - Reordering is done on the party screen by dragging a panel onto another one; there is no "Switch" button.
   While dragging, the held panel follows the finger with a shadow under it and uses the game's own
   "switching" panel images, as does the panel under it; its own slot shows the blank panel. Letting go swaps
-  the two; letting go anywhere else puts it back. With the buttons: hold the confirm button on a Pokémon to
+  the two (swap, as in the game, not insert: decided); letting go anywhere else puts it back. With the buttons: hold the confirm button on a Pokémon to
   pick it up, move with the D-pad, confirm to drop.
-- A short touch (no drag) opens that Pokémon's actions: its panel alone at the top, and under it the options
-  the game gives for it except Switch (Summary, its field moves, Item or Mail) as a two-column grid of medium
-  buttons in the approved style, one colour per kind. Rows are added as needed.
+- A short touch (no drag) opens that Pokémon's actions: its panel alone at the top, widened to 356 px so the
+  HP bar clears the icon, and under it the options the game gives for it except Switch (Summary, its field
+  moves, Item or Mail) stacked as medium buttons as wide as the panel, in the approved style, one colour per
+  kind. Three fit at this size; with more, the rows get closer.
 - The game's "Cancel" is the VOLVER button at the bottom right, as on the other screens.

@@ -42,31 +42,31 @@ PARTY = [('Pikachu', 'PIKACHU', 5, 18, 18, 'm'), ('Pidgey', 'PIDGEY', 4, 9, 16, 
 SELECTED = 0
 SIDE, MID, BOTTOM = 54, 90, 66
 WIDE, GROW = 40, 20                                               # panel: 256x98 -> 296x138
-def tall(im): return repeat_col(repeat_row(repeat_row(im, 60, GROW), 46, GROW), 128, WIDE)
+def tall(im, wide=WIDE): return repeat_col(repeat_row(repeat_row(im, 60, GROW), 46, GROW), 128, wide)
 def slot_xy(i): return 8 + (i % 2) * 308, 6 + 16 * (i % 2) + 142 * (i // 2)
 def kind(i, mon):
     if not mon: return 'Party/panel_blank.png'
     return 'Party/panel_%s%s%s.png' % ('round' if i == 0 else 'rect', '_faint' if mon[3] == 0 else '', '_sel' if i == SELECTED else '')
 
-def contents(one, d, i, mon, pos=None, swap=False):               # positions in content pixels (1 = U screen px)
+def contents(one, d, i, mon, pos=None, swap=False, room=0):     # room: extra content px on the right side               # positions in content pixels (1 = U screen px)
     x, y = pos or tuple(v * 2 for v in slot_xy(i))
     def at(cx, cy): return x + cx * U, y + cy * U
     name, species, lv, hp, total, gender = mon
     faint = hp == 0
-    one.alpha_composite(big(img('Party/overlay_hp_back%s.png' % ('_swap' if swap else '_faint' if faint else ''))), at(52, 36))
+    one.alpha_composite(big(img('Party/overlay_hp_back%s.png' % ('_swap' if swap else '_faint' if faint else ''))), at(52 + room, 36))
     one.alpha_composite(big(img('Party/icon_ball%s.PNG' % ('_sel' if i == SELECTED else ''))), at(1, 0))
     icon = Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64))
     one.alpha_composite(big(icon), at(10, 2))
     text(d, name, *at(80, 1), WHITE, DARK)
     g = ('♂', (0, 112, 248), (120, 184, 232)) if gender == 'm' else ('♀', (232, 32, 16), (248, 168, 184))
-    text(d, g[0], *at(190, 1), g[1], g[2], 1)
+    text(d, g[0], *at(190 + room, 1), g[1], g[2], 1)
     if hp > 0:
         w = max(1, hp * 96.0 / total); w = int(round(w / 2)) * 2
         zone = 2 if hp <= total // 4 else 1 if hp <= total // 2 else 0
-        one.alpha_composite(big(img('Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8))), at(84, 38))
+        one.alpha_composite(big(img('Party/overlay_hp.png').crop((0, zone * 8, w, zone * 8 + 8))), at(84 + room, 38))
     else:
         one.alpha_composite(big(img('statuses.png').crop((0, 16 * 5, 44, 16 * 6))), at(50, 66))
-    text(d, '%d/%d' % (hp, total), *at(190, 50), WHITE, DARK, 1)
+    text(d, '%d/%d' % (hp, total), *at(190 + room, 50), WHITE, DARK, 1)
     one.alpha_composite(big(img('Party/overlay_lv.png')), at(6, 68))
     text(d, str(lv), *at(28, 55), WHITE, DARK, font=SMALL)
 
@@ -99,21 +99,22 @@ def screen():
 # Switch is not a button: the order is changed by dragging on the party screen (see drag()).
 ACTIONS = [('DATOS', (56, 136, 232)), ('OBJETO', (240, 168, 48)), ('DESTELLO', (64, 184, 184))]
 def actions():
-    """After touching a Pokémon: its panel alone on top, a grid of medium buttons under it, back at the bottom."""
-    global slot_xy
-    s = backdrop(); keep = slot_xy; slot_xy = lambda i: ((W - 296) // 2, 8)
-    s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED]))), slot_xy(SELECTED))
+    """After touching a Pokémon: its panel alone on top (wider, so the HP bar clears the icon), the options
+    stacked under it as wide medium buttons, back at the bottom."""
+    CARD = 356; room = (CARD - 296) * 2 // U                       # panel width in logical px; extra content px
+    s = backdrop(); x0 = (W - CARD) // 2
+    s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
     one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
-    contents(one, d, SELECTED, PARTY[SELECTED]); slot_xy = keep
+    contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
-    rows = (len(ACTIONS) + 1) // 2
-    grid = Image.new('RGBA', (160, rows * 30), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
+    bw = CARD * 2 // 6                                             # as wide as the panel
+    grid = Image.new('RGBA', (bw + 2, len(ACTIONS) * 28), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(ACTIONS):
-        bx, by = (n % 2) * 82, (n // 2) * 30
-        m.button(gd, (bx + 1, by + 1, bx + 77, by + 25), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
-        m.pix_text(grid, label, bx + 39, by + 13 - (1 if n == 0 else 0), 1)
+        by = n * 28
+        m.button(gd, (1, by + 1, bw, by + 23), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+        m.pix_text(grid, label, (bw + 1) // 2, by + 12 - (1 if n == 0 else 0), 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
-    one.paste(grid, ((W * 2 - 160 * 6) // 2 + 6, 330), grid)
+    one.paste(grid, ((W * 2 - grid.width) // 2, 336), grid)
     footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0])
     return one.convert('RGB')
 
