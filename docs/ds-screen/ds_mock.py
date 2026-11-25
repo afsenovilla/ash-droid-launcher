@@ -78,18 +78,19 @@ def inset(mask, n):
 def rows(mask, y0, y1):
     m = Image.new('L', mask.size, 0); m.paste(mask.crop((0, y0, mask.width, y1)), (0, y0)); return m
 
-def button(d, box, col, r, selected=False, lift=0):
-    """Dark outline, white rim, bevelled two-tone body. Each layer is the outer shape shrunk evenly."""
+def button(d, box, col, r, selected=False, lift=0, rim=2):
+    """Dark outline, white rim, bevelled two-tone body. Each layer is the outer shape shrunk evenly.
+    rim = thickness of the white rim: 2 on normal buttons, 1 on small ones (tabs) so the lettering keeps its margin."""
     shadow(d, box, r, lift)
     img = d._image; x0, y0 = box[0], box[1]-lift; w, h = box[2]-box[0]+1, box[3]-box[1]+1
     outer = rounded((w, h), r)
     img.paste((56, 56, 72), (x0, y0), outer)
     img.paste((240, 240, 248), (x0, y0), inset(outer, 1))
-    body = inset(outer, 3); fill = inset(outer, 4)
+    body = inset(outer, rim + 1); fill = inset(outer, rim + 2)
     img.paste(shade(col, 0.55), (x0, y0), body)
     img.paste(shade(col, 0.84), (x0, y0), rows(fill, 0, h-5))
     img.paste(col, (x0, y0), rows(fill, 0, int(h*0.56)))
-    img.paste(shade(col, 1.22), (x0, y0), rows(inset(outer, 5), 5, 7))
+    img.paste(shade(col, 1.22), (x0, y0), rows(inset(outer, rim + 3), rim + 3, rim + 5))
 
 def socket(d, box, r):
     d.rounded_rectangle(box, r, fill=(168, 168, 200))

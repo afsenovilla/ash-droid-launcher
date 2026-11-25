@@ -43,3 +43,8 @@ SAVE writes the game (with confirmation, only while the game allows saving). Map
 read-only views in this first version; each gets its own mock-up before being built. The Pokémon icons in the mock-up
 are placeholders: on the device they are the game's own.
 
+`screen-map.png` (`ds_mock_flow.py`) shows how the screens connect and which ones still have no mock-up.
+`overworld-map.png` and `overworld-route.png` are proposals under review (not approved yet): the region map with the
+player's marker, and a route sheet opened from the map's place panel that lists the wild Pokémon per method (grass,
+water, fishing...) with levels, encounter rate and time of day; species not seen yet show as a silhouette and "???".
+Small buttons (tabs) use a one-pixel white rim so the lettering never touches the edge.

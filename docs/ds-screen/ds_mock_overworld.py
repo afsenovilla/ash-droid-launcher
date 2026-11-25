@@ -1,4 +1,4 @@
-# Second-screen overworld mock-ups. Usage: ds_mock_overworld.py <pixelfonts.txt> <game font .ttf> <out.png> [home|map]
+# Second-screen overworld mock-ups. Usage: ds_mock_overworld.py <pixelfonts.txt> <game font .ttf> <out.png> [home|map|route]
 # 'home' was approved as an MVP on 2026-11-25; 'map' is a proposal.
 # Pokémon icons are placeholders here: on the device they are the game's own party icons.
 import sys
@@ -78,9 +78,45 @@ def region_map():
     m.ttf(d, 'MAPA', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
     m.ttf(d, 'KANTO', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
     m.ttf(d, 'RUTA 1', 12*S, 149*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
-    m.ttf(d, 'Estás aquí', 12*S, 164*S, 39, (112, 112, 136), None, 'lm')
+    m.ttf(d, 'Estás aquí · Toca para ver sus Pokémon', 12*S, 164*S, 39, (112, 112, 136), None, 'lm')
+    return big
+
+def panel(a, d, box, fill=(232, 228, 248), r=6):
+    w, h = box[2]-box[0]+1, box[3]-box[1]+1; outer = m.rounded((w, h), r)
+    d.rounded_rectangle((box[0]+1, box[1]+2, box[2]-1, box[3]+2), r, fill=m.SHADOW)
+    a.paste((56, 56, 72), box[:2], outer); a.paste((240, 240, 248), box[:2], m.inset(outer, 1)); a.paste(fill, box[:2], m.inset(outer, 2))
+
+def tag(d, box, col):
+    d.rounded_rectangle(box, 3, fill=m.shade(col, 0.6)); d.rounded_rectangle((box[0]+1, box[1]+1, box[2]-1, box[3]-1), 2, fill=col)
+
+WILD = [('Pidgey', '2-5', 45, None), ('Rattata', '2-4', 35, None), ('Hoothoot', '3-4', 15, 'NOCHE'), ('???', '4', 5, 'DÍA')]
+def route_info():
+    """Wild Pokémon of a route: method tabs, then per species its levels, encounter rate and time of day.
+    Species the player has not seen yet show as ???."""
+    a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); m.background(d); topbar(d)
+    tabs = [('HIERBA', (88, 200, 88), True), ('AGUA', (56, 136, 232), False), ('PESCA', (64, 184, 184), False)]
+    for i, (t, col, on) in enumerate(tabs):
+        b = (4 + i*67, 19, 4 + i*67 + 63, 40)
+        m.button(d, b, col if on else (168, 168, 196), 8, rim=1); m.pix_text(a, t, (b[0]+b[2])//2, (b[1]+b[3])//2, 1)
+    rows = [(4, 46 + i*25, 201, 46 + i*25 + 22) for i in range(4)]
+    for (n, lv, pct, when), b in zip(WILD, rows):
+        panel(a, d, b)
+        d.ellipse((b[0]+5, b[1]+3, b[0]+21, b[1]+19), fill=(72, 72, 96) if n == '???' else (200, 196, 232))   # icon placeholder; dark = silhouette of an unseen species
+        d.rounded_rectangle((b[0]+118, b[1]+8, b[0]+160, b[1]+14), 2, fill=(56, 56, 72))        # rate bar
+        d.rectangle((b[0]+119, b[1]+9, b[0]+119+int(40*pct/100), b[1]+13), fill=(96, 208, 96))
+        if when: tag(d, (b[0]+84, b[1]+6, b[0]+112, b[1]+16), (72, 88, 168) if when == 'NOCHE' else (240, 176, 56))
+    m.button(d, (134, 148, 201, 175), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 161, 1)
+    big = m.up(a); d = ImageDraw.Draw(big)
+    m.ttf(d, 'RUTA 1', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
+    m.ttf(d, 'Pokémon salvajes', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
+    for (n, lv, pct, when), b in zip(WILD, rows):
+        m.ttf(d, n, (b[0]+26)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
+        m.ttf(d, 'Nv ' + lv, (b[0]+26)*S, (b[1]+16.5)*S, 39, (112, 112, 136), None, 'lm')
+        m.ttf(d, str(pct) + '%', (b[2]-6)*S, (b[1]+11)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
+        if when: m.ttf(d, when.capitalize(), (b[0]+98.5)*S, (b[1]+10.5)*S, 39, (255, 255, 255), None, 'mm')
+    m.ttf(d, '??? = aún no lo has visto', 8*S, 162*S, 39, (112, 112, 136), None, 'lm')
     return big
 
 if __name__ == '__main__':
-    h = (region_map if (sys.argv + ['home'])[4] == 'map' else home)(); out = Image.new('RGB', (h.width + 40, h.height + 40), (0, 0, 0)); out.paste(h, (20, 20))
+    h = {'map': region_map, 'route': route_info}.get((sys.argv + ['home'])[4], home)(); out = Image.new('RGB', (h.width + 40, h.height + 40), (0, 0, 0)); out.paste(h, (20, 20))
     out.resize((out.width//2, out.height//2), Image.NEAREST).save(sys.argv[3])
