@@ -135,11 +135,12 @@ if __name__ == '__main__':
         d.rectangle((0, 0, pw2 - 3, (288 + DY_TOP) * 2 - 17), fill=ORANGE[:3])
         m.SHADOW = (176, 88, 48)
         BW = 68                                                    # option buttons: narrower than the panel
-        col = Image.new('RGBA', (BW + 2, 132), (0, 0, 0, 0)); cd = ImageDraw.Draw(col)
+        CW = 76                                                    # CANCELAR: a little wider, its word is longer
+        col = Image.new('RGBA', (CW + 2, 134), (0, 0, 0, 0)); ox = (CW - BW) // 2; cd = ImageDraw.Draw(col)
         for n, (label, colour) in enumerate(options):
-            m.button(cd, (1, n * 27 + 1, BW, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
-            m.pix_text(col, label, (BW + 1) // 2, n * 27 + 12 - (1 if n == 0 else 0), 1)
-        m.button(cd, (1, 108, BW, 128), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', (BW + 1) // 2, 118, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
+            m.button(cd, (ox + 1, n * 27 + 1, ox + BW, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+            m.pix_text(col, label, ox + (BW + 1) // 2, n * 27 + 12 - (1 if n == 0 else 0), 1)
+        m.button(cd, (1, 106, CW, 130), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', (CW + 1) // 2, 118, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
         col = col.resize((col.width * 6, col.height * 6), Image.NEAREST); one.alpha_composite(col, ((pw2 - col.width) // 2, 14))
     one = one.convert('RGB')
     one.save(OUT.replace('.png', '-1to1.png'))                    # the screen pixel for pixel (1240x1080)
