@@ -44,6 +44,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   with the next save. (Beta: to be tested on a device.)
 
 ### Changed
+- Launcher main screen: the game title and the Play button start at the top, level with the settings list,
+  instead of leaving an empty gap above them on screens where the list is taller than the screen.
+- Launcher main screen: "Touch buttons" is only listed while the touch controls are on.
 - The Italian entry of the language list is now called "Italian" instead of "Italiano", like the game's own
   languages, which are named in English.
 

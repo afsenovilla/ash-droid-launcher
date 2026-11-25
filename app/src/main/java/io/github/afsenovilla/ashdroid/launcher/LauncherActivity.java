@@ -270,7 +270,9 @@ public class LauncherActivity extends Activity
         // ---- left: game + Play
         LinearLayout left = new LinearLayout(this);
         left.setOrientation(LinearLayout.VERTICAL);
-        left.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        // From the top, level with the settings list: that list is taller than the screen, and centring
+        // this column against it left a large empty gap above the title.
+        left.setGravity(android.view.Gravity.TOP);
         left.setPadding(0, 0, mUi.dp(24), 0);
         left.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1f));
 
@@ -301,7 +303,7 @@ public class LauncherActivity extends Activity
         // ---- right: console-style settings list
         LinearLayout right = new LinearLayout(this);
         right.setOrientation(LinearLayout.VERTICAL);
-        right.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        right.setGravity(android.view.Gravity.TOP);
         right.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1f));
 
         TextView cap = mUi.caption(getString(R.string.settings).toUpperCase(java.util.Locale.getDefault()));
@@ -318,7 +320,10 @@ public class LauncherActivity extends Activity
             render();
             focusItem(3);
         });
-        mUi.item(g1, getString(R.string.tile_touch_buttons), mUi.value("›"), false, v -> touchButtonsMenu());
+        // What each on-screen button does: only worth a row while the on-screen controls are on
+        if (ButtonMapping.touchControlsEnabled(this)) {
+            mUi.item(g1, getString(R.string.tile_touch_buttons), mUi.value("›"), false, v -> touchButtonsMenu());
+        }
         right.addView(g1);
 
         TextView cap2 = mUi.caption(getString(R.string.game_section).toUpperCase(java.util.Locale.getDefault()));
