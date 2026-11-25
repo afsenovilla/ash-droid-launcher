@@ -36,8 +36,8 @@ def home():
             full = end - 1 - (x0 + 28)
             if hp: d.rectangle((x0+28, y0+16, x0+28+int(full*f), y0+19), fill=col)
             if tag:
-                d.rounded_rectangle((x1-31, y0+12, x1-9, y0+21), 3, fill=m.shade(tag, 0.6))
-                d.rounded_rectangle((x1-30, y0+13, x1-10, y0+20), 2, fill=tag)
+                d.rounded_rectangle((x1-31, y0+13, x1-9, y0+22), 3, fill=m.shade(tag, 0.6))
+                d.rounded_rectangle((x1-30, y0+14, x1-10, y0+21), 2, fill=tag)
     btns = [(114, 20 + i*31, 201, 20 + i*31 + 27) for i in range(5)]   # wide enough for SAUVEGARDER / SPEICHERN
     for (label, col), b in zip(ACTIONS, btns):
         m.button(d, b, col, 9)
@@ -46,9 +46,9 @@ def home():
     m.ttf(d, 'RUTA 1', 6*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'lm')
     m.ttf(d, '12:34', (AW-6)*S, 7*S, 52, (255, 255, 255), (40, 40, 64), 'rm')
     for (n, lv, hp, tot, st), b in zip(PARTY, cells):
-        m.ttf(d, n, (b[0]+27)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
-        m.ttf(d, 'Nv' + str(lv), (b[2]-9)*S, (b[1]+8)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
-        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-20)*S, (b[1]+16.5)*S, 39, (255, 255, 255), None, 'mm')
+        m.ttf(d, n, (b[0]+27)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'lm')
+        m.ttf(d, 'Nv' + str(lv), (b[2]-9)*S, (b[1]+7)*S, 52, (64, 64, 80), (176, 176, 200), 'rm')
+        if st or hp == 0: m.ttf(d, st or 'DEB', (b[2]-20)*S, (b[1]+17.5)*S, 39, (255, 255, 255), None, 'mm')
     return big
 
 def topbar(d, AWd=AW):
