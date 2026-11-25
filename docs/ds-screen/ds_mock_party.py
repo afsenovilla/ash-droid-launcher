@@ -77,12 +77,21 @@ def backdrop():
     for y in range(0, 330): s.paste(edge, (0, y))
     return s
 
-def footer(one, d, line):
+HOUSE = ['.....#.....', '....###....', '...#####...', '..#######..', '.#########.', '###########',
+         '.#########.', '.###...###.', '.###...###.', '.###...###.']
+def footer(one, d, line, home=False):
+    """Help line, the back button and, on screens more than one step away from home, a home button beside it."""
     text(d, line, 48, H * 2 - 124, WHITE, DARK, font=HELP, k=2)
     m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
-    key = Image.new('RGBA', (72, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
-    m.button(kd, (1, 1, 70, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 35, 11, 1)
-    key = key.resize((72 * 6, 26 * 6), Image.NEAREST); one.paste(key, (W * 2 - 72 * 6 - 8, H * 2 - 26 * 6 - 2), key)
+    key = Image.new('RGBA', (100, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
+    m.button(kd, (29, 1, 98, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 63, 11, 1)
+    if home:
+        m.button(kd, (1, 1, 24, 22), (88, 200, 88), 9)
+        for col, o in (((48, 48, 64), 1), ((255, 255, 255), 0)):
+            for r, row in enumerate(HOUSE):
+                for c, v in enumerate(row):
+                    if v == '#': kd.point((7 + c + o, 6 + r + o), fill=col)
+    key = key.resize((100 * 6, 26 * 6), Image.NEAREST); one.paste(key, (W * 2 - 100 * 6 - 8, H * 2 - 26 * 6 - 2), key)
 
 def screen():
     s = backdrop()
@@ -115,7 +124,7 @@ def actions():
         m.pix_text(grid, label, (bw + 1) // 2, by + 14 - (1 if n == 0 else 0), 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
     one.paste(grid, ((W * 2 - grid.width) // 2, 314), grid)
-    footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0])
+    footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0], home=True)
     return one.convert('RGB')
 
 PAGES = ['INFORMACIÓN', 'NOTAS', 'HABILIDADES', 'MOVIMIENTOS', 'CINTAS']   # the game's five summary pages
@@ -142,7 +151,7 @@ def summary(page=0):
         m.pix_text(ui, label, X0 + 60, by + 10 - (1 if n == page else 0), 1)
     ui = ui.resize((ui.width * 6, ui.height * 6), Image.NEAREST)
     one.paste(ui, ((W * 2 - ui.width) // 2, 8), ui)
-    footer(one, d, 'Los datos se ven arriba.')
+    footer(one, d, 'Los datos se ven arriba.', home=True)
     return one.convert('RGB')
 
 def drag():

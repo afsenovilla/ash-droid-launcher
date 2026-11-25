@@ -141,3 +141,9 @@ Mock-up: `ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> summary`.
 - OBJETO: a second level with the same stacked buttons (USAR, DAR, and QUITAR when holding something); USAR and
   DAR open the bag to pick the item. Field moves: the menu closes, the second screen goes back to home and the
   move runs on the top screen with the game's own messages.
+
+## Home button (decided)
+
+Every screen more than one step away from the overworld home shows a round home button (green, house glyph
+drawn by code) to the left of VOLVER. VOLVER goes up one level; home goes straight back to the overworld home.
+First-level screens (bag, party, map, profile) only show VOLVER, which already leads home.
