@@ -155,3 +155,6 @@ Mock-up: `ds_mock_profile.py <game folder> <pixelfonts.txt> <out.png>`.
 - Replica of the game's trainer card (the one the pause menu opens): card image, player sprite, the five rows
   and the ID with `UI_TrainerCard`'s positions and colours, and the badges of the current region. Shown whole
   at 2x, centred, over the card's own background colour. VOLVER under it.
+- Arrows in the side margins move between this card and the three pages of the game's GC card (in the game
+  that one is opened with the GCCARD item, so those pages are only offered when the player has it). Bottom
+  left: which card is shown.
