@@ -186,11 +186,10 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   offers CAMBIAR (only if it can fight) and DATOS. The home button leads back to the battle commands.
 - Party, OBJETO (`ds_mock_party.py ... item`): USAR, DAR, and QUITAR when the Pokémon holds something (the
   game's held item mark is shown by its icon). USAR and DAR open the bag to pick the item.
-- Summary, moves (`ds_mock_party.py ... moves`): the second screen shows everything about the four moves at
-  once, so nothing has to be touched to read it. Same 2x2 layout and button look as the approved battle move
-  menu (type-coloured frame, cream panel, type tag), plus a category tag, power, accuracy, PP and the
-  description (up to three lines). An earlier version with four full-width rows and the game's type and
-  category icons at 3x was dropped: it looked out of place. The top
+- Summary, moves (`ds_mock_party.py ... moves`): the second screen shows the four moves at once in a 2x2
+  grid, so nothing has to be touched to read them: name, type tag and category tag, then power, accuracy and
+  PP. No description (decided). Cards are buttons in the approved style with a thin frame in the type's colour
+  around a cream panel; the thick frame of the battle move buttons was rejected here. The top
   screen keeps the game's moves page. Dragging a card onto another swaps the moves, as the game's move page
   allows (same gesture as reordering the party; with the buttons: hold confirm, move with the D-pad, confirm
   to drop). Not in battle, where the game does not allow it either.

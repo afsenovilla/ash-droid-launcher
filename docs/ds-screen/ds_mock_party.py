@@ -168,21 +168,19 @@ MOVES = [('Impactrueno', 'Eléctrico', 'Especial', '40', '100%', '30/30', 'Una d
          ('Onda Trueno', 'Eléctrico', 'Estado', '---', '90%', '20/20', 'Una ligera descarga que paraliza al objetivo.')]
 MOVE_CELLS = [(4, 3, 101, 74), (105, 3, 202, 74), (4, 78, 101, 149), (105, 78, 202, 149)]
 def moves():
-    """MOVIMIENTOS: everything about the Pokémon's four moves at once, in the 2x2 layout and button look
-    approved for the battle move menu (type-coloured frame, cream panel, type tag), with a category tag, power,
-    accuracy, PP and the description added. Dragging one onto another swaps them."""
+    """MOVIMIENTOS: the Pokémon's four moves at once in a 2x2 grid: name, type and category tags, power,
+    accuracy and PP (no description). Cards are buttons in the approved style with a thin frame in the type's
+    colour around a cream panel. Dragging one onto another swaps them."""
     S = m.S; sh = m.shade
     a = Image.new('RGB', (m.AW, m.AH)); d = ImageDraw.Draw(a); m.SHADOW = (124, 124, 168); m.background(d)
     for (name, ty, cat, power, acc, pp, desc), (x0, y0, x1, y1) in zip(MOVES, MOVE_CELLS):
         col = MOVE_TYPES[ty]; m.shadow(d, (x0, y0, x1, y1), 8, 0)
         w, h = x1 - x0 + 1, y1 - y0 + 1; outer = m.rounded((w, h), 8)
         a.paste((56, 56, 72), (x0, y0), outer); a.paste((240, 240, 248), (x0, y0), m.inset(outer, 1))
-        a.paste(sh(col, 0.6), (x0, y0), m.inset(outer, 3)); a.paste(col, (x0, y0), m.rows(m.inset(outer, 4), 0, h - 5))
-        a.paste(sh(col, 1.2), (x0, y0), m.rows(m.inset(outer, 5), 5, 6))
-        d.rounded_rectangle((x0 + 8, y0 + 8, x1 - 8, y1 - 9), 4, fill=sh(col, 0.6))
-        d.rounded_rectangle((x0 + 9, y0 + 9, x1 - 9, y1 - 10), 3, fill=(248, 248, 236))
-        for tx0, tx1, c in ((x0 + 11, x0 + 48, col), (x0 + 50, x1 - 11, MOVE_CATS[cat])):          # type and category tags
-            d.rounded_rectangle((tx0, y0 + 19, tx1, y0 + 31), 4, fill=sh(c, 0.6)); d.rounded_rectangle((tx0 + 1, y0 + 20, tx1 - 1, y0 + 30), 3, fill=c)
+        a.paste(sh(col, 0.6), (x0, y0), m.inset(outer, 3)); a.paste(col, (x0, y0), m.inset(outer, 4))
+        a.paste((248, 248, 236), (x0, y0), m.inset(outer, 6))
+        for tx0, tx1, c in ((x0 + 9, x0 + 47, col), (x0 + 50, x1 - 9, MOVE_CATS[cat])):            # type and category tags
+            d.rounded_rectangle((tx0, y0 + 22, tx1, y0 + 35), 4, fill=sh(c, 0.6)); d.rounded_rectangle((tx0 + 1, y0 + 23, tx1 - 1, y0 + 34), 3, fill=c)
     m.button(d, (134, 155, 201, 177), (56, 136, 232), 9); m.pix_text(a, 'VOLVER', 167, 166, 1)
     m.button(d, (106, 155, 129, 177), (88, 200, 88), 9)
     for c2, off in (((48, 48, 64), 1), ((255, 255, 255), 0)):
@@ -190,24 +188,16 @@ def moves():
             for c, v in enumerate(row):
                 if v == '#': d.point((112 + c + off, 161 + r + off), fill=c2)
     one = m.up(a); d = ImageDraw.Draw(one)
-    ink, soft, shd = (64, 64, 80), (104, 104, 124), (168, 168, 192)
-    small = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 39)
+    ink, shd = (64, 64, 80), (168, 168, 192)
     for (name, ty, cat, power, acc, pp, desc), (x0, y0, x1, y1) in zip(MOVES, MOVE_CELLS):
-        cx = (x0 + x1 + 1) / 2 * S; size = 65
-        while ImageFont.truetype(GAME + '/Fonts/power green.ttf', size).getlength(name) > (x1 - x0 - 24) * S: size -= 13
+        cx = (x0 + x1 + 1) / 2 * S; size = 78
+        while ImageFont.truetype(GAME + '/Fonts/power green.ttf', size).getlength(name) > (x1 - x0 - 20) * S: size -= 13
         m.ttf(d, name, cx, (y0 + 13.5) * S, size, ink, shd)
-        m.ttf(d, ty, (x0 + 30) * S, (y0 + 25.5) * S, 52, (255, 255, 255), sh(MOVE_TYPES[ty], 0.42))
-        m.ttf(d, cat, (x0 + 50 + (x1 - 11 - x0 - 50) / 2 + 0.5) * S, (y0 + 25.5) * S, 52, (255, 255, 255), sh(MOVE_CATS[cat], 0.42))
-        m.ttf(d, 'Pot. ' + power, (x0 + 12) * S, (y0 + 36.5) * S, 39, ink, None, 'lm')
-        m.ttf(d, 'Prec. ' + acc, cx, (y0 + 36.5) * S, 39, ink, None, 'mm')
-        m.ttf(d, 'PP ' + pp, (x1 - 11) * S, (y0 + 36.5) * S, 39, ink, None, 'rm')
-        d.line(((x0 + 12) * S, (y0 + 40) * S + 2, (x1 - 11) * S, (y0 + 40) * S + 2), fill=(208, 208, 196), width=3)
-        words, lines, cur = desc.split(), [], ''
-        for wd in words:
-            if small.getlength((cur + ' ' + wd).strip()) > (x1 - x0 - 23) * S: lines.append(cur); cur = wd
-            else: cur = (cur + ' ' + wd).strip()
-        lines.append(cur)
-        for n, line in enumerate(lines[:3]): m.ttf(d, line, (x0 + 12) * S, (y0 + 44) * S + 39 * n, 39, soft, None, 'lm')
+        m.ttf(d, ty, (x0 + 28.5) * S, (y0 + 29) * S, 52, (255, 255, 255), sh(MOVE_TYPES[ty], 0.42))
+        m.ttf(d, cat, (x0 + 50 + (x1 - 9 - x0 - 50) / 2 + 0.5) * S, (y0 + 29) * S, 52, (255, 255, 255), sh(MOVE_CATS[cat], 0.42))
+        for n, (label, value) in enumerate((('Potencia', power), ('Precisión', acc), ('PP', pp))):
+            y = (y0 + 42.5 + 8.5 * n) * S
+            m.ttf(d, label, (x0 + 11) * S, y, 39, (104, 104, 124), None, 'lm'); m.ttf(d, value, (x1 - 10) * S, y, 52, ink, shd, 'rm')
     m.ttf(d, 'Pikachu', 48, 1080 - 96, 52, ink, (176, 176, 200), 'lm')
     return one
 
