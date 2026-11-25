@@ -2719,6 +2719,8 @@ module AshDroidDS
       @hide = $1 == "1"
       return
     end
+    # every touch command and where it arrived, to trace a button that does nothing on the device
+    AshDroidLog.log("ds: cmd #{cmd} ctx=#{@ctx} modal=#{@modal ? 1 : 0} stack=#{@stack.map { |d| d[:mode] }.join('/')}")
     if @modal
       @modal_cmds << cmd
       return
