@@ -1583,7 +1583,7 @@ module AshDroidDSUI
   end
 
   def self.option_color(o)
-    { use: GREEN, give: ORANGE, take: RED, toss: RED, summary: BLUE, item: ORANGE, switch: GREEN, cancel: BLUE }[o[:kind]] || TEAL
+    { use: GREEN, give: ORANGE, take: RED, toss: RED, summary: PURPLE, item: ORANGE, switch: GREEN, cancel: BLUE }[o[:kind]] || TEAL
   end
 
   # After choosing a Pokémon: its panel and what the game offers for it, stacked.
