@@ -210,6 +210,22 @@ module AshDroidText
   ITALIAN_NAME = "Italian"
   ITALIAN_FILE = "italian.dat"
 
+  # Switches the game to another of its languages while it runs, the way its title screen does: the
+  # language is kept in the options (saved with the game) and the texts are loaded again.
+  def self.change_language(index)
+    langs = Settings::LANGUAGES
+    index = index.to_i
+    return false unless langs && langs[index] && $PokemonSystem && $PokemonSystem.language != index
+    $PokemonSystem.language = index
+    pbLoadMessages("Data/" + langs[index][1])
+    AshDroidDS.instance_variable_set(:@lang_set, nil) if defined?(AshDroidDS)
+    AshDroidLog.log("language changed in game: #{langs[index][0]}")
+    true
+  rescue StandardError, NameError => e
+    AshDroidLog.log("change_language error: #{e.class}: #{e.message}")
+    false
+  end
+
   def self.lang_file
     langs = Settings::LANGUAGES
     idx = $PokemonSystem ? $PokemonSystem.language : nil
@@ -936,7 +952,7 @@ module AshDroidDSUI
   }.freeze
   # Words the game has no text for. Official terms.
   LABELS = {
-    "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", unseen: "??? = not seen", lv: "Lv",
+    "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", lv: "Lv",
               wild_title: "Wild Pokémon", card: "Card %d of %d", save_q: "Save the game?", saved: "Game saved",
               save: "SAVE", saved_button: "SAVED", held: "Held: %s", no_held: "No held item", type: "Type:", item: "Item:", power: "Power",
               accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], dex_unseen: "Not seen yet.", sum_help: "Details are shown above.",
@@ -944,7 +960,7 @@ module AshDroidDSUI
               eff: ["No effect", "Not very effective", "Super effective"], badges: "Badges:", pokedex: "Pokédex:",
               time: "Time:", money: "Money:", started: "Started:", no_wild: "No wild Pokémon here.",
               busy: "", choose: "Choose a Pokémon." },
-    "es" => { back: "VOLVER", wild: "POKéMON SALVAJES", here: "Estás aquí", unseen: "??? = sin ver", lv: "Nv",
+    "es" => { back: "VOLVER", wild: "POKéMON SALVAJES", here: "Estás aquí", lv: "Nv",
               wild_title: "Pokémon salvajes", card: "Tarjeta %d de %d", save_q: "¿Guardar la partida?",
               saved: "Partida guardada", save: "GUARDAR", saved_button: "GUARDADO", held: "Equipado: %s", no_held: "Sin objeto equipado",
               type: "Tipo:", item: "Objeto:", power: "Potencia", accuracy: "Precisión",
@@ -953,7 +969,7 @@ module AshDroidDSUI
               eff: ["No afecta", "Poco eficaz", "Muy eficaz"], badges: "Medallas:", pokedex: "Pokédex:",
               time: "Tiempo:", money: "Dinero:", started: "Inicio:", no_wild: "Aquí no hay Pokémon salvajes.",
               busy: "", choose: "Elige un Pokémon." },
-    "fr" => { back: "RETOUR", wild: "POKéMON SAUVAGES", here: "Vous êtes ici", unseen: "??? = non vu", lv: "N.",
+    "fr" => { back: "RETOUR", wild: "POKéMON SAUVAGES", here: "Vous êtes ici", lv: "N.",
               wild_title: "Pokémon sauvages", card: "Carte %d sur %d", save_q: "Sauvegarder la partie ?",
               saved: "Partie sauvegardée", save: "SAUVEGARDER", saved_button: "SAUVEGARDÉ", held: "Tenu : %s", no_held: "Aucun objet tenu",
               type: "Type :", item: "Objet :", power: "Puissance", accuracy: "Précision",
@@ -962,7 +978,7 @@ module AshDroidDSUI
               eff: ["Sans effet", "Peu efficace", "Super efficace"], badges: "Badges :", pokedex: "Pokédex :",
               time: "Temps :", money: "Argent :", started: "Début :", no_wild: "Aucun Pokémon sauvage ici.",
               busy: "", choose: "Choisissez un Pokémon." },
-    "de" => { back: "ZURÜCK", wild: "WILDE POKéMON", here: "Du bist hier", unseen: "??? = nicht gesehen", lv: "Lv.",
+    "de" => { back: "ZURÜCK", wild: "WILDE POKéMON", here: "Du bist hier", lv: "Lv.",
               wild_title: "Wilde Pokémon", card: "Karte %d von %d", save_q: "Spiel speichern?",
               saved: "Spiel gespeichert", save: "SPEICHERN", saved_button: "GESPEICHERT", held: "Trägt: %s", no_held: "Trägt kein Item",
               type: "Typ:", item: "Item:", power: "Stärke", accuracy: "Genauigkeit",
@@ -2147,7 +2163,6 @@ module AshDroidDSUI
     else
       ops << { "o" => "scroll", "key" => "route#{d[:tab]}", "r" => [3 * S, 40 * S, 196 * S, view_h], "ch" => rows.length * 23 * S, "ops" => inner,
                "bar" => [199 * S, 43 * S, 4 * S, 110 * S], "bc1" => "#a8a8c4", "bc2" => "#585878" }
-      txt(ops, l(:unseen), 8 * S, 168 * S, 52, INK, [176, 176, 200], "l", "m")
     end
     s.button(0, 0, [134, 157, 201, 178], BLUE, l(:back), "back", shadow: LAVENDER_SHADOW, center: [167, 167])
     s.button(0, 0, [106, 157, 129, 178], GREEN, nil, "home", shadow: LAVENDER_SHADOW, icon: house_icon(7, 6))
@@ -3986,8 +4001,32 @@ module AshDroidFixes
   # Options screen: drop "Screen Size" on the device (it only makes a window
   # smaller) and, while the game is in Spanish, offer the Spanish music.
   module OptionsAshDroid
+    def pbStartScene(inloadscreen = false)
+      @ashdroid_inload = inloadscreen
+      @ashdroid_language = nil
+      super
+    end
+
+    # The language chosen in the list is applied when the screen closes, so the texts change at once
+    # everywhere instead of leaving this screen half in each language.
+    def pbEndScene
+      super
+      AshDroidText.change_language(@ashdroid_language) if @ashdroid_language
+    end
+
     def pbAddOnOptions(options)
       opts = super
+      # In game (the title screen already has its own "Language" entry): change language without leaving
+      begin
+        langs = Settings::LANGUAGES
+        if !@ashdroid_inload && defined?(EnumOption2) && langs && langs.length > 1
+          opts = opts + [EnumOption2.new(_INTL("Language"), langs.map { |l| l[0].to_s },
+            proc { $PokemonSystem.language.to_i },
+            proc { |v| @ashdroid_language = v })]
+        end
+      rescue StandardError, NameError => e
+        AshDroidLog.log("language option error: #{e.class}: #{e.message}")
+      end
       unless ASHDROID_PC
         names = ["Screen Size", (_INTL("Screen Size") rescue "Screen Size")]
         opts = opts.reject { |o| o.respond_to?(:name) && names.include?(o.name) }

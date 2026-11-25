@@ -38,6 +38,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   - Design notes and the mock-up generators are in `docs/ds-screen/`; `docs/ds-screen/preview/` draws any
     screen on a PC with the same code the app uses.
 
+### Added
+- **Language in the options screen**: the in-game Options have a new "Language" entry to switch the game's
+  language without going back to the title screen. It is applied when the options screen closes and is kept
+  with the next save. (Beta: to be tested on a device.)
+
 ### Changed
 - The Italian entry of the language list is now called "Italian" instead of "Italiano", like the game's own
   languages, which are named in English.
