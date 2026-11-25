@@ -347,3 +347,9 @@ status icons (`statuses.png`), plus each Pokémon's icon, name and HP, all at 2x
 repeating a column and 80 px tall by leaving out lines of their two flat bands, so six fit in a column beside the
 five buttons. Rule that follows: where the game has an image for something (status, HP bar, panels, type and
 category icons), that image is used; code-drawn elements are for what the game has no art for.
+
+## Reported on device, to fix (beta-ds-184)
+
+- **Pokédex**: the picture of the game's entry page shows correctly, but the navigation controls at the top of
+  the second screen do not respond (reported as "the upper navigation arrows"; to confirm whether this is the
+  INFO / AREA / FORMS tabs, the previous / next arrows, or both). Not started.
