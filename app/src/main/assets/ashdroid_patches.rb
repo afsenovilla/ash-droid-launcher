@@ -938,36 +938,36 @@ module AshDroidDSUI
   LABELS = {
     "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", unseen: "??? = not seen", lv: "Lv",
               wild_title: "Wild Pokémon", card: "Card %d of %d", save_q: "Save the game?", saved: "Game saved",
-              save: "SAVE", held: "Held: %s", no_held: "No held item", type: "Type:", power: "Power",
+              save: "SAVE", held: "Held: %s", no_held: "No held item", type: "Type:", item: "Item:", power: "Power",
               accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], sum_help: "Details are shown above.",
-              drop: "Let go to swap.", grass: "GRASS", cave: "CAVE", change: "SWITCH", mega: "MEGA",
+              drop: "Let go to swap.", grass: "GRASS", fishing: "FISHING", cave: "CAVE", change: "SWITCH", mega: "MEGA",
               eff: ["No effect", "Not very effective", "Super effective"], badges: "Badges:", pokedex: "Pokédex:",
               time: "Time:", money: "Money:", started: "Started:", no_wild: "No wild Pokémon here.",
               busy: "", choose: "Choose a Pokémon." },
     "es" => { back: "VOLVER", wild: "POKéMON SALVAJES", here: "Estás aquí", unseen: "??? = sin ver", lv: "Nv",
               wild_title: "Pokémon salvajes", card: "Tarjeta %d de %d", save_q: "¿Guardar la partida?",
               saved: "Partida guardada", save: "GUARDAR", held: "Equipado: %s", no_held: "Sin objeto equipado",
-              type: "Tipo:", power: "Potencia", accuracy: "Precisión",
+              type: "Tipo:", item: "Objeto:", power: "Potencia", accuracy: "Precisión",
               pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], sum_help: "Los datos se ven arriba.",
-              drop: "Suelta para cambiar.", grass: "HIERBA", cave: "CUEVA", change: "CAMBIAR", mega: "MEGA",
+              drop: "Suelta para cambiar.", grass: "HIERBA", fishing: "PESCA", cave: "CUEVA", change: "CAMBIAR", mega: "MEGA",
               eff: ["No afecta", "Poco eficaz", "Muy eficaz"], badges: "Medallas:", pokedex: "Pokédex:",
               time: "Tiempo:", money: "Dinero:", started: "Inicio:", no_wild: "Aquí no hay Pokémon salvajes.",
               busy: "", choose: "Elige un Pokémon." },
     "fr" => { back: "RETOUR", wild: "POKéMON SAUVAGES", here: "Vous êtes ici", unseen: "??? = non vu", lv: "N.",
               wild_title: "Pokémon sauvages", card: "Carte %d sur %d", save_q: "Sauvegarder la partie ?",
               saved: "Partie sauvegardée", save: "SAUVEGARDER", held: "Tenu : %s", no_held: "Aucun objet tenu",
-              type: "Type :", power: "Puissance", accuracy: "Précision",
+              type: "Type :", item: "Objet :", power: "Puissance", accuracy: "Précision",
               pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], sum_help: "Les données sont en haut.",
-              drop: "Relâchez pour échanger.", grass: "HERBE", cave: "GROTTE", change: "CHANGER", mega: "MÉGA",
+              drop: "Relâchez pour échanger.", grass: "HERBE", fishing: "PÊCHE", cave: "GROTTE", change: "CHANGER", mega: "MÉGA",
               eff: ["Sans effet", "Peu efficace", "Super efficace"], badges: "Badges :", pokedex: "Pokédex :",
               time: "Temps :", money: "Argent :", started: "Début :", no_wild: "Aucun Pokémon sauvage ici.",
               busy: "", choose: "Choisissez un Pokémon." },
     "de" => { back: "ZURÜCK", wild: "WILDE POKéMON", here: "Du bist hier", unseen: "??? = nicht gesehen", lv: "Lv.",
               wild_title: "Wilde Pokémon", card: "Karte %d von %d", save_q: "Spiel speichern?",
               saved: "Spiel gespeichert", save: "SPEICHERN", held: "Trägt: %s", no_held: "Trägt kein Item",
-              type: "Typ:", power: "Stärke", accuracy: "Genauigkeit",
+              type: "Typ:", item: "Item:", power: "Stärke", accuracy: "Genauigkeit",
               pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], sum_help: "Die Daten stehen oben.",
-              drop: "Loslassen zum Tauschen.", grass: "GRAS", cave: "HÖHLE", change: "WECHSELN", mega: "MEGA",
+              drop: "Loslassen zum Tauschen.", grass: "GRAS", fishing: "ANGELN", cave: "HÖHLE", change: "WECHSELN", mega: "MEGA",
               eff: ["Wirkungslos", "Nicht sehr effektiv", "Sehr effektiv"], badges: "Orden:", pokedex: "Pokédex:",
               time: "Spielzeit:", money: "Geld:", started: "Beginn:", no_wild: "Hier gibt es keine wilden Pokémon.",
               busy: "", choose: "Wähle ein Pokémon." }
@@ -1490,12 +1490,13 @@ module AshDroidDSUI
       sel = i == d[:sel].to_i
       panel(s.ops, panel_name(i, mon, sel), lx, ly, 40, g)
       panel_contents(s.ops, i, mon, lx * 2, ly * 2, sel, 0, g)
+      next if d[:message]                       # a message is up: a touch anywhere confirms it
       hit = { "o" => "hit", "r" => [lx * 2, ly * 2, PANEL_W * 2, 276], "cmd" => "sel:#{i}", "dim" => 1, "n" => i, "g" => i }
       hit["drag"] = "swap" if d[:drag]
       s.ops << hit
     end
     footer(s, d[:help], d[:home])
-    s.result("id" => "party")
+    s.result("id" => "party", "tap" => d[:message] ? "a" : nil)
   end
 
   CARD_W = 356
@@ -1572,6 +1573,70 @@ module AshDroidDSUI
     s.button(2, py, [106, 1, 129, 22], GREEN, nil, "home", shadow: FOOT_SHADOW, icon: house_icon(7, 6))
     s.button(2, py, [134, 1, 203, 22], BLUE, l(:back), "back", shadow: FOOT_SHADOW, center: [168, 11])
     s.result("id" => "battle_info")
+  end
+
+  # The party screen is on the game screen; this shows everything about the Pokémon under its cursor and what
+  # can be done with it, so nothing has to be opened to look.
+  # d: { mon:, slot:, first:, last:, types: [rows], item_name:, moves: [{name:, row:, pp:, tpp:}],
+  #      options: [{label:, cmd:, kind:}], help: }
+  def self.party_sheet(d)
+    s = Screen.new
+    party_backdrop(s.ops)
+    mon = d[:mon]
+    room = (CARD_W - PANEL_W) * 2 / U
+    cx0 = 20
+    panel(s.ops, panel_name(d[:slot].to_i, mon, true), cx0 / 2 + 32, 8, CARD_W - 256)
+    panel_contents(s.ops, d[:slot].to_i, mon, cx0 + 64, 16, true, room)
+    pw = 140
+    ph = 100
+    px = 16
+    py = 300
+    art = Art.new(px, py, pw, ph)
+    box = [0, 0, pw - 1, ph - 1]
+    art.rr(box, 8, 0, [56, 56, 72]).rr(box, 8, 1, [240, 240, 248]).rr(box, 8, 3, [248, 248, 236])
+    s.ops << art.op
+    types = pic("types")
+    left = px + 36
+    right = px + pw * S - 36
+    icon = ->(row, x, cy) { img(s.ops, types, 0, row.to_i * 28, 64, 28, x, cy - 42, 3) }
+    txt(s.ops, l(:type), left, 364, 65, INK, INK_SH, "l", "m")
+    (d[:types] || []).first(2).each_with_index { |row, n| icon.call(row, left + 210 + 204 * n, 364) }
+    txt(s.ops, l(:item), left, 452, 65, INK, INK_SH, "l", "m")
+    if mon[:item]
+      whole(s.ops, mon[:item], left + 204, 452 - 48, 2)
+      txt(s.ops, d[:item_name], left + 204 + 104, 452, 65, INK, INK_SH, "l", "m", { "fit" => right - left - 310 })
+    else
+      txt(s.ops, "-", left + 210, 452, 65, INK, INK_SH, "l", "m")
+    end
+    fill(s.ops, left, 502, right - left + 1, 6, [208, 208, 196])
+    4.times do |n|
+      y = 564 + 88 * n
+      m = (d[:moves] || [])[n]
+      if m
+        icon.call(m[:row], left, y)
+        txt(s.ops, m[:name], left + 210, y, 65, INK, INK_SH, "l", "m", { "fit" => right - left - 210 - 190 })
+        txt(s.ops, "#{m[:pp]}/#{m[:tpp]}", right, y, 65, INK, INK_SH, "r", "m")
+      else
+        txt(s.ops, "-", left + 210, y, 65, INK, INK_SH, "l", "m")
+      end
+    end
+    # right column: previous / next Pokémon, then what the game offers for this one
+    colx = 876
+    [true, false].each do |lft|
+      usable = lft ? !d[:first] : !d[:last]
+      bx = lft ? 1 : 31
+      s.button(colx, 10, [bx, 1, bx + 26, 25], usable ? BLUE : GREY, nil, usable ? (lft ? "mon:prev" : "mon:next") : nil, shadow: PARTY_SHADOW,
+               icon: arrow_icon(12, 9, lft), disabled: !usable)
+    end
+    opts = d[:options] || []
+    high, pitch = opts.length > 4 ? [21, 24] : [27, 31]
+    opts.first(6).each_with_index do |o, n|
+      by = 32 + n * pitch
+      s.button(colx, 10, [1, by, 57, by + high], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW,
+               center: [29, by + high / 2])
+    end
+    footer(s, d[:help], false)
+    s.result("id" => "sheet")
   end
 
   # ---- summary ----
@@ -1675,7 +1740,9 @@ module AshDroidDSUI
     cut = 180
     top = 92
     row = 43
-    grow_list, grow_desc = state == :world ? [44, 24] : [1, 67]
+    message = d[:message].to_s
+    talking = !message.empty?                  # the game is saying or asking something: the foot shows it
+    grow_list, grow_desc = state == :world && !talking ? [44, 24] : [1, 67]
     pocket = [d[:pocket].to_i, 1].max
     src = pic("Bag/bg_#{pocket}") || pic("Bag/bg_1")
     fill(ops, 0, 0, W, H, BAG_ORANGE)
@@ -1699,13 +1766,13 @@ module AshDroidDSUI
       id = s.next_id
       ops << art.op(id)
       img(ops, sheet_f, i * 28, 0, 28, 28, (x + 30) * 2 - 42, (y + 30) * 2 - 42, 3, { "fx" => POCKET_KEEP }) if sheet_f
-      ops << { "o" => "hit", "r" => [x * 2, y * 2, 120, 124], "cmd" => "pocket:#{i + 1}", "art" => id }
+      ops << { "o" => "hit", "r" => [x * 2, y * 2, 120, 124], "cmd" => "pocket:#{i + 1}", "art" => id } unless talking
     end
     # the list
     lx = 6
     ly = top + 10
     lw = 620 - 6 - 52
-    visible = state == :world ? 7 : 6
+    visible = state == :world && !talking ? 7 : 6
     items = d[:items] || []
     sel = d[:index].to_i
     inner = []
@@ -1719,7 +1786,7 @@ module AshDroidDSUI
       whole(inner, it[:icon], 14 * 2, (y + 2) * 2, 2) if it[:icon]
       gtext(inner, it[:name], 70 * 2, (y + 8) * 2, 52, BAG_INK, BAG_INK_SH, 0, { "fit" => (lw - 70 - 90) * 2 })
       gtext(inner, format("x%3d", it[:qty]), (lw - 22) * 2, (y + 8) * 2, 52, BAG_INK, BAG_INK_SH, 1) if it[:qty]
-      inner << { "o" => "hit", "r" => [0, y * 2, (lw + 8) * 2, row * 2], "cmd" => "item:#{i}", "dim" => 1 }
+      inner << { "o" => "hit", "r" => [0, y * 2, (lw + 8) * 2, row * 2], "cmd" => "item:#{i}", "dim" => 1 } unless talking
     end
     view_h = row * visible * 2
     ops << { "o" => "scroll", "key" => "bag#{pocket}", "r" => [(lx - 2) * 2, (ly - 5) * 2, (lw + 8) * 2, view_h],
@@ -1730,6 +1797,16 @@ module AshDroidDSUI
     desc = d[:desc].to_s
     sh = [72, 76, 84]
     opts = d[:options] || []
+    if talking
+      txt(ops, message, 48, (foot + 20) * 2, 52, WHITE, [0, 0, 0], "l", "a", { "ww" => W - 96, "lh" => 64, "ml" => 2 })
+      py = foot * 2 + 12 + 27 * S
+      opts.first(2).each_with_index do |o, n|
+        x = 2 + n * 100
+        s.button(14, py, [x, 1, x + 97, 24], o[:kind] == :cancel ? BLUE : GREEN, upper(o[:label]), o[:cmd], shadow: sh,
+                 center: [x + 49, 13], bounce: n == d[:opt_index].to_i)
+      end
+      return s.result("id" => "bag", "tap" => opts.empty? ? "a" : nil)
+    end
     case state
     when :battle
       txt(ops, desc, 48, (foot + 20) * 2, 52, WHITE, [0, 0, 0], "l", "a", { "ww" => W - 96, "lh" => 64, "ml" => 2 })
@@ -1914,6 +1991,11 @@ module AshDroidDSUI
     inner = []
     rows.each_with_index do |r, i|
       y = i * 23 * S
+      if r[:header]                             # a group inside the tab (each fishing rod)
+        fill(inner, 6 * S, y + 19 * S, 184 * S, S, [168, 168, 196])
+        txt(inner, r[:header], 8 * S, y + 11 * S, 52, INK, [176, 176, 200], "l", "m")
+        next
+      end
       art = Art.new(0, y, 196, 25)
       b = [1, 1, 193, 22]
       art.rr([b[0] + 1, b[1] + 2, b[2] - 1, b[3] + 2], 9, 0, LAVENDER_SHADOW)
@@ -2274,11 +2356,71 @@ module AshDroidDS
     s.is_a?(Hash) ? s : {}
   end
 
-  def self.help_text(scene)
-    w = sprites_of(scene)["helpwindow"]
-    w && !w.disposed? && w.visible && w.respond_to?(:text) ? w.text.to_s.gsub(/<[^>]*>/, "") : ""
+  def self.clean(text)
+    text.to_s.gsub(/<[^>]*>/, "").gsub(/[\x00-\x09\x0b-\x1f]/, "").strip
+  end
+
+  # What one of a scene's text windows is saying right now ("" if it is not showing)
+  def self.window_text(scene, name)
+    w = sprites_of(scene)[name]
+    w && !w.disposed? && w.visible && w.respond_to?(:text) ? clean(w.text) : ""
   rescue StandardError
     ""
+  end
+
+  def self.help_text(scene)
+    t = window_text(scene, "messagebox")
+    t.empty? ? window_text(scene, "helpwindow") : t
+  end
+
+  # ---- the game screen keeps what it was showing ----
+  # While the bag or the party run on the second screen, a picture of what the game screen showed before
+  # (the battle, the map) covers the game's own copy of that menu. It steps aside whenever something else
+  # needs the game screen: the summary, a number to enter, any screen this module does not show.
+
+  def self.cover_begin
+    return unless @active
+    @cover_depth = @cover_depth.to_i + 1
+    return if @cover
+    @cover_vp = Viewport.new(0, 0, Graphics.width, Graphics.height)
+    @cover_vp.z = 9_999_999
+    @cover = Sprite.new(@cover_vp)
+    @cover.bitmap = Graphics.snap_to_bitmap
+    @cover_seen = @tickn
+  rescue StandardError, NameError => e
+    log_once("cover", e)
+    cover_drop
+  end
+
+  def self.cover_end
+    return if @cover_depth.to_i <= 0
+    @cover_depth -= 1
+    cover_drop if @cover_depth <= 0
+  end
+
+  def self.cover_drop
+    @cover_depth = 0
+    [(@cover.bitmap rescue nil), @cover, @cover_vp].each { |o| o.dispose if o && !o.disposed? rescue nil }
+    @cover = @cover_vp = nil
+  end
+
+  def self.cover_update
+    return unless @cover
+    if @cover.disposed?
+      cover_drop
+      return
+    end
+    bag = live(:bag)
+    show = (bag || live(:party)) && !live(:summary)
+    if show && bag && !usable_window?(live(:cmd))
+      # the bag asking for a number: that is only on the game's screen
+      show = false if !window_text(bag, "helpwindow").empty? && window_text(bag, "msgwindow").empty?
+    end
+    @cover_seen = @tickn if show
+    @cover.visible = @tickn - @cover_seen <= 8
+  rescue StandardError, NameError => e
+    log_once("cover", e)
+    cover_drop
   end
 
   # ---- every frame (Graphics.update) ----
@@ -2296,6 +2438,7 @@ module AshDroidDS
         handle(cmd.to_s)
       end
       pursue
+      cover_update
       state = compose
       publish(state) if state
     end
@@ -2694,6 +2837,21 @@ module AshDroidDS
       AshDroidDS.frame(self, cw)
     end
 
+    # The bag and the party opened from a battle go to the second screen; this one keeps showing the battle
+    def pbItemMenu(*args, &block)
+      AshDroidDS.cover_begin
+      super
+    ensure
+      AshDroidDS.cover_end
+    end
+
+    def pbPartyScreen(*args, &block)
+      AshDroidDS.cover_begin
+      super
+    ensure
+      AshDroidDS.cover_end
+    end
+
     # The menu was just made visible: with "hide" on it never gets drawn on the game's screen
     def pbShowWindow(windowType)
       super
@@ -2716,9 +2874,11 @@ module AshDroidDS
     sel = scene.instance_variable_get(:@activecmd).to_i
     help = help_text(scene)
     drag = @party_free && !$game_temp.in_battle
-    key = [scene.object_id, sel, help, drag, party.map { |p| mon_digest(p) }]
+    message = !window_text(scene, "messagebox").empty?
+    key = [scene.object_id, sel, help, drag, message, party.map { |p| mon_digest(p) }]
     screen(:party, key) do
-      ui.party(mons: party.first(6).map { |p| mon_data(p) }, sel: sel, help: help, drag: drag, home: !$game_temp.in_battle && @from_home != :party)
+      ui.party(mons: party.first(6).map { |p| mon_data(p) }, sel: sel, help: help, drag: drag && !message, message: message,
+               home: !$game_temp.in_battle && @from_home != :party)
     end
   end
 
@@ -2823,7 +2983,8 @@ module AshDroidDS
     in_battle = $game_temp.in_battle
     state = in_battle ? :battle : cw ? :item : :world
     labels = cw ? commands_of(cw).map { |c| label_of(c) } : nil
-    key = [scene.object_id, win.pocket, index, state, items.map { |i| [i[0], i[1]] }, labels, cw && cw.index]
+    message = window_text(scene, "msgwindow")
+    key = [scene.object_id, win.pocket, index, state, items.map { |i| [i[0], i[1]] }, labels, cw && cw.index, message]
     screen(:bag, key) do
       current = items[index]
       rows = items.map do |id, qty|
@@ -2834,13 +2995,13 @@ module AshDroidDS
       ui.bag(pocket: win.pocket, pockets: (PokemonBag.numPockets rescue 8), items: rows, index: index,
              desc: current ? GameData::Item.get(current[0]).description.to_s : "", state: state, options: opts,
              opt_index: cw ? (opts.index { |o| o[:at] == cw.index.to_i } || -1) : -1,
-             can_use: !current.nil?, use_label: _INTL("Use"))
+             can_use: !current.nil?, use_label: _INTL("Use"), message: message)
     end
   end
 
   def self.pick_item(i)
     scene = live(:bag)
-    return unless scene && @ctx == :bag && !live(:cmd)
+    return unless scene && @ctx == :bag && !live(:cmd) && window_text(scene, "msgwindow").empty?
     win = sprites_of(scene)["itemlist"]
     return unless win && i < bag_items(scene, win).length
     win.index = i
@@ -2936,11 +3097,14 @@ module AshDroidDS
       pbPlayDecisionSE
       $game_temp.in_menu = true
       item = nil
-      pbFadeOutIn {
+      begin
+        cover_begin                             # the game screen keeps showing the map
         scene = PokemonBag_Scene.new
         bag = (defined?($bag) && $bag) ? $bag : $PokemonBag
         item = PokemonBagScreen.new(scene, bag).pbStartScreen
-      }
+      ensure
+        cover_end
+      end
       $game_temp.in_menu = false
       pbUseKeyItemInField(item) if item
     when :map then modal_map
@@ -3044,7 +3208,7 @@ module AshDroidDS
   def self.wild_tabs
     data = GameData::Encounter.get($game_map.map_id, $PokemonGlobal.encounter_version)
     return [] unless data
-    tabs = []
+    tabs = {}
     data.types.each do |type, slots|
       next if slots.nil? || slots.empty?
       kind = (GameData::EncounterType.get(type).type rescue :land)
@@ -3052,7 +3216,7 @@ module AshDroidDS
       label, col = case kind
                    when :cave then [ui.l(:cave), [184, 160, 56]]
                    when :water then [(GameData::Move.get(:SURF).name rescue "Surf"), ui::BLUE]
-                   when :fishing then [(GameData::Item.get(type.to_s.upcase.to_sym).name rescue type.to_s), ui::TEAL]
+                   when :fishing then [ui.l(:fishing), ui::TEAL]
                    else [ui.l(:grass), ui::GREEN]
                    end
       total = slots.inject(0) { |a, s| a + s[0].to_i }
@@ -3069,8 +3233,12 @@ module AshDroidDS
         { icon: (ui.file(GameData::Species.icon_filename(species)) rescue nil), name: (GameData::Species.get(species).name.to_s rescue species.to_s),
           seen: seen, lo: lo, hi: hi, pct: total > 0 ? [(chance * 100.0 / total).round, 1].max : 0 }
       end
-      tabs << { label: label, col: col, rows: rows }
+      tab = (tabs[kind] ||= { label: label, col: col, rows: [] })
+      # one tab per way of finding them; inside "fishing", a heading per rod
+      tab[:rows] << { header: (GameData::Item.get(type.to_s.upcase.to_sym).name.to_s rescue type.to_s) } if kind == :fishing
+      tab[:rows].concat(rows)
     end
+    tabs = tabs.values
     tabs.first(4)
   rescue StandardError, NameError => e
     log_once("wild", e)
