@@ -350,6 +350,7 @@ category icons), that image is used; code-drawn elements are for what the game h
 
 ## Reported on device, to fix (beta-ds-184)
 
-- **Pokédex**: the picture of the game's entry page shows correctly, but the navigation controls at the top of
-  the second screen do not respond (reported as "the upper navigation arrows"; to confirm whether this is the
-  INFO / AREA / FORMS tabs, the previous / next arrows, or both). Not started.
+- **Pokédex**: the picture of the game's entry page shows correctly, but the INFO / AREA / FORMS tabs at the
+  top of the second screen do nothing (confirmed by the user). Works in the simulator, so the cause is on the
+  game side: check the launcher log for "ds: dexshot" / "ds: dexframe" lines (an error drawing pages 2 and 3
+  off screen is the first suspect). Not started.
