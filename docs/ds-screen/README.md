@@ -174,3 +174,17 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
   under it holds GUARDAR (large, green) and VOLVER; after saving only VOLVER stays. The game's warning about
   overwriting a different save file is shown as a second confirmation before saving.
 - The home screen's GUARDAR button is greyed out while the game has saving disabled.
+
+## Remaining pieces (pending approval)
+
+- Bag, item options (`ds_mock_bag.py <game folder> <out.png> item <pixelfonts.txt>`): touching an item swaps
+  the left panel (bag picture, pocket name, pocket buttons) for the options the game gives for that item,
+  stacked in the approved style (USAR, DAR, TIRAR; REGISTRAR and LEER when they apply), with VOLVER under them
+  to get the pockets back. Up to four options fit.
+- Bag in battle (`... battle <pixelfonts.txt>`): the same screen; the game only offers Use there.
+- Party in battle (`ds_mock_party.py ... battle`): the same party screen without dragging; touching a Pokémon
+  offers CAMBIAR (only if it can fight) and DATOS. The home button leads back to the battle commands.
+- Party, OBJETO (`ds_mock_party.py ... item`): USAR, DAR, and QUITAR when the Pokémon holds something (the
+  game's held item mark is shown by its icon). USAR and DAR open the bag to pick the item.
+- Summary, moves (`ds_mock_party.py ... moves`): touching MOVIMIENTOS again lists the Pokémon's moves, each in
+  its type's colour; touching one shows the game's own move detail on the top screen.

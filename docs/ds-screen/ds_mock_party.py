@@ -6,7 +6,7 @@
 #   panels 768 px wide, which does not fit two columns on a 1240 px screen.
 # - The game's 512x384 background is extended to 620x540 by repeating lines; the panel sockets drawn on it are
 #   filled with the frame's own colour. Bottom band: help line and the back button (approved button style).
-# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions|drag|summary]
+# Needs the game folder. Usage: ds_mock_party.py <game folder> <pixelfonts.txt> <out.png> [actions|item|battle|drag|summary|moves]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, FONTS_TXT, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -107,7 +107,10 @@ def screen():
 # What the game offers for a Pokémon: Summary, its field moves, Switch, Item (or Mail), Cancel.
 # Switch is not a button: the order is changed by dragging on the party screen (see drag()).
 ACTIONS = [('DATOS', (56, 136, 232)), ('OBJETO', (240, 168, 48)), ('DESTELLO', (64, 184, 184))]
-def actions():
+BATTLE_ACTIONS = [('CAMBIAR', (88, 200, 88)), ('DATOS', (56, 136, 232))]   # what the game offers in battle (Switch In only if it can fight)
+ITEM_ACTIONS = [('USAR', (88, 200, 88)), ('DAR', (240, 168, 48)), ('QUITAR', (232, 96, 96))]   # QUITAR only when it holds something
+def actions(options=None, line=None, held=False):
+    options = options or ACTIONS
     """After touching a Pokémon: its panel alone on top (wider, so the HP bar clears the icon), the options
     stacked under it as wide medium buttons, back at the bottom."""
     CARD = 356; room = (CARD - 296) * 2 // U                       # panel width in logical px; extra content px
@@ -115,16 +118,18 @@ def actions():
     s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
     one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
     contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
+    if held:                                                       # the game's held item mark, by the icon as in the game
+        one.alpha_composite(big(img('Party/icon_item.png')), (x0 * 2 + 44 * U, 16 + 44 * U))
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
-    grid = Image.new('RGBA', (bw + 2, len(ACTIONS) * 31), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
-    for n, (label, col) in enumerate(ACTIONS):
+    grid = Image.new('RGBA', (bw + 2, len(options) * 31), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
+    for n, (label, col) in enumerate(options):
         by = n * 31
         m.button(gd, (1, by + 1, bw, by + 27), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
         m.pix_text(grid, label, (bw + 1) // 2, by + 14 - (1 if n == 0 else 0), 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
     one.paste(grid, ((W * 2 - grid.width) // 2, 314), grid)
-    footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0], home=True)
+    footer(one, d, line or '¿Qué hacer con %s?' % PARTY[SELECTED][0], home=True)
     return one.convert('RGB')
 
 PAGES = ['INFORMACIÓN', 'NOTAS', 'HABILIDADES', 'MOVIMIENTOS', 'CINTAS']   # the game's five summary pages
@@ -154,6 +159,26 @@ def summary(page=0):
     footer(one, d, 'Los datos se ven arriba.', home=True)
     return one.convert('RGB')
 
+MOVES = [('IMPACTRUENO', (248, 208, 48)), ('ATAQUE RÁPIDO', (168, 168, 120)), ('LÁTIGO', (168, 168, 120)), ('ONDA TRUENO', (248, 208, 48))]
+def moves():
+    """MOVIMIENTOS page of the summary: touching the page's button again lists the Pokémon's moves, each in its
+    type's colour. Touching one shows its details on the top screen (the game's own move detail view)."""
+    s = backdrop(); one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
+    m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
+    name, species = PARTY[SELECTED][0], PARTY[SELECTED][1]
+    icon = big(Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64)))
+    w = icon.width + int(d.textlength(name, font=FONT)); x = (W * 2 - w) // 2
+    one.alpha_composite(icon, (x, -6)); text(d, name, x + icon.width, 30, (64, 64, 80), (176, 200, 200))
+    ui = Image.new('RGBA', (121, 4 * 29), (0, 0, 0, 0)); ud = ImageDraw.Draw(ui)
+    for n, (label, col) in enumerate(MOVES):
+        by = n * 29
+        m.button(ud, (1, by, 119, by + 25), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+        m.pix_text(ui, label, 60, by + 12 - (1 if n == 0 else 0), 1)
+    ui = ui.resize((ui.width * 6, ui.height * 6), Image.NEAREST)
+    one.paste(ui, ((W * 2 - ui.width) // 2, 178), ui)
+    footer(one, d, 'Elige un movimiento.', home=True)
+    return one.convert('RGB')
+
 def drag():
     """Reordering by dragging: the held panel follows the finger with a shadow under it, its slot stays empty and
     the panel under it takes the game's own 'switching' colours. Letting go swaps the two."""
@@ -173,4 +198,6 @@ def drag():
     return one.convert('RGB')
 
 if __name__ == '__main__':
-    {'actions': actions, 'drag': drag, 'summary': summary}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
+    if MODE == 'battle': SELECTED = 1                              # in battle: a Pokémon that is not out
+    {'battle': lambda: actions(BATTLE_ACTIONS), 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
+     'item': lambda: actions(ITEM_ACTIONS, '¿Qué hacer con el objeto?', True)}.get(MODE, screen)().save(OUT)   # real size: 1240x1080

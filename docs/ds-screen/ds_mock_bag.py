@@ -4,10 +4,15 @@
 # so nothing is blurred or distorted: +64 px in the left panel, +44 in the item list, +124 of height
 # in the upper part and +32 at the top of the description box (so its text is not glued to the edge).
 # The strip of small pocket icons becomes a grid of large touch buttons built from the same icons.
-# Needs the game folder. Usage: ds_mock_bag.py <game folder> <out.png>
+# With a third argument, the state after touching an item: the left panel gives way to that item's options
+# (the ones the game offers for it) as stacked buttons in the approved style, and a button to go back to the
+# pockets. 'item' = out of battle, 'battle' = in battle (the game only offers Use there).
+# Needs the game folder. Usage: ds_mock_bag.py <game folder> <out.png> [item|battle <pixelfonts.txt>]
 import sys
 from PIL import Image, ImageDraw, ImageFont
 GAME, OUT = sys.argv[1], sys.argv[2]
+MODE = sys.argv[3] if len(sys.argv) > 3 else ''
+FONTS_TXT = sys.argv[4] if len(sys.argv) > 4 else ''
 G = GAME + '/Graphics/'
 def img(p): return Image.open(G + p).convert('RGBA')
 FONT = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 26)   # the game asks for size 29; the engine draws it at 26 px
@@ -121,6 +126,19 @@ if __name__ == '__main__':
                 elif state == 'pressed': px[xx, yy] = tuple(int(v * 0.72) for v in px[xx, yy][:3]) + (255,)
         e = e.resize((84, 84), Image.NEAREST)
         one.alpha_composite(e, (cx * 2 - 42, cy * 2 - 42))
+    if MODE:
+        sys.argv = [sys.argv[0], FONTS_TXT, GAME + '/Fonts/power green.ttf']
+        import ds_mock as m
+        options = [('USAR', (88, 200, 88))] if MODE == 'battle' else [('USAR', (88, 200, 88)), ('DAR', (160, 112, 232)), ('TIRAR', (232, 96, 96))]
+        pw2 = (186 + DX_LEFT) * 2; d = ImageDraw.Draw(one)
+        d.rectangle((0, 0, pw2 - 3, (288 + DY_TOP) * 2 - 17), fill=ORANGE[:3])
+        m.SHADOW = (176, 88, 48)
+        col = Image.new('RGBA', (82, 132), (0, 0, 0, 0)); cd = ImageDraw.Draw(col)
+        for n, (label, colour) in enumerate(options):
+            m.button(cd, (1, n * 27 + 1, 80, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+            m.pix_text(col, label, 41, n * 27 + 12 - (1 if n == 0 else 0), 1)
+        m.button(cd, (11, 108, 80, 128), (56, 136, 232), 9); m.pix_text(col, 'VOLVER', 46, 118, 1)
+        col = col.resize((col.width * 6, col.height * 6), Image.NEAREST); one.alpha_composite(col, ((pw2 - col.width) // 2, 14))
     one = one.convert('RGB')
     one.save(OUT.replace('.png', '-1to1.png'))                    # the screen pixel for pixel (1240x1080)
     out = Image.new('RGB', (W * 2 + 40, H * 2 + 40), (0, 0, 0)); out.paste(one, (20, 20))
