@@ -48,3 +48,32 @@ are placeholders: on the device they are the game's own.
 player's marker, and a route sheet opened from the map's place panel that lists the wild Pokémon per method (grass,
 water, fishing...) with levels, encounter rate and time of day; species not seen yet show as a silhouette and "???".
 Small buttons (tabs) use a one-pixel white rim so the lettering never touches the edge.
+
+### Bag (approved 2026-11-25)
+
+Mirroring the game's own bag screen onto the second screen was tried (build 179) and dropped: not viable. The bag is
+instead **replicated natively** from the game's own images, font, colours and layout rules (`UI_Bag` in the game's
+scripts), read from the player's copy of the game at run time. `ds_mock_bag.py <game folder> <out.png>` renders the
+approved mock-up; its output is not committed because it is made of game art, and nothing of the game ships in the
+repository or the APK.
+
+- **Full screen, no bars.** The game's 512x384 bag background is cut along lines where it is uniform and those
+  lines are repeated (never scaled): +64 px in the left panel, +44 in the item list, +124 of height in the upper
+  part, +32 at the top of the description box. Logical canvas 620x540, shown at 2x (1240x1080).
+- **Item list**: 11 rows visible instead of 7, the game's red cursor (extended the same way), quantities on the
+  right, CLOSE BAG as the last entry (returns to the home screen).
+- **Description box**: taller, its text starts 8 px below the box's top edge instead of on it. The item icon box
+  grows from 64 to 88 px (same frame, extended) and is centred vertically; the icon is drawn at 3 screen pixels per
+  pixel instead of 2.
+- **Pocket buttons**: the strip of 20 px icons becomes two rows of four round touch buttons, drawn by code. The
+  whole face of each button takes that pocket's two colours and middle band from the game's `icon_pocket.png`
+  (colour row); on top goes only the drawing of that icon (its square background removed), at 3 screen pixels per
+  pixel. States: idle (grey ring), selected (wider white ring), pressed (sunk two pixels, darkened to 72 %, no
+  shadow); on release the pressed pocket becomes the selected one.
+- **Optional larger pocket icons**: if the game folder has `Graphics/Pictures/Bag/icon_pocket_ds.png` (384x144:
+  8 columns of 48x48 in pocket order, rows idle / selected / pressed, transparent background, drawn at the game's
+  pixel size), the buttons use it instead. The launcher never ships such a file. Pocket 6 is Badges in Fire Ash.
+- Read-only in this first version: browsing by touch or with the buttons; using items stays in the game's menu.
+- Mock-ups must be judged at the screen's real resolution (1240x1080): halved previews show the 3x elements with
+  uneven pixels.
+
