@@ -1324,9 +1324,51 @@ module AshDroidDSUI
   # from the game's image at run time
   COMMAND_COLORS = [[[232, 56, 56], [248, 168, 176]], [[224, 152, 40], [248, 208, 120]],
                     [[88, 176, 40], [144, 224, 120]], [[40, 144, 200], [120, 208, 248]]].freeze
+  COMMAND_ROWS = [0, 2, 1, 3].freeze            # fight, bag, Pokémon, run in the game's command button sheet
+
+  # A battle button in the game's own shape: one of the rounded buttons of its command menu (row of its
+  # sheet), without the word drawn in it (only the two ends of the image are used, and a clean column between
+  # them), made as wide and as tall as needed by repeating flat lines, k screen px per image pixel. With an
+  # id, the game's lighter version of the same button (the one it shows under its cursor) is the pressed
+  # look. The label goes on top in the button lettering.
+  def self.pill(s, x, y, w, h, row, k, text, cmd, lettering: 1, selected: false)
+    f = pic("Battle/cursor_command")
+    fw, fh = size(f)
+    cell = fw / 2
+    bh = 46
+    id = cmd ? s.next_id : nil
+    if cell >= 60 && fh >= (row + 1) * bh
+      lw = w / k
+      lh = h / k
+      [0, 1].each do |variant|
+        next if variant == 1 && !id
+        x0 = variant * cell
+        y0 = row * bh
+        xs = Axis.new(fw)
+        xs.instance_variable_set(:@segs, [[x0, 14, 14], [x0 + 14, 1, [lw - 28, 1].max], [x0 + cell - 14, 14, 14]])
+        ys = Axis.new(fh)
+        extra_rows = [lh - bh, 0].max
+        ys.instance_variable_set(:@segs, [[y0, 16, 16], [y0 + 16, 1, extra_rows / 2 + 1], [y0 + 17, 13, 13],
+                                          [y0 + 30, 1, extra_rows - extra_rows / 2 + 1], [y0 + 31, 15, 15]])
+        extra = {}
+        extra[variant == 1 ? "dn_of" : "up_of"] = id if id
+        extra["bn"] = 1 if selected && variant == 0
+        sheet(s.ops, f, xs, ys, x, y, k, extra)
+      end
+    else
+      game_box(s.ops, x, y, w, h, COMMAND_COLORS[COMMAND_ROWS.index(row) || 3][0], id, selected)
+    end
+    aw = w / S
+    ah = h / S
+    art = Art.new(x + (w - aw * S) / 2, y + (h - ah * S) / 2, aw, ah)
+    art.label(text, aw / 2, ah / 2, lettering, aw - 8)
+    art.bounce = selected
+    s.ops << art.op
+    s.ops << { "o" => "hit", "r" => [x, y, w, h], "cmd" => cmd, "art" => id } if id
+  end
 
   # d: { texts: [fight, bag, pokemon, run], index:, own: [:ok/:st/:ko/nil x6], foe: [...],
-  #      colors: [[plain, under the cursor] x4] read from the game's buttons, or nil }
+  #      rows: the row of the game's button sheet each of the four uses (it changes in the Safari Zone...) }
   def self.command(d)
     s = Screen.new
     stripes(s.ops)
@@ -1341,17 +1383,12 @@ module AshDroidDSUI
     s.ops << dots.op
     t = (d[:texts] || []).map { |x| upper(x) }
     idx = d[:index].to_i
-    sh = LAVENDER_SHADOW
-    # each button always in the game's own plain colour; the cursor is the bounce alone (decided), not the
-    # lighter colour the game gives the button under it
-    col = lambda do |i|
-      pair = ((d[:colors] || [])[i]) || COMMAND_COLORS[i]
-      pair[0] || COMMAND_COLORS[i][0]
-    end
-    s.button(0, 0, [10, 19, 195, 112], col.call(0), t[0], "sel:0", shadow: sh, r: 11, k: 3, center: [103, 65], bounce: idx == 0)
-    s.button(0, 0, [4, 122, 70, 174], col.call(1), t[1], "sel:1", shadow: sh, center: [37, 147], bounce: idx == 1)
-    s.button(0, 0, [77, 134, 128, 174], col.call(3), t[3], "sel:3", shadow: sh, r: 8, center: [103, 153], bounce: idx == 3)
-    s.button(0, 0, [135, 122, 201, 174], col.call(2), t[2], "sel:2", shadow: sh, center: [168, 147], bounce: idx == 2)
+    row = ->(i) { ((d[:rows] || [])[i]) || COMMAND_ROWS[i] }
+    # the game's own rounded command buttons; the cursor is the bob alone, never a change of colour
+    pill(s, 10 * S, 19 * S, 186 * S, 94 * S, row.call(0), 6, t[0], "sel:0", lettering: 3, selected: idx == 0)
+    pill(s, 4 * S, 122 * S, 67 * S, 53 * S, row.call(1), 3, t[1], "sel:1", selected: idx == 1)
+    pill(s, 77 * S, 134 * S, 52 * S, 41 * S, row.call(3), 3, t[3], "sel:3", selected: idx == 3)
+    pill(s, 135 * S, 122 * S, 67 * S, 53 * S, row.call(2), 3, t[2], "sel:2", selected: idx == 2)
     s.result("id" => "command")
   end
 
@@ -1403,10 +1440,8 @@ module AshDroidDSUI
       txt(s.ops, l(:eff)[eff], cx, (y0 + 53.5) * S, 52, [255, 255, 255], shade(band, 0.6), "m", "m", bn) if band
       s.ops << { "o" => "hit", "r" => [x0 * S, y0 * S, w * S, h * S], "cmd" => "sel:#{i}", "dim" => 1 }
     end
-    s.button(0, 0, [56, 147, 149, 175], COMMAND_COLORS[3][0], upper(d[:cancel] || l(:back)), "back", shadow: LAVENDER_SHADOW, center: [103, 161])
-    if d[:mega].to_i > 0
-      s.button(0, 0, [4, 147, 52, 175], d[:mega].to_i == 2 ? ORANGE : PURPLE, l(:mega), "act", shadow: LAVENDER_SHADOW, center: [28, 161])
-    end
+    pill(s, 56 * S, 147 * S, 94 * S, 29 * S, 3, 3, upper(d[:cancel] || l(:back)), "back")
+    pill(s, 4 * S, 147 * S, 49 * S, 29 * S, d[:mega].to_i == 2 ? 0 : 2, 3, l(:mega), "act") if d[:mega].to_i > 0
     s.result("id" => "fight")
   end
 
@@ -2895,7 +2930,8 @@ module AshDroidDS
       foe = battle.wildBattle? ? [:ok] : dots(battle.pbParty(1))
       screen(:command, [top.object_id, cw.index, texts, own, foe]) do
         @count = 4
-        ui.command(texts: texts[1, 4] || [], index: cw.index.to_i, own: own, foe: foe, colors: button_colors(cw))
+        rows = (cw.instance_variable_get(:@buttons) || []).first(4).map { |b| (b.src_rect.y.to_i / 46 rescue nil) }
+        ui.command(texts: texts[1, 4] || [], index: cw.index.to_i, own: own, foe: foe, rows: rows)
       end
     end
   rescue StandardError, NameError => e
