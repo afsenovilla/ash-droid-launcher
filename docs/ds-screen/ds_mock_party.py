@@ -205,6 +205,50 @@ def moves():
     m.ttf(d, name, 12 + icon.width + 6, 1080 - 96, 78, ink, (176, 176, 200), 'lm')
     return one.convert('RGB')
 
+# example data for the Pokémon looked at in battle
+BATTLE_INFO = {'types': [0, 2], 'ability': 'Vista Lince', 'item': 'Ninguno',
+               'stats': [('Ataque', '9'), ('Defensa', '8'), ('Velocidad', '10'), ('At. Esp.', '8'), ('Def. Esp.', '8')],
+               'moves': [('Placaje', 0, '35/35'), ('Ataque Arena', 4, '15/15')]}
+def battle_info():
+    """In battle, touching a Pokémon of the party shows its data right here instead of opening the summary:
+    its card, then types, ability, held item, stats and moves with their PP, all at 2x (the game's font and its
+    type icons). CAMBIAR sits at the bottom beside home and VOLVER; it is greyed out if it cannot fight."""
+    CARD = 356; room = (CARD - 296) * 2 // U
+    s = backdrop(); x0 = (W - CARD) // 2
+    s.alpha_composite(tall(img(kind(SELECTED, PARTY[SELECTED])), CARD - 256), (x0, 8))
+    one = s.resize((W * 2, H * 2), Image.NEAREST); d = ImageDraw.Draw(one); d.fontmode = '1'
+    contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
+    types = img('types.png'); ink, shd, soft = (64, 64, 80), (176, 200, 200), (72, 112, 120)
+    L, R = 204, 1036
+    def icon(row, x, cy): 
+        t = types.crop((0, row * 28, 64, row * 28 + 28)).resize((128, 56), Image.NEAREST); one.alpha_composite(t, (x, cy - 28))
+    def rule(y): d.rectangle((L, y, R, y + 3), fill=(120, 192, 192))
+    for n, row in enumerate(BATTLE_INFO['types']): icon(row, L + 136 * n, 336)
+    for n, (label, value) in enumerate((('Habilidad', BATTLE_INFO['ability']), ('Objeto', BATTLE_INFO['item']))):
+        m.ttf(d, label, L, 396 + 58 * n, 52, ink, shd, 'lm'); m.ttf(d, value, R, 396 + 58 * n, 52, ink, shd, 'rm')
+    rule(488)
+    for n, (label, value) in enumerate(BATTLE_INFO['stats']):
+        cx0 = L + 290 * (n % 3); y = 526 + 58 * (n // 3)
+        m.ttf(d, label, cx0, y, 52, ink, shd, 'lm'); m.ttf(d, value, cx0 + 252, y, 52, ink, shd, 'rm')
+    rule(618)
+    for n in range(4):
+        y = 656 + 60 * n
+        if n < len(BATTLE_INFO['moves']):
+            name, row, pp = BATTLE_INFO['moves'][n]
+            icon(row, L, y); m.ttf(d, name, L + 144, y, 52, ink, shd, 'lm'); m.ttf(d, 'PP ' + pp, R, y, 52, ink, shd, 'rm')
+        else: m.ttf(d, '-', L + 144, y, 52, ink, shd, 'lm')
+    m.SHADOW = tuple(int(v * 0.6) for v in one.getpixel((W * 2 - 40, H * 2 - 20))[:3])
+    key = Image.new('RGBA', (206, 26), (0, 0, 0, 0)); kd = ImageDraw.Draw(key)
+    m.button(kd, (2, 1, 100, 22), (88, 200, 88), 9, selected=True, lift=1); m.pix_text(key, 'CAMBIAR', 51, 10, 1)
+    m.button(kd, (106, 1, 129, 22), (88, 200, 88), 9)
+    for col, o in (((48, 48, 64), 1), ((255, 255, 255), 0)):
+        for r, row in enumerate(HOUSE):
+            for c, v in enumerate(row):
+                if v == '#': kd.point((112 + c + o, 6 + r + o), fill=col)
+    m.button(kd, (134, 1, 203, 22), (56, 136, 232), 9); m.pix_text(key, 'VOLVER', 168, 11, 1)
+    key = key.resize((206 * 6, 26 * 6), Image.NEAREST); one.paste(key, (2, H * 2 - 26 * 6 - 2), key)
+    return one.convert('RGB')
+
 def drag():
     """Reordering by dragging: the held panel follows the finger with a shadow under it, its slot stays empty and
     the panel under it takes the game's own 'switching' colours. Letting go swaps the two."""
@@ -225,5 +269,5 @@ def drag():
 
 if __name__ == '__main__':
     if MODE == 'battle': SELECTED = 1                              # in battle: a Pokémon that is not out
-    {'battle': lambda: actions(BATTLE_ACTIONS), 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
+    {'battle': battle_info, 'actions': actions, 'drag': drag, 'summary': summary, 'moves': moves,
      'item': lambda: actions(ITEM_ACTIONS, '¿Qué hacer con el objeto?', True)}.get(MODE, screen)().save(OUT)   # real size: 1240x1080
