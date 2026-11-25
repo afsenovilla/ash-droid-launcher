@@ -2398,7 +2398,11 @@ module AshDroidDS
         @moves_view = $1.to_i == 3
       end
     when "moves:close" then @moves_view = false
-    when /\Aopen:(\w+)\z/ then @open = $1.to_sym if @ctx == :home
+    when /\Aopen:(\w+)\z/
+      if @ctx == :home
+        @open = $1.to_sym
+        @open_wait = 0
+      end
     end
   rescue StandardError, NameError => e
     log_once("handle", e)
@@ -2817,9 +2821,20 @@ module AshDroidDS
     false
   end
 
+  # The home buttons stay lit while the player merely walks: only an event, a message or a closed menu
+  # greys them out (a touch made mid-step waits for the step to end)
+  def self.home_usable?
+    return false if $game_temp.in_menu || $game_temp.in_battle || $game_temp.message_window_showing
+    return false if $game_system.map_interpreter.running? || $game_system.menu_disabled
+    return false if $game_player.move_route_forcing
+    true
+  rescue StandardError, NameError
+    false
+  end
+
   def self.home_state(cursor = nil)
     party = $Trainer.party
-    free = cursor ? true : player_free?
+    free = cursor ? true : home_usable?
     off = []
     off << 0 if party.empty?
     off << 1 if (pbInBugContest? rescue false) || ($game_switches[675] rescue false)
@@ -2836,9 +2851,18 @@ module AshDroidDS
   def self.world_frame(scene)
     return unless @active
     mark(:world, scene)
+    open = nil
+    return unless @open
+    @open_wait = @open_wait.to_i + 1
+    if !home_usable? || @open_wait > 40      # an event started meanwhile, or the player never stopped
+      @open = nil
+      @open_wait = 0
+      return
+    end
+    return unless player_free?
     open = @open
     @open = nil
-    return unless open && player_free?
+    @open_wait = 0
     run_open(open)
   rescue StandardError, NameError => e
     log_once("world", e)
