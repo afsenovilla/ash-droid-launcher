@@ -35,6 +35,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   - Design notes and the mock-up generators are in `docs/ds-screen/`; `docs/ds-screen/preview/` draws any
     screen on a PC with the same code the app uses.
 
+### Changed
+- The Italian entry of the language list is now called "Italian" instead of "Italiano", like the game's own
+  languages, which are named in English.
+
 ## [0.7.1] - 2026-11-08
 
 ### Fixed
@@ -46,7 +50,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [0.7.0] - 2026-11-07
 
 ### Added
-- **Italian**: new "Italian" language in the game's options (it isn't one of the game's own languages), with
+- **Italian**: new "Italiano" language in the game's options (it isn't one of the game's own languages), with
   every text translated and the images with English lettering redrawn in Italian. It loads the game's
   English files and replaces every text with the Italian pack, on Android and PC.
 
