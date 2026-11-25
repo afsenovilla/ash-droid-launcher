@@ -2157,21 +2157,22 @@ module AshDroidDSUI
 
   # ---- trainer cards ----
 
-  # The game's own card screens, captured as they are drawn, with the card itself (without the margin of
-  # background around it) enlarged to the width of the screen: 2.5x, the largest that fits.
+  # The game's own card screens, captured as they are drawn, at 2x: the largest whole factor that fits (3x is
+  # wider than the screen, and pixels are never enlarged by a fraction).
   # d: { shot: png file, page: 1.., total: }
   def self.profile(d)
     s = Screen.new
     ops = s.ops
     bg = pic("Trainer Card/bg")
-    if size(bg)[0] > 0
-      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [0, 0] }
+    bw, bh = size(bg)
+    x0 = 54
+    y0 = 38
+    if bw > 0                                   # tiled like the game's plane, lined up with the tiles in the picture
+      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [(x0 % bw - bw) * 2, (y0 % bh - bh) * 2] }
     else
       fill(ops, 0, 0, W, H, [160, 208, 240])
     end
-    if d[:shot]
-      ops << { "o" => "img", "f" => d[:shot], "s" => [16, 16, 480, 352], "d" => [20, 14, 1200, 880] }
-    end
+    whole(ops, d[:shot], x0 * 2, y0 * 2, 2) if d[:shot]
     total = d[:total].to_i
     if total > 1
       game_button(s, 6, 472, 112, 62, nil, "card:prev", nil, glyph: arrow_icon(16, 6, true))
