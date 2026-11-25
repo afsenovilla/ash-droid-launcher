@@ -21,8 +21,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
     the pause menu (the other face buttons still open the game's own menu).
   - **Party, bag and summary**: the game's own screens keep running on the game screen and the second screen
     drives them: touch a Pokémon or an item, pick one of the options the game offers, drag a Pokémon onto
-    another to swap them, change pocket, turn the summary's pages, and see or reorder the four moves at once.
+    another to swap them, change pocket and turn the summary's pages.
     Any other list of choices the game shows (yes / no, the pause menu...) appears as buttons too.
+  - **Town Map**: while the game's Town Map is open (from the bag, the Pokégear...), the region map with the
+    player's position, dragged with a finger and with three zoom levels, and the wild Pokémon of the place
+    per encounter method, with levels and encounter rate; species not seen yet show as a silhouette.
   - **Trainer cards and save**: the game's card screens as the game draws them, and a save screen with the
     save's details.
   - The game stays in charge: a touch becomes the same cursor move and button press the player would make,

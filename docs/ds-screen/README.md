@@ -47,8 +47,11 @@ Changes after the first build on the device (2026-11-25), which replace what the
 - **Home**: the buttons stay lit while walking.
 - **Home**: the buttons are the entries of the game's own pause menu, in its order and under its conditions
   (Pokédex, Pokémon, Bag, Pokégear, trainer, Save, Options). There is no MAP button: the game has no map
-  entry in that menu (the Town Map is an item in the bag). The second screen's region map and wild Pokémon
-  screens are still in the code but have no entry point for now; where they hang from is to be decided.
+  entry in that menu (the Town Map is an item in the bag).
+- **Map and wild Pokémon**: they follow the game's own Town Map. While it is open (bag, Pokégear, Fly), the
+  second screen shows the draggable region map and the wild Pokémon button; VOLVER closes the game's map.
+- **Summary**: the MOVES button only turns the game's page, like the other page buttons. The 2x2 moves
+  screen with drag-to-swap is removed (it was designed for a case that cannot happen).
 
 Differences from the mock-ups, to review on the device:
 

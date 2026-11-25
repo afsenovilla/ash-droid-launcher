@@ -1802,46 +1802,6 @@ module AshDroidDSUI
     s.result("id" => "summary")
   end
 
-  SUM_CELLS = [[4, 3, 101, 74], [105, 3, 202, 74], [4, 78, 101, 149], [105, 78, 202, 149]].freeze
-
-  # The Pokémon's moves, all at once. Dragging one onto another swaps them.
-  # d: { name:, icon:, moves: [{name:, type:, row:, cat:, power:, accuracy:, pp:, tpp:}], drag: }
-  def self.moves(d)
-    s = Screen.new
-    stripes(s.ops)
-    types = pic("types")
-    cats = pic("category")
-    (d[:moves] || []).first(4).each_with_index do |m, i|
-      x0, y0, x1, y1 = SUM_CELLS[i]
-      w = (x1 - x0 + 1) * S
-      h = (y1 - y0 + 1) * S
-      x = x0 * S
-      y = y0 * S
-      g = { "g" => i }
-      unless move_box(s.ops, x, y, w, h, m[:row].to_i, 3, nil, false, g)
-        game_box(s.ops, x, y, w, h, type_color(m[:type]))
-      end
-      cx = x + w / 2
-      txt(s.ops, m[:name], cx, y + 84, 78, INK, INK_SH, "m", "m", g.merge("fit" => w - 96))
-      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx - 201, y + 132, 3, g)
-      img(s.ops, cats, 0, m[:cat].to_i * 28, 64, 28, cx + 9, y + 132, 3, g)
-      rows = [[l(:power), m[:power]], [l(:accuracy), m[:accuracy]], ["PP", "#{m[:pp]}/#{m[:tpp]}"]]
-      rows.each_with_index do |(label, value), n|
-        ry = y + 252 + 50 * n
-        txt(s.ops, label, cx - 201, ry, 52, INK, INK_SH, "l", "m", g)
-        txt(s.ops, value.to_s, cx + 197, ry, 52, INK, INK_SH, "r", "m", g)
-      end
-      hit = { "o" => "hit", "r" => [x, y, w, h], "n" => i, "g" => i }
-      hit["drag"] = "mswap" if d[:drag]
-      s.ops << hit
-    end
-    s.button(0, 0, [134, 155, 201, 177], BLUE, l(:back), "moves:close", shadow: LAVENDER_SHADOW, center: [167, 166])
-    s.button(0, 0, [106, 155, 129, 177], GREEN, nil, "home", shadow: LAVENDER_SHADOW, icon: house_icon(7, 7))
-    img(s.ops, d[:icon], 0, 0, 64, 64, 12, H - 198, 3) if d[:icon]
-    txt(s.ops, d[:name], 12 + 192 + 6, H - 96, 78, INK, [176, 176, 200], "l", "m", { "fit" => 400 })
-    s.result("id" => "moves")
-  end
-
   # ---- bag ----
 
   BAG_ORANGE = [232, 128, 80].freeze
@@ -2553,8 +2513,8 @@ module AshDroidDS
       return
     end
     bag = live(:bag)
-    # something that is only on the game's screen: the summary, or the bag asking for a number
-    blocked = live(:summary) ? true : false
+    # something that is only on the game's screen: the summary, the Town Map, or the bag asking for a number
+    blocked = live(:summary) || live(:map) ? true : false
     if !blocked && bag && !usable_window?(live(:cmd))
       blocked = !window_text(bag, "helpwindow").empty? && window_text(bag, "msgwindow").empty?
     end
@@ -2631,6 +2591,7 @@ module AshDroidDS
     if cw && party then party_actions_state(party, cw)
     elsif cw && bag then bag_state(bag, cw)
     elsif cw then choice_state(cw)
+    elsif (map = live(:map)) && !cw then map_state(map)
     elsif summary then summary_state(summary)
     elsif bag then bag_state(bag, nil)
     elsif party then party_state(party)
@@ -2669,8 +2630,19 @@ module AshDroidDS
     case cmd
     when "a" then force(:use)
     when "back"
-      @moves_view = false if @ctx == :moves
-      force(:back)
+      if @ctx == :route && @map_wild
+        @map_wild = false
+        pbPlayCloseMenuSE
+      else
+        force(:back)
+      end
+    when /\Azoom:(\d)\z/ then @zoom = [[$1.to_i, 2].max, 4].min if @ctx == :map
+    when "wild"
+      if @ctx == :map && @map_tabs && !@map_tabs.empty?
+        @map_wild = true
+        pbPlayDecisionSE
+      end
+    when /\Atab:(\d)\z/ then @map_tab = $1.to_i if @ctx == :route
     when "home" then @unwind = 40
     when "act" then force(:action) if @ctx == :fight
     when "shift" then force(:special) if @ctx == :fight
@@ -2698,7 +2670,6 @@ module AshDroidDS
           pbPlayCursorSE
         end
       end
-    when /\Amswap:(\d+):(\d+)\z/ then swap_moves($1.to_i, $2.to_i)
     when /\Apocket:(\d+)\z/ then @goal = [:pocket, $1.to_i, 10] if live(:bag)
     when /\Aitem:(\d+)\z/ then pick_item($1.to_i)
     when "use"
@@ -2717,9 +2688,7 @@ module AshDroidDS
     when /\Apage:(\d)\z/
       if live(:summary)
         @goal = [:page, $1.to_i + 1, 8]
-        @moves_view = $1.to_i == 3
       end
-    when "moves:close" then @moves_view = false
     when /\Aopen:(\w+)\z/
       if @ctx == :home
         @open = $1.to_sym
@@ -3145,34 +3114,10 @@ module AshDroidDS
     page = scene.instance_variable_get(:@page).to_i
     party = scene.instance_variable_get(:@party) || []
     idx = scene.instance_variable_get(:@partyindex).to_i
-    in_battle = scene.instance_variable_get(:@inbattle)
-    @moves_view = false if page != 4 && !(@goal && @goal[0] == :page)
-    if @moves_view && page == 4 && !pkmn.egg?
-      key = [scene.object_id, pkmn.object_id, pkmn.moves.map { |m| m && [m.id, m.pp] }]
-      screen(:moves, key) do
-        ui.moves(name: pkmn.name.to_s, icon: species_icon(pkmn), moves: pkmn.moves.compact.map { |m| move_data(m) },
-                 drag: !in_battle && pkmn.moves.compact.length > 1)
-      end
-    else
-      screen(:summary, [scene.object_id, pkmn.object_id, pkmn.name, page, idx, party.length]) do
-        ui.summary(name: pkmn.name.to_s, icon: species_icon(pkmn), page: page - 1, first: idx <= 0,
-                   last: idx >= party.length - 1, egg: pkmn.egg?)
-      end
+    screen(:summary, [scene.object_id, pkmn.object_id, pkmn.name, page, idx, party.length]) do
+      ui.summary(name: pkmn.name.to_s, icon: species_icon(pkmn), page: page - 1, first: idx <= 0,
+                 last: idx >= party.length - 1, egg: pkmn.egg?)
     end
-  end
-
-  def self.swap_moves(a, b)
-    scene = live(:summary)
-    return unless scene && @ctx == :moves && a != b
-    return if scene.instance_variable_get(:@inbattle)
-    sel = sprites_of(scene)["movesel"]
-    return if sel && !sel.disposed? && sel.visible    # the game is in its own move selection
-    pkmn = scene.instance_variable_get(:@pokemon)
-    return unless pkmn && pkmn.moves[a] && pkmn.moves[b]
-    pkmn.moves[a], pkmn.moves[b] = pkmn.moves[b], pkmn.moves[a]
-    scene.drawPage(4)
-    pbSEPlay("GUI party switch") rescue nil
-    @key = nil
   end
 
   # ---- bag ----
@@ -3338,7 +3283,6 @@ module AshDroidDS
       end
       $game_temp.in_menu = false
       pbUseKeyItemInField(item) if item
-    when :map then modal_map
     when :pokedex
       pbPlayDecisionSE
       $game_temp.in_menu = true
@@ -3500,39 +3444,24 @@ module AshDroidDS
     []
   end
 
-  def self.modal_map
-    pbPlayDecisionSE
-    $game_temp.in_menu = true
-    info = map_info
-    tabs = wild_tabs
-    wild = false
-    tab = 0
-    modal(:map) do |cmd|
-      @modal_view = lambda do
-        if wild
-          screen(:route, [tab, ui.lang]) { ui.route(place: info[:place], tabs: tabs, tab: tab, rows: tabs[tab][:rows]) }
-        else
-          screen(:map, [@zoom, tabs.length]) { ui.region_map(info.merge(zoom: @zoom, wild: !tabs.empty?)) }
-        end
-      end
-      if wild
-        if cmd == "back" then wild = false; pbPlayCloseMenuSE
-        elsif cmd =~ /\Atab:(\d)\z/ then tab = [$1.to_i, tabs.length - 1].min
-        elsif Input.trigger?(Input::RIGHT) then tab = (tab + 1) % tabs.length; pbPlayCursorSE
-        elsif Input.trigger?(Input::LEFT) then tab = (tab - 1) % tabs.length; pbPlayCursorSE
-        end
-        next
-      end
-      next :done if cmd == "back"
-      if cmd =~ /\Azoom:(\d)\z/ then @zoom = [[$1.to_i, 2].max, 4].min
-      elsif (cmd == "wild" || Input.trigger?(Input::USE)) && !tabs.empty? then wild = true; pbPlayDecisionSE
-      elsif Input.trigger?(Input::UP) then @zoom = [@zoom + 1, 4].min
-      elsif Input.trigger?(Input::DOWN) then @zoom = [@zoom - 1, 2].max
-      end
+  # The game's Town Map is open (from the bag, the Pokégear, Fly...): the second screen shows the region map,
+  # which can be dragged and zoomed, and the wild Pokémon of the place the player is in.
+  def self.map_state(scene)
+    if @map_scene != scene.object_id
+      @map_scene = scene.object_id
+      @map_info = map_info
+      @map_tabs = wild_tabs
+      @map_wild = false
+      @map_tab = 0
     end
-    pbPlayCloseMenuSE unless @modal_exit
-  ensure
-    $game_temp.in_menu = false
+    tabs = @map_tabs
+    if @map_wild && !tabs.empty?
+      tab = [@map_tab, tabs.length - 1].min
+      screen(:route, [scene.object_id, tab]) { ui.route(place: @map_info[:place], tabs: tabs, tab: tab, rows: tabs[tab][:rows]) }
+    else
+      @map_wild = false
+      screen(:map, [scene.object_id, @zoom, tabs.length]) { ui.region_map(@map_info.merge(zoom: @zoom, wild: !tabs.empty?)) }
+    end
   end
 
   # A picture of one of the game's card screens, taken behind a picture of the map so the game screen
@@ -3730,6 +3659,7 @@ module AshDroidDS
     when "PokemonParty_Scene" then after(klass, :update, "update") { |s| AshDroidDS.mark(:party, s) }
     when "PokemonBag_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:bag, s) }
     when "PokemonSummary_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:summary, s) }
+    when "PokemonRegionMap_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:map, s) }
     when "Window_CommandPokemon", "Window_AdvancedCommandPokemon"
       after(klass, :update, "update_#{klass.name.downcase}") { |w| AshDroidDS.mark(:cmd, w) if w.visible && (!w.respond_to?(:active) || w.active) }
     when "PokemonPartyScreen"
@@ -4114,6 +4044,7 @@ module AshDroidFixes
     "PokemonPartyScreen" => ->(m) { AshDroidDS.install_menu(m) },
     "PokemonBag_Scene" => ->(m) { AshDroidDS.install_menu(m) },
     "PokemonSummary_Scene" => ->(m) { AshDroidDS.install_menu(m) },
+    "PokemonRegionMap_Scene" => ->(m) { AshDroidDS.install_menu(m) },
     "Window_CommandPokemon" => ->(m) { AshDroidDS.install_menu(m) },
     "Window_AdvancedCommandPokemon" => ->(m) { AshDroidDS.install_menu(m) },
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
