@@ -2869,15 +2869,19 @@ module AshDroidDS
     @forced = [b, Graphics.frame_count] if b
   end
 
+  # Like a real press, it reads as pressed to everyone who asks during one frame, not only to the first:
+  # the battle scene asks for the back button on its own every frame (to abort a battle that allows it)
+  # before its menus do, and used to swallow the press meant for the menu.
   def self.forced?(button)
     f = @forced
     return false unless f
-    if (Graphics.frame_count - f[1]).abs > 3
+    now = Graphics.frame_count
+    if f[2] ? now != f[2] : (now - f[1]).abs > 3
       @forced = nil
       return false
     end
     return false unless f[0] == button
-    @forced = nil
+    f[2] ||= now
     true
   rescue StandardError
     false
@@ -3029,6 +3033,9 @@ module AshDroidDS
   def self.battle_state(pair)
     scene, cw = pair
     top = top_for(scene)
+    # the window reported last frame may still be the menu the game has just left (moves -> commands)
+    own = top && window(scene, top[:mode])
+    cw = own if own && !own.disposed?
     return nil unless top && cw && !cw.disposed?
     battle = scene.instance_variable_get(:@battle)
     if top[:mode] == :fight
