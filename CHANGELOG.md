@@ -7,21 +7,31 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ## [Unreleased]
 
 ### Added
-- **Second-screen battle menus (beta, dual-screen handhelds such as the AYN Thor)**: while a battle menu is
-  open, the other screen shows it as touch buttons: Fight / Bag / Pokémon / Run, and the four moves with
-  type, PP and how effective each is against the opponent (single battles), plus Back and Mega Evolution.
-  The console's buttons keep working and the cursor is mirrored on both screens. While the second screen
-  shows the menus, the game hides its own for a cleaner battle screen.
-  The second screen is built from the game's own menu images as the game is showing them (its command
-  and move buttons, menu panels, type icons, Mega Evolution/Shift buttons, already translated), enlarged
-  pixel-sharp, with the game's font and text colours; nothing of the game ships in the APK.
-  Only enabled on known dual-screen models; nothing changes on other devices, PC or Steam Deck.
-  Test builds only, not part of a release.
-- **Second screen, overworld prototype**: a BAG button on the second screen opens the game's own bag there: the
-  game screen keeps showing the world while every frame of the real, fully working menu is sent to the second
-  screen (new `Android.companion_frame` engine call). Driven with the console's buttons; the cost per frame is
-  shown in a corner to measure it on hardware. Plain placeholder visuals: the approved designs are in
-  `docs/ds-screen/` and are not implemented yet.
+- **Second screen (beta, dual-screen handhelds such as the AYN Thor)**: the other screen shows DS-style touch
+  menus, in battle and in the overworld. Only enabled on known dual-screen models; nothing changes on other
+  devices, PC or Steam Deck. Test builds only, not part of a release.
+  - **Battle**: Fight / Bag / Pokémon / Run as large buttons, and the four moves as cards with the game's type
+    icon, PP and how effective each is against the opponent (single battles), plus Cancel and Mega Evolution.
+    The game hides its own battle menus and its message bar keeps saying "What will X do?". The bag and the
+    party opened from a battle get their own layouts (item list with icons and USE; the Pokémon's types and
+    moves with SWITCH).
+  - **Overworld home**: the party (the game's own panels, icons, HP bars and status icons), the place and the
+    time, and POKéMON, BAG, MAP, the trainer's name and SAVE. The menu button puts the cursor on these
+    buttons instead of opening the pause menu (the other face buttons still open the game's own menu).
+  - **Party, bag and summary**: the game's own screens keep running on the game screen and the second screen
+    drives them: touch a Pokémon or an item, pick one of the options the game offers, drag a Pokémon onto
+    another to swap them, change pocket, turn the summary's pages, and see or reorder the four moves at once.
+    Any other list of choices the game shows (yes / no, the pause menu...) appears as buttons too.
+  - **Map**: the region map with the player's position and three zoom levels, and the wild Pokémon of the
+    place per encounter method, with levels and encounter rate; species not seen yet show as a silhouette.
+  - **Trainer cards and save**: the game's card screens as the game draws them, and a save screen with the
+    save's details.
+  - The game stays in charge: a touch becomes the same cursor move and button press the player would make,
+    and the console's buttons keep working everywhere. Everything is drawn from the player's own copy of the
+    game (its images and fonts, enlarged by whole factors) plus buttons drawn by code; nothing of the game
+    ships in the APK. Labels follow the game's language (English, Spanish, French, German).
+  - Design notes and the mock-up generators are in `docs/ds-screen/`; `docs/ds-screen/preview/` draws any
+    screen on a PC with the same code the app uses.
 
 ## [0.7.1] - 2026-11-08
 

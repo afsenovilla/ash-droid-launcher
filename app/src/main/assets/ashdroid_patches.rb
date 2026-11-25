@@ -900,32 +900,1179 @@ rescue StandardError
   # Never break the game because of a cosmetic patch
 end
 
-# Second-screen battle menus (BETA): on dual-screen Android handhelds (AYN Thor...) the launcher
-# shows the battle command and move menus on the other screen, as touch buttons, and the game's
-# own menus can be hidden for a cleaner battle screen. The game stays in charge: this only
-# reports what its menu shows (JSON through Android.companion_send) and turns a touch into the
-# same cursor move + button press the player would make (Android.companion_poll). Without that
-# engine API or without a second screen nothing here does anything.
+# Second-screen layouts (BETA). Pure layout code: each method takes plain data gathered from the game and
+# returns the screen as a list of drawing operations for the launcher (DsScene.java), in a 1240x1080 space.
+# The layouts are the ones approved as mock-ups in docs/ds-screen (same coordinates, same rules): the game's
+# own images enlarged by whole factors and widened only by repeating uniform lines, texts in the game's
+# font at multiples of 13 px, and buttons drawn by code in "art pixels" of 6 screen pixels.
+module AshDroidDSUI
+  W = 1240
+  H = 1080
+  S = 6
+  WHITE = [248, 248, 248].freeze
+  DARK = [40, 40, 40].freeze
+  INK = [64, 64, 80].freeze
+  INK_SH = [168, 168, 192].freeze
+  BLUE = [56, 136, 232].freeze
+  GREEN = [88, 200, 88].freeze
+  ORANGE = [240, 168, 48].freeze
+  TEAL = [64, 184, 184].freeze
+  PINK = [248, 144, 200].freeze
+  PURPLE = [160, 112, 232].freeze
+  RED = [232, 96, 96].freeze
+  GREY = [168, 168, 196].freeze
+  LAVENDER_SHADOW = [124, 124, 168].freeze
+  PARTY_SHADOW = [95, 151, 151].freeze
+  FOOT_SHADOW = [25, 69, 72].freeze
+  HOUSE = [".....#.....", "....###....", "...#####...", "..#######..", ".#########.", "###########",
+           ".#########.", ".###...###.", ".###...###.", ".###...###."].freeze
+  TYPE_COLORS = {
+    "NORMAL" => [168, 168, 120], "FIRE" => [240, 128, 48], "WATER" => [104, 144, 240],
+    "ELECTRIC" => [248, 208, 48], "GRASS" => [120, 200, 80], "ICE" => [152, 216, 216],
+    "FIGHTING" => [192, 48, 40], "POISON" => [160, 64, 160], "GROUND" => [224, 192, 104],
+    "FLYING" => [168, 144, 240], "PSYCHIC" => [248, 88, 136], "BUG" => [168, 184, 32],
+    "ROCK" => [184, 160, 56], "GHOST" => [112, 88, 152], "DRAGON" => [112, 56, 248],
+    "DARK" => [112, 88, 72], "STEEL" => [184, 184, 208], "FAIRY" => [238, 153, 172]
+  }.freeze
+  # Words the game has no text for. Official terms.
+  LABELS = {
+    "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", unseen: "??? = not seen", lv: "Lv",
+              wild_title: "Wild Pokémon", card: "Card %d of %d", save_q: "Save the game?", saved: "Game saved",
+              save: "SAVE", held: "Held: %s", no_held: "No held item", type: "Type:", power: "Power",
+              accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], sum_help: "Details are shown above.",
+              drop: "Let go to swap.", grass: "GRASS", cave: "CAVE", change: "SWITCH", mega: "MEGA",
+              eff: ["No effect", "Not very effective", "Super effective"], badges: "Badges:", pokedex: "Pokédex:",
+              time: "Time:", money: "Money:", started: "Started:", no_wild: "No wild Pokémon here.",
+              busy: "", choose: "Choose a Pokémon." },
+    "es" => { back: "VOLVER", wild: "POKéMON SALVAJES", here: "Estás aquí", unseen: "??? = sin ver", lv: "Nv",
+              wild_title: "Pokémon salvajes", card: "Tarjeta %d de %d", save_q: "¿Guardar la partida?",
+              saved: "Partida guardada", save: "GUARDAR", held: "Equipado: %s", no_held: "Sin objeto equipado",
+              type: "Tipo:", power: "Potencia", accuracy: "Precisión",
+              pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], sum_help: "Los datos se ven arriba.",
+              drop: "Suelta para cambiar.", grass: "HIERBA", cave: "CUEVA", change: "CAMBIAR", mega: "MEGA",
+              eff: ["No afecta", "Poco eficaz", "Muy eficaz"], badges: "Medallas:", pokedex: "Pokédex:",
+              time: "Tiempo:", money: "Dinero:", started: "Inicio:", no_wild: "Aquí no hay Pokémon salvajes.",
+              busy: "", choose: "Elige un Pokémon." },
+    "fr" => { back: "RETOUR", wild: "POKéMON SAUVAGES", here: "Vous êtes ici", unseen: "??? = non vu", lv: "N.",
+              wild_title: "Pokémon sauvages", card: "Carte %d sur %d", save_q: "Sauvegarder la partie ?",
+              saved: "Partie sauvegardée", save: "SAUVEGARDER", held: "Tenu : %s", no_held: "Aucun objet tenu",
+              type: "Type :", power: "Puissance", accuracy: "Précision",
+              pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], sum_help: "Les données sont en haut.",
+              drop: "Relâchez pour échanger.", grass: "HERBE", cave: "GROTTE", change: "CHANGER", mega: "MÉGA",
+              eff: ["Sans effet", "Peu efficace", "Super efficace"], badges: "Badges :", pokedex: "Pokédex :",
+              time: "Temps :", money: "Argent :", started: "Début :", no_wild: "Aucun Pokémon sauvage ici.",
+              busy: "", choose: "Choisissez un Pokémon." },
+    "de" => { back: "ZURÜCK", wild: "WILDE POKéMON", here: "Du bist hier", unseen: "??? = nicht gesehen", lv: "Lv.",
+              wild_title: "Wilde Pokémon", card: "Karte %d von %d", save_q: "Spiel speichern?",
+              saved: "Spiel gespeichert", save: "SPEICHERN", held: "Trägt: %s", no_held: "Trägt kein Item",
+              type: "Typ:", power: "Stärke", accuracy: "Genauigkeit",
+              pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], sum_help: "Die Daten stehen oben.",
+              drop: "Loslassen zum Tauschen.", grass: "GRAS", cave: "HÖHLE", change: "WECHSELN", mega: "MEGA",
+              eff: ["Wirkungslos", "Nicht sehr effektiv", "Sehr effektiv"], badges: "Orden:", pokedex: "Pokédex:",
+              time: "Spielzeit:", money: "Geld:", started: "Beginn:", no_wild: "Hier gibt es keine wilden Pokémon.",
+              busy: "", choose: "Wähle ein Pokémon." }
+  }.freeze
+
+  class << self
+    attr_accessor :root, :lang
+  end
+  @root = nil
+  @lang = "en"
+  @files = {}
+  @sizes = {}
+
+  def self.l(key)
+    (LABELS[@lang] || LABELS["en"])[key] || LABELS["en"][key]
+  end
+
+  # ---- the game's files ----
+
+  # Real path of one of the game's files, whatever the letter case of its name and with or without
+  # extension ("Graphics/Pictures/Party/bg" -> ".../Graphics/Pictures/Party/bg.PNG"); nil if missing.
+  def self.file(rel)
+    return nil if rel.nil? || rel.to_s.empty?
+    rel = rel.to_s
+    return @files[rel] if @files.key?(rel)
+    base = @root || Dir.pwd
+    path = File.absolute_path?(rel) ? rel : File.join(base, rel)
+    found = File.file?(path) ? path : nil
+    unless found
+      dir = File.dirname(path)
+      name = File.basename(path).downcase
+      real_dir = File.directory?(dir) ? dir : real_directory(dir)
+      if real_dir
+        entries = Dir.children(real_dir)
+        pick = entries.find { |e| e.downcase == name } ||
+               entries.find { |e| File.basename(e, ".*").downcase == name && e =~ /\.(png|gif|jpe?g|bmp|ttf)\z/i }
+        found = File.join(real_dir, pick) if pick
+      end
+    end
+    @files[rel] = found
+  rescue StandardError
+    @files[rel] = nil
+  end
+
+  def self.real_directory(dir)
+    parent = File.dirname(dir)
+    return nil if parent == dir
+    parent = real_directory(parent) unless File.directory?(parent)
+    return nil unless parent
+    pick = Dir.children(parent).find { |e| e.downcase == File.basename(dir).downcase }
+    pick ? File.join(parent, pick) : nil
+  rescue StandardError
+    nil
+  end
+
+  def self.pic(name)
+    file("Graphics/Pictures/#{name}")
+  end
+
+  # Width and height of a PNG, from its header
+  def self.size(path)
+    return [0, 0] unless path
+    @sizes[path] ||= begin
+      head = File.binread(path, 24)
+      head && head.bytesize >= 24 && head[12, 4] == "IHDR" ? head[16, 8].unpack("NN") : [0, 0]
+    end
+  rescue StandardError
+    [0, 0]
+  end
+
+  # ---- drawing operations ----
+
+  def self.hex(c)
+    c.is_a?(String) ? c : format("#%02x%02x%02x", *c.first(3).map { |v| [[v.to_i, 0].max, 255].min })
+  end
+
+  def self.shade(c, f)
+    c.map { |v| [[(v * f).to_i, 0].max, 255].min }
+  end
+
+  def self.fill(ops, x, y, w, h, c)
+    ops << { "o" => "fill", "r" => [x, y, w, h], "c" => hex(c) }
+  end
+
+  # Part of an image (source rectangle) at a screen position, each pixel k x k (or stretched to dw x dh)
+  def self.img(ops, f, sx, sy, sw, sh, dx, dy, k = 2, extra = nil)
+    return unless f
+    op = { "o" => "img", "f" => f, "s" => [sx, sy, sw, sh], "d" => [dx, dy, sw * k, sh * k] }
+    op.merge!(extra) if extra
+    ops << op
+  end
+
+  def self.whole(ops, f, dx, dy, k = 2, extra = nil)
+    w, h = size(f)
+    img(ops, f, 0, 0, w, h, dx, dy, k, extra) if w > 0
+  end
+
+  # Text in the game's font. a: "l" / "m" / "r"; v: "a" (y is the top of the line) / "m" (y is its middle)
+  def self.txt(ops, s, x, y, z, c, k = nil, a = "l", v = "a", extra = nil)
+    return if s.nil? || s.to_s.empty?
+    op = { "o" => "txt", "s" => s.to_s, "x" => x.round, "y" => y.round, "z" => z, "c" => hex(c), "a" => a, "v" => v }
+    op["k"] = hex(k) if k
+    op.merge!(extra) if extra
+    ops << op
+  end
+
+  # Text placed as the game places it (its drawing routines add 10 px at the font's base size of 26)
+  def self.gtext(ops, s, x, y, z, base, shadow, align = 0, extra = nil)
+    txt(ops, s, x, y + 10 * z / 26, z, base, shadow, align == 1 ? "r" : "l", "a", extra)
+  end
+
+  # One axis of an image widened by repeating single lines (never scaled): segments [source start, source
+  # length, target length]
+  class Axis
+    attr_reader :segs
+
+    def initialize(len)
+      @segs = [[0, len, len]]
+    end
+
+    # insert n copies of the line at position pos (a position in the image as widened so far)
+    def repeat(pos, n)
+      out = []
+      at = 0
+      @segs.each do |s0, sl, dl|
+        if pos >= at && pos < at + dl
+          if sl == dl
+            cut = pos - at
+            out << [s0, cut, cut] if cut > 0
+            out << [s0 + cut, 1, n]
+            out << [s0 + cut, sl - cut, dl - cut]
+          else
+            out << [s0, sl, dl + n]
+          end
+        else
+          out << [s0, sl, dl]
+        end
+        at += dl
+      end
+      @segs = out
+      self
+    end
+
+    # keep only positions a...b
+    def crop(a, b)
+      out = []
+      at = 0
+      @segs.each do |s0, sl, dl|
+        lo = [a, at].max
+        hi = [b, at + dl].min
+        if hi > lo
+          out << (sl == dl ? [s0 + lo - at, hi - lo, hi - lo] : [s0, sl, hi - lo])
+        end
+        at += dl
+      end
+      @segs = out
+      self
+    end
+
+    def length
+      @segs.inject(0) { |a, s| a + s[2] }
+    end
+  end
+
+  # Draws an image through two axes at (dx, dy), k screen pixels per image pixel
+  def self.sheet(ops, f, xs, ys, dx, dy, k = 2, extra = nil)
+    return unless f
+    y = dy
+    ys.segs.each do |sy, sh, dh|
+      x = dx
+      xs.segs.each do |sx, sw, dw|
+        op = { "o" => "img", "f" => f, "s" => [sx, sy, sw, sh], "d" => [x, y, dw * k, dh * k] }
+        op.merge!(extra) if extra
+        ops << op
+        x += dw * k
+      end
+      y += dh * k
+    end
+  end
+
+  # A canvas of art pixels: buttons, cards and lettering drawn by code
+  class Art
+    attr_reader :items, :down
+    attr_accessor :bounce
+
+    def initialize(x, y, w, h, scale = S)
+      @x = x
+      @y = y
+      @w = w
+      @h = h
+      @scale = scale
+      @items = []
+      @down = nil
+      @bounce = false
+    end
+
+    def rr(box, r, inset, col, rows = nil, into = @items)
+      it = ["rr", box[0], box[1], box[2], box[3], r, inset, AshDroidDSUI.hex(col)]
+      it.push(rows[0], rows[1]) if rows
+      into << it
+      self
+    end
+
+    def rc(box, col, into = @items)
+      into << ["rc", box[0], box[1], box[2], box[3], AshDroidDSUI.hex(col)]
+      self
+    end
+
+    def el(box, col, upper = false, into = @items)
+      into << ["el", box[0], box[1], box[2], box[3], AshDroidDSUI.hex(col), upper ? 1 : 0]
+      self
+    end
+
+    def pattern(x, y, rows, col = [255, 255, 255], edge = [48, 48, 64], into = @items)
+      into << ["px", x + 1, y + 1, AshDroidDSUI.hex(edge)] + rows
+      into << ["px", x, y, AshDroidDSUI.hex(col)] + rows
+      self
+    end
+
+    def label(text, cx, cy, k = 1, max = 0, into = @items)
+      into << ["pt", text.to_s, cx, cy, k, max]
+      self
+    end
+
+    def shadow(box, r, col, into = @items)
+      rr([box[0] + 1, box[1] + 3, box[2] - 1, box[3] + 3], r, 0, col, nil, into)
+    end
+
+    # Dark outline, white rim, bevelled two-tone body; each layer is the outer shape shrunk evenly
+    def body(box, col, r, rim = 2, into = @items)
+      h = box[3] - box[1] + 1
+      sh = AshDroidDSUI.method(:shade)
+      rr(box, r, 0, [56, 56, 72], nil, into)
+      rr(box, r, 1, [240, 240, 248], nil, into)
+      rr(box, r, rim + 1, sh.call(col, 0.55), nil, into)
+      rr(box, r, rim + 2, sh.call(col, 0.84), [0, h - 5], into)
+      rr(box, r, rim + 2, col, [0, (h * 0.56).to_i], into)
+      rr(box, r, rim + 3, sh.call(col, 1.22), [rim + 3, rim + 5], into)
+    end
+
+    # A whole button, with its pressed look (sunk one art pixel, darker, no shadow) kept for the launcher
+    def button(box, col, r, shadow_col, text = nil, center = nil, rim: 2, k: 1, icon: nil)
+      shadow(box, r, shadow_col) if shadow_col
+      body(box, col, r, rim)
+      @down ||= []
+      low = [box[0], box[1] + 1, box[2], box[3] + 1]
+      body(low, AshDroidDSUI.shade(col, 0.72), r, rim, @down)
+      cx, cy = center || [(box[0] + box[2]) / 2, (box[1] + box[3]) / 2]
+      max = box[2] - box[0] - 2 * rim - 5
+      if text
+        label(text, cx, cy, k, max)
+        label(text, cx, cy + 1, k, max, @down)
+      end
+      if icon
+        icon.call(self, @items, 0)
+        icon.call(self, @down, 1)
+      end
+      self
+    end
+
+    def op(id = nil, extra = nil)
+      o = { "o" => "art", "x" => @x, "y" => @y, "w" => @w, "h" => @h, "it" => @items }
+      o["S"] = @scale if @scale != S
+      o["dn"] = @down if @down && id
+      o["id"] = id if id
+      o["bn"] = 1 if @bounce
+      o.merge!(extra) if extra
+      o
+    end
+  end
+
+  # Collects the operations of one screen and numbers its buttons
+  class Screen
+    attr_reader :ops
+
+    def initialize
+      @ops = []
+      @id = 0
+    end
+
+    def next_id
+      @id += 1
+    end
+
+    # A button on its own canvas. (px, py): where the mock-up pasted its art canvas; box: the button in it.
+    def button(px, py, box, col, text, cmd, shadow:, r: 9, rim: 2, k: 1, center: nil, bounce: false, icon: nil,
+               into: @ops, disabled: false)
+      x0, y0, x1, y1 = box
+      w = x1 - x0 + 1
+      h = y1 - y0 + 1
+      art = Art.new(px + (x0 - 1) * S, py + (y0 - 1) * S, w + 2, h + 6)
+      local = [1, 1, w, h]
+      c = center ? [center[0] - x0 + 1, center[1] - y0 + 1] : nil
+      if bounce            # the shadow stays on the ground while the button bobs
+        sh = Art.new(px + (x0 - 1) * S, py + (y0 - 1) * S, w + 2, h + 6)
+        sh.shadow(local, r, shadow)
+        into << sh.op
+        art.button(local, col, r, nil, text, c, rim: rim, k: k, icon: icon)
+        art.bounce = true
+      else
+        art.button(local, col, r, shadow, text, c, rim: rim, k: k, icon: icon)
+      end
+      id = cmd && !disabled ? next_id : nil
+      into << art.op(id)
+      if id
+        into << { "o" => "hit", "r" => [px + x0 * S, py + y0 * S, w * S, (h + 3) * S], "cmd" => cmd, "art" => id }
+      end
+    end
+
+    def result(extra = nil)
+      out = { "ops" => @ops, "fonts" => [AshDroidDSUI.file("Fonts/power green.ttf"), AshDroidDSUI.file("Fonts/power green small.ttf")] }
+      out.merge!(extra) if extra
+      out
+    end
+  end
+
+  def self.house_icon(x, y)
+    proc { |art, into, off| art.pattern(x, y + off, HOUSE, [255, 255, 255], [48, 48, 64], into) }
+  end
+
+  # Arrowhead of 5 columns: column k (from the tip) spans rows 4-k..4+k
+  def self.arrow_icon(x, y, left)
+    rows = (0...9).map do |r|
+      (0...5).map { |c| (r - 4).abs <= (left ? c : 4 - c) ? "#" : "." }.join
+    end
+    proc { |art, into, off| art.pattern(x, y + off, rows, [255, 255, 255], [48, 48, 64], into) }
+  end
+
+  def self.stripes(ops)
+    ops << { "o" => "stripes", "r" => [0, 0, W, H], "c1" => "#cecee8", "c2" => "#c8c8e4", "n" => 12 }
+  end
+
+  def self.upper(s)
+    s.to_s.upcase.gsub("POKÉMON", "POKéMON")
+  end
+
+  # ---- battle: commands ----
+
+  # d: { texts: [fight, bag, pokemon, run], index:, own: [:ok/:st/:ko/nil x6], foe: [...] }
+  def self.command(d)
+    s = Screen.new
+    stripes(s.ops)
+    dots = Art.new(0, 0, 206, 16)
+    dot = lambda do |x, st|
+      col = { ok: [96, 208, 96], st: [240, 200, 64], ko: [128, 128, 144] }[st]
+      dots.el([x, 4, x + 8, 12], [56, 56, 72]).el([x + 1, 5, x + 7, 11], col || [176, 176, 204])
+      dots.rc([x + 3, 6, x + 4, 7], [255, 255, 255]) if col
+    end
+    (d[:own] || []).first(6).each_with_index { |st, i| dot.call(5 + i * 11, st) }
+    (d[:foe] || []).first(6).each_with_index { |st, i| dot.call(206 - 14 - i * 11, st) }
+    s.ops << dots.op
+    t = (d[:texts] || []).map { |x| upper(x) }
+    idx = d[:index].to_i
+    sh = LAVENDER_SHADOW
+    s.button(0, 0, [10, 19, 195, 112], PINK, t[0], "sel:0", shadow: sh, r: 11, k: 3, center: [103, 65], bounce: idx == 0)
+    s.button(0, 0, [4, 122, 70, 174], ORANGE, t[1], "sel:1", shadow: sh, center: [37, 147], bounce: idx == 1)
+    s.button(0, 0, [77, 134, 128, 174], BLUE, t[3], "sel:3", shadow: sh, r: 8, center: [103, 153], bounce: idx == 3)
+    s.button(0, 0, [135, 122, 201, 174], GREEN, t[2], "sel:2", shadow: sh, center: [168, 147], bounce: idx == 2)
+    s.result("id" => "command")
+  end
+
+  # ---- battle: moves ----
+
+  MOVE_CELLS = [[4, 5, 101, 71], [105, 5, 202, 71], [4, 75, 101, 141], [105, 75, 202, 141]].freeze
+
+  def self.type_color(type)
+    TYPE_COLORS[type.to_s.upcase] || [104, 160, 144]
+  end
+
+  def self.card(art, box, col, r = 8)
+    art.rr(box, r, 0, [56, 56, 72]).rr(box, r, 1, [240, 240, 248])
+    art.rr(box, r, 3, shade(col, 0.6)).rr(box, r, 4, col).rr(box, r, 6, [248, 248, 236])
+  end
+
+  # d: { moves: [{name:, type:, row:, pp:, tpp:, eff: 0/1/2/nil}], index:, mega: 0/1/2, cancel: }
+  def self.fight(d)
+    s = Screen.new
+    stripes(s.ops)
+    types = pic("types")
+    idx = d[:index].to_i
+    (d[:moves] || []).first(4).each_with_index do |m, i|
+      x0, y0, x1, y1 = MOVE_CELLS[i]
+      w = x1 - x0 + 1
+      h = y1 - y0 + 1
+      px = (x0 - 1) * S
+      py = (y0 - 1) * S
+      box = [1, 1, w, h]
+      sel = i == idx
+      sh = Art.new(px, py, w + 2, h + 6)
+      sh.shadow(box, 8, LAVENDER_SHADOW)
+      s.ops << sh.op
+      art = Art.new(px, py, w + 2, h + 6)
+      col = type_color(m[:type])
+      card(art, box, col)
+      eff = m[:eff]
+      band = eff == 2 ? [72, 184, 88] : eff == 1 ? [208, 136, 56] : eff == 0 ? [136, 136, 152] : nil
+      if band
+        art.rr(box, 8, 6, band, [47, h]).rr(box, 8, 6, shade(band, 0.7), [47, 48]).rr(box, 8, 6, shade(band, 1.2), [48, 49])
+      end
+      bn = sel ? { "bn" => 1 } : {}
+      s.ops << art.op(nil, bn)
+      cx = (x0 + x1 + 1) / 2.0 * S
+      ny, iy = band ? [14.5, 25] : [20, 35]
+      txt(s.ops, m[:name], cx, (y0 + ny) * S, 78, INK, INK_SH, "m", "m", bn.merge("fit" => (x1 - x0 - 20) * S))
+      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx.to_i - 201, (y0 + iy) * S, 3, bn) if types
+      txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", cx.to_i + 197, (y0 + iy + 7) * S, 52, INK, INK_SH, "r", "m", bn)
+      txt(s.ops, l(:eff)[eff], cx, (y0 + 53.5) * S, 52, [255, 255, 255], shade(band, 0.6), "m", "m", bn) if band
+      s.ops << { "o" => "hit", "r" => [x0 * S, y0 * S, w * S, h * S], "cmd" => "sel:#{i}", "dim" => 1 }
+    end
+    s.button(0, 0, [56, 147, 149, 175], BLUE, upper(d[:cancel] || l(:back)), "back", shadow: LAVENDER_SHADOW, center: [103, 161])
+    if d[:mega].to_i > 0
+      s.button(0, 0, [4, 147, 52, 175], d[:mega].to_i == 2 ? ORANGE : PURPLE, l(:mega), "act", shadow: LAVENDER_SHADOW, center: [28, 161])
+    end
+    s.result("id" => "fight")
+  end
+
+  # ---- party ----
+
+  SIDE = 54
+  PANEL_W = 296
+  U = 3
+
+  def self.party_backdrop(ops)
+    f = pic("Party/bg")
+    xs = Axis.new(512).repeat(511, SIDE).repeat(0, SIDE)
+    ys = Axis.new(384)
+    ys.instance_variable_set(:@segs, [[320, 1, 410], [320, 50, 50], [370, 1, 66], [370, 14, 14]])
+    sheet(ops, f, xs, ys, 0, 0, 2)
+  end
+
+  # The game's party panel made taller and wider by repeating lines: 256x98 -> (256 + wide) x 138
+  def self.panel(ops, name, lx, ly, wide = 40, extra = nil)
+    f = pic("Party/#{name}") || pic("Party/panel_rect")
+    xs = Axis.new(256).repeat(128, wide)
+    ys = Axis.new(98).repeat(60, 20).repeat(46, 20)
+    sheet(ops, f, xs, ys, lx * 2, ly * 2, 2, extra)
+  end
+
+  def self.slot_xy(i)
+    [8 + (i % 2) * 308, 6 + 16 * (i % 2) + 142 * (i / 2)]
+  end
+
+  def self.panel_name(i, mon, sel)
+    return "panel_blank" unless mon
+    "panel_#{i == 0 ? 'round' : 'rect'}#{mon[:hp].to_i == 0 && !mon[:egg] ? '_faint' : ''}#{sel ? '_sel' : ''}"
+  end
+
+  # What a party panel shows, at 3 screen px per pixel of the game's panel. (x, y): the panel on screen.
+  # mon: { name:, icon:, level:, hp:, total:, gender: 0/1/nil, status: row or nil, item: icon file or nil, egg: }
+  def self.panel_contents(ops, i, mon, x, y, sel, room = 0, extra = nil)
+    at = ->(cx, cy) { [x + cx * U, y + cy * U] }
+    faint = mon[:hp].to_i == 0 && !mon[:egg]
+    unless mon[:egg]
+      whole(ops, pic("Party/overlay_hp_back#{faint ? '_faint' : ''}"), *at.call(52 + room, 36), U, extra)
+    end
+    whole(ops, pic("Party/icon_ball#{sel ? '_sel' : ''}"), *at.call(1, 0), U, extra)
+    img(ops, mon[:icon], 0, 0, 64, 64, *at.call(10, 2), U, extra) if mon[:icon]
+    gtext(ops, mon[:name], *at.call(80, 1), 78, WHITE, DARK, 0, extra)
+    if mon[:gender] == 0
+      gtext(ops, "♂", *at.call(190 + room, 1), 78, [0, 112, 248], [120, 184, 232], 1, extra)
+    elsif mon[:gender] == 1
+      gtext(ops, "♀", *at.call(190 + room, 1), 78, [232, 32, 16], [248, 168, 184], 1, extra)
+    end
+    unless mon[:egg]
+      hp = mon[:hp].to_i
+      total = [mon[:total].to_i, 1].max
+      if hp > 0
+        w = [1, hp * 96.0 / total].max
+        w = (w / 2).round * 2
+        zone = hp <= total / 4 ? 2 : hp <= total / 2 ? 1 : 0
+        img(ops, pic("Party/overlay_hp"), 0, zone * 8, w, 8, *at.call(84 + room, 38), U, extra)
+      end
+      row = faint ? 5 : mon[:status]
+      img(ops, pic("statuses"), 0, 16 * row, 44, 16, *at.call(mon[:item] ? 82 : 50, 66), U, extra) if row
+      gtext(ops, "#{hp}/#{total}", *at.call(190 + room, 50), 78, WHITE, DARK, 1, extra)
+      whole(ops, pic("Party/overlay_lv"), *at.call(6, 68), U, extra)
+      gtext(ops, mon[:level].to_s, *at.call(28, 55), 78, WHITE, DARK, 0, (extra || {}).merge("f" => 1))
+    end
+    whole(ops, mon[:item], *at.call(46, 46), 2, extra) if mon[:item]
+  end
+
+  # Help line in a window drawn with the game's menu frame, the home button (on screens more than one step
+  # away from home) and the back button
+  def self.footer(s, line, home, back_cmd = "back")
+    if line && !line.to_s.empty?
+      skin = file("Graphics/Windowskins/choice 1")
+      bw = home ? 300 : 372
+      bh = 64
+      sheet(s.ops, skin, Axis.new(48).repeat(24, bw - 48), Axis.new(48).repeat(24, bh - 48), 12, H - bh * 2 - 12, 2)
+      txt(s.ops, line, 48, H - 12 - bh - 52 + 20, 52, [80, 80, 88], [160, 160, 168], "l", "a", { "fit" => bw * 2 - 64 })
+    end
+    px = W - 100 * S - 8
+    py = H - 26 * S - 2
+    s.button(px, py, [29, 1, 98, 22], BLUE, l(:back), back_cmd, shadow: FOOT_SHADOW, center: [63, 11])
+    s.button(px, py, [1, 1, 24, 22], GREEN, nil, "home", shadow: FOOT_SHADOW, icon: house_icon(7, 6)) if home
+  end
+
+  # d: { mons: [mon or nil x6], sel:, help:, drag: true/false, home: }
+  def self.party(d)
+    s = Screen.new
+    party_backdrop(s.ops)
+    mons = (0...6).map { |i| (d[:mons] || [])[i] }
+    mons.each_with_index do |mon, i|
+      lx, ly = slot_xy(i)
+      panel(s.ops, "panel_blank", lx, ly)
+      next unless mon
+      g = { "g" => i }
+      sel = i == d[:sel].to_i
+      panel(s.ops, panel_name(i, mon, sel), lx, ly, 40, g)
+      panel_contents(s.ops, i, mon, lx * 2, ly * 2, sel, 0, g)
+      hit = { "o" => "hit", "r" => [lx * 2, ly * 2, PANEL_W * 2, 276], "cmd" => "sel:#{i}", "dim" => 1, "n" => i, "g" => i }
+      hit["drag"] = "swap" if d[:drag]
+      s.ops << hit
+    end
+    footer(s, d[:help], d[:home])
+    s.result("id" => "party")
+  end
+
+  CARD_W = 356
+
+  def self.party_card(s, mon, i)
+    room = (CARD_W - PANEL_W) * 2 / U
+    x0 = (620 - CARD_W) / 2
+    panel(s.ops, panel_name(i, mon, true), x0, 8, CARD_W - 256)
+    panel_contents(s.ops, i, mon, x0 * 2, 16, true, room)
+  end
+
+  def self.option_color(o)
+    { use: GREEN, give: ORANGE, take: RED, toss: RED, summary: BLUE, item: ORANGE, switch: GREEN, cancel: BLUE }[o[:kind]] || TEAL
+  end
+
+  # After choosing a Pokémon: its panel and what the game offers for it, stacked.
+  # d: { mon:, slot:, options: [{label:, cmd:, kind:}], index:, help: }
+  def self.party_actions(d)
+    s = Screen.new
+    party_backdrop(s.ops)
+    party_card(s, d[:mon], d[:slot].to_i)
+    opts = d[:options] || []
+    bw = CARD_W * 2 / S
+    gx = (W - (bw + 2) * S) / 2
+    cols = opts.length > 4 ? 2 : 1
+    rows = (opts.length / cols.to_f).ceil
+    high, pitch = rows > 3 ? [22, 25] : [27, 31]
+    cw = cols == 2 ? (bw - 4) / 2 : bw
+    opts.each_with_index do |o, n|
+      c = n % cols
+      by = (n / cols) * pitch
+      x = 1 + c * (cw + 4)
+      s.button(gx, 314, [x, by + 1, x + cw - 1, by + high], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW,
+               center: [x + cw / 2, by + (high + 1) / 2], bounce: n == d[:index].to_i)
+    end
+    footer(s, d[:help], true)
+    s.result("id" => "actions")
+  end
+
+  # In battle: the Pokémon's panel, its types and its moves, and CAMBIAR.
+  # d: { mon:, slot:, types: [rows], moves: [{name:, row:, pp:, tpp:}], can_switch:, switch_cmd: }
+  def self.battle_info(d)
+    s = Screen.new
+    party_backdrop(s.ops)
+    party_card(s, d[:mon], d[:slot].to_i)
+    pw = 146
+    ph = 96
+    panel = Art.new((W - pw * S) / 2, 300, pw, ph)
+    box = [0, 0, pw - 1, ph - 1]
+    panel.rr(box, 8, 0, [56, 56, 72]).rr(box, 8, 1, [240, 240, 248]).rr(box, 8, 3, [248, 248, 236])
+    s.ops << panel.op
+    types = pic("types")
+    left = 224
+    right = 1016
+    icon = ->(row, x, cy) { img(s.ops, types, 0, row.to_i * 28, 64, 28, x, cy - 42, 3) }
+    txt(s.ops, l(:type), left, 372, 65, INK, INK_SH, "l", "m")
+    (d[:types] || []).first(2).each_with_index { |row, n| icon.call(row, left + 210 + 204 * n, 372) }
+    fill(s.ops, left, 432, right - left + 1, 6, [208, 208, 196])
+    4.times do |n|
+      y = 498 + 100 * n
+      m = (d[:moves] || [])[n]
+      if m
+        icon.call(m[:row], left, y)
+        txt(s.ops, m[:name], left + 210, y, 65, INK, INK_SH, "l", "m", { "fit" => 420 })
+        txt(s.ops, "#{m[:pp]}/#{m[:tpp]}", right, y, 65, INK, INK_SH, "r", "m")
+      else
+        txt(s.ops, "-", left + 210, y, 65, INK, INK_SH, "l", "m")
+      end
+    end
+    py = H - 26 * S - 2
+    can = d[:can_switch]
+    s.button(2, py, [2, 1, 100, 22], can ? GREEN : GREY, l(:change), can ? d[:switch_cmd] : nil, shadow: FOOT_SHADOW,
+             center: [51, 11], bounce: can, disabled: !can)
+    s.button(2, py, [106, 1, 129, 22], GREEN, nil, "home", shadow: FOOT_SHADOW, icon: house_icon(7, 6))
+    s.button(2, py, [134, 1, 203, 22], BLUE, l(:back), "back", shadow: FOOT_SHADOW, center: [168, 11])
+    s.result("id" => "battle_info")
+  end
+
+  # ---- summary ----
+
+  # The game's summary is on the game screen; this is its remote.
+  # d: { name:, icon:, page: 0..4, first:, last:, egg: }
+  def self.summary(d)
+    s = Screen.new
+    party_backdrop(s.ops)
+    kids = []
+    kids << { "o" => "img", "f" => d[:icon], "s" => [0, 0, 64, 64], "d" => [0, -6, 192, 192] } if d[:icon]
+    kids << { "o" => "txt", "s" => d[:name].to_s, "x" => 0, "y" => 60, "z" => 78, "c" => hex(INK), "k" => hex([176, 200, 200]), "a" => "l", "v" => "a" }
+    s.ops << { "o" => "hb", "cx" => W / 2, "ops" => kids }
+    uw = 145
+    x0 = 13
+    px = (W - (uw + 2) * S) / 2
+    [true, false].each do |left|
+      bx = left ? 1 : uw - 25
+      usable = left ? !d[:first] : !d[:last]
+      s.button(px, 8, [bx, 1, bx + 24, 25], usable ? BLUE : GREY, nil, left ? "sum:prev" : "sum:next", shadow: PARTY_SHADOW,
+               icon: arrow_icon(11, 9, left), disabled: !usable)
+    end
+    l(:pages).each_with_index do |label, n|
+      by = 30 + n * 23
+      on = n == d[:page].to_i
+      s.button(px, 8, [x0 + 1, by, x0 + 119, by + 20], on ? ORANGE : GREY, label, d[:egg] ? nil : "page:#{n}", shadow: PARTY_SHADOW,
+               center: [x0 + 60, by + 10], disabled: d[:egg] && !on)
+    end
+    footer(s, l(:sum_help), true)
+    s.result("id" => "summary")
+  end
+
+  SUM_CELLS = [[4, 3, 101, 74], [105, 3, 202, 74], [4, 78, 101, 149], [105, 78, 202, 149]].freeze
+
+  # The Pokémon's moves, all at once. Dragging one onto another swaps them.
+  # d: { name:, icon:, moves: [{name:, type:, row:, cat:, power:, accuracy:, pp:, tpp:}], drag: }
+  def self.moves(d)
+    s = Screen.new
+    stripes(s.ops)
+    types = pic("types")
+    cats = pic("category")
+    (d[:moves] || []).first(4).each_with_index do |m, i|
+      x0, y0, x1, y1 = SUM_CELLS[i]
+      w = x1 - x0 + 1
+      h = y1 - y0 + 1
+      g = { "g" => i }
+      art = Art.new((x0 - 1) * S, (y0 - 1) * S, w + 2, h + 6)
+      art.shadow([1, 1, w, h], 8, LAVENDER_SHADOW)
+      card(art, [1, 1, w, h], type_color(m[:type]))
+      s.ops << art.op(nil, g)
+      cx = (x0 + x1 + 1) / 2.0 * S
+      txt(s.ops, m[:name], cx, (y0 + 13.5) * S, 78, INK, INK_SH, "m", "m", g.merge("fit" => (x1 - x0 - 20) * S))
+      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx.to_i - 201, (y0 + 22) * S, 3, g)
+      img(s.ops, cats, 0, m[:cat].to_i * 28, 64, 28, cx.to_i + 9, (y0 + 22) * S, 3, g)
+      rows = [[l(:power), m[:power]], [l(:accuracy), m[:accuracy]], ["PP", "#{m[:pp]}/#{m[:tpp]}"]]
+      rows.each_with_index do |(label, value), n|
+        y = (y0 + 42.5 + 8.5 * n) * S
+        txt(s.ops, label, cx.to_i - 201, y, 52, INK, INK_SH, "l", "m", g)
+        txt(s.ops, value.to_s, cx.to_i + 197, y, 52, INK, INK_SH, "r", "m", g)
+      end
+      hit = { "o" => "hit", "r" => [x0 * S, y0 * S, w * S, h * S], "n" => i, "g" => i }
+      hit["drag"] = "mswap" if d[:drag]
+      s.ops << hit
+    end
+    s.button(0, 0, [134, 155, 201, 177], BLUE, l(:back), "moves:close", shadow: LAVENDER_SHADOW, center: [167, 166])
+    s.button(0, 0, [106, 155, 129, 177], GREEN, nil, "home", shadow: LAVENDER_SHADOW, icon: house_icon(7, 7))
+    img(s.ops, d[:icon], 0, 0, 64, 64, 12, H - 198, 3) if d[:icon]
+    txt(s.ops, d[:name], 12 + 192 + 6, H - 96, 78, INK, [176, 176, 200], "l", "m", { "fit" => 400 })
+    s.result("id" => "moves")
+  end
+
+  # ---- bag ----
+
+  BAG_ORANGE = [232, 128, 80].freeze
+  BAG_INK = [88, 88, 80].freeze
+  BAG_INK_SH = [168, 184, 184].freeze
+  POCKET_KEEP = "keep:#0070f8,#90d0f8,#f8f8f8,#b8b8b8,#d8d8d8".freeze
+  POCKET_COLORS = [[[232, 136, 192], [168, 80, 128], [200, 104, 160]], [[248, 120, 64], [136, 80, 32], [192, 96, 48]],
+                   [[232, 184, 40], [136, 112, 32], [248, 248, 248]], [[168, 232, 72], [96, 144, 56], [248, 248, 248]],
+                   [[64, 192, 64], [48, 128, 80], [56, 160, 72]], [[40, 208, 200], [48, 136, 128], [248, 248, 248]],
+                   [[80, 128, 232], [16, 80, 192], [48, 104, 216]], [[152, 88, 240], [96, 24, 216], [128, 56, 232]]].freeze
+
+  def self.pocket_face(art, into, selected, light, dark, mid, off, k)
+    tone = ->(c) { c.map { |v| (v * k).to_i } }
+    art.el([2, 5, 57, 60], [176, 88, 48], false, into) if off == 0
+    art.el([2, 2 + off, 57, 57 + off], [72, 72, 72], false, into)
+    art.el([4, 4 + off, 55, 55 + off], selected ? [248, 248, 248] : tone.call([200, 200, 200]), false, into)
+    i = selected ? 8 : 6
+    box = [i, i + off, 59 - i, 59 - i + off]
+    art.el(box, tone.call(dark), false, into)
+    art.el(box, tone.call(light), true, into)
+    art.rc([i + 1, 28 + off, 58 - i, 29 + off], tone.call(mid), into)
+  end
+
+  # d: { pocket: 1.., pockets: n, colors: [[light, dark, mid] per pocket] or nil, items: [{icon:, name:, qty:}],
+  #      index:, desc:, state: :world / :battle / :item, options: [{label:, cmd:, kind:}], opt_index: }
+  def self.bag(d)
+    s = Screen.new
+    ops = s.ops
+    state = d[:state] || :world
+    cut = 180
+    top = 92
+    row = 43
+    grow_list, grow_desc = state == :world ? [44, 24] : [1, 67]
+    pocket = [d[:pocket].to_i, 1].max
+    src = pic("Bag/bg_#{pocket}") || pic("Bag/bg_1")
+    fill(ops, 0, 0, W, H, BAG_ORANGE)
+    img(ops, src, 0, 0, 1, 4, 0, 0, 2, { "d" => [0, 0, W, 8] })
+    xs = Axis.new(512).crop(cut, 512).repeat(300 - cut, 620 - 332)
+    ys = Axis.new(384).crop(4, 384).repeat(292 - 4, grow_desc).repeat(150, grow_list)
+    sheet(ops, src, xs, ys, 0, top * 2, 2)
+    fill(ops, 0, top * 2, (186 - cut) * 2, (270 + grow_list + 3) * 2, BAG_ORANGE)
+    sheet_f = pic("Bag/icon_pocket")
+    count = [[d[:pockets].to_i, 1].max, 8].min
+    count.times do |i|
+      x = 62 + i * 62
+      y = 16
+      light, dark, mid = ((d[:colors] || [])[i]) || POCKET_COLORS[i % 8]
+      selected = i + 1 == pocket
+      art = Art.new(x * 2, y * 2, 60, 63, 2)
+      pocket_face(art, art.items, selected, light, dark, mid, 0, 1.0)
+      down = []
+      pocket_face(art, down, selected, light, dark, mid, 2, 0.72)
+      art.instance_variable_set(:@down, down)
+      id = s.next_id
+      ops << art.op(id)
+      img(ops, sheet_f, i * 28, 0, 28, 28, (x + 30) * 2 - 42, (y + 30) * 2 - 42, 3, { "fx" => POCKET_KEEP }) if sheet_f
+      ops << { "o" => "hit", "r" => [x * 2, y * 2, 120, 124], "cmd" => "pocket:#{i + 1}", "art" => id }
+    end
+    # the list
+    lx = 6
+    ly = top + 10
+    lw = 620 - 6 - 52
+    visible = state == :world ? 7 : 6
+    items = d[:items] || []
+    sel = d[:index].to_i
+    inner = []
+    cur = pic("Bag/cursor")
+    if cur && sel < items.length
+      cw, = size(cur)
+      sheet(inner, cur, Axis.new(cw).repeat(141, lw - cw + 8), Axis.new(size(cur)[1]), 0, (row * sel - 7) * 2, 2)
+    end
+    items.each_with_index do |it, i|
+      y = row * i
+      whole(inner, it[:icon], 14 * 2, (y + 2) * 2, 2) if it[:icon]
+      gtext(inner, it[:name], 70 * 2, (y + 8) * 2, 52, BAG_INK, BAG_INK_SH, 0, { "fit" => (lw - 70 - 90) * 2 })
+      gtext(inner, format("x%3d", it[:qty]), (lw - 22) * 2, (y + 8) * 2, 52, BAG_INK, BAG_INK_SH, 1) if it[:qty]
+      inner << { "o" => "hit", "r" => [0, y * 2, (lw + 8) * 2, row * 2], "cmd" => "item:#{i}", "dim" => 1 }
+    end
+    view_h = row * visible * 2
+    ops << { "o" => "scroll", "key" => "bag#{pocket}", "r" => [(lx - 2) * 2, (ly - 5) * 2, (lw + 8) * 2, view_h],
+             "ch" => row * items.length * 2, "ops" => inner, "see" => [row * sel * 2, row * (sel + 1) * 2],
+             "bar" => [(620 - 28) * 2 + 4, (ly + 24) * 2, 12, view_h - 116], "bc1" => "#00000000", "bc2" => "#58483c" }
+    # the foot
+    foot = top + 284 + grow_list
+    desc = d[:desc].to_s
+    sh = [72, 76, 84]
+    opts = d[:options] || []
+    case state
+    when :battle
+      txt(ops, desc, 48, (foot + 20) * 2, 52, WHITE, [0, 0, 0], "l", "a", { "ww" => W - 96, "lh" => 64, "ml" => 2 })
+      py = foot * 2 + 12 + 27 * S
+      can = d[:can_use]
+      s.button(14, py, [2, 1, 99, 24], can ? GREEN : GREY, upper(d[:use_label]), can ? "use" : nil, shadow: sh, center: [51, 13], disabled: !can)
+      s.button(14, py, [102, 1, 199, 24], BLUE, l(:back), "back", shadow: sh, center: [151, 13])
+    when :item
+      cols = opts.length > 4 ? 3 : 2
+      bw = cols == 3 ? 64 : 98
+      opts.first(6).each_with_index do |o, n|
+        x = 2 + (n % cols) * (bw + (cols == 3 ? 3 : 2))
+        y = 1 + (n / cols) * 27
+        s.button(14, foot * 2 + 12, [x, y, x + bw - 1, y + 23], o[:kind] == :give ? PURPLE : option_color(o), upper(o[:label]), o[:cmd], shadow: sh,
+                 center: [x + bw / 2, y + 12], bounce: n == d[:opt_index].to_i)
+      end
+    else
+      txt(ops, desc, 48, (foot + 20) * 2, 52, WHITE, [0, 0, 0], "l", "a", { "ww" => 820, "lh" => 64, "ml" => 3 })
+      kw = 50
+      s.button(W - kw * S - 56, foot * 2 + 34, [1, 1, 48, 29], BLUE, l(:back), "back", shadow: sh, center: [25, 15])
+    end
+    s.result("id" => "bag")
+  end
+
+  # ---- overworld home ----
+
+  def self.topbar(ops, left, right_parts)
+    fill(ops, 0, 0, W, 15 * S, [72, 72, 104])
+    fill(ops, 0, 15 * S, W, S, [240, 240, 248])
+    txt(ops, left, 6 * S, 7 * S, 52, [255, 255, 255], [40, 40, 64], "l", "m", { "fit" => 700 })
+    kids = right_parts.each_with_index.map do |part, i|
+      { "o" => "txt", "s" => part.to_s, "x" => 0, "y" => 7 * S, "z" => 52, "c" => "#ffffff", "k" => "#282840", "a" => "l", "v" => "m",
+        "gap" => i == 0 ? 0 : 8 }
+    end
+    ops << { "o" => "hb", "cx" => (206 - 6) * S, "ax" => "r", "ops" => kids }
+  end
+
+  # d: { place:, time: "12:34", mons: [{name:, icon:, level:, hp:, total:, status:, item:, egg:}], trainer:, free:,
+  #      save_label:, bag_label:, cursor: nil or 0..4 }
+  def self.home(d)
+    s = Screen.new
+    ops = s.ops
+    stripes(ops)
+    hh, mm = d[:time].to_s.split(":")
+    topbar(ops, upper(d[:place]), [hh.to_s, ":", mm.to_s])
+    pw = 340
+    ph = 80
+    pitch = 81
+    xs = Axis.new(256).repeat(128, pw - 256)
+    compact = Axis.new(98)
+    compact.instance_variable_set(:@segs, [[0, 30, 30], [39, 31, 31], [79, 19, 19]])
+    mons = d[:mons] || []
+    6.times do |i|
+      y = 102 + i * pitch * 2
+      mon = mons[i]
+      unless mon
+        sheet(ops, pic("Party/panel_blank"), xs, compact, 10, y, 2)
+        next
+      end
+      faint = mon[:hp].to_i == 0 && !mon[:egg]
+      sheet(ops, pic("Party/panel_rect#{faint ? '_faint' : ''}"), xs, compact, 10, y, 2)
+      whole(ops, pic("Party/icon_ball"), 10 + 16, y + 4, 2)
+      gtext(ops, mon[:name], 10 + 212, y + 12, 52, WHITE, DARK, 0, { "fit" => 300 })
+      # the game's icons are 32x32 drawings stored doubled: 5 screen px per drawn pixel is still pixel-perfect
+      if mon[:icon]
+        ops << { "o" => "img", "f" => mon[:icon], "s" => [0, 0, 64, 64], "d" => [10 + 124 - 80, y + 72 - 80, 160, 160] }
+      end
+      if mon[:item]
+        iw, ih = size(mon[:item])
+        ops << { "o" => "img", "f" => mon[:item], "s" => [0, 0, iw, ih], "d" => [10 + 148, y + 82, iw * 3 / 2, ih * 3 / 2] }
+      end
+      unless mon[:egg]
+        whole(ops, pic("Party/overlay_lv"), 10 + 24, y + 120, 2)
+        gtext(ops, mon[:level].to_s, 10 + 68, y + 94, 52, WHITE, DARK, 0, { "f" => 1 })
+        whole(ops, pic("Party/overlay_hp_back#{faint ? '_faint' : ''}"), 10 + 212, y + 90, 3)
+        hp = mon[:hp].to_i
+        total = [mon[:total].to_i, 1].max
+        if hp > 0
+          w = [(hp * 96.0 / total / 2).round * 2, 2].max
+          zone = hp <= total / 4 ? 2 : hp <= total / 2 ? 1 : 0
+          img(ops, pic("Party/overlay_hp"), 0, zone * 8, w, 8, 10 + 212 + 96, y + 90 + 6, 3)
+        end
+        row = faint ? 5 : mon[:status]
+        img(ops, pic("statuses"), 0, 16 * row, 44, 16, 10 + pw * 2 - 132 - 28, y + 24, 3) if row
+      end
+    end
+    free = d[:free]
+    labels = [["POKéMON", PINK, "open:party"], [upper(d[:bag_label]), ORANGE, "open:bag"], [upper(d[:map_label]), GREEN, "open:map"],
+              [upper(d[:trainer]), TEAL, "open:card"], [upper(d[:save_label]), BLUE, "open:save"]]
+    labels.each_with_index do |(label, col, cmd), i|
+      on = free && !(d[:off] || []).include?(i)
+      s.button(0, 0, [118, 20 + i * 31, 201, 20 + i * 31 + 27], on ? col : GREY, label, on ? cmd : nil, shadow: LAVENDER_SHADOW,
+               bounce: on && d[:cursor] == i, disabled: !on)
+    end
+    s.result("id" => "home", "tap" => free ? nil : "a")
+  end
+
+  # ---- region map ----
+
+  # d: { region:, place:, map: file, marker: file or nil, pos: [x, y] in squares, zoom: 2..4, wild: true/false }
+  def self.region_map(d)
+    s = Screen.new
+    ops = s.ops
+    side = 54
+    bottom = 156
+    f = pic("mapbg")
+    sheet(ops, f, Axis.new(512).repeat(505, side).repeat(5, side), Axis.new(384).repeat(378, bottom), 0, 0, 2) if f
+    fill(ops, 0, 0, W, 84, [24, 40, 136])
+    fill(ops, 0, 0, W, 8, [72, 96, 240])
+    fill(ops, 0, 8, W, 8, [48, 72, 208])
+    title = [d[:region], d[:place]].compact.reject { |x| x.to_s.empty? }.join("  ·  ")
+    gtext(ops, title, 36, 2, 52, WHITE, [0, 0, 0], 0, { "fit" => 800 })
+    gtext(ops, l(:here), W - 32, 2, 52, WHITE, [0, 0, 0], 1)
+    zoom = [[d[:zoom].to_i, 2].max, 4].min
+    top = 84
+    rowh = 196
+    vw = W
+    vh = H - rowh - top
+    mw, mh = size(d[:map])
+    px = -8 + d[:pos][0].to_i * 16
+    py = -8 + d[:pos][1].to_i * 16
+    window = lambda do |sz, view, centre|
+      next [0, (view - sz) / 2] if sz <= view
+      [[0, [sz - view, centre - view / 2].min].max, 0]
+    end
+    cx, ox = window.call(mw * zoom, vw - 8, (px + 16) * zoom)
+    cy, oy = window.call(mh * zoom, vh - 8, (py + 16) * zoom)
+    pw = [mw * zoom - cx, vw - 8].min
+    phh = [mh * zoom - cy, vh - 8].min
+    whole_map = pw != vw - 8 || phh != vh - 8
+    fill(ops, 0, top, vw, vh, whole_map ? [24, 40, 136] : [0, 0, 0])
+    fill(ops, ox, top + oy, pw + 8, phh + 8, [0, 0, 0]) if whole_map
+    view = { "o" => "scroll", "key" => "map", "r" => [4 + ox, top + 4 + oy, pw, phh], "ch" => phh, "ops" => [] }
+    inner = view["ops"]
+    whole(inner, d[:map], -cx, -cy, zoom) if mw > 0
+    whole(inner, d[:marker], px * zoom - cx, py * zoom - cy, zoom) if d[:marker]
+    cursor = pic("mapCursor")
+    img(inner, cursor, 0, 0, 32, 32, px * zoom - cx, py * zoom - cy, zoom) if cursor
+    ops << view
+    sh = [16, 24, 96]
+    zx = W - 24 * S - 6
+    zy = top + vh - 50 * S - 6
+    bar = lambda do |art, into, off, plus|
+      art.rc([7, 11 + off, 17, 13 + off], [48, 48, 64], into)
+      art.rc([11, 7 + off, 13, 17 + off], [48, 48, 64], into) if plus
+      art.rc([6, 10 + off, 16, 12 + off], [255, 255, 255], into)
+      art.rc([10, 6 + off, 12, 16 + off], [255, 255, 255], into) if plus
+    end
+    plus = proc { |art, into, off| bar.call(art, into, off, true) }
+    minus = proc { |art, into, off| bar.call(art, into, off, false) }
+    s.button(zx, zy, [1, 1, 22, 22], zoom == 4 ? [136, 136, 160] : BLUE, nil, zoom == 4 ? nil : "zoom:#{zoom + 1}", shadow: sh, icon: plus, disabled: zoom == 4)
+    s.button(zx, zy, [1, 26, 22, 47], zoom == 2 ? [136, 136, 160] : BLUE, nil, zoom == 2 ? nil : "zoom:#{zoom - 1}", shadow: sh, icon: minus, disabled: zoom == 2)
+    fill(ops, 0, H - rowh, W, rowh, [32, 48, 152])
+    by = H - rowh + 2
+    wild = d[:wild]
+    s.button(2, by, [2, 2, 128, 28], wild ? GREEN : [136, 136, 160], l(:wild), wild ? "wild" : nil, shadow: sh, center: [65, 15], disabled: !wild)
+    s.button(2, by, [134, 2, 203, 28], BLUE, l(:back), "back", shadow: sh, center: [168, 15])
+    s.result("id" => "map")
+  end
+
+  # ---- wild Pokémon of the place ----
+
+  # d: { place:, tabs: [{label:, col:}], tab:, rows: [{icon:, name:, seen:, lo:, hi:, pct:}] }
+  def self.route(d)
+    s = Screen.new
+    ops = s.ops
+    stripes(ops)
+    fill(ops, 0, 0, W, 15 * S, [72, 72, 104])
+    fill(ops, 0, 15 * S, W, S, [240, 240, 248])
+    txt(ops, upper(d[:place]), 6 * S, 7 * S, 52, [255, 255, 255], [40, 40, 64], "l", "m", { "fit" => 620 })
+    txt(ops, l(:wild_title), (206 - 6) * S, 7 * S, 52, [255, 255, 255], [40, 40, 64], "r", "m")
+    tabs = d[:tabs] || []
+    n = [tabs.length, 1].max
+    tw = (200 - 3 * (n - 1)) / n
+    tabs.each_with_index do |t, i|
+      x = 4 + i * (tw + 3)
+      on = i == d[:tab].to_i
+      s.button(0, 0, [x, 17, x + tw - 1, 38], on ? (t[:col] || GREEN) : GREY, upper(t[:label]), "tab:#{i}", shadow: LAVENDER_SHADOW, rim: 1,
+               center: [x + tw / 2, 27])
+    end
+    rows = d[:rows] || []
+    inner = []
+    rows.each_with_index do |r, i|
+      y = i * 23 * S
+      art = Art.new(0, y, 196, 25)
+      b = [1, 1, 193, 22]
+      art.rr([b[0] + 1, b[1] + 2, b[2] - 1, b[3] + 2], 9, 0, LAVENDER_SHADOW)
+      art.rr(b, 9, 0, [56, 56, 72]).rr(b, 9, 1, [240, 240, 248]).rr(b, 9, 2, [232, 228, 248])
+      art.rr([b[0] + 112, b[1] + 8, b[0] + 154, b[1] + 14], 2, 0, [56, 56, 72])
+      art.rc([b[0] + 113, b[1] + 9, b[0] + 113 + [1, (40 * r[:pct].to_i / 100)].max, b[1] + 13], [96, 208, 96])
+      inner << art.op
+      extra = r[:seen] ? nil : { "fx" => "sil:#484860" }
+      img(inner, r[:icon], 0, 0, 64, 64, (b[0] + 2) * S, y + b[1] * S - 2, 2, extra) if r[:icon]
+      lv = r[:lo] == r[:hi] ? "#{l(:lv)} #{r[:lo]}" : "#{l(:lv)} #{r[:lo]}-#{r[:hi]}"
+      txt(inner, r[:seen] ? r[:name] : "???", (b[0] + 26) * S, y + (b[1] + 6.5) * S, 52, INK, [176, 176, 200], "l", "m", { "fit" => 500 })
+      txt(inner, lv, (b[0] + 26) * S, y + (b[1] + 15) * S, 52, [104, 104, 128], [200, 200, 220], "l", "m")
+      txt(inner, "#{r[:pct]}%", (b[2] - 6) * S, y + (b[1] + 11) * S, 52, INK, [176, 176, 200], "r", "m")
+    end
+    view_h = 5 * 23 * S
+    if rows.empty?
+      txt(ops, l(:no_wild), W / 2, 90 * S, 52, INK, [176, 176, 200], "m", "m")
+    else
+      ops << { "o" => "scroll", "key" => "route#{d[:tab]}", "r" => [3 * S, 40 * S, 196 * S, view_h], "ch" => rows.length * 23 * S, "ops" => inner,
+               "bar" => [199 * S, 43 * S, 4 * S, 110 * S], "bc1" => "#a8a8c4", "bc2" => "#585878" }
+      txt(ops, l(:unseen), 8 * S, 168 * S, 52, INK, [176, 176, 200], "l", "m")
+    end
+    s.button(0, 0, [134, 157, 201, 178], BLUE, l(:back), "back", shadow: LAVENDER_SHADOW, center: [167, 167])
+    s.button(0, 0, [106, 157, 129, 178], GREEN, nil, "home", shadow: LAVENDER_SHADOW, icon: house_icon(7, 6))
+    s.result("id" => "route")
+  end
+
+  # ---- trainer cards ----
+
+  # The game's own card screens, captured as they are drawn. d: { shot: png file, page: 1.., total: }
+  def self.profile(d)
+    s = Screen.new
+    ops = s.ops
+    x0 = 54
+    y0 = 30
+    bg = pic("Trainer Card/bg")
+    bw, bh = size(bg)
+    if bw > 0
+      # tiled like the game's plane, lined up with the tiles inside the captured screen
+      ops << { "o" => "tile", "f" => bg, "r" => [0, 0, W, H], "k" => 2, "at" => [(x0 % bw - bw) * 2, (y0 % bh - bh) * 2] }
+    else
+      fill(ops, 0, 0, W, H, [160, 208, 240])
+    end
+    whole(ops, d[:shot], x0 * 2, y0 * 2, 2) if d[:shot]
+    sh = [96, 124, 144]
+    total = d[:total].to_i
+    if total > 1
+      [true, false].each do |left|
+        px = left ? 2 : W - 17 * S - 2
+        s.button(px, (y0 + 192) * 2 - 120, [0, 0, 16, 38], BLUE, nil, left ? "card:prev" : "card:next", shadow: sh, r: 7, rim: 1,
+                 icon: arrow_icon(7, 16, left))
+      end
+      txt(ops, format(l(:card), d[:page].to_i, total), 48, H - 104, 52, WHITE, [72, 104, 136], "l", "a")
+    end
+    s.button(W - 72 * S - 8, H - 26 * S - 2, [1, 1, 70, 22], BLUE, l(:back), "back", shadow: sh, center: [35, 11])
+    s.result("id" => "profile")
+  end
+
+  # ---- save ----
+
+  # d: { done:, place:, name:, male:, id:, rows: [[label, value]...], party: [icon files], char: file }
+  def self.save(d)
+    s = Screen.new
+    ops = s.ops
+    u = 3
+    lw = 414
+    lh = 294
+    px = (lw - 408) / 2
+    py = 4
+    fill(ops, 0, 0, W, H, [72, 72, 104])
+    img(ops, pic("loadbg"), 0, 0, lw, lh, -1, 0, u)
+    panels = pic("loadPanels")
+    ys = Axis.new(536).crop(222, 444).repeat(150, 64)
+    sheet(ops, panels, Axis.new(408), ys, px * u - 1, py * u, u)
+    at = ->(x, y) { [(px + x) * u - 1, (py + y) * u] }
+    text_c = [232, 232, 232]
+    text_sh = [136, 136, 136]
+    if d[:char]
+      cw, chh = size(d[:char])
+      cw /= 4
+      chh /= 4
+      img(ops, d[:char], 0, 0, cw, chh, *at.call(64 - cw / 2, 80 - chh / 2), u)
+    end
+    (d[:party] || []).first(6).each_with_index do |icon, i|
+      img(ops, icon, 0, 0, 64, 64, *at.call(286 + 66 * (i % 2) - 32, 96 + 66 * (i / 2) - 32), u)
+    end
+    gtext(ops, d[:done] ? l(:saved) : l(:save_q), *at.call(32, 4), 78, text_c, text_sh)
+    gtext(ops, d[:place], *at.call(386, 4), 78, text_c, text_sh, 1, { "fit" => 420 })
+    name_c, name_sh = d[:male] ? [[56, 160, 248], [56, 104, 168]] : [[240, 72, 88], [160, 64, 64]]
+    gtext(ops, d[:name], *at.call(112, 40), 78, name_c, name_sh)
+    gtext(ops, d[:id], *at.call(112, 70), 78, text_c, text_sh)
+    (d[:rows] || []).first(5).each_with_index do |(label, value), n|
+      gtext(ops, label, *at.call(32, 110 + 32 * n), 78, text_c, text_sh)
+      gtext(ops, value, *at.call(236, 110 + 32 * n), 78, text_c, text_sh, 1)
+    end
+    fill(ops, 0, lh * u - 6, W, H - lh * u + 6, [72, 72, 104])
+    fill(ops, 0, lh * u - 6, W, 6, [240, 240, 248])
+    sh = [40, 40, 64]
+    by = H - 32 * S + 2
+    unless d[:done]
+      s.button(2, by, [3, 1, 128, 28], GREEN, upper(d[:save_label] || l(:save)), "save", shadow: sh, center: [65, 14], bounce: true)
+    end
+    s.button(2, by, [134, 6, 203, 28], BLUE, l(:back), "back", shadow: sh, center: [168, 17])
+    s.result("id" => "save")
+  end
+
+  # ---- any other list of choices the game shows ----
+
+  # d: { help:, options: [{label:, cmd:}], index: }
+  def self.choice(d)
+    s = Screen.new
+    stripes(s.ops)
+    opts = d[:options] || []
+    n = opts.length
+    cols = n > 10 ? 3 : n > 5 ? 2 : 1
+    rows = (n / cols.to_f).ceil
+    bw = cols == 1 ? 150 : cols == 2 ? 97 : 64
+    gap = 4
+    total = cols * bw + (cols - 1) * gap
+    x0 = (206 - total) / 2
+    pitch = rows > 5 ? 24 : 29
+    high = pitch - 5
+    y0 = [8, (150 - rows * pitch) / 2].max
+    opts.each_with_index do |o, i|
+      c = i / rows
+      r = i % rows
+      x = x0 + c * (bw + gap)
+      y = y0 + r * pitch
+      col = [PINK, ORANGE, GREEN, TEAL, BLUE, PURPLE][i % 6]
+      col = BLUE if o[:kind] == :cancel
+      s.button(0, 0, [x, y, x + bw - 1, y + high], col, upper(o[:label]), o[:cmd], shadow: LAVENDER_SHADOW, bounce: i == d[:index].to_i)
+    end
+    if d[:help] && !d[:help].to_s.empty?
+      txt(s.ops, d[:help], 48, H - 150, 52, INK, [176, 176, 200], "l", "a", { "ww" => 700, "lh" => 60, "ml" => 2 })
+    end
+    s.button(0, 0, [134, 155, 201, 177], BLUE, l(:back), "back", shadow: LAVENDER_SHADOW, center: [167, 166])
+    s.result("id" => "choice")
+  end
+
+  # Nothing to choose right now (a message, an animation): a touch anywhere is the confirm button
+  def self.idle(_d = nil)
+    s = Screen.new
+    stripes(s.ops)
+    s.result("id" => "idle", "tap" => "a")
+  end
+end
+
+# Second screen (BETA): on dual-screen Android handhelds (AYN Thor...) the launcher shows DS-style touch
+# menus on the other screen, in battle and in the overworld. The game stays in charge: its own menus keep
+# running on the game screen and this module only (1) reports what they show, laid out for the second
+# screen by AshDroidDSUI, and (2) turns a touch into what the player would do with the buttons (move the
+# game's cursor and press the button it is waiting for). A few screens that the game has no menu for (home,
+# region map with the wild Pokémon of the place, trainer cards, save) are run from here.
+# Bridge to the launcher: Android.companion_send (state, JSON) and Android.companion_poll (touch commands).
+# Without that engine API or without a second screen nothing here does anything.
 module AshDroidDS
   ACTIVE_EVERY = 40 # frames between "is the second screen showing?" checks
-  IDLE = { "screen" => "idle" }.freeze
+  GRACE = 12        # frames a screen stays up after the game stops reporting it (fades, animations)
   JSON_ESC = { '"' => '\\"', "\\" => "\\\\", "\n" => "\\n", "\r" => "\\r", "\t" => "\\t" }.freeze
-  BUTTONS = { use: [:USE, :C], back: [:BACK, :B], action: [:ACTION, :A], special: [:SPECIAL] }.freeze
-  # The game's own menu images are handed to the second screen as PNG files in this folder
-  # (rewritten every battle), so it shows exactly the buttons the game is showing.
-  ART_DIR = "ashdroid_ds"
-  # Second-screen labels the game has no text for. Official terms; English for other languages.
-  LABELS = {
-    nil => { "back" => "Back", "mega" => "Mega Evolution",
-             "eff" => ["No effect", "Not very effective", "Super effective"] },
-    "es" => { "back" => "Atrás", "mega" => "Megaevolución",
-              "eff" => ["No afecta", "Poco eficaz", "Muy eficaz"] }
-  }.freeze
+  BUTTONS = { use: [:USE, :C], back: [:BACK, :B], action: [:ACTION, :A], special: [:SPECIAL],
+              up: [:UP], down: [:DOWN], left: [:LEFT], right: [:RIGHT] }.freeze
+  SHOT_DIR = "ashdroid_ds"
 
   @stack = []
   @hide = false
   @active = nil
   @tick = 0
+  @tickn = 0
+  @seen = {}
+  @modal_cmds = []
+  @zoom = 2
 
   def self.available?
     if @available.nil?
@@ -948,6 +2095,7 @@ module AshDroidDS
       if @active != was
         AshDroidLog.log("ds: second screen #{@active ? 'on' : 'off'}")
         @last = nil            # a screen that just appeared needs the current state
+        @key = nil
         @restore = !@active    # and a menu hidden for it must come back if it went away
       end
     end
@@ -967,6 +2115,7 @@ module AshDroidDS
       s = s.scrub("?") unless s.valid_encoding?
       '"' + s.gsub(/["\\\x00-\x1f]/) { |c| JSON_ESC[c] || format("\\u%04x", c.ord) } + '"'
     when Integer then v.to_s
+    when Float then v.finite? ? v.round(2).to_s : "0"
     when true, false then v.to_s
     when nil then "null"
     else json(v.to_s)
@@ -974,180 +2123,457 @@ module AshDroidDS
   end
 
   def self.publish(state)
+    return if state.equal?(@last_state) && @last   # the same screen object as last frame: nothing new
+    @last_state = state
     s = json(state)
     return if s == @last
     @last = s
     ::Android.companion_send(s)
   end
 
-  def self.labels
-    LABELS[AshDroidText.art_lang] || LABELS[nil]
-  rescue StandardError
-    LABELS[nil]
+  def self.log_once(tag, e)
+    @errors ||= Hash.new(0)
+    @errors[tag] += 1
+    AshDroidLog.log("ds: #{tag} #{e.class}: #{e.message}") if @errors[tag] <= 3
   end
 
-  # ---- what the menus show ----
+  def self.ui
+    AshDroidDSUI
+  end
+
+  # ---- what the game is showing ----
+
+  def self.mark(kind, obj)
+    @seen[kind] = [obj, @tickn]
+  end
+
+  # The object a hook reported since the previous frame, if it did
+  def self.live(kind)
+    s = @seen[kind]
+    s && s[1] >= @tickn - 1 ? s[0] : nil
+  end
+
+  def self.usable_window?(w)
+    return false unless w && !w.disposed? && w.visible
+    return false if w.respond_to?(:active) && !w.active
+    c = commands_of(w)
+    c.length > 0 && c.length <= 15
+  rescue StandardError
+    false
+  end
+
+  def self.commands_of(w)
+    c = w.respond_to?(:commands) ? w.commands : w.instance_variable_get(:@commands)
+    c.is_a?(Array) ? c : []
+  rescue StandardError
+    []
+  end
+
+  def self.label_of(c)
+    (c.is_a?(Array) ? c[0] : c).to_s.gsub(/<[^>]*>/, "").strip
+  end
+
+  # What a command of the game's menus is, by its text in the current language
+  def self.kind_of(label)
+    @kinds = nil if @kinds_lang != ui.lang
+    @kinds_lang = ui.lang
+    @kinds ||= {
+      _INTL("Summary") => :summary, _INTL("Item") => :item, _INTL("Use") => :use, _INTL("Give") => :give,
+      _INTL("Take") => :take, _INTL("Toss") => :toss, _INTL("Switch") => :switch, _INTL("Switch In") => :switch_in,
+      _INTL("Cancel") => :cancel, _INTL("Quit") => :cancel, _INTL("Exit") => :cancel, _INTL("No") => :cancel
+    }
+    @kinds[label]
+  rescue StandardError, NameError
+    nil
+  end
+
+  def self.options_of(w, skip = [])
+    list = []
+    commands_of(w).each_with_index do |c, i|
+      label = label_of(c)
+      kind = kind_of(label)
+      next if skip.include?(kind)
+      list << { label: label, cmd: "opt:#{i}", kind: kind, at: i }
+    end
+    list
+  end
+
+  # ---- game data ----
+
+  def self.species_icon(pkmn)
+    ui.file(GameData::Species.icon_filename_from_pokemon(pkmn))
+  rescue StandardError, NameError
+    nil
+  end
+
+  def self.item_icon(item)
+    return nil unless item
+    ui.file(GameData::Item.icon_filename(item))
+  rescue StandardError, NameError
+    nil
+  end
+
+  def self.status_row(pkmn)
+    return nil if pkmn.status.nil? || pkmn.status == :NONE || pkmn.status == 0
+    GameData::Status.get(pkmn.status).id_number - 1
+  rescue StandardError, NameError
+    nil
+  end
+
+  def self.type_row(type)
+    GameData::Type.get(type).id_number.to_i
+  rescue StandardError, NameError
+    0
+  end
+
+  def self.mon_data(pkmn)
+    return nil unless pkmn
+    egg = pkmn.egg?
+    gender = egg ? nil : pkmn.gender
+    { name: pkmn.name.to_s, icon: species_icon(pkmn), level: pkmn.level.to_i, hp: pkmn.hp.to_i, total: pkmn.totalhp.to_i,
+      gender: gender == 0 ? 0 : gender == 1 ? 1 : nil, status: egg ? nil : status_row(pkmn),
+      item: egg ? nil : item_icon(pkmn.item), egg: egg }
+  rescue StandardError, NameError => e
+    log_once("mon", e)
+    { name: "?", level: 0, hp: 0, total: 1 }
+  end
+
+  def self.mon_digest(pkmn)
+    return nil unless pkmn
+    [pkmn.object_id, pkmn.species, pkmn.name, pkmn.level, pkmn.hp, pkmn.totalhp, pkmn.status, pkmn.item, pkmn.egg?]
+  rescue StandardError, NameError
+    [pkmn.object_id]
+  end
+
+  def self.move_data(m)
+    total = m.respond_to?(:total_pp) ? m.total_pp : (m.totalpp rescue 0)
+    power = m.respond_to?(:base_damage) ? m.base_damage : (m.baseDamage rescue 0)
+    acc = m.accuracy.to_i
+    { name: m.name.to_s, type: m.type.to_s, row: type_row(m.type), cat: (m.category.to_i rescue 2),
+      power: power.to_i <= 0 ? "---" : power.to_i == 1 ? "???" : power.to_i, accuracy: acc <= 0 ? "---" : "#{acc}%",
+      pp: m.pp.to_i, tpp: total.to_i }
+  rescue StandardError, NameError => e
+    log_once("move", e)
+    { name: m.name.to_s, type: "", row: 0, cat: 2, power: "---", accuracy: "---", pp: 0, tpp: 0 }
+  end
+
+  def self.sprites_of(scene)
+    s = scene.instance_variable_get(:@sprites)
+    s.is_a?(Hash) ? s : {}
+  end
+
+  def self.help_text(scene)
+    w = sprites_of(scene)["helpwindow"]
+    w && !w.disposed? && w.visible && w.respond_to?(:text) ? w.text.to_s.gsub(/<[^>]*>/, "") : ""
+  rescue StandardError
+    ""
+  end
+
+  # ---- every frame (Graphics.update) ----
+
+  def self.tick
+    return unless available?
+    return if @in_tick
+    @in_tick = true
+    if active?
+      ui.lang = (AshDroidText.art_lang rescue nil) || "en" if @tickn % 60 == 0 || @lang_set.nil?
+      @lang_set = true
+      8.times do
+        cmd = ::Android.companion_poll
+        break unless cmd
+        handle(cmd.to_s)
+      end
+      pursue
+      state = compose
+      publish(state) if state
+    end
+    @tickn += 1
+  rescue StandardError, NameError => e
+    log_once("tick", e)
+  ensure
+    @in_tick = false
+  end
+
+  # Builds the screen only when what it shows may have changed
+  def self.screen(ctx, key)
+    key = [ctx, ui.lang, key]
+    @ctx = ctx
+    @idle_since = nil
+    return @state if key == @key && @state
+    @key = key
+    @state = yield
+  end
+
+  def self.compose
+    return modal_state if @modal
+    cw = live(:cmd)
+    cw = nil unless usable_window?(cw)
+    @auto = nil if @auto && @tickn > @auto[1]
+    if cw && @auto
+      i = commands_of(cw).index { |c| label_of(c) == @auto[0] }
+      @auto = nil
+      if i
+        cw.index = i
+        force(:use)
+        return nil
+      end
+    end
+    party = live(:party)
+    bag = live(:bag)
+    summary = live(:summary)
+    battle = live(:battle)
+    if cw && party then party_actions_state(party, cw)
+    elsif cw && bag then bag_state(bag, cw)
+    elsif cw then choice_state(cw)
+    elsif summary then summary_state(summary)
+    elsif bag then bag_state(bag, nil)
+    elsif party then party_state(party)
+    elsif battle && battle_state(battle) then @state
+    elsif live(:world) && !$game_temp.in_menu then home_state
+    else
+      # nothing reported: keep the last screen through fades and animations, then a plain "touch = confirm"
+      @idle_since ||= @tickn
+      return nil if @state && @tickn - @idle_since < GRACE
+      @ctx = :idle
+      @key = nil
+      @state = (@idle_state ||= ui.idle)
+    end
+  rescue StandardError, NameError => e
+    log_once("compose", e)
+    nil
+  end
+
+  # ---- touches ----
+
+  def self.handle(cmd)
+    case cmd
+    when "hello"
+      @last = nil
+      @last_state = nil
+      @key = nil
+      return
+    when /\Ahide:([01])\z/
+      @hide = $1 == "1"
+      return
+    end
+    if @modal
+      @modal_cmds << cmd
+      return
+    end
+    case cmd
+    when "a" then force(:use)
+    when "back"
+      @moves_view = false if @ctx == :moves
+      force(:back)
+    when "home" then @unwind = 40
+    when "act" then force(:action) if @ctx == :fight
+    when "shift" then force(:special) if @ctx == :fight
+    when /\Asel:(\d+)\z/ then select($1.to_i)
+    when /\Aopt:(\d+)\z/
+      cw = live(:cmd)
+      if usable_window?(cw) && $1.to_i < commands_of(cw).length
+        cw.index = $1.to_i
+        force(:use)
+      end
+    when /\Aswap:(\d+):(\d+)\z/ then swap_party($1.to_i, $2.to_i)
+    when /\Amswap:(\d+):(\d+)\z/ then swap_moves($1.to_i, $2.to_i)
+    when /\Apocket:(\d+)\z/ then @goal = [:pocket, $1.to_i, 10] if live(:bag)
+    when /\Aitem:(\d+)\z/ then pick_item($1.to_i)
+    when "use"
+      if @ctx == :bag && live(:bag)
+        cw = live(:cmd)
+        use = usable_window?(cw) ? commands_of(cw).index { |c| kind_of(label_of(c)) == :use } : nil
+        if use                              # the game is already asking what to do with the item
+          cw.index = use
+        else
+          @auto = [_INTL("Use"), @tickn + 45]
+        end
+        force(:use)
+      end
+    when "sum:prev" then force(:up) if live(:summary)
+    when "sum:next" then force(:down) if live(:summary)
+    when /\Apage:(\d)\z/
+      if live(:summary)
+        @goal = [:page, $1.to_i + 1, 8]
+        @moves_view = $1.to_i == 3
+      end
+    when "moves:close" then @moves_view = false
+    when /\Aopen:(\w+)\z/ then @open = $1.to_sym if @ctx == :home
+    end
+  rescue StandardError, NameError => e
+    log_once("handle", e)
+  end
+
+  def self.select(n)
+    case @ctx
+    when :command, :fight
+      scene, cw = live(:battle)
+      return unless scene && cw && n < @count.to_i
+      cw.index = n if cw.index != n
+      force(:use)
+    when :party
+      scene = live(:party)
+      return unless scene
+      party = scene.instance_variable_get(:@party)
+      return unless party && party[n]
+      scene.pbSelect(n)
+      force(:use)
+    end
+  end
+
+  # Things that take several button presses: one press every few frames until the game gets there
+  def self.pursue
+    if @unwind
+      @unwind -= 1
+      done = @unwind <= 0 || live(:world) || live(:battle)
+      if done
+        @unwind = nil
+      elsif !@forced && @tickn % 4 == 0
+        force(:back)
+      end
+      return
+    end
+    return unless @goal && !@forced && @tickn % 3 == 0
+    kind, target, tries = @goal
+    @goal = tries > 1 ? [kind, target, tries - 1] : nil
+    case kind
+    when :pocket
+      scene = live(:bag)
+      win = scene && sprites_of(scene)["itemlist"]
+      if !win || win.pocket == target
+        @goal = nil
+      else
+        n = (PokemonBag.numPockets rescue 8)
+        force((target - win.pocket) % n <= n / 2 ? :right : :left)
+      end
+    when :page
+      scene = live(:summary)
+      page = scene && scene.instance_variable_get(:@page)
+      if !page || page == target
+        @goal = nil
+      else
+        force(target > page ? :right : :left)
+      end
+    end
+  rescue StandardError, NameError => e
+    @goal = nil
+    log_once("pursue", e)
+  end
+
+  # ---- a touch becomes the button press the menu is waiting for ----
+
+  def self.force(name)
+    b = BUTTONS[name].map { |c| Input.const_defined?(c) ? Input.const_get(c) : nil }.compact.first
+    @forced = [b, Graphics.frame_count] if b
+  end
+
+  def self.forced?(button)
+    f = @forced
+    return false unless f
+    if (Graphics.frame_count - f[1]).abs > 3
+      @forced = nil
+      return false
+    end
+    return false unless f[0] == button
+    @forced = nil
+    true
+  rescue StandardError
+    false
+  end
+
+  def self.forcing?
+    !@forced.nil?
+  end
+
+  # ---- battle ----
 
   def self.enter(scene, mode, data)
     return unless available?
-    unless @scene.equal?(scene)
-      @stack.clear
-      reset_art
-    end
+    @stack.clear unless @scene.equal?(scene)
     @scene = scene
+    @prompt = nil if mode == :command
     @stack.push(data.merge(mode: mode))
   rescue StandardError => e
-    AshDroidLog.log("ds: enter #{e.class}: #{e.message}")
+    log_once("enter", e)
   end
 
   def self.leave(mode)
     return unless available?
     i = @stack.rindex { |d| d[:mode] == mode }
     @stack.slice!(i..-1) if i
-    publish(IDLE) if @active && @stack.empty?
   rescue StandardError
   end
 
   def self.window(scene, mode)
-    sprites = scene.instance_variable_get(:@sprites)
-    sprites.is_a?(Hash) ? sprites[mode == :fight ? "fightWindow" : "commandWindow"] : nil
+    sprites_of(scene)[mode == :fight ? "fightWindow" : "commandWindow"]
   end
 
-  # ---- the game's own images ----
-
-  def self.reset_art
-    @sheets = {}
-    @pixels = {}
-    @battle_n = (@battle_n || 0) + 1
-    Dir.glob(File.join(ART_DIR, "*.png")).each { |f| File.delete(f) rescue nil }
-  rescue StandardError
+  def self.top_for(scene)
+    @scene.equal?(scene) ? @stack.last : nil
   end
 
-  # PNG copy of a bitmap the game has loaded (so already redrawn/translated); nil if it can't be made
-  def self.sheet(bitmap)
-    return nil unless bitmap && !bitmap.disposed? && bitmap.respond_to?(:to_file)
-    @sheets ||= {}
-    key = bitmap.object_id
-    return @sheets[key] || nil if @sheets.key?(key)
-    @sheets[key] = false
-    Dir.mkdir(ART_DIR) unless File.directory?(ART_DIR)
-    path = File.expand_path(File.join(ART_DIR, "b#{@battle_n.to_i}_#{@sheets.length}.png"))
-    bitmap.to_file(path)
-    @sheets[key] = path
-  rescue StandardError => e
-    AshDroidLog.log("ds: image #{e.class}: #{e.message}")
-    nil
-  end
-
-  # Which part of which image a sprite of the menu is showing
-  def self.sprite(spr)
-    return nil unless spr && !spr.disposed? && spr.bitmap
-    path = sheet(spr.bitmap)
-    return nil unless path
-    r = spr.src_rect
-    { "img" => path, "r" => [r.x.to_i, r.y.to_i, r.width.to_i, r.height.to_i] }
-  rescue StandardError
-    nil
-  end
-
-  def self.hex(color)
-    format("#%02x%02x%02x%02x", color.alpha.to_i, color.red.to_i, color.green.to_i, color.blue.to_i)
-  rescue StandardError
-    nil
-  end
-
-  def self.const(cw, name)
-    cw.class.const_defined?(name) ? cw.class.const_get(name) : nil
-  rescue StandardError
-    nil
-  end
-
-  def self.parts(cw)
-    s = cw.instance_variable_get(:@sprites)
-    s.is_a?(Hash) ? s : {}
-  end
-
-  def self.buttons(cw)
-    b = cw.instance_variable_get(:@buttons)
-    b.is_a?(Array) ? b : []
-  end
-
-  def self.shown?(cw, key)
-    v = cw.instance_variable_get(:@visibility)
-    !v.is_a?(Hash) || v[key] != false
-  end
-
-  def self.text_colors(cw)
-    { "base" => hex(const(cw, :TEXT_BASE_COLOR)), "shadow" => hex(const(cw, :TEXT_SHADOW_COLOR)) }
-  end
-
-  # The strip the game keeps behind its battle menus (its message bar), when it is showing one
-  def self.strip(scene)
-    sprites = scene.instance_variable_get(:@sprites)
-    bar = sprites.is_a?(Hash) ? sprites["messageBox"] : nil
-    bar && !bar.disposed? && bar.visible ? sprite(bar) : nil
-  rescue StandardError
-    nil
-  end
-
-  def self.command_state(scene, top, cw)
-    texts = Array(top[:texts]).map(&:to_s)
-    { "screen" => "command", "title" => texts[0].to_s, "items" => texts[1, 4] || [],
-      "index" => cw.index.to_i, "bg" => sprite(parts(cw)["background"]), "strip" => strip(scene),
-      "buttons" => buttons(cw).first(4).map { |b| sprite(b) } }.merge(text_colors(cw))
-  end
-
-  # The colour the game gives a move's name: a pixel of its button
-  def self.name_color(button)
-    y = button.src_rect.y.to_i
-    @pixels ||= {}
-    @pixels[[button.bitmap.object_id, y]] ||= hex(button.bitmap.get_pixel(10, y + 34))
-  rescue StandardError
-    nil
-  end
-
-  def self.move_info(cw, move)
-    return nil unless move
-    info = { "icon" => shown?(cw, "typeIcon") ? sprite(parts(cw)["typeIcon"]) : nil }
-    total = move.respond_to?(:total_pp) ? move.total_pp.to_i : 0
-    if total > 0
-      info["pp"] = _INTL("PP: {1}/{2}", move.pp, total)
-      colors = const(cw, :PP_COLORS)
-      if colors.is_a?(Array) && colors.length >= 8
-        f = [(4.0 * move.pp / total).ceil, 3].min
-        info["base"] = hex(colors[f * 2])
-        info["shadow"] = hex(colors[f * 2 + 1])
+  # Called every frame a battle menu is open
+  def self.frame(scene, cw)
+    unless @active
+      if @restore
+        @restore = false
+        if cw && @stack.any? && !cw.visible
+          cw.visible = true
+          unprompt(scene)
+        end
       end
+      return
     end
-    info
+    top = top_for(scene)
+    mine = top && cw && cw.equal?(window(scene, top[:mode]))
+    return unless mine
+    mark(:battle, [scene, cw])
+    if @hide
+      cw.visible = false if cw.visible
+      prompt(scene)
+    elsif !cw.visible
+      cw.visible = true
+      unprompt(scene)
+    end
+  rescue StandardError, NameError => e
+    log_once("frame", e)
+  end
+
+  # With the game's menu hidden, its message bar says "What will X do?" full width instead of staying empty
+  def self.prompt(scene)
+    entry = @stack.reverse.find { |d| d[:mode] == :command }
+    title = entry && Array(entry[:texts])[0].to_s
+    return if title.nil? || title.empty?
+    s = sprites_of(scene)
+    box = s["messageBox"]
+    win = s["messageWindow"]
+    return unless win && !win.disposed?
+    box.visible = true if box && !box.disposed? && !box.visible
+    win.visible = true unless win.visible
+    if @prompt != [win.object_id, title]
+      @prompt = [win.object_id, title]
+      win.text = title
+    end
+    win.update if win.respond_to?(:busy?) && win.busy?
+  rescue StandardError, NameError => e
+    log_once("prompt", e)
+  end
+
+  def self.unprompt(scene)
+    return unless @prompt
+    @prompt = nil
+    s = sprites_of(scene)
+    %w[messageBox messageWindow].each { |k| s[k].visible = false if s[k] && !s[k].disposed? }
   rescue StandardError, NameError
-    nil
   end
 
-  # The "Cancel" button of the game's command menu, to use as Back
-  def self.back_button(scene)
-    cmd = window(scene, :command)
-    bmp = cmd && cmd.instance_variable_get(:@buttonBitmap)
-    bmp = bmp.bitmap if bmp.respond_to?(:bitmap)
-    bh = (const(cmd, :BUTTON_HEIGHT) || 46).to_i
-    return nil unless bmp && !bmp.disposed? && bmp.height >= bh * 10
-    path = sheet(bmp)
-    path ? { "img" => path, "r" => [0, bh * 9, bmp.width / 2, bh] } : nil
-  rescue StandardError
-    nil
-  end
-
-  # Mega Evolution, Shift and whatever other toggle buttons the game's menu is showing
-  def self.extra_buttons(cw)
-    list = []
-    parts(cw).each do |key, spr|
-      next unless key.to_s =~ /Button\z/ && shown?(cw, key)
-      info = sprite(spr)
-      next unless info
-      list << info.merge("cmd" => (key.to_s =~ /shift/i ? "shift" : "act"))
+  def self.dots(party)
+    party.map do |p|
+      next nil unless p
+      next :ko if p.fainted?
+      p.status && p.status != :NONE && p.status != 0 ? :st : :ok
     end
-    list
-  rescue StandardError
+  rescue StandardError, NameError
     []
   end
 
@@ -1166,120 +2592,34 @@ module AshDroidDS
     nil
   end
 
-  def self.type_name(type)
-    GameData::Type.get(type).name.to_s
-  rescue StandardError, NameError
-    type.to_s
-  end
-
-  def self.moves(scene, idx_battler)
+  def self.battle_state(pair)
+    scene, cw = pair
+    top = top_for(scene)
+    return nil unless top && cw && !cw.disposed?
     battle = scene.instance_variable_get(:@battle)
-    battler = battle.battlers[idx_battler]
-    list = []
-    battler.moves.each do |m|
-      break unless m && m.id
-      total = m.respond_to?(:total_pp) ? m.total_pp : (m.totalpp rescue 0)
-      list << { "name" => m.name.to_s, "type" => m.type.to_s, "typeName" => type_name(m.type),
-                "pp" => m.pp.to_i, "tpp" => total.to_i, "eff" => effectiveness(battle, battler, m) }
-    end
-    list
-  rescue StandardError, NameError => e
-    AshDroidLog.log("ds: moves #{e.class}: #{e.message}")
-    []
-  end
-
-  def self.fight_state(scene, top, cw)
-    top[:moves] ||= moves(scene, top[:battler])
-    mode = (cw.respond_to?(:mode) ? cw.mode.to_i : 0)
-    btns = buttons(cw)
-    list = top[:moves].each_with_index.map do |m, i|
-      b = btns[i]
-      art = b && shown?(cw, "button_#{i}") ? sprite(b) : nil
-      art ? m.merge(art).merge("col" => name_color(b)) : m
-    end
-    battler = cw.respond_to?(:battler) ? cw.battler : nil
-    current = battler ? battler.moves[cw.index.to_i] : nil
-    { "screen" => "fight", "moves" => list, "index" => cw.index.to_i,
-      "mega" => (top[:mega] ? mode : 0), "labels" => labels,
-      "bg" => sprite(parts(cw)["background"]), "strip" => strip(scene), "info" => move_info(cw, current),
-      "extras" => extra_buttons(cw), "backBtn" => back_button(scene) }.merge(text_colors(cw))
-  end
-
-  # The state is only rebuilt when something the second screen shows may have changed
-  def self.state_key(top, cw)
-    [top.object_id, cw.index, (cw.respond_to?(:mode) ? cw.mode : 0),
-     (cw.respond_to?(:shiftMode) ? cw.shiftMode : 0)]
-  end
-
-  # ---- every frame a battle menu is open ----
-
-  def self.frame(scene, cw)
-    unless active?
-      if @restore
-        @restore = false
-        cw.visible = true if cw && @stack.any? && !cw.visible
+    if top[:mode] == :fight
+      battler = battle.battlers[top[:battler]]
+      mode = top[:mega] && cw.respond_to?(:mode) ? cw.mode.to_i : 0
+      key = [top.object_id, cw.index, mode, battler.moves.map { |m| m && [m.id, m.pp] }]
+      screen(:fight, key) do
+        moves = battler.moves.compact.select { |m| m.id }.map do |m|
+          move_data(m).merge(eff: effectiveness(battle, battler, m))
+        end
+        @count = moves.length
+        ui.fight(moves: moves, index: cw.index.to_i, mega: mode, cancel: _INTL("Cancel"))
       end
-      return
+    else
+      texts = Array(top[:texts]).map(&:to_s)
+      own = dots(battle.pbParty(0))
+      foe = battle.wildBattle? ? [:ok] : dots(battle.pbParty(1))
+      screen(:command, [top.object_id, cw.index, texts, own, foe]) do
+        @count = 4
+        ui.command(texts: texts[1, 4] || [], index: cw.index.to_i, own: own, foe: foe)
+      end
     end
-    top = @scene.equal?(scene) ? @stack.last : nil
-    mine = top && cw && cw.equal?(window(scene, top[:mode]))
-    key = mine ? state_key(top, cw) : nil
-    if @last.nil? || key != @key
-      @key = key
-      @count = 0
-      state = if !mine then IDLE
-              elsif top[:mode] == :fight then fight_state(scene, top, cw)
-              else command_state(scene, top, cw)
-              end
-      @count = (state["moves"] || state["items"] || []).length
-      publish(state)
-    end
-    8.times do
-      cmd = ::Android.companion_poll
-      break unless cmd
-      handle(cmd.to_s, mine ? cw : nil)
-    end
-    cw.visible = false if mine && @hide && cw.visible
   rescue StandardError, NameError => e
-    @errors = (@errors || 0) + 1
-    AshDroidLog.log("ds: frame #{e.class}: #{e.message}") if @errors <= 3
-  end
-
-  def self.handle(cmd, cw)
-    case cmd
-    when "hello" then @last = nil
-    when /\Ahide:([01])\z/
-      @hide = $1 == "1"
-      cw.visible = true if cw && !@hide
-    when /\Asel:(\d)\z/
-      n = $1.to_i
-      return unless cw && n < @count.to_i
-      cw.index = n if cw.index != n
-      force(:use)
-    when "back" then force(:back) if cw
-    when "act" then force(:action) if cw
-    when "shift" then force(:special) if cw
-    end
-  end
-
-  # ---- a touch becomes the button press the menu is waiting for ----
-
-  def self.force(name)
-    b = BUTTONS[name].map { |c| Input.const_defined?(c) ? Input.const_get(c) : nil }.compact.first
-    @forced = [b, Graphics.frame_count] if b
-  end
-
-  def self.forced?(button)
-    f = @forced
-    return false unless f && f[0] == button
-    @forced = nil
-    (Graphics.frame_count - f[1]).abs <= 2
-  rescue StandardError
-    false
-  end
-
-  def self.forcing?
-    !@forced.nil?
+    log_once("battle", e)
+    nil
   end
 
   # Prepended to the battle scene (PokeBattle_Scene / Battle::Scene)
@@ -1319,23 +2659,154 @@ module AshDroidDS
     end
   end
 
-  def self.top_for(scene)
-    @scene.equal?(scene) ? @stack.last : nil
+  # ---- party ----
+
+  def self.party_state(scene)
+    party = scene.instance_variable_get(:@party) || []
+    sel = scene.instance_variable_get(:@activecmd).to_i
+    help = help_text(scene)
+    drag = @party_free && !$game_temp.in_battle
+    key = [scene.object_id, sel, help, drag, party.map { |p| mon_digest(p) }]
+    screen(:party, key) do
+      ui.party(mons: party.first(6).map { |p| mon_data(p) }, sel: sel, help: help, drag: drag, home: !$game_temp.in_battle && @from_home != :party)
+    end
   end
 
-  # ---- overworld (prototype): the game's own menu screens, shown on the second screen ----
-  # The engine draws one screen only, but it can render a frame without showing it. While a
-  # menu opened from the second screen is up, a picture of the world covers it on the game
-  # screen and every frame of the menu (rendered without that cover) is sent to the second
-  # screen. The menu is the game's real one, fully working, driven by the console's buttons.
-
-  def self.mirror_ready?
-    available? && ::Android.respond_to?(:companion_frame)
+  # The game asks what to do with the chosen Pokémon
+  def self.party_actions_state(scene, cw)
+    party = scene.instance_variable_get(:@party) || []
+    slot = scene.instance_variable_get(:@activecmd).to_i
+    pkmn = party[slot]
+    return choice_state(cw) unless pkmn
+    in_battle = $game_temp.in_battle
+    drag = @party_free && !in_battle
+    key = [scene.object_id, cw.object_id, cw.index, slot, mon_digest(pkmn), commands_of(cw).map { |c| label_of(c) }, in_battle]
+    screen(:actions, key) do
+      opts = options_of(cw, drag ? [:cancel, :switch] : [:cancel])
+      mon = mon_data(pkmn)
+      sw = opts.find { |o| o[:kind] == :switch_in }
+      if in_battle && (sw || opts.all? { |o| o[:kind] == :summary })
+        ui.battle_info(mon: mon, slot: slot, types: (pkmn.types rescue []).map { |t| type_row(t) },
+                       moves: pkmn.moves.compact.map { |m| move_data(m) }, can_switch: !sw.nil?, switch_cmd: sw && sw[:cmd])
+      else
+        help = help_text(scene)
+        if opts.any? { |o| [:give, :take].include?(o[:kind]) }
+          help = pkmn.item ? format(ui.l(:held), GameData::Item.get(pkmn.item).name) : ui.l(:no_held)
+        end
+        index = opts.index { |o| o[:at] == cw.index.to_i } || -1
+        ui.party_actions(mon: mon, slot: slot, options: opts, index: index, help: help)
+      end
+    end
   end
 
-  def self.mirroring?
-    @mirror == true
+  def self.swap_party(a, b)
+    scene = live(:party)
+    return unless scene && @party_free && !$game_temp.in_battle && a != b
+    party = scene.instance_variable_get(:@party)
+    return unless party && party[a] && party[b]
+    party[a], party[b] = party[b], party[a]
+    scene.pbHardRefresh
+    scene.pbSelect(b)
+    pbSEPlay("GUI party switch") rescue nil
+    @key = nil
   end
+
+  # ---- summary ----
+
+  def self.summary_state(scene)
+    pkmn = scene.instance_variable_get(:@pokemon)
+    return ui.idle unless pkmn
+    page = scene.instance_variable_get(:@page).to_i
+    party = scene.instance_variable_get(:@party) || []
+    idx = scene.instance_variable_get(:@partyindex).to_i
+    in_battle = scene.instance_variable_get(:@inbattle)
+    @moves_view = false if page != 4 && !(@goal && @goal[0] == :page)
+    if @moves_view && page == 4 && !pkmn.egg?
+      key = [scene.object_id, pkmn.object_id, pkmn.moves.map { |m| m && [m.id, m.pp] }]
+      screen(:moves, key) do
+        ui.moves(name: pkmn.name.to_s, icon: species_icon(pkmn), moves: pkmn.moves.compact.map { |m| move_data(m) },
+                 drag: !in_battle && pkmn.moves.compact.length > 1)
+      end
+    else
+      screen(:summary, [scene.object_id, pkmn.object_id, pkmn.name, page, idx, party.length]) do
+        ui.summary(name: pkmn.name.to_s, icon: species_icon(pkmn), page: page - 1, first: idx <= 0,
+                   last: idx >= party.length - 1, egg: pkmn.egg?)
+      end
+    end
+  end
+
+  def self.swap_moves(a, b)
+    scene = live(:summary)
+    return unless scene && @ctx == :moves && a != b
+    return if scene.instance_variable_get(:@inbattle)
+    sel = sprites_of(scene)["movesel"]
+    return if sel && !sel.disposed? && sel.visible    # the game is in its own move selection
+    pkmn = scene.instance_variable_get(:@pokemon)
+    return unless pkmn && pkmn.moves[a] && pkmn.moves[b]
+    pkmn.moves[a], pkmn.moves[b] = pkmn.moves[b], pkmn.moves[a]
+    scene.drawPage(4)
+    pbSEPlay("GUI party switch") rescue nil
+    @key = nil
+  end
+
+  # ---- bag ----
+
+  def self.bag_items(scene, win)
+    bag = scene.instance_variable_get(:@bag)
+    filter = win.instance_variable_get(:@filterlist)
+    pocket = bag.pockets[win.pocket] || []
+    filter ? (filter[win.pocket] || []).map { |j| pocket[j] }.compact : pocket
+  end
+
+  def self.item_name(id)
+    @adapter ||= PokemonMartAdapter.new
+    @adapter.getDisplayName(id).to_s
+  rescue StandardError, NameError
+    GameData::Item.get(id).name.to_s
+  end
+
+  def self.bag_state(scene, cw)
+    win = sprites_of(scene)["itemlist"]
+    return ui.idle unless win && !win.disposed?
+    items = bag_items(scene, win)
+    index = win.index.to_i
+    in_battle = $game_temp.in_battle
+    state = in_battle ? :battle : cw ? :item : :world
+    labels = cw ? commands_of(cw).map { |c| label_of(c) } : nil
+    key = [scene.object_id, win.pocket, index, state, items.map { |i| [i[0], i[1]] }, labels, cw && cw.index]
+    screen(:bag, key) do
+      current = items[index]
+      rows = items.map do |id, qty|
+        data = GameData::Item.get(id)
+        { icon: item_icon(id), name: item_name(id), qty: data.is_important? ? nil : qty.to_i }
+      end
+      opts = cw ? options_of(cw) : []
+      ui.bag(pocket: win.pocket, pockets: (PokemonBag.numPockets rescue 8), items: rows, index: index,
+             desc: current ? GameData::Item.get(current[0]).description.to_s : "", state: state, options: opts,
+             opt_index: cw ? (opts.index { |o| o[:at] == cw.index.to_i } || -1) : -1,
+             can_use: !current.nil?, use_label: _INTL("Use"))
+    end
+  end
+
+  def self.pick_item(i)
+    scene = live(:bag)
+    return unless scene && @ctx == :bag && !live(:cmd)
+    win = sprites_of(scene)["itemlist"]
+    return unless win && i < bag_items(scene, win).length
+    win.index = i
+    force(:use) unless $game_temp.in_battle   # in battle a touch only moves the cursor; USAR confirms
+  end
+
+  # ---- any other list of choices ----
+
+  def self.choice_state(cw)
+    labels = commands_of(cw).map { |c| label_of(c) }
+    screen(:choice, [cw.object_id, cw.index, labels]) do
+      ui.choice(help: "", options: options_of(cw), index: cw.index.to_i)
+    end
+  end
+
+  # ---- overworld ----
 
   def self.player_free?
     return false if $game_temp.in_menu || $game_temp.in_battle || $game_temp.message_window_showing
@@ -1346,119 +2817,375 @@ module AshDroidDS
     false
   end
 
-  # Called every frame of the map scene
-  def self.world_frame
-    return unless active? && !@mirror
-    @key = :world
-    publish("screen" => "world", "free" => player_free?, "mirror" => mirror_ready?)
-    4.times do
-      cmd = ::Android.companion_poll
-      break unless cmd
-      case cmd.to_s
-      when "hello" then @last = nil
-      when /\Ahide:([01])\z/ then @hide = $1 == "1"
-      when "open:bag" then open_bag if mirror_ready? && player_free?
-      end
+  def self.home_state(cursor = nil)
+    party = $Trainer.party
+    free = cursor ? true : player_free?
+    off = []
+    off << 0 if party.empty?
+    off << 1 if (pbInBugContest? rescue false) || ($game_switches[675] rescue false)
+    off << 4 if $game_system.save_disabled
+    time = (pbGetTimeNow.strftime("%H:%M") rescue Time.now.strftime("%H:%M"))
+    key = [$game_map.map_id, time, free, cursor, off, party.map { |p| mon_digest(p) }]
+    screen(:home, key) do
+      ui.home(place: $game_map.name.to_s, time: time, mons: party.first(6).map { |p| mon_data(p) }, trainer: $Trainer.name.to_s,
+              free: free, off: off, cursor: cursor, save_label: _INTL("Save"), bag_label: _INTL("Bag"), map_label: _INTL("Map"))
     end
-  rescue StandardError, NameError => e
-    @world_errors = (@world_errors || 0) + 1
-    AshDroidLog.log("ds: world #{e.class}: #{e.message}") if @world_errors <= 3
   end
 
-  def self.open_bag
-    item = nil
-    $game_temp.in_menu = true
-    mirror do
+  # Called every frame of the map scene
+  def self.world_frame(scene)
+    return unless @active
+    mark(:world, scene)
+    open = @open
+    @open = nil
+    return unless open && player_free?
+    run_open(open)
+  rescue StandardError, NameError => e
+    log_once("world", e)
+  ensure
+    $game_temp.in_menu = false if open && $game_temp
+  end
+
+  def self.run_open(what)
+    case what
+    when :party
+      return if $Trainer.party.empty?
+      pbPlayDecisionSE
+      $game_temp.in_menu = true
+      hidden = nil
+      @from_home = :party
+      pbFadeOutIn {
+        sscene = PokemonParty_Scene.new
+        sscreen = PokemonPartyScreen.new(sscene, $Trainer.party)
+        hidden = sscreen.pbPokemonScreen
+      }
+      @from_home = nil
+      $game_temp.in_menu = false
+      pbUseHiddenMove(hidden[0], hidden[1]) if hidden
+    when :bag
+      pbPlayDecisionSE
+      $game_temp.in_menu = true
+      item = nil
       pbFadeOutIn {
         scene = PokemonBag_Scene.new
         bag = (defined?($bag) && $bag) ? $bag : $PokemonBag
         item = PokemonBagScreen.new(scene, bag).pbStartScreen
       }
+      $game_temp.in_menu = false
+      pbUseKeyItemInField(item) if item
+    when :map then modal_map
+    when :card then modal_cards
+    when :save then modal_save unless $game_system.save_disabled
+    end
+  ensure
+    @from_home = nil
+    $game_temp.in_menu = false
+    @key = nil
+  end
+
+  # The menu button: the cursor goes to the second screen's home. Returns false to let the game's own
+  # pause menu open instead (second press, or no second screen).
+  def self.take_menu?
+    return false unless @active && !@modal && !@want_game_menu
+    true
+  rescue StandardError
+    false
+  end
+
+  def self.home_cursor
+    $game_temp.menu_calling = false
+    $game_temp.menu_beep = false
+    $game_temp.in_menu = true
+    pbPlayDecisionSE
+    cursor = 0
+    choice = nil
+    modal(:home) do |cmd|
+      @modal_view = -> { home_state(cursor) }
+      if Input.trigger?(Input::UP) then cursor = (cursor - 1) % 5; pbPlayCursorSE
+      elsif Input.trigger?(Input::DOWN) then cursor = (cursor + 1) % 5; pbPlayCursorSE
+      elsif Input.trigger?(Input::USE) then choice = %i[party bag map card save][cursor]
+      elsif Input.trigger?(Input::ACTION) || Input.trigger?(Input::SPECIAL) then choice = :menu
+      elsif cmd =~ /\Aopen:(\w+)\z/ then choice = $1.to_sym
+      end
+      next :done if choice || cmd == "back"
     end
     $game_temp.in_menu = false
-    pbUseKeyItemInField(item) if item
-  rescue StandardError, NameError => e
-    AshDroidLog.log("ds: bag #{e.class}: #{e.message}")
-  ensure
-    $game_temp.in_menu = false rescue nil
-  end
-
-  def self.mirror
-    @cover_vp = Viewport.new(0, 0, Graphics.width, Graphics.height)
-    @cover_vp.z = 9_999_999
-    @cover = Sprite.new(@cover_vp)
-    @cover.bitmap = Graphics.snap_to_bitmap
-    @mirror = true
-    @mirror_time = 0.0
-    @mirror_n = 0
-    publish("screen" => "mirror", "ms" => 0)
-    AshDroidLog.log("ds: mirror on")
-    yield
-  ensure
-    @mirror = false
-    [(@cover.bitmap rescue nil), @cover, @cover_vp].each { |o| o.dispose if o && !o.disposed? rescue nil }
-    @cover = @cover_vp = nil
-    @last = nil
-  end
-
-  # One frame of the menu for the second screen: rendered without the cover, never shown here
-  def self.capture
-    return unless @cover && !@cover.disposed?
-    t = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    @cover.visible = false
-    shot = Graphics.snap_to_bitmap
-    @cover.visible = true
-    ::Android.companion_frame(shot)
-    shot.dispose
-    @mirror_time += Process.clock_gettime(Process::CLOCK_MONOTONIC) - t
-    @mirror_n += 1
-    if @mirror_n >= 60                       # average cost per frame, in tenths of a millisecond
-      tenths = (@mirror_time / @mirror_n * 10_000).round
-      publish("screen" => "mirror", "ms" => tenths)
-      AshDroidLog.log("ds: mirror #{tenths / 10.0} ms/frame") if (@mirror_logs = (@mirror_logs || 0) + 1) <= 5
-      @mirror_time = 0.0
-      @mirror_n = 0
+    if choice == :menu
+      @want_game_menu = true
+      $game_temp.menu_calling = true
+    elsif choice
+      run_open(choice)
+    else
+      pbPlayCloseMenuSE
     end
-  rescue StandardError => e
-    @cover.visible = true if @cover && !@cover.disposed?
-    @capture_errors = (@capture_errors || 0) + 1
-    AshDroidLog.log("ds: capture #{e.class}: #{e.message}") if @capture_errors <= 3
+  rescue StandardError, NameError => e
+    log_once("home", e)
+  ensure
+    $game_temp.in_menu = false
   end
 
-  # Both hooks are alias chains, not prepended modules: the game's own scripts (and plugins) wrap
-  # Graphics.update and Scene_Map#update with "alias old update" later on, and an alias taken after
-  # a prepend points back at the prepended method, which recurses forever on the first frame.
-  def self.install_world(scene_class)
-    return unless available?
-    return unless scene_class.method_defined?(:update)   # class body not finished yet: next time
-    unless scene_class.method_defined?(:ashdroid_ds_update)
-      scene_class.class_eval do
-        alias_method :ashdroid_ds_update, :update
-        def update(*args)
-          ashdroid_ds_update(*args)
-        ensure
-          AshDroidDS.world_frame
+  # ---- screens run from here (the game keeps showing the map) ----
+
+  def self.modal(kind)
+    @modal = kind
+    @modal_cmds.clear
+    @modal_exit = false
+    @key = nil
+    loop do
+      Graphics.update
+      Input.update
+      pbUpdateSceneMap
+      cmd = @modal_cmds.shift
+      if cmd == "home"
+        @modal_exit = true
+        break
+      end
+      cmd ||= "back" if Input.trigger?(Input::BACK)
+      break if yield(cmd) == :done || @modal_exit
+    end
+  ensure
+    @modal = nil
+    @modal_view = nil
+    @key = nil
+    Input.update
+  end
+
+  def self.modal_state
+    @modal_view ? @modal_view.call : nil
+  rescue StandardError, NameError => e
+    log_once("modal", e)
+    nil
+  end
+
+  def self.map_info
+    meta = GameData::MapMetadata.try_get($game_map.map_id)
+    pos = meta ? meta.town_map_position : nil
+    region = pos ? pos[0] : (pbGetCurrentRegion(0) rescue 0)
+    data = pbLoadTownMapData[region]
+    name = (pbGetMessage(MessageTypes::RegionNames, region) rescue data[0]).to_s
+    marker = ui.file(GameData::TrainerType.player_map_icon_filename($Trainer.trainer_type)) rescue nil
+    { region: name, place: $game_map.name.to_s, map: ui.pic(data[1]), marker: pos ? marker : nil,
+      pos: pos ? [pos[1], pos[2]] : [-9, -9] }
+  rescue StandardError, NameError => e
+    log_once("map", e)
+    { region: "", place: ($game_map.name.to_s rescue ""), map: nil, marker: nil, pos: [-9, -9] }
+  end
+
+  def self.wild_tabs
+    data = GameData::Encounter.get($game_map.map_id, $PokemonGlobal.encounter_version)
+    return [] unless data
+    tabs = []
+    data.types.each do |type, slots|
+      next if slots.nil? || slots.empty?
+      kind = (GameData::EncounterType.get(type).type rescue :land)
+      next if kind == :contest
+      label, col = case kind
+                   when :cave then [ui.l(:cave), [184, 160, 56]]
+                   when :water then [(GameData::Move.get(:SURF).name rescue "Surf"), ui::BLUE]
+                   when :fishing then [(GameData::Item.get(type.to_s.upcase.to_sym).name rescue type.to_s), ui::TEAL]
+                   else [ui.l(:grass), ui::GREEN]
+                   end
+      total = slots.inject(0) { |a, s| a + s[0].to_i }
+      merged = {}
+      slots.each do |chance, species, lo, hi|
+        hi ||= lo
+        e = (merged[species] ||= [0, lo, hi])
+        e[0] += chance.to_i
+        e[1] = [e[1], lo].min
+        e[2] = [e[2], hi].max
+      end
+      rows = merged.sort_by { |_, v| -v[0] }.map do |species, (chance, lo, hi)|
+        seen = ($Trainer.pokedex.seen?(species) rescue true)
+        { icon: (ui.file(GameData::Species.icon_filename(species)) rescue nil), name: (GameData::Species.get(species).name.to_s rescue species.to_s),
+          seen: seen, lo: lo, hi: hi, pct: total > 0 ? [(chance * 100.0 / total).round, 1].max : 0 }
+      end
+      tabs << { label: label, col: col, rows: rows }
+    end
+    tabs.first(4)
+  rescue StandardError, NameError => e
+    log_once("wild", e)
+    []
+  end
+
+  def self.modal_map
+    pbPlayDecisionSE
+    $game_temp.in_menu = true
+    info = map_info
+    tabs = wild_tabs
+    wild = false
+    tab = 0
+    modal(:map) do |cmd|
+      @modal_view = lambda do
+        if wild
+          screen(:route, [tab, ui.lang]) { ui.route(place: info[:place], tabs: tabs, tab: tab, rows: tabs[tab][:rows]) }
+        else
+          screen(:map, [@zoom, tabs.length]) { ui.region_map(info.merge(zoom: @zoom, wild: !tabs.empty?)) }
+        end
+      end
+      if wild
+        if cmd == "back" then wild = false; pbPlayCloseMenuSE
+        elsif cmd =~ /\Atab:(\d)\z/ then tab = [$1.to_i, tabs.length - 1].min
+        elsif Input.trigger?(Input::RIGHT) then tab = (tab + 1) % tabs.length; pbPlayCursorSE
+        elsif Input.trigger?(Input::LEFT) then tab = (tab - 1) % tabs.length; pbPlayCursorSE
+        end
+        next
+      end
+      next :done if cmd == "back"
+      if cmd =~ /\Azoom:(\d)\z/ then @zoom = [[$1.to_i, 2].max, 4].min
+      elsif (cmd == "wild" || Input.trigger?(Input::USE)) && !tabs.empty? then wild = true; pbPlayDecisionSE
+      elsif Input.trigger?(Input::UP) then @zoom = [@zoom + 1, 4].min
+      elsif Input.trigger?(Input::DOWN) then @zoom = [@zoom - 1, 2].max
+      end
+    end
+    pbPlayCloseMenuSE unless @modal_exit
+  ensure
+    $game_temp.in_menu = false
+  end
+
+  # A picture of one of the game's card screens, taken behind a picture of the map so the game screen
+  # never shows it. page 1: the trainer card; 2..5: the four pages of the other card, if the player has it.
+  def self.card_shot(page)
+    Dir.mkdir(SHOT_DIR) unless File.directory?(SHOT_DIR)
+    vp = Viewport.new(0, 0, Graphics.width, Graphics.height)
+    vp.z = 9_999_999
+    cover = Sprite.new(vp)
+    cover.bitmap = Graphics.snap_to_bitmap
+    scene = nil
+    if page == 1
+      scene = PokemonTrainerCard_Scene.new
+      scene.pbStartScene
+    else
+      scene = GCCard_Scene.new
+      scene.send(%i[pbDrawGCCardOne pbDrawGCCardTwo pbDrawGCCardThree pbDrawGCCardFour][page - 2])
+    end
+    cover.visible = false
+    shot = Graphics.snap_to_bitmap
+    cover.visible = true
+    path = File.expand_path(File.join(SHOT_DIR, "card#{page}_#{Graphics.frame_count}.png"))
+    Dir.glob(File.join(SHOT_DIR, "card#{page}_*.png")).each { |f| File.delete(f) rescue nil }
+    shot.to_file(path)
+    shot.dispose
+    path
+  rescue StandardError, NameError => e
+    log_once("card", e)
+    nil
+  ensure
+    begin
+      if scene
+        sprites = scene.instance_variable_get(:@sprites)
+        pbDisposeSpriteHash(sprites) if sprites
+        old = scene.instance_variable_get(:@oldOutfit)
+        $Trainer.outfit = old if old
+        svp = scene.instance_variable_get(:@viewport)
+        svp.dispose if svp && !svp.disposed?
+      end
+    rescue StandardError, NameError
+    end
+    [(cover.bitmap rescue nil), cover, vp].each { |o| o.dispose if o && !o.disposed? rescue nil }
+  end
+
+  def self.modal_cards
+    pbSEPlay("GUI trainer card open") rescue nil
+    $game_temp.in_menu = true
+    has_other = (defined?(GCCard_Scene) && $PokemonBag.pbHasItem?(:GCCARD)) rescue false
+    total = has_other ? 5 : 1
+    page = 1
+    shots = {}
+    modal(:cards) do |cmd|
+      shots[page] ||= card_shot(page) || ""
+      @modal_view = -> { screen(:cards, [page, shots[page]]) { ui.profile(shot: shots[page].to_s.empty? ? nil : shots[page], page: page, total: total) } }
+      next :done if cmd == "back"
+      if total > 1
+        if cmd == "card:next" || Input.trigger?(Input::RIGHT) then page = page % total + 1; pbPlayCursorSE
+        elsif cmd == "card:prev" || Input.trigger?(Input::LEFT) then page = (page - 2) % total + 1; pbPlayCursorSE
         end
       end
     end
+    pbPlayCloseMenuSE unless @modal_exit
+  ensure
+    $game_temp.in_menu = false
+  end
+
+  def self.save_data(done)
+    totalsec = Graphics.frame_count / Graphics.frame_rate
+    hour = totalsec / 60 / 60
+    min = totalsec / 60 % 60
+    time = hour > 0 ? _INTL("{1}h {2}m", hour, min) : _INTL("{1}m", min)
+    start = $PokemonGlobal.startTime
+    started = start ? _INTL("{1} {2}, {3}", pbGetAbbrevMonthName(start.mon), start.day, start.year) : ""
+    { done: done, place: $game_map.name.to_s, name: $Trainer.name.to_s, male: !$Trainer.female?,
+      id: "#{_INTL('ID No.')} #{format('%05d', $Trainer.public_ID)}",
+      rows: [[ui.l(:badges), $Trainer.badge_count.to_s],
+             [ui.l(:pokedex), format("%d/%d", $Trainer.pokedex.owned_count, $Trainer.pokedex.seen_count)],
+             [ui.l(:time), time], [ui.l(:money), _INTL("${1}", $Trainer.money.to_s_formatted)], [ui.l(:started), started]],
+      party: $Trainer.party.first(6).map { |p| species_icon(p) }, char: ui.file("Graphics/Characters/#{$game_player.character_name}"),
+      save_label: _INTL("Save") }
+  end
+
+  def self.modal_save
+    pbPlayDecisionSE
+    $game_temp.in_menu = true
+    done = false
+    modal(:save) do |cmd|
+      @modal_view = -> { screen(:save, [done, Graphics.frame_count / (Graphics.frame_rate * 60)]) { ui.save(save_data(done)) } }
+      next :done if cmd == "back"
+      if !done && (cmd == "save" || Input.trigger?(Input::USE))
+        pbSEPlay("GUI save choice") rescue nil
+        if Game.save
+          done = true
+          @key = nil
+        else
+          pbPlayBuzzerSE
+        end
+      elsif done && Input.trigger?(Input::USE)
+        next :done
+      end
+    end
+    pbPlayCloseMenuSE unless @modal_exit
+  ensure
+    $game_temp.in_menu = false
+  end
+
+  # ---- hooks ----
+
+  # Runs after a method of one of the game's classes. An alias chain, not a prepended module: the game's own
+  # scripts (and plugins) wrap methods with "alias old update" later on, and an alias taken after a prepend
+  # points back at the prepended method, which recurses forever.
+  def self.after(klass, meth, tag, &block)
+    als = :"ashdroid_ds_#{tag}"
+    return unless klass.method_defined?(meth) || klass.private_method_defined?(meth)
+    return if klass.method_defined?(als) || klass.private_method_defined?(als)
+    klass.class_eval do
+      alias_method als, meth
+      define_method(meth) do |*args, &blk|
+        begin
+          send(als, *args, &blk)
+        ensure
+          begin
+            block.call(self)
+          rescue StandardError, NameError
+          end
+        end
+      end
+    end
+    AshDroidLog.log("ds: hooked #{klass.name}##{meth}")
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: hook #{klass} #{meth} #{e.class}: #{e.message}")
+  end
+
+  def self.install_core
+    return if @core || !available?
+    @core = true
     graphics = Graphics.singleton_class
     unless graphics.method_defined?(:ashdroid_ds_update)
       graphics.class_eval do
         alias_method :ashdroid_ds_update, :update
         def update(*args)
-          AshDroidDS.capture if AshDroidDS.mirroring?
+          AshDroidDS.tick
           ashdroid_ds_update(*args)
         end
       end
-      AshDroidLog.log("ds: map scene hooked (mirror #{mirror_ready? ? 'ready' : 'unavailable'})")
     end
-  rescue StandardError, NameError => e
-    AshDroidLog.log("ds: install_world #{e.class}: #{e.message}")
-  end
-
-  def self.install(scene_class)
-    return unless available?
-    scene_class.prepend(Scene) unless scene_class.ancestors.include?(Scene)
     input = Input.singleton_class
     unless input.method_defined?(:ashdroid_ds_trigger?)
       input.class_eval do
@@ -1469,6 +3196,61 @@ module AshDroidDS
         end
       end
     end
+    AshDroidLog.log("ds: core hooked")
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: install_core #{e.class}: #{e.message}")
+  end
+
+  def self.install_world(scene_class)
+    return unless available?
+    install_core
+    after(scene_class, :update, "update") { |scene| AshDroidDS.world_frame(scene) }
+    return unless scene_class.method_defined?(:call_menu) && !scene_class.method_defined?(:ashdroid_ds_call_menu)
+    scene_class.class_eval do
+      alias_method :ashdroid_ds_call_menu, :call_menu
+      def call_menu(*args)
+        if AshDroidDS.take_menu?
+          AshDroidDS.home_cursor
+          return unless $game_temp.menu_calling
+        end
+        ashdroid_ds_call_menu(*args)
+      ensure
+        AshDroidDS.instance_variable_set(:@want_game_menu, false)
+      end
+    end
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: install_world #{e.class}: #{e.message}")
+  end
+
+  def self.install_menu(klass)
+    return unless available?
+    install_core
+    case klass.name
+    when "PokemonParty_Scene" then after(klass, :update, "update") { |s| AshDroidDS.mark(:party, s) }
+    when "PokemonBag_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:bag, s) }
+    when "PokemonSummary_Scene" then after(klass, :pbUpdate, "pbUpdate") { |s| AshDroidDS.mark(:summary, s) }
+    when "Window_CommandPokemon", "Window_AdvancedCommandPokemon"
+      after(klass, :update, "update_#{klass.name.downcase}") { |w| AshDroidDS.mark(:cmd, w) if w.visible && (!w.respond_to?(:active) || w.active) }
+    when "PokemonPartyScreen"
+      return unless klass.method_defined?(:pbPokemonScreen) && !klass.method_defined?(:ashdroid_ds_pbPokemonScreen)
+      klass.class_eval do
+        alias_method :ashdroid_ds_pbPokemonScreen, :pbPokemonScreen
+        def pbPokemonScreen(*args)
+          AshDroidDS.instance_variable_set(:@party_free, true)
+          ashdroid_ds_pbPokemonScreen(*args)
+        ensure
+          AshDroidDS.instance_variable_set(:@party_free, false)
+        end
+      end
+    end
+  rescue StandardError, NameError => e
+    AshDroidLog.log("ds: install_menu #{e.class}: #{e.message}")
+  end
+
+  def self.install(scene_class)
+    return unless available?
+    install_core
+    scene_class.prepend(Scene) unless scene_class.ancestors.include?(Scene)
     AshDroidLog.log("ds: battle menus hooked (#{scene_class.name})")
   rescue StandardError, NameError => e
     AshDroidLog.log("ds: install #{e.class}: #{e.message}")
@@ -1827,6 +3609,12 @@ module AshDroidFixes
 
   HOOKS = {
     "Scene_Map" => ->(m) { AshDroidDS.install_world(m) },
+    "PokemonParty_Scene" => ->(m) { AshDroidDS.install_menu(m) },
+    "PokemonPartyScreen" => ->(m) { AshDroidDS.install_menu(m) },
+    "PokemonBag_Scene" => ->(m) { AshDroidDS.install_menu(m) },
+    "PokemonSummary_Scene" => ->(m) { AshDroidDS.install_menu(m) },
+    "Window_CommandPokemon" => ->(m) { AshDroidDS.install_menu(m) },
+    "Window_AdvancedCommandPokemon" => ->(m) { AshDroidDS.install_menu(m) },
     "MessageTypes" => ->(m) { AshDroidFixes.hook_message_types(m) },
     "AbilitySplashBar" => AbilitySplashBarES,
     "Trainer" => TrainerES,
