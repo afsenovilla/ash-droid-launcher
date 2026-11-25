@@ -108,13 +108,13 @@ def actions():
     contents(one, d, SELECTED, PARTY[SELECTED], pos=(x0 * 2, 16), room=room)
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
-    grid = Image.new('RGBA', (bw + 2, len(ACTIONS) * 28), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
+    grid = Image.new('RGBA', (bw + 2, len(ACTIONS) * 31), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(ACTIONS):
-        by = n * 28
-        m.button(gd, (1, by + 1, bw, by + 23), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
-        m.pix_text(grid, label, (bw + 1) // 2, by + 12 - (1 if n == 0 else 0), 1)
+        by = n * 31
+        m.button(gd, (1, by + 1, bw, by + 27), col, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
+        m.pix_text(grid, label, (bw + 1) // 2, by + 14 - (1 if n == 0 else 0), 1)
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
-    one.paste(grid, ((W * 2 - grid.width) // 2, 336), grid)
+    one.paste(grid, ((W * 2 - grid.width) // 2, 314), grid)
     footer(one, d, '¿Qué hacer con %s?' % PARTY[SELECTED][0])
     return one.convert('RGB')
 
