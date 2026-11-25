@@ -22,7 +22,7 @@ ACTIONS = [('POKéMON', (248, 144, 200)), ('MOCHILA', (240, 168, 48)), ('MAPA', 
 
 def home():
     """Overworld home. Left: the party as six of the game's own party panels (its panel, ball, HP bar, level and
-    status images; the HP bar and the status icon at 3x, the rest at 2x; no HP numbers here), made wider by repeating a column and lower by leaving out lines of their two flat
+    status images; the Pokémon's icon, the HP bar and the status icon at 3x, the rest at 2x; no HP numbers here), made wider by repeating a column and lower by leaving out lines of their two flat
     bands, so six fit in a column. Right: the five buttons, drawn by code. Needs the game folder (the one above
     the font's)."""
     import os
@@ -52,6 +52,8 @@ def home():
         for dx, dy in ((2, 0), (0, 2), (2, 2)): dd.text((x + dx, y + dy), t, font=f, fill=shadow, anchor='la')
         dd.text((x, y), t, font=f, fill=base, anchor='la')
     col = Image.new('RGBA', (PW, 6 * PITCH), (0, 0, 0, 0)); cd = ImageDraw.Draw(col); cd.fontmode = '1'
+    over = Image.new('RGBA', col.size, (0, 0, 0, 0)); od = ImageDraw.Draw(over); od.fontmode = '1'   # the level, drawn over the icon
+    mons = []
     white, dark = (248, 248, 248), (40, 40, 40)
     for i in range(6):
         y = i * PITCH
@@ -60,12 +62,16 @@ def home():
         col.alpha_composite(compact(pic('Pictures/Party/panel_rect%s.png' % ('_faint' if faint else ''))), (0, y))
         bars.append((y, faint, hp, tot))
         col.alpha_composite(pic('Pictures/Party/icon_ball.PNG'), (8, y + 2))
-        col.alpha_composite(pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)), (28, y + 4))
+        mons.append((n, y))
         text(cd, n, 106, y + 6, white, dark)
         row = 5 if faint else {'PAR': 3}.get(st)                   # row of the game's statuses.png (example: paralysed; 5 = fainted)
         if row is not None: marks.append((row, y))
-        col.alpha_composite(pic('Pictures/Party/overlay_lv.png'), (12, y + 60)); text(cd, str(lv), 34, y + 47, white, dark, f=small)
+        over.alpha_composite(pic('Pictures/Party/overlay_lv.png'), (12, y + 60)); text(od, str(lv), 34, y + 47, white, dark, f=small)
     col = col.resize((PW * 2, col.height * 2), Image.NEAREST); big.alpha_composite(col, (10, 102))
+    for n, y in mons:                                             # the Pokémon's icon at 3x
+        ic = pic('Pokemon/Icons/%s.png' % n.upper()).crop((0, 0, 64, 64)).resize((192, 192), Image.NEAREST)
+        big.alpha_composite(ic, (10 + 126 - 96, 102 + y * 2 + 66 - 96))
+    big.alpha_composite(over.resize((PW * 2, over.height * 2), Image.NEAREST), (10, 102))
     for y, faint, hp, tot in bars:                                # the game's HP bar at 3x
         x0, y0 = 10 + 212, 102 + y * 2 + 90
         back = pic('Pictures/Party/overlay_hp_back%s.png' % ('_faint' if faint else '')); big.alpha_composite(back.resize((back.width * 3, back.height * 3), Image.NEAREST), (x0, y0))
