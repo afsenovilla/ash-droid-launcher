@@ -179,7 +179,7 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 
 ## Remaining pieces (pending approval)
 
-- Bag, item options (`ds_mock_bag.py <game folder> <out.png> item <pixelfonts.txt>`): touching an item swaps
+- Bag, item options (approved; `ds_mock_bag.py <game folder> <out.png> item <pixelfonts.txt>`): touching an item swaps
   the left panel (bag picture, pocket name, pocket buttons) for the options the game gives for that item,
   stacked in the approved style (USAR, DAR, TIRAR; REGISTRAR and LEER when they apply), with CANCELAR under
   them to drop the selection and get the pockets back. Leaving the bag is always the list's CERRAR MOCHILA
