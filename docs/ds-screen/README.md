@@ -181,8 +181,9 @@ Mock-up: `ds_mock_save.py <game folder> <pixelfonts.txt> <out.png> [done]`.
 
 - Bag, item options (`ds_mock_bag.py <game folder> <out.png> item <pixelfonts.txt>`): touching an item swaps
   the left panel (bag picture, pocket name, pocket buttons) for the options the game gives for that item,
-  stacked in the approved style (USAR, DAR, TIRAR; REGISTRAR and LEER when they apply), with VOLVER under them
-  to get the pockets back. Up to four options fit.
+  stacked in the approved style (USAR, DAR, TIRAR; REGISTRAR and LEER when they apply), with CANCELAR under
+  them to drop the selection and get the pockets back. Leaving the bag is always the list's CERRAR MOCHILA
+  entry, as in the game; the two are named differently on purpose. Up to four options fit.
 - Bag in battle (`... battle <pixelfonts.txt>`): the same screen; the game only offers Use there.
 - Party in battle (approved; `ds_mock_party.py ... battle`): the same party screen without dragging. Touching a
   Pokémon shows on the second screen itself, with no trip to the summary, only what matters to decide a switch:

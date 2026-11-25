@@ -5,8 +5,8 @@
 # in the upper part and +32 at the top of the description box (so its text is not glued to the edge).
 # The strip of small pocket icons becomes a grid of large touch buttons built from the same icons.
 # With a third argument, the state after touching an item: the left panel gives way to that item's options
-# (the ones the game offers for it) as stacked buttons in the approved style, and a button to go back to the
-# pockets. 'item' = out of battle, 'battle' = in battle (the game only offers Use there).
+# (the ones the game offers for it) as stacked buttons in the approved style, and CANCELAR to drop the
+# selection and get the pockets back. 'item' = out of battle, 'battle' = in battle (the game only offers Use there).
 # Needs the game folder. Usage: ds_mock_bag.py <game folder> <out.png> [item|battle <pixelfonts.txt>]
 import sys
 from PIL import Image, ImageDraw, ImageFont
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         for n, (label, colour) in enumerate(options):
             m.button(cd, (1, n * 27 + 1, 80, n * 27 + 24), colour, 9, selected=(n == 0), lift=(1 if n == 0 else 0))
             m.pix_text(col, label, 41, n * 27 + 12 - (1 if n == 0 else 0), 1)
-        m.button(cd, (11, 108, 80, 128), (56, 136, 232), 9); m.pix_text(col, 'VOLVER', 46, 118, 1)
+        m.button(cd, (1, 108, 80, 128), (56, 136, 232), 9); m.pix_text(col, 'CANCELAR', 41, 118, 1)   # drops the selection; CERRAR MOCHILA leaves the bag
         col = col.resize((col.width * 6, col.height * 6), Image.NEAREST); one.alpha_composite(col, ((pw2 - col.width) // 2, 14))
     one = one.convert('RGB')
     one.save(OUT.replace('.png', '-1to1.png'))                    # the screen pixel for pixel (1240x1080)
