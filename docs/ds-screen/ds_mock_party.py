@@ -198,7 +198,7 @@ def moves():
         one.alpha_composite(big(cats.crop((0, cr, 64, cr + 28))), (int(cx) + 9, (y0 + 22) * S))
         for n, (label, value) in enumerate((('Potencia', power), ('Precisión', acc), ('PP', pp))):
             y = (y0 + 42.5 + 8.5 * n) * S
-            m.ttf(d, label, (x0 + 11) * S, y, 52, ink, shd, 'lm'); m.ttf(d, value, (x1 - 10) * S, y, 52, ink, shd, 'rm')
+            m.ttf(d, label, (x0 + 20) * S, y, 52, ink, shd, 'lm'); m.ttf(d, value, (x1 - 19) * S, y, 52, ink, shd, 'rm')
     name, species = PARTY[SELECTED][0], PARTY[SELECTED][1]         # whose moves these are: icon and name at 3x
     icon = big(Image.open(GAME + '/Graphics/Pokemon/Icons/' + species + '.png').convert('RGBA').crop((0, 0, 64, 64)))
     one.alpha_composite(icon, (12, 1080 - 198))
