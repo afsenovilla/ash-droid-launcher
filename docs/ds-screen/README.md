@@ -51,7 +51,7 @@ Changes after the first build on the device (2026-11-25), which replace what the
 - **Map and wild Pokémon**: they follow the game's own Town Map. While it is open (bag, Pokégear, Fly), the
   second screen shows the draggable region map and the wild Pokémon button; VOLVER closes the game's map.
 - **Pokédex**: while the list is open the second screen shows a picture of the game's own entry page for
-  the species under the cursor (2x), with INFO / AREA / FORMS tabs, previous / next and VOLVER. The game's
+  the species under the cursor (2.5x, see below), previous / next and VOLVER. The game's
   entry screen is kept hidden and only shown for the instant of each picture; the picture is taken once the
   cursor rests (6 frames). Unseen species show a "not seen yet" panel. The search stays on the buttons.
 - **Summary**: the MOVES button only turns the game's page, like the other page buttons. The 2x2 moves
@@ -353,9 +353,11 @@ category icons), that image is used; code-drawn elements are for what the game h
 - **Pokédex tabs**: not a bug. The INFO / AREA / FORMS tabs of the second screen work on the device. The
   report was about touching the game's own screen (the list's scroll arrows on the top screen), which does
   nothing: the game has no touch support of its own, and only the second screen is touch-driven.
-- **Pokédex layout**: the game's page already has its own INFO / AREA / FORMS strip, so the second screen's
-  tabs duplicate it, and the picture is smaller than the screen allows. To redo: drop our tabs, make the
-  game's strip inside the picture touchable, and decide the size (2x exact, or 2.5x like the trainer card).
+- **Pokédex layout** (redone, option B chosen by the user): the game's page already has its own INFO / AREA /
+  FORMS strip, so the second screen's own tabs are gone and that strip, inside the picture, is what is
+  touched. The picture fills the width at 2.5x (8 game px cropped at each side), the same exception to the
+  whole-factor rule as the trainer card; previous / next and VOLVER sit in a strip below. The touch zones were
+  measured on the English page background; the localized ones may place the words slightly differently.
 
 ## Idea for later: foldable phones (not started, nothing tested)
 

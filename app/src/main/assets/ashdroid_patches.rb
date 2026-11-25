@@ -939,7 +939,7 @@ module AshDroidDSUI
     "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", unseen: "??? = not seen", lv: "Lv",
               wild_title: "Wild Pokémon", card: "Card %d of %d", save_q: "Save the game?", saved: "Game saved",
               save: "SAVE", saved_button: "SAVED", held: "Held: %s", no_held: "No held item", type: "Type:", item: "Item:", power: "Power",
-              accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], dex_pages: %w[INFO AREA FORMS], dex_unseen: "Not seen yet.", sum_help: "Details are shown above.",
+              accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], dex_unseen: "Not seen yet.", sum_help: "Details are shown above.",
               drop: "Let go to swap.", grass: "GRASS", fishing: "FISHING", cave: "CAVE", change: "SWITCH", mega: "MEGA",
               eff: ["No effect", "Not very effective", "Super effective"], badges: "Badges:", pokedex: "Pokédex:",
               time: "Time:", money: "Money:", started: "Started:", no_wild: "No wild Pokémon here.",
@@ -948,7 +948,7 @@ module AshDroidDSUI
               wild_title: "Pokémon salvajes", card: "Tarjeta %d de %d", save_q: "¿Guardar la partida?",
               saved: "Partida guardada", save: "GUARDAR", saved_button: "GUARDADO", held: "Equipado: %s", no_held: "Sin objeto equipado",
               type: "Tipo:", item: "Objeto:", power: "Potencia", accuracy: "Precisión",
-              pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], dex_pages: %w[INFO ÁREA FORMAS], dex_unseen: "Aún no lo has visto.", sum_help: "Los datos se ven arriba.",
+              pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], dex_unseen: "Aún no lo has visto.", sum_help: "Los datos se ven arriba.",
               drop: "Suelta para cambiar.", grass: "HIERBA", fishing: "PESCA", cave: "CUEVA", change: "CAMBIAR", mega: "MEGA",
               eff: ["No afecta", "Poco eficaz", "Muy eficaz"], badges: "Medallas:", pokedex: "Pokédex:",
               time: "Tiempo:", money: "Dinero:", started: "Inicio:", no_wild: "Aquí no hay Pokémon salvajes.",
@@ -957,7 +957,7 @@ module AshDroidDSUI
               wild_title: "Pokémon sauvages", card: "Carte %d sur %d", save_q: "Sauvegarder la partie ?",
               saved: "Partie sauvegardée", save: "SAUVEGARDER", saved_button: "SAUVEGARDÉ", held: "Tenu : %s", no_held: "Aucun objet tenu",
               type: "Type :", item: "Objet :", power: "Puissance", accuracy: "Précision",
-              pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], dex_pages: %w[INFOS ZONE FORMES], dex_unseen: "Pas encore vu.", sum_help: "Les données sont en haut.",
+              pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], dex_unseen: "Pas encore vu.", sum_help: "Les données sont en haut.",
               drop: "Relâchez pour échanger.", grass: "HERBE", fishing: "PÊCHE", cave: "GROTTE", change: "CHANGER", mega: "MÉGA",
               eff: ["Sans effet", "Peu efficace", "Super efficace"], badges: "Badges :", pokedex: "Pokédex :",
               time: "Temps :", money: "Argent :", started: "Début :", no_wild: "Aucun Pokémon sauvage ici.",
@@ -966,7 +966,7 @@ module AshDroidDSUI
               wild_title: "Wilde Pokémon", card: "Karte %d von %d", save_q: "Spiel speichern?",
               saved: "Spiel gespeichert", save: "SPEICHERN", saved_button: "GESPEICHERT", held: "Trägt: %s", no_held: "Trägt kein Item",
               type: "Typ:", item: "Item:", power: "Stärke", accuracy: "Genauigkeit",
-              pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], dex_pages: %w[INFO GEBIET FORMEN], dex_unseen: "Noch nicht gesehen.", sum_help: "Die Daten stehen oben.",
+              pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], dex_unseen: "Noch nicht gesehen.", sum_help: "Die Daten stehen oben.",
               drop: "Loslassen zum Tauschen.", grass: "GRAS", fishing: "ANGELN", cave: "HÖHLE", change: "WECHSELN", mega: "MEGA",
               eff: ["Wirkungslos", "Nicht sehr effektiv", "Sehr effektiv"], badges: "Orden:", pokedex: "Pokédex:",
               time: "Spielzeit:", money: "Geld:", started: "Beginn:", no_wild: "Hier gibt es keine wilden Pokémon.",
@@ -1715,31 +1715,32 @@ module AshDroidDSUI
   end
 
   # The Pokédex is open: the pages of the game's own entry for the species under its cursor, as the game
-  # draws them (a picture of its screen at 2x), so nothing has to be opened to read them.
-  # d: { shot: png file or nil, page: 1..3, seen:, first:, last: }
+  # draws them, so nothing has to be opened to read them. A picture of the game's screen, as wide as the
+  # second screen: 2.5 screen px per game pixel, without 8 px of its border at each side (decided: the same
+  # exception to the whole-factor rule as the trainer card). The game's own INFO / AREA / FORMS strip, at
+  # the top of the picture, is what is touched to change page.
+  # d: { shot: png file or nil, page: 1..3, seen:, first:, last:, error: }
+  DEX_TABS = [[44, 126], [126, 216], [216, 312]].freeze   # game px, left and right of each word's zone
+
   def self.dex(d)
     s = Screen.new
     stripes(s.ops)
-    l(:dex_pages).each_with_index do |label, n|
-      on = n + 1 == d[:page].to_i
-      x = 2 + n * 68
-      s.button(0, 0, [x, 2, x + 65, 21], [GREEN, ORANGE, PURPLE][n], label, d[:seen] ? "dexpage:#{n + 1}" : nil, shadow: LAVENDER_SHADOW,
-               disabled: !d[:seen], chosen: on && d[:seen])
-    end
-    sx = (W - 1024) / 2
-    sy = 144
-    fill(s.ops, sx - 6, sy - 6, 1036, 780, [56, 56, 72])
+    ph = 960
     if d[:shot]
-      s.ops << { "o" => "img", "f" => d[:shot], "s" => [0, 0, 512, 384], "d" => [sx, sy, 1024, 768] }
+      s.ops << { "o" => "img", "f" => d[:shot], "s" => [8, 0, 496, 384], "d" => [0, 0, W, ph] }
+      DEX_TABS.each_with_index do |(x0, x1), n|
+        s.ops << { "o" => "hit", "r" => [(x0 - 8) * 5 / 2, 0, (x1 - x0) * 5 / 2, 120], "cmd" => "dexpage:#{n + 1}", "dim" => 1 }
+      end
     else
-      fill(s.ops, sx, sy, 1024, 768, [248, 248, 236])
-      txt(s.ops, d[:seen] ? "" : l(:dex_unseen), W / 2, sy + 384, 78, INK, INK_SH, "m", "m")
+      fill(s.ops, 0, 0, W, ph, [248, 248, 236])
+      txt(s.ops, d[:seen] ? "" : l(:dex_unseen), W / 2, ph / 2, 78, INK, INK_SH, "m", "m")
       # a page the game could not draw: the reason, to report it
-      txt(s.ops, d[:error], sx + 40, sy + 60, 39, INK, nil, "l", "a", { "ww" => 944, "lh" => 52, "ml" => 12 }) if d[:error]
+      txt(s.ops, d[:error], 40, 60, 39, INK, nil, "l", "a", { "ww" => W - 80, "lh" => 52, "ml" => 12 }) if d[:error]
     end
-    game_button(s, 6, 472, 112, 62, nil, d[:first] ? nil : "dex:prev", nil, glyph: arrow_icon(16, 6, true))
-    game_button(s, 124, 472, 112, 62, nil, d[:last] ? nil : "dex:next", nil, glyph: arrow_icon(16, 6, false))
-    game_button(s, 620 - 6 - 200, 472, 200, 62, l(:back), "back")
+    fill(s.ops, 0, ph, W, 6, [56, 56, 72])
+    game_button(s, 6, 486, 112, 50, nil, d[:first] ? nil : "dex:prev", nil, glyph: arrow_icon(16, 4, true))
+    game_button(s, 124, 486, 112, 50, nil, d[:last] ? nil : "dex:next", nil, glyph: arrow_icon(16, 4, false))
+    game_button(s, 620 - 6 - 200, 486, 200, 50, l(:back), "back")
     s.result("id" => "dex")
   end
 
