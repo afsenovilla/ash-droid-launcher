@@ -2608,13 +2608,22 @@ module AshDroidDS
       return
     end
     bag = live(:bag)
-    show = (bag || live(:party)) && !live(:summary)
-    if show && bag && !usable_window?(live(:cmd))
-      # the bag asking for a number: that is only on the game's screen
-      show = false if !window_text(bag, "helpwindow").empty? && window_text(bag, "msgwindow").empty?
+    # something that is only on the game's screen: the summary, or the bag asking for a number
+    blocked = live(:summary) ? true : false
+    if !blocked && bag && !usable_window?(live(:cmd))
+      blocked = !window_text(bag, "helpwindow").empty? && window_text(bag, "msgwindow").empty?
     end
-    @cover_seen = @tickn if show
-    @cover.visible = @tickn - @cover_seen <= 8
+    if blocked
+      @cover.visible = false
+      @cover_seen = -1000
+    elsif bag || live(:party)
+      @cover.visible = true
+      @cover_seen = @tickn
+    else
+      # between two of the game's screens (their fades): stay up, so the game screen never flashes the menu;
+      # if nothing known shows up within a second, something else needs the game screen
+      @cover.visible = @tickn - @cover_seen <= 40
+    end
   rescue StandardError, NameError => e
     log_once("cover", e)
     cover_drop
