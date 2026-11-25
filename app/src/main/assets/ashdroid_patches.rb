@@ -1629,21 +1629,20 @@ module AshDroidDSUI
         txt(s.ops, "-", x + 204, y, 65, INK, INK_SH, "l", "m")
       end
     end
-    # what the game offers for this one: a row of up to three wide buttons, and a second row beside VOLVER
-    opts = (d[:options] || []).first(5)
-    top = opts.first(3)
-    k = [top.length, 1].max
-    bw = (204 - 2 * (k - 1)) / k
-    top.each_with_index do |o, n|
-      x = 1 + n * (bw + 2)
-      s.button(0, 704, [x, 1, x + bw - 1, 28], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW)
+    # what the game offers for this one and VOLVER, as one grid of equal buttons (VOLVER always last, bottom
+    # right): one row up to three, 2x2 for four, 3x2 for five or six
+    cells = (d[:options] || []).first(5) + [{ label: l(:back), cmd: "back", kind: :cancel }]
+    t = cells.length
+    cols = t <= 3 ? t : t == 4 ? 2 : 3
+    rows = (t / cols.to_f).ceil
+    bw = (204 - 2 * (cols - 1)) / cols
+    y0 = rows == 1 ? 890 : 704
+    cells.each_with_index do |o, n|
+      n = cols * rows - 1 if n == t - 1         # VOLVER takes the last cell
+      x = 1 + (n % cols) * (bw + 2)
+      y = 1 + (n / cols) * 31
+      s.button(0, y0, [x, y, x + bw - 1, y + 27], option_color(o), upper(o[:label]), o[:cmd], shadow: PARTY_SHADOW)
     end
-    fy = H - 26 * S - 2
-    opts.drop(3).each_with_index do |o, n|
-      x = 2 + n * 66
-      s.button(2, fy, [x, 1, x + 63, 22], option_color(o), upper(o[:label]), o[:cmd], shadow: FOOT_SHADOW)
-    end
-    s.button(2, fy, [134, 1, 203, 22], BLUE, l(:back), "back", shadow: FOOT_SHADOW, center: [168, 11])
     s.result("id" => "sheet")
   end
 
