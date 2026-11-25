@@ -1328,10 +1328,11 @@ module AshDroidDSUI
     t = (d[:texts] || []).map { |x| upper(x) }
     idx = d[:index].to_i
     sh = LAVENDER_SHADOW
-    # as in the game: each button in its own colour, and the lighter one while it is under the cursor
+    # each button always in the game's own plain colour; the cursor is the bounce alone (decided), not the
+    # lighter colour the game gives the button under it
     col = lambda do |i|
       pair = ((d[:colors] || [])[i]) || COMMAND_COLORS[i]
-      pair[idx == i ? 1 : 0] || COMMAND_COLORS[i][idx == i ? 1 : 0]
+      pair[0] || COMMAND_COLORS[i][0]
     end
     s.button(0, 0, [10, 19, 195, 112], col.call(0), t[0], "sel:0", shadow: sh, r: 11, k: 3, center: [103, 65], bounce: idx == 0)
     s.button(0, 0, [4, 122, 70, 174], col.call(1), t[1], "sel:1", shadow: sh, center: [37, 147], bounce: idx == 1)
@@ -1371,7 +1372,7 @@ module AshDroidDSUI
       sh.shadow(box, 8, LAVENDER_SHADOW)
       s.ops << sh.op
       art = Art.new(px, py, w + 2, h + 6)
-      col = (sel ? m[:light] : nil) || m[:col] || type_color(m[:type])   # the game's own button colours when known
+      col = m[:col] || type_color(m[:type])   # the game's own colour for that type's button, when known
       card(art, box, col)
       eff = m[:eff]
       band = eff == 2 ? [72, 184, 88] : eff == 1 ? [208, 136, 56] : eff == 0 ? [136, 136, 152] : nil
