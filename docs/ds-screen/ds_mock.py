@@ -128,10 +128,16 @@ def command(dy=0):
     return up(a)
 
 TYPES = {'Eléctrico': (248, 208, 48), 'Psíquico': (248, 88, 136), 'Normal': (168, 168, 120)}
+TYPE_ROW = {'Normal': 0, 'Eléctrico': 13, 'Psíquico': 14}       # rows of the game's types.png (64x28 each)
 MOVES = [('Impactrueno', 'Eléctrico', '30/30', 'Muy eficaz'), ('Rayo', 'Eléctrico', '15/15', 'Muy eficaz'),
          ('Agilidad', 'Psíquico', '30/30', None), ('Ataque Rápido', 'Normal', '30/30', None)]
 CELLS = [(4, 5, 101, 71), (105, 5, 202, 71), (4, 75, 101, 141), (105, 75, 202, 141)]
 def fight(dy=0):
+    """Move buttons: thin frame in the type's colour around a cream panel (same card as the moves screen of the
+    summary); name, the game's own type icon at 3x with the PP beside it, and the effectiveness band at the foot
+    when it applies. The type icon needs the game folder: it is taken as the folder above the font's."""
+    import os
+    types = Image.open(os.path.join(os.path.dirname(os.path.dirname(TTF)), 'Graphics', 'Pictures', 'types.png')).convert('RGBA')
     cells = [(b[0], b[1]+dy, b[2], b[3]+dy) if i == 0 else b for i, b in enumerate(CELLS)]
     a = Image.new('RGB', (AW, AH)); d = ImageDraw.Draw(a); background(d)
     for i, ((n, t, pp, e), b) in enumerate(zip(MOVES, cells)):
@@ -140,33 +146,26 @@ def fight(dy=0):
         w, h = x1-x0+1, y1-y0+1; outer = rounded((w, h), 8)
         a.paste((56, 56, 72), (x0, y0), outer)
         a.paste((240, 240, 248), (x0, y0), inset(outer, 1))
-        a.paste(shade(col, 0.6), (x0, y0), inset(outer, 3))
-        a.paste(col, (x0, y0), rows(inset(outer, 4), 0, h-5))
-        a.paste(shade(col, 1.2), (x0, y0), rows(inset(outer, 5), 5, 6))
-        d.rounded_rectangle((x0+8, y0+8, x1-8, y1-9), 4, fill=shade(col, 0.6))        # inner panel edge
-        d.rounded_rectangle((x0+9, y0+9, x1-9, y1-10), 3, fill=(248, 248, 236))       # cream panel, as the game's name bar
+        a.paste(shade(col, 0.6), (x0, y0), inset(outer, 3)); a.paste(col, (x0, y0), inset(outer, 4))
+        a.paste((248, 248, 236), (x0, y0), inset(outer, 6))
         if e:
-            band = (72, 184, 88)
-            d.rounded_rectangle((x0+9, y0+44, x1-9, y1-10), 3, fill=band)
-            d.rectangle((x0+9, y0+44, x1-9, y0+47), fill=band)
-            d.line((x0+9, y0+44, x1-9, y0+44), fill=shade(col, 0.6))
-            d.line((x0+10, y0+45, x1-10, y0+45), fill=shade(band, 1.2))
-        ty = 28 if e else 34
-        d.rounded_rectangle((x0+11, y0+ty-1, x0+51, y0+ty+11), 4, fill=shade(col, 0.6))    # type tag
-        d.rounded_rectangle((x0+12, y0+ty, x0+50, y0+ty+10), 3, fill=col)
+            band = (72, 184, 88); cream = inset(outer, 6)
+            a.paste(band, (x0, y0), rows(cream, 47, h)); a.paste(shade(band, 0.7), (x0, y0), rows(cream, 47, 48))
+            a.paste(shade(band, 1.2), (x0, y0), rows(cream, 48, 49))
     button(d, (56, 147, 149, 175), (56, 136, 232), 9)
     pix_text(a, 'CANCELAR', 103, 161, 1)
-    big = up(a); d = ImageDraw.Draw(big)
+    big = up(a).convert('RGBA'); d = ImageDraw.Draw(big)
     for (n, t, pp, e), b in zip(MOVES, cells):
-        col = TYPES[t]; cx = (b[0] + b[2]) / 2 * S
+        cx = (b[0] + b[2] + 1) / 2 * S
         size = 78
-        while ImageFont.truetype(TTF, size).getlength(n) > (b[2]-b[0]-22)*S: size -= 13
-        ny, ty = (18, 28) if e else (22, 34)
+        while ImageFont.truetype(TTF, size).getlength(n) > (b[2]-b[0]-20)*S: size -= 13
+        ny, iy = (14.5, 25) if e else (20, 35)                    # name centre and icon top, in art px from the cell's top
         ttf(d, n, cx, (b[1]+ny)*S, size, (64, 64, 80), (168, 168, 192))
-        ttf(d, t, (b[0]+31)*S, (b[1]+ty+4.5)*S, 52, (255, 255, 255), shade(col, 0.42))
-        ttf(d, 'PP ' + pp, (b[2]-11)*S, (b[1]+ty+5)*S, 52, (64, 64, 80), (168, 168, 192), 'rm')
-        if e: ttf(d, e, cx, (b[1]+49.5)*S, 52, (255, 255, 255), (40, 112, 56))
-    return big
+        icon = types.crop((0, TYPE_ROW[t]*28, 64, TYPE_ROW[t]*28 + 28)); icon = icon.resize((192, 84), Image.NEAREST)
+        big.alpha_composite(icon, (int(cx) - 201, (b[1]+iy)*S))
+        ttf(d, 'PP ' + pp, int(cx) + 197, (b[1]+iy+7)*S, 52, (64, 64, 80), (168, 168, 192), 'rm')
+        if e: ttf(d, e, cx, (b[1]+53.5)*S, 52, (255, 255, 255), (40, 112, 56))
+    return big.convert('RGB')
 if __name__ == '__main__':
     OUT = sys.argv[3]
     def sheet(dy):
