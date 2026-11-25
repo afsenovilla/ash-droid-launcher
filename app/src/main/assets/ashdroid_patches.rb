@@ -1405,6 +1405,38 @@ module AshDroidDSUI
     art.rr(box, r, 3, shade(col, 0.6)).rr(box, r, 4, col).rr(box, r, 6, [248, 248, 236])
   end
 
+  # The game's own move button for a type (row of its sheet: blank, with the type's colour at both ends),
+  # made as wide and as tall as needed by repeating its flat lines, k screen px per image pixel. With an id,
+  # the game's lighter version (the one under its cursor) is the pressed look. Returns false if the game's
+  # image is not there.
+  def self.move_box(ops, x, y, w, h, row, k, id = nil, selected = false, extra = nil)
+    f = pic("Battle/cursor_fight")
+    fw, fh = size(f)
+    cell = fw / 2
+    bh = 46
+    return false unless cell >= 60 && fh >= (row + 1) * bh
+    lw = w / k
+    lh = h / k
+    grow = [lh - bh, 0].max
+    [0, 1].each do |variant|
+      next if variant == 1 && !id
+      x0 = variant * cell
+      y0 = row * bh
+      xs = Axis.new(fw)
+      xs.instance_variable_set(:@segs, [[x0, cell / 2, cell / 2], [x0 + cell / 2, 1, [lw - cell, 0].max + 1], [x0 + cell / 2 + 1, cell - cell / 2 - 1, cell - cell / 2 - 1]])
+      ys = Axis.new(fh)
+      ys.instance_variable_set(:@segs, [[y0, 16, 16], [y0 + 16, 1, grow / 2 + 1], [y0 + 17, 13, 13],
+                                        [y0 + 30, 1, grow - grow / 2 + 1], [y0 + 31, 15, 15]])
+      e = (extra || {}).dup
+      e[variant == 1 ? "dn_of" : "up_of"] = id if id
+      e["bn"] = 1 if selected && variant == 0
+      sheet(ops, f, xs, ys, x, y, k, e)
+    end
+    true
+  end
+
+  EFF_COLORS = [[[120, 120, 136], [208, 208, 216]], [[200, 104, 32], [240, 208, 168]], [[40, 144, 64], [176, 224, 184]]].freeze
+
   # d: { moves: [{name:, type:, row:, pp:, tpp:, eff: 0/1/2/nil}], index:, mega: 0/1/2, cancel: }
   def self.fight(d)
     s = Screen.new
@@ -1413,32 +1445,24 @@ module AshDroidDSUI
     idx = d[:index].to_i
     (d[:moves] || []).first(4).each_with_index do |m, i|
       x0, y0, x1, y1 = MOVE_CELLS[i]
-      w = x1 - x0 + 1
-      h = y1 - y0 + 1
-      px = (x0 - 1) * S
-      py = (y0 - 1) * S
-      box = [1, 1, w, h]
+      w = (x1 - x0 + 1) * S
+      h = (y1 - y0 + 1) * S
+      x = x0 * S
+      y = y0 * S
       sel = i == idx
-      sh = Art.new(px, py, w + 2, h + 6)
-      sh.shadow(box, 8, LAVENDER_SHADOW)
-      s.ops << sh.op
-      art = Art.new(px, py, w + 2, h + 6)
-      col = m[:col] || type_color(m[:type])   # the game's own colour for that type's button, when known
-      card(art, box, col)
-      eff = m[:eff]
-      band = eff == 2 ? [72, 184, 88] : eff == 1 ? [208, 136, 56] : eff == 0 ? [136, 136, 152] : nil
-      if band
-        art.rr(box, 8, 6, band, [47, h]).rr(box, 8, 6, shade(band, 0.7), [47, 48]).rr(box, 8, 6, shade(band, 1.2), [48, 49])
-      end
       bn = sel ? { "bn" => 1 } : {}
-      s.ops << art.op(nil, bn)
-      cx = (x0 + x1 + 1) / 2.0 * S
-      ny, iy = band ? [14.5, 25] : [20, 35]
-      txt(s.ops, m[:name], cx, (y0 + ny) * S, 78, INK, INK_SH, "m", "m", bn.merge("fit" => (x1 - x0 - 20) * S))
-      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx.to_i - 201, (y0 + iy) * S, 3, bn) if types
-      txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", cx.to_i + 197, (y0 + iy + 7) * S, 52, INK, INK_SH, "r", "m", bn)
-      txt(s.ops, l(:eff)[eff], cx, (y0 + 53.5) * S, 52, [255, 255, 255], shade(band, 0.6), "m", "m", bn) if band
-      s.ops << { "o" => "hit", "r" => [x0 * S, y0 * S, w * S, h * S], "cmd" => "sel:#{i}", "dim" => 1 }
+      id = s.next_id
+      unless move_box(s.ops, x, y, w, h, m[:row].to_i, 3, id, sel)      # the game's own button for that type
+        game_box(s.ops, x, y, w, h, m[:col] || type_color(m[:type]), id, sel)
+      end
+      cx = x + w / 2
+      eff = m[:eff]
+      ny, iy = eff ? [84, 150] : [108, 198]
+      txt(s.ops, m[:name], cx, y + ny, 78, INK, INK_SH, "m", "m", bn.merge("fit" => w - 96))
+      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx - 201, y + iy, 3, bn) if types
+      txt(s.ops, "PP #{m[:pp]}/#{m[:tpp]}", cx + 197, y + iy + 42, 52, INK, INK_SH, "r", "m", bn)
+      txt(s.ops, l(:eff)[eff], cx, y + 300, 52, EFF_COLORS[eff][0], EFF_COLORS[eff][1], "m", "m", bn) if eff
+      s.ops << { "o" => "hit", "r" => [x, y, w, h], "cmd" => "sel:#{i}", "art" => id }
     end
     pill(s, 56 * S, 147 * S, 94 * S, 29 * S, 3, 3, upper(d[:cancel] || l(:back)), "back")
     pill(s, 4 * S, 147 * S, 49 * S, 29 * S, d[:mega].to_i == 2 ? 0 : 2, 3, l(:mega), "act") if d[:mega].to_i > 0
@@ -1785,24 +1809,25 @@ module AshDroidDSUI
     cats = pic("category")
     (d[:moves] || []).first(4).each_with_index do |m, i|
       x0, y0, x1, y1 = SUM_CELLS[i]
-      w = x1 - x0 + 1
-      h = y1 - y0 + 1
+      w = (x1 - x0 + 1) * S
+      h = (y1 - y0 + 1) * S
+      x = x0 * S
+      y = y0 * S
       g = { "g" => i }
-      art = Art.new((x0 - 1) * S, (y0 - 1) * S, w + 2, h + 6)
-      art.shadow([1, 1, w, h], 8, LAVENDER_SHADOW)
-      card(art, [1, 1, w, h], type_color(m[:type]))
-      s.ops << art.op(nil, g)
-      cx = (x0 + x1 + 1) / 2.0 * S
-      txt(s.ops, m[:name], cx, (y0 + 13.5) * S, 78, INK, INK_SH, "m", "m", g.merge("fit" => (x1 - x0 - 20) * S))
-      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx.to_i - 201, (y0 + 22) * S, 3, g)
-      img(s.ops, cats, 0, m[:cat].to_i * 28, 64, 28, cx.to_i + 9, (y0 + 22) * S, 3, g)
+      unless move_box(s.ops, x, y, w, h, m[:row].to_i, 3, nil, false, g)
+        game_box(s.ops, x, y, w, h, type_color(m[:type]))
+      end
+      cx = x + w / 2
+      txt(s.ops, m[:name], cx, y + 84, 78, INK, INK_SH, "m", "m", g.merge("fit" => w - 96))
+      img(s.ops, types, 0, m[:row].to_i * 28, 64, 28, cx - 201, y + 132, 3, g)
+      img(s.ops, cats, 0, m[:cat].to_i * 28, 64, 28, cx + 9, y + 132, 3, g)
       rows = [[l(:power), m[:power]], [l(:accuracy), m[:accuracy]], ["PP", "#{m[:pp]}/#{m[:tpp]}"]]
       rows.each_with_index do |(label, value), n|
-        y = (y0 + 42.5 + 8.5 * n) * S
-        txt(s.ops, label, cx.to_i - 201, y, 52, INK, INK_SH, "l", "m", g)
-        txt(s.ops, value.to_s, cx.to_i + 197, y, 52, INK, INK_SH, "r", "m", g)
+        ry = y + 252 + 50 * n
+        txt(s.ops, label, cx - 201, ry, 52, INK, INK_SH, "l", "m", g)
+        txt(s.ops, value.to_s, cx + 197, ry, 52, INK, INK_SH, "r", "m", g)
       end
-      hit = { "o" => "hit", "r" => [x0 * S, y0 * S, w * S, h * S], "n" => i, "g" => i }
+      hit = { "o" => "hit", "r" => [x, y, w, h], "n" => i, "g" => i }
       hit["drag"] = "mswap" if d[:drag]
       s.ops << hit
     end
