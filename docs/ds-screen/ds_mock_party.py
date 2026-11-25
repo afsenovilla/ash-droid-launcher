@@ -123,17 +123,6 @@ def actions(options=None, line=None, held=False):
     m.SHADOW = tuple(int(v * 0.7) for v in one.getpixel((W, 400))[:3])
     bw = CARD * 2 // 6                                             # as wide as the panel
     top, pitch, high = 314, 31, 27
-    if held:
-        # Which item it holds: a cream strip under the card with the item's own icon (2x) and its name. It takes
-        # the place of the help line, and the buttons get a little lower to make room.
-        strip = Image.new('RGBA', (bw + 2, 17), (0, 0, 0, 0)); outer = m.rounded((bw, 16), 7)
-        strip.paste((56, 56, 72), (1, 0), outer); strip.paste((240, 240, 248), (1, 0), m.inset(outer, 1)); strip.paste((248, 248, 236), (1, 0), m.inset(outer, 3))
-        strip = strip.resize((strip.width * 6, strip.height * 6), Image.NEAREST); sx = (W * 2 - strip.width) // 2
-        one.paste(strip, (sx, 302), strip)
-        icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((96, 96), Image.NEAREST)
-        one.alpha_composite(icon, (sx + 30, 302))
-        m.ttf(d, 'Lleva', sx + 140, 350, 52, (64, 64, 80), (168, 168, 192), 'lm'); m.ttf(d, held[1], sx + strip.width - 36, 350, 52, (64, 64, 80), (168, 168, 192), 'rm')
-        top, pitch, high = 410, 26, 23
     grid = Image.new('RGBA', (bw + 2, len(options) * pitch + 2), (0, 0, 0, 0)); gd = ImageDraw.Draw(grid)
     for n, (label, col) in enumerate(options):
         by = n * pitch
@@ -142,6 +131,14 @@ def actions(options=None, line=None, held=False):
     grid = grid.resize((grid.width * 6, grid.height * 6), Image.NEAREST)
     one.paste(grid, ((W * 2 - grid.width) // 2, top), grid)
     footer(one, d, '' if held else (line or '¿Qué hacer con %s?' % PARTY[SELECTED][0]), home=True)
+    if held:
+        # Which item it holds goes where the help line was, bottom left: the item's own icon (3x) and its name,
+        # white with a dark shadow like the other texts on this background.
+        icon = Image.open(GAME + '/Graphics/Items/' + held[0] + '.png').convert('RGBA'); icon = icon.resize((144, 144), Image.NEAREST)
+        one = one.convert('RGBA'); one.alpha_composite(icon, (16, H * 2 - 170)); d = ImageDraw.Draw(one); d.fontmode = '1'
+        f = ImageFont.truetype(GAME + '/Fonts/power green.ttf', 65)
+        for dx, dy in ((5, 0), (0, 5), (5, 5)): d.text((168 + dx, H * 2 - 96 + dy), held[1], font=f, fill=DARK, anchor='lm')
+        d.text((168, H * 2 - 96), held[1], font=f, fill=WHITE, anchor='lm')
     return one.convert('RGB')
 
 PAGES = ['INFORMACIÓN', 'NOTAS', 'HABILIDADES', 'MOVIMIENTOS', 'CINTAS']   # the game's five summary pages
