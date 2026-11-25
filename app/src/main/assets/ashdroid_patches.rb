@@ -938,7 +938,7 @@ module AshDroidDSUI
   LABELS = {
     "en" => { back: "BACK", wild: "WILD POKéMON", here: "You are here", unseen: "??? = not seen", lv: "Lv",
               wild_title: "Wild Pokémon", card: "Card %d of %d", save_q: "Save the game?", saved: "Game saved",
-              save: "SAVE", held: "Held: %s", no_held: "No held item", type: "Type:", item: "Item:", power: "Power",
+              save: "SAVE", saved_button: "SAVED", held: "Held: %s", no_held: "No held item", type: "Type:", item: "Item:", power: "Power",
               accuracy: "Accuracy", pages: %w[INFO MEMO SKILLS MOVES RIBBONS], sum_help: "Details are shown above.",
               drop: "Let go to swap.", grass: "GRASS", fishing: "FISHING", cave: "CAVE", change: "SWITCH", mega: "MEGA",
               eff: ["No effect", "Not very effective", "Super effective"], badges: "Badges:", pokedex: "Pokédex:",
@@ -946,7 +946,7 @@ module AshDroidDSUI
               busy: "", choose: "Choose a Pokémon." },
     "es" => { back: "VOLVER", wild: "POKéMON SALVAJES", here: "Estás aquí", unseen: "??? = sin ver", lv: "Nv",
               wild_title: "Pokémon salvajes", card: "Tarjeta %d de %d", save_q: "¿Guardar la partida?",
-              saved: "Partida guardada", save: "GUARDAR", held: "Equipado: %s", no_held: "Sin objeto equipado",
+              saved: "Partida guardada", save: "GUARDAR", saved_button: "GUARDADO", held: "Equipado: %s", no_held: "Sin objeto equipado",
               type: "Tipo:", item: "Objeto:", power: "Potencia", accuracy: "Precisión",
               pages: %w[INFORMACIÓN NOTAS HABILIDADES MOVIMIENTOS CINTAS], sum_help: "Los datos se ven arriba.",
               drop: "Suelta para cambiar.", grass: "HIERBA", fishing: "PESCA", cave: "CUEVA", change: "CAMBIAR", mega: "MEGA",
@@ -955,7 +955,7 @@ module AshDroidDSUI
               busy: "", choose: "Elige un Pokémon." },
     "fr" => { back: "RETOUR", wild: "POKéMON SAUVAGES", here: "Vous êtes ici", unseen: "??? = non vu", lv: "N.",
               wild_title: "Pokémon sauvages", card: "Carte %d sur %d", save_q: "Sauvegarder la partie ?",
-              saved: "Partie sauvegardée", save: "SAUVEGARDER", held: "Tenu : %s", no_held: "Aucun objet tenu",
+              saved: "Partie sauvegardée", save: "SAUVEGARDER", saved_button: "SAUVEGARDÉ", held: "Tenu : %s", no_held: "Aucun objet tenu",
               type: "Type :", item: "Objet :", power: "Puissance", accuracy: "Précision",
               pages: %w[INFOS NOTES STATS CAPACITÉS RUBANS], sum_help: "Les données sont en haut.",
               drop: "Relâchez pour échanger.", grass: "HERBE", fishing: "PÊCHE", cave: "GROTTE", change: "CHANGER", mega: "MÉGA",
@@ -964,7 +964,7 @@ module AshDroidDSUI
               busy: "", choose: "Choisissez un Pokémon." },
     "de" => { back: "ZURÜCK", wild: "WILDE POKéMON", here: "Du bist hier", unseen: "??? = nicht gesehen", lv: "Lv.",
               wild_title: "Wilde Pokémon", card: "Karte %d von %d", save_q: "Spiel speichern?",
-              saved: "Spiel gespeichert", save: "SPEICHERN", held: "Trägt: %s", no_held: "Trägt kein Item",
+              saved: "Spiel gespeichert", save: "SPEICHERN", saved_button: "GESPEICHERT", held: "Trägt: %s", no_held: "Trägt kein Item",
               type: "Typ:", item: "Item:", power: "Stärke", accuracy: "Genauigkeit",
               pages: %w[INFO NOTIZEN WERTE ATTACKEN BÄNDER], sum_help: "Die Daten stehen oben.",
               drop: "Loslassen zum Tauschen.", grass: "GRAS", fishing: "ANGELN", cave: "HÖHLE", change: "WECHSELN", mega: "MEGA",
@@ -2134,7 +2134,9 @@ module AshDroidDSUI
     fill(ops, 0, lh * u - 6, W, 6, [240, 240, 248])
     sh = [40, 40, 64]
     by = H - 32 * S + 2
-    unless d[:done]
+    if d[:done]                                 # the button stays, saying it is done; it does nothing more
+      s.button(2, by, [3, 1, 128, 28], [120, 152, 128], l(:saved_button), nil, shadow: sh, center: [65, 14], disabled: true)
+    else
       s.button(2, by, [3, 1, 128, 28], GREEN, upper(d[:save_label] || l(:save)), "save", shadow: sh, center: [65, 14], bounce: true)
     end
     s.button(2, by, [134, 6, 203, 28], BLUE, l(:back), "back", shadow: sh, center: [168, 17])
