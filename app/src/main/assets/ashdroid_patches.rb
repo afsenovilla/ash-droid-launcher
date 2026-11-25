@@ -1306,7 +1306,13 @@ module AshDroidDSUI
 
   # ---- battle: commands ----
 
-  # d: { texts: [fight, bag, pokemon, run], index:, own: [:ok/:st/:ko/nil x6], foe: [...] }
+  # The colours of the game's own command buttons (plain, under the cursor), used when they cannot be read
+  # from the game's image at run time
+  COMMAND_COLORS = [[[232, 56, 56], [248, 168, 176]], [[224, 152, 40], [248, 208, 120]],
+                    [[88, 176, 40], [144, 224, 120]], [[40, 144, 200], [120, 208, 248]]].freeze
+
+  # d: { texts: [fight, bag, pokemon, run], index:, own: [:ok/:st/:ko/nil x6], foe: [...],
+  #      colors: [[plain, under the cursor] x4] read from the game's buttons, or nil }
   def self.command(d)
     s = Screen.new
     stripes(s.ops)
@@ -1322,10 +1328,15 @@ module AshDroidDSUI
     t = (d[:texts] || []).map { |x| upper(x) }
     idx = d[:index].to_i
     sh = LAVENDER_SHADOW
-    s.button(0, 0, [10, 19, 195, 112], PINK, t[0], "sel:0", shadow: sh, r: 11, k: 3, center: [103, 65], bounce: idx == 0)
-    s.button(0, 0, [4, 122, 70, 174], ORANGE, t[1], "sel:1", shadow: sh, center: [37, 147], bounce: idx == 1)
-    s.button(0, 0, [77, 134, 128, 174], BLUE, t[3], "sel:3", shadow: sh, r: 8, center: [103, 153], bounce: idx == 3)
-    s.button(0, 0, [135, 122, 201, 174], GREEN, t[2], "sel:2", shadow: sh, center: [168, 147], bounce: idx == 2)
+    # as in the game: each button in its own colour, and the lighter one while it is under the cursor
+    col = lambda do |i|
+      pair = ((d[:colors] || [])[i]) || COMMAND_COLORS[i]
+      pair[idx == i ? 1 : 0] || COMMAND_COLORS[i][idx == i ? 1 : 0]
+    end
+    s.button(0, 0, [10, 19, 195, 112], col.call(0), t[0], "sel:0", shadow: sh, r: 11, k: 3, center: [103, 65], bounce: idx == 0)
+    s.button(0, 0, [4, 122, 70, 174], col.call(1), t[1], "sel:1", shadow: sh, center: [37, 147], bounce: idx == 1)
+    s.button(0, 0, [77, 134, 128, 174], col.call(3), t[3], "sel:3", shadow: sh, r: 8, center: [103, 153], bounce: idx == 3)
+    s.button(0, 0, [135, 122, 201, 174], col.call(2), t[2], "sel:2", shadow: sh, center: [168, 147], bounce: idx == 2)
     s.result("id" => "command")
   end
 
@@ -1360,7 +1371,7 @@ module AshDroidDSUI
       sh.shadow(box, 8, LAVENDER_SHADOW)
       s.ops << sh.op
       art = Art.new(px, py, w + 2, h + 6)
-      col = type_color(m[:type])
+      col = (sel ? m[:light] : nil) || m[:col] || type_color(m[:type])   # the game's own button colours when known
       card(art, box, col)
       eff = m[:eff]
       band = eff == 2 ? [72, 184, 88] : eff == 1 ? [208, 136, 56] : eff == 0 ? [136, 136, 152] : nil
@@ -1377,7 +1388,7 @@ module AshDroidDSUI
       txt(s.ops, l(:eff)[eff], cx, (y0 + 53.5) * S, 52, [255, 255, 255], shade(band, 0.6), "m", "m", bn) if band
       s.ops << { "o" => "hit", "r" => [x0 * S, y0 * S, w * S, h * S], "cmd" => "sel:#{i}", "dim" => 1 }
     end
-    s.button(0, 0, [56, 147, 149, 175], BLUE, upper(d[:cancel] || l(:back)), "back", shadow: LAVENDER_SHADOW, center: [103, 161])
+    s.button(0, 0, [56, 147, 149, 175], COMMAND_COLORS[3][0], upper(d[:cancel] || l(:back)), "back", shadow: LAVENDER_SHADOW, center: [103, 161])
     if d[:mega].to_i > 0
       s.button(0, 0, [4, 147, 52, 175], d[:mega].to_i == 2 ? ORANGE : PURPLE, l(:mega), "act", shadow: LAVENDER_SHADOW, center: [28, 161])
     end
@@ -2596,6 +2607,38 @@ module AshDroidDS
     nil
   end
 
+  # A colour of one of the game's button images: the first of the given points that is neither grey nor dark
+  def self.sample(bitmap, points)
+    points.each do |x, y|
+      c = bitmap.get_pixel(x, y)
+      rgb = [c.red.to_i, c.green.to_i, c.blue.to_i]
+      return rgb if c.alpha.to_i > 200 && rgb.max - rgb.min > 40
+    end
+    nil
+  rescue StandardError
+    nil
+  end
+
+  # [plain, under the cursor] for each button of one of the game's battle menus, read from its own image
+  def self.button_colors(cw)
+    @button_colors ||= {}
+    list = cw.instance_variable_get(:@buttons)
+    return [] unless list.is_a?(Array)
+    list.map do |b|
+      next nil unless b && !b.disposed? && b.bitmap && !b.bitmap.disposed?
+      bmp = b.bitmap
+      y = b.src_rect.y.to_i
+      w = bmp.width / 2
+      @button_colors[[bmp.object_id, y]] ||= [
+        sample(bmp, [[16, y + 10], [14, y + 8], [20, y + 10], [16, y + 12]]),
+        sample(bmp, [[w + 16, y + 12], [w + 8, y + 22], [w + 6, y + 22], [w + 12, y + 36], [w + 10, y + 10]])
+      ]
+    end
+  rescue StandardError, NameError => e
+    log_once("colors", e)
+    []
+  end
+
   def self.battle_state(pair)
     scene, cw = pair
     top = top_for(scene)
@@ -2606,8 +2649,10 @@ module AshDroidDS
       mode = top[:mega] && cw.respond_to?(:mode) ? cw.mode.to_i : 0
       key = [top.object_id, cw.index, mode, battler.moves.map { |m| m && [m.id, m.pp] }]
       screen(:fight, key) do
-        moves = battler.moves.compact.select { |m| m.id }.map do |m|
-          move_data(m).merge(eff: effectiveness(battle, battler, m))
+        cols = button_colors(cw)
+        moves = battler.moves.compact.select { |m| m.id }.each_with_index.map do |m, i|
+          plain, light = cols[i]
+          move_data(m).merge(eff: effectiveness(battle, battler, m), col: plain, light: light)
         end
         @count = moves.length
         ui.fight(moves: moves, index: cw.index.to_i, mega: mode, cancel: _INTL("Cancel"))
@@ -2618,7 +2663,7 @@ module AshDroidDS
       foe = battle.wildBattle? ? [:ok] : dots(battle.pbParty(1))
       screen(:command, [top.object_id, cw.index, texts, own, foe]) do
         @count = 4
-        ui.command(texts: texts[1, 4] || [], index: cw.index.to_i, own: own, foe: foe)
+        ui.command(texts: texts[1, 4] || [], index: cw.index.to_i, own: own, foe: foe, colors: button_colors(cw))
       end
     end
   rescue StandardError, NameError => e
