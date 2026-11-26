@@ -2302,6 +2302,15 @@ module AshDroidDSUI
     s = Screen.new
     stripes(s.ops)
     opts = d[:options] || []
+    # a yes / no question: two large buttons, yes in green and no in red in the game's own order, and
+    # nothing else (going back is the same as "no"). d[:confirm]: for each option, whether it is the "yes"
+    if d[:confirm] && opts.length == 2
+      [[8, 100], [106, 198]].each_with_index do |(x0, x1), i|
+        s.button(0, 0, [x0, 52, x1, 127], d[:confirm][i] ? GREEN : RED, upper(opts[i][:label]), opts[i][:cmd],
+                 shadow: LAVENDER_SHADOW, bounce: i == d[:index].to_i)
+      end
+      return s.result("id" => "choice")
+    end
     n = opts.length
     cols = n > 10 ? 3 : n > 5 ? 2 : 1
     rows = (n / cols.to_f).ceil
@@ -2866,17 +2875,26 @@ module AshDroidDS
 
   def self.force(name)
     b = BUTTONS[name].map { |c| Input.const_defined?(c) ? Input.const_get(c) : nil }.compact.first
-    @forced = [b, Graphics.frame_count] if b
+    @forced = [b, @input_n] if b
   end
 
-  # Like a real press, it reads as pressed to everyone who asks during one frame, not only to the first:
+  # Counts the game's input updates: one per turn of whatever loop is running. A forced press lasts one of
+  # them, like a real press. (Counting drawn frames instead made a press last several turns of the loop
+  # while the game's fast-forward skips frames, so one touch chose FIGHT and then a move.)
+  @input_n = 0
+
+  def self.input_update
+    @input_n += 1
+  end
+
+  # Like a real press, it reads as pressed to everyone who asks until the next input update, not only to the first:
   # the battle scene asks for the back button on its own every frame (to abort a battle that allows it)
   # before its menus do, and used to swallow the press meant for the menu.
   def self.forced?(button)
     f = @forced
     return false unless f
-    now = Graphics.frame_count
-    if f[2] ? now != f[2] : (now - f[1]).abs > 3
+    now = @input_n
+    if f[2] ? now != f[2] : (now - f[1]).abs > 4
       @forced = nil
       return false
     end
@@ -3466,7 +3484,8 @@ module AshDroidDS
     labels = commands_of(cw).map { |c| label_of(c) }
     flags = language_flags(labels)
     screen(:choice, [cw.object_id, cw.index, labels]) do
-      ui.choice(help: "", options: options_of(cw), index: cw.index.to_i, flags: flags, flag_col: ui::TEAL)
+      ui.choice(help: "", options: options_of(cw), index: cw.index.to_i, flags: flags, flag_col: ui::TEAL,
+                confirm: labels.length == 2 && labels.sort == [_INTL("Yes"), _INTL("No")].sort ? labels.map { |t| t == _INTL("Yes") } : nil)
     end
   end
 
@@ -3927,6 +3946,15 @@ module AshDroidDS
         def trigger?(button)
           return true if AshDroidDS.forcing? && AshDroidDS.forced?(button)
           ashdroid_ds_trigger?(button)
+        end
+      end
+    end
+    unless input.method_defined?(:ashdroid_ds_input_update)
+      input.class_eval do
+        alias_method :ashdroid_ds_input_update, :update
+        def update(*args)
+          AshDroidDS.input_update
+          ashdroid_ds_input_update(*args)
         end
       end
     end
