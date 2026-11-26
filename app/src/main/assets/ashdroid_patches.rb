@@ -2312,33 +2312,68 @@ module AshDroidDSUI
       return s.result("id" => "choice")
     end
     n = opts.length
+    # the list fills the screen: one column up to five options, then two, then three. A list with its own
+    # way out (Cancel, Exit...) needs no VOLVER; otherwise it gets one in a strip at the bottom.
+    own_exit = opts.any? { |o| o[:kind] == :cancel }
     cols = n > 10 ? 3 : n > 5 ? 2 : 1
-    rows = (n / cols.to_f).ceil
-    bw = cols == 1 ? 150 : cols == 2 ? 97 : 64
     gap = 4
-    total = cols * bw + (cols - 1) * gap
-    x0 = (206 - total) / 2
-    pitch = rows > 5 ? 24 : 29
-    high = pitch - 5
-    y0 = [8, (150 - rows * pitch) / 2].max
+    # long names (towns) need the width more than the height: fewer columns while the rows still fit
+    longest = opts.map { |o| o[:label].to_s.length }.max.to_i
+    cols -= 1 while cols > 1 && (206 - 8 - (cols - 1) * gap) / cols - 6 < longest * 5 && (n / (cols - 1.0)).ceil <= 8
+    rows = [(n / cols.to_f).ceil, 1].max
+    bw = (206 - 8 - (cols - 1) * gap) / cols
+    room = own_exit ? 172 : 146
+    pitch = [room / rows, 46].min
+    high = pitch - 4
+    x0 = (206 - cols * bw - (cols - 1) * gap) / 2
+    y0 = 4 + (room - rows * pitch) / 2
     opts.each_with_index do |o, i|
       c = i / rows
       r = i % rows
       x = x0 + c * (bw + gap)
       y = y0 + r * pitch
-      col = [PINK, ORANGE, GREEN, TEAL, BLUE, PURPLE][i % 6]
-      col = BLUE if o[:kind] == :cancel
       flag = d[:flags] && d[:flags][i]
-      col = d[:flag_col] || col if flag
+      col = flag ? (d[:flag_col] || TEAL) : choice_color(o)
       icon = flag ? flag_icon(7, (high + 3 - FLAG_H) / 2, flag) : nil
       s.button(0, 0, [x, y, x + bw - 1, y + high], col, upper(o[:label]), o[:cmd], shadow: LAVENDER_SHADOW, bounce: i == d[:index].to_i,
                icon: icon, center: flag ? [x + (bw + FLAG_W + 4) / 2, y + (high + 1) / 2] : nil)
     end
-    if d[:help] && !d[:help].to_s.empty?
-      txt(s.ops, d[:help], 48, H - 150, 52, INK, [176, 176, 200], "l", "a", { "ww" => 700, "lh" => 60, "ml" => 2 })
-    end
-    s.button(0, 0, [134, 155, 201, 177], BLUE, l(:back), "back", shadow: LAVENDER_SHADOW, center: [167, 166])
+    s.button(0, 0, [134, 155, 201, 177], BLUE, l(:back), "back", shadow: LAVENDER_SHADOW, center: [167, 166]) unless own_exit
     s.result("id" => "choice")
+  end
+
+  SKY = [96, 184, 240].freeze
+  NAVY = [72, 96, 208].freeze
+  YELLOW = [232, 184, 40].freeze
+  SILVER = [152, 160, 176].freeze
+  PALE = [200, 200, 212].freeze
+  MINT = [112, 200, 152].freeze
+  BROWN = [184, 104, 72].freeze
+  # Options that name a colour get it: the towns of Kanto are named after colours in every language
+  # of the game (Viridian / Verde / Jadielle / Vertania / Smeraldopoli...).
+  WORD_COLORS = [
+    [/\b(paleta|pallet|palette|alabastia|biancavilla)/i, PALE],
+    [/\b(verde|viridian|jadielle|vertania|smeraldopoli)/i, GREEN],
+    [/\b(plateada|pewter|argenta|marmoria|plumbeopoli)/i, SILVER],
+    [/\b(celeste|cerulean|azuria|celestopoli)/i, SKY],
+    [/\b(carm[ií]n|vermilion)/i, RED],
+    [/\b(orania|aranciopoli)/i, ORANGE],
+    [/\b(lavanda|lavender|lavanville|lavandia|lavandonia)/i, PURPLE],
+    [/\b(azulona|azzurropoli)/i, NAVY],
+    [/\b(celadon|c[eé]ladopole|prismania)/i, MINT],
+    [/\b(azafr[aá]n|saffron|safrania|saffronia|zafferanopoli)/i, YELLOW],
+    [/\b(fucsia|fuchsia|parmanie|fuchsania|fucsiapoli)/i, PINK],
+    [/\b(canela|cinnabar|cramois|zinnober|cannella)/i, BROWN]
+  ].freeze
+  KIND_COLORS = { cancel: BLUE, buy: GREEN, sell: ORANGE, yes: GREEN, use: GREEN, give: ORANGE, take: RED, toss: RED,
+                  summary: PURPLE, item: ORANGE, switch: GREEN, switch_in: GREEN }.freeze
+
+  # The colour of an option of a plain list: what it means if it is a known one, the colour it names,
+  # and otherwise the same calm colour for all (not one at random each)
+  def self.choice_color(o)
+    return KIND_COLORS[o[:kind]] if KIND_COLORS[o[:kind]]
+    hit = WORD_COLORS.find { |re, _| o[:label].to_s =~ re }
+    hit ? hit[1] : TEAL
   end
 
   # Nothing to choose right now (a message, an animation): a touch anywhere is the confirm button
@@ -2480,7 +2515,8 @@ module AshDroidDS
     @kinds ||= {
       _INTL("Summary") => :summary, _INTL("Item") => :item, _INTL("Use") => :use, _INTL("Give") => :give,
       _INTL("Take") => :take, _INTL("Toss") => :toss, _INTL("Switch") => :switch, _INTL("Switch In") => :switch_in,
-      _INTL("Cancel") => :cancel, _INTL("Quit") => :cancel, _INTL("Exit") => :cancel, _INTL("No") => :cancel
+      _INTL("Cancel") => :cancel, _INTL("Quit") => :cancel, _INTL("Exit") => :cancel, _INTL("No") => :cancel,
+      _INTL("Buy") => :buy, _INTL("Sell") => :sell
     }
     @kinds[label]
   rescue StandardError, NameError
@@ -2678,6 +2714,7 @@ module AshDroidDS
     return modal_state if @modal
     cw = live(:cmd)
     cw = nil unless usable_window?(cw)
+    park_window(cw)
     @auto = nil if @auto && @tickn > @auto[1]
     if cw && @auto
       i = commands_of(cw).index { |c| label_of(c) == @auto[0] }
@@ -2702,6 +2739,12 @@ module AshDroidDS
     elsif party then party_state(party)
     elsif battle && battle_state(battle) then @state
     elsif live(:world) && !$game_temp.in_menu then home_state
+    elsif $scene.is_a?(Scene_Map) && $game_map && !$game_temp.in_menu && !($game_temp.in_battle rescue false)
+      # on the map but busy (talking to someone, an event running): the home stays, with its buttons
+      # greyed, and a touch anywhere is the confirm button
+      @idle_since ||= @tickn
+      return nil if @state && @ctx != :home && @tickn - @idle_since < GRACE
+      home_state
     else
       # nothing reported: keep the last screen through fades and animations, then a plain "touch = confirm"
       @idle_since ||= @tickn
@@ -2869,6 +2912,27 @@ module AshDroidDS
   rescue StandardError, NameError => e
     @goal = nil
     log_once("pursue", e)
+  end
+
+  # ---- the list is on the second screen: the game's own copy leaves the game screen ----
+
+  # Called every tick with the list window being shown below (or nil). The window is slid off the side
+  # of the game screen rather than made invisible, so whatever the game does with its visibility stays
+  # true, and it is put back where it was when the list is over.
+  def self.park_window(cw)
+    old = @parked
+    if old && !old[0].equal?(cw)
+      w, x = old
+      w.x = x if !w.disposed? && w.x >= Graphics.width
+      @parked = nil
+    end
+    return unless cw && !cw.disposed?
+    @parked ||= [cw, cw.x]
+    @parked[1] = cw.x if cw.x < Graphics.width        # the game placed it (again)
+    cw.x = Graphics.width + 32 if cw.x < Graphics.width
+  rescue StandardError, NameError => e
+    log_once("park", e)
+    @parked = nil
   end
 
   # ---- a touch becomes the button press the menu is waiting for ----
@@ -4375,6 +4439,11 @@ module AshDroidFixes
       if key.is_a?(String) && !(pk = AshDroidText.retrans_pack).empty?
         r = pk["@#{type}:#{AshDroidText.norm(key)}"]
         return r if r
+        # what a trainer says on losing is ordinary dialogue: the pack holds it by its English alone
+        if type == MessageTypes::TrainerLoseText
+          r = pk[AshDroidText.norm(key)]
+          return r if r
+        end
       end
       super
     end

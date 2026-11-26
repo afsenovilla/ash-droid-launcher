@@ -375,6 +375,19 @@ the silence at their end. 12 still fade out and restart (nothing to loop on); th
 and are untouched. Checked by measurement only (waveform match across the jump, no click); reported after
 beta-ds-188, where only the first 122 were in: wild battle and victory music still restarted.
 
+## Plain lists of choices (2026-11-26, previews sent; untested on a device)
+
+- The buttons fill the screen: one column up to five options, two up to ten, three beyond; names too long for
+  a column get fewer columns while the rows still fit.
+- Colour by meaning (`KIND_COLORS`), then by the colour the label names (`WORD_COLORS`: Kanto's towns in the
+  five languages), otherwise teal for all. Never a colour per position.
+- No BACK button when the list has an entry of the cancel kind (Cancel, Exit, Quit, No).
+- The game's own window is slid off the game screen while the list is shown below (`park_window`) and put
+  back afterwards; its `visible` is never touched.
+- On the map with an event running (talking to someone), the home is kept with greyed buttons.
+- Open: accented capital alignment in the game's message text ("Épico."), cause not found yet; the launcher
+  log's "tall text" lines from that moment are needed.
+
 ## Idea for later: foldable phones (not started, nothing tested)
 
 To look at only once the beta is solid on the AYN Thor. All figures below are estimates from typical screen

@@ -22,8 +22,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   - **Party, bag and summary**: the game's own screens keep running on the game screen and the second screen
     drives them: touch a Pokémon or an item, pick one of the options the game offers, drag a Pokémon onto
     another to swap them, change pocket and turn the summary's pages.
-    Any other list of choices the game shows (yes / no, the pause menu...) appears as buttons too.
-    The list of languages shows a small flag per language.
+    Any other list of choices the game shows (yes / no, a shop's buy / sell, the pause menu...) appears as
+    buttons that fill the screen, and the game's own copy of the list leaves the game screen meanwhile.
+    Colours mean something: yes green and no red, buy green and sell orange, the way out blue, Kanto's towns
+    the colour they are named after, and one same colour for the rest. BACK only shows when the list has no
+    way out of its own. The list of languages shows a small flag per language.
+    While the player talks to someone the home screen stays, greyed, instead of going blank.
   - **Town Map**: while the game's Town Map is open (from the bag, the Pokégear...), the region map with the
     player's position, dragged with a finger and with three zoom levels, and the wild Pokémon of the place
     per encounter method, with levels and encounter rate; species not seen yet show as a silhouette.
@@ -44,6 +48,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   with the next save. (Beta: to be tested on a device.)
 
 ### Fixed
+- **Spanish (Spain)**: what a trainer says on losing a battle now comes from the Spain translation too; it was
+  shown in the game's own Spanish (e.g. "¿Cómo hiciste eso?" instead of "¿Cómo lo has hecho?").
 - **Music loops without a gap**: battle, route, town and other themes no longer play to their end, go silent
   and start again. Most of the game's music is recorded as "intro, loop, loop, fade out" with no loop marks;
   the engine now knows where 190 tracks loop (battle and victory themes included) and replays 32 more
