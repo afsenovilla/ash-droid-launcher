@@ -375,7 +375,7 @@ the silence at their end. 12 still fade out and restart (nothing to loop on); th
 and are untouched. Checked by measurement only (waveform match across the jump, no click); reported after
 beta-ds-188, where only the first 122 were in: wild battle and victory music still restarted.
 
-## Plain lists of choices (2026-11-26, previews sent; untested on a device)
+## Plain lists of choices (2026-11-26; confirmed on device with beta-ds-189)
 
 - The buttons fill the screen: one column up to five options, two up to ten, three beyond; names too long for
   a column get fewer columns while the rows still fit.
@@ -385,6 +385,9 @@ beta-ds-188, where only the first 122 were in: wild battle and victory music sti
 - The game's own window is slid off the game screen while the list is shown below (`park_window`) and put
   back afterwards; its `visible` is never touched.
 - On the map with an event running (talking to someone), the home is kept with greyed buttons.
+- Confirmed on device with beta-ds-189 (2026-11-26): yes / no in green and red, touch buttons with the game's
+  fast-forward on, battle and victory music looping, the lists above, the greyed home while talking, and
+  trainers' defeat lines in Spain Spanish.
 - Open: accented capital alignment in the game's message text ("Épico."), cause not found yet; the launcher
   log's "tall text" lines from that moment are needed.
 
