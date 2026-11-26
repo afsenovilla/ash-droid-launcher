@@ -26,6 +26,7 @@
 #include <vorbis/vorbisfile.h>
 #include <vector>
 #include <algorithm>
+#include "ashdroid-loops.h"
 
 static size_t vfRead(void *ptr, size_t size, size_t nmemb, void *ops)
 {
@@ -143,6 +144,22 @@ struct VorbisSource : ALDataSource
 
 		loop.end = loop.start + loop.length;
 		loop.valid = (loop.start && loop.length);
+
+		/* No loop tags: some music is a recording of "intro, loop, loop, fade out" and
+		 * would be heard to end and start over. Known tracks get their loop from a table,
+		 * recognised by their exact length. */
+		if (!loop.valid)
+		{
+			const AshDroidLoop *known = ashdroidFindLoop(ov_pcm_total(&vf, -1));
+
+			if (known)
+			{
+				loop.start = known->start;
+				loop.length = known->length;
+				loop.end = loop.start + loop.length;
+				loop.valid = true;
+			}
+		}
 	}
 
 	~VorbisSource()

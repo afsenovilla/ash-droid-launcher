@@ -43,6 +43,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   language without going back to the title screen. It is applied when the options screen closes and is kept
   with the next save. (Beta: to be tested on a device.)
 
+### Fixed
+- **Music loops without a gap**: battle, route, town and other themes no longer play to their end, go silent
+  and start again. Most of the game's music is recorded as "intro, loop, loop, fade out" with no loop marks;
+  the engine now knows where 90 tracks repeat and loops them there, and replays 32 more without the silence
+  at their end. Tracks are recognised by their exact length, so no other file is affected, and the game's
+  files are not modified. (Beta: checked by measurement, to be listened to on a device.)
+
 ### Changed
 - Launcher main screen: the game title and the Play button start at the top, level with the settings list,
   instead of leaving an empty gap above them on screens where the list is taller than the screen.
