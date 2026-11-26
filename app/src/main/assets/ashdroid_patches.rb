@@ -2950,6 +2950,9 @@ module AshDroidDS
     entry = @stack.reverse.find { |d| d[:mode] == :command }
     title = entry && Array(entry[:texts])[0].to_s
     return if title.nil? || title.empty?
+    # the game breaks the question in two lines to fit beside its command menu; with the menu on the
+    # second screen the box is free from side to side, so it goes on one line
+    title = title.gsub(/\s*\n\s*/, " ")
     s = sprites_of(scene)
     box = s["messageBox"]
     win = s["messageWindow"]
