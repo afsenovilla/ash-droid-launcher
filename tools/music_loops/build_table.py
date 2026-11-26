@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Step 2: decide what to do with each analysed track and write the engine's table.
 
-  build_table.py analysis.jsonl <folder with the game's Audio/BGM> <out header>
+  build_table.py analysis.jsonl <out header>
 
 Reads the lines analyse.py printed, keeps the loops it can trust, falls back to trimming the
 silence at the end, and writes app/jni/mkxp-z/src/audio/ashdroid-loops.h. Also prints a report.
@@ -53,18 +53,15 @@ def needs_fix(r):
 
 
 def main():
-    analysis, folder, out = sys.argv[1:4]
-    paths = {}
-    for root, _, files in os.walk(folder):
-        for f in files:
-            if f.lower().endswith(".ogg"):
-                paths[f] = os.path.join(root, f)
-    rows, report = [], {"loop": [], "trim": [], "left": []}
+    analysis, out = sys.argv[1:3]
+    rows, report = [], {"loop": [], "tail": [], "trim": [], "left": []}
     for line in open(analysis):
         r = json.loads(line)
         if "error" in r:
             continue
-        name, lp, need = r["name"], r.get("loop"), needs_fix(r)
+        path, lp, need = r["path"], r.get("loop"), needs_fix(r)
+        name = "/".join(path.replace("\\", "/").split("/")[-2:])[:-4]     # folder/track, for the comments
+        tail = r.get("tail")
         ok = False
         if lp:
             ratio = lp["len_s"] / max(r["fade_s"], 1)          # a whole loop, not a repeated phrase
@@ -75,28 +72,46 @@ def main():
             else:
                 # ends at full level: only when the repeat is the same recording, note for note
                 ok = ratio >= 0.3 and reach and lp["wave"] >= 0.9 and lp["seam"] <= 0.02
-            ok = ok and click(paths[name], lp["start"], lp["length"], r["rate"]) <= 1.5
+            ok = ok and click(path, lp["start"], lp["length"], r["rate"]) <= 1.5
+        # cut as intro + one loop + the first moments of the loop again: the end of the file is the same
+        # audio, at four spots, as a point one loop earlier, and that loop is most of the track
+        tail_ok = (not ok and tail and tail["hits"] == 4 and tail["score"] >= 0.7 and tail["seam"] <= 0.08
+                   and tail["len_s"] >= 0.6 * r["dur"]
+                   and click(path, tail["start"], tail["length"], r["rate"]) <= 1.5)
         if ok:
-            rows.append((pcm_total(paths[name]), lp["start"], lp["length"], name))
+            rows.append((pcm_total(path), lp["start"], lp["length"], name))
             report["loop"].append(name)
+        elif tail_ok:
+            rows.append((pcm_total(path), tail["start"], tail["length"], name))
+            report["tail"].append(name)
         elif r["tail_silence"] > 0.25:
-            rows.append((pcm_total(paths[name]), 0, int(r["sound_end"] * r["rate"]), name))
+            rows.append((pcm_total(path), 0, int(r["sound_end"] * r["rate"]), name))
             report["trim"].append(name)
         elif need:
             report["left"].append(name)
     rows.sort()
-    assert len({t for t, *_ in rows}) == len(rows), "two tracks with the same length"
+    # the same file kept in two folders gives the same row twice; two different tracks of the same
+    # length could not be told apart, so neither is touched
+    by_total = {}
+    for row in rows:
+        by_total.setdefault(row[0], []).append(row)
+    rows = []
+    for t, same in sorted(by_total.items()):
+        if len({(s, l) for _, s, l, _ in same}) == 1:
+            rows.append(same[0])
+        else:
+            print("same length, different loops, skipped: " + ", ".join(n for *_, n in same))
     for t, s, l, name in rows:
         assert 0 <= s and l > 0 and s + l <= t, name
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "header.tmpl")) as f:
         tmpl = f.read()
-    body = "".join("\t{ %du, %du, %du }, /* %s */\n" % (t, s, l, n[:-4]) for t, s, l, n in rows)
+    body = "".join("\t{ %du, %du, %du }, /* %s */\n" % (t, s, l, n) for t, s, l, n in rows)
     with open(out, "w") as f:
         f.write(tmpl.replace("@ROWS@", body))
-    print("%d loops, %d silence trims, %d fade out with nothing to loop" %
-          (len(report["loop"]), len(report["trim"]), len(report["left"])))
-    for k in ("trim", "left"):
-        print(k + ": " + ", ".join(n[:-4] for n in report[k]))
+    print("%d rows: %d loops by repeat, %d by end overlap, %d silence trims; %d fade out with nothing to loop" %
+          (len(rows), len(report["loop"]), len(report["tail"]), len(report["trim"]), len(report["left"])))
+    for k in ("tail", "trim", "left"):
+        print(k + ": " + ", ".join(report[k]))
 
 
 if __name__ == "__main__":

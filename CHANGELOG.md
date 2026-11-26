@@ -46,8 +46,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ### Fixed
 - **Music loops without a gap**: battle, route, town and other themes no longer play to their end, go silent
   and start again. Most of the game's music is recorded as "intro, loop, loop, fade out" with no loop marks;
-  the engine now knows where 90 tracks repeat and loops them there, and replays 32 more without the silence
-  at their end. Tracks are recognised by their exact length, so no other file is affected, and the game's
+  the engine now knows where 190 tracks loop (battle and victory themes included) and replays 32 more
+  without the silence at their end. Tracks are recognised by their exact length, so no other file is affected, and the game's
   files are not modified. (Beta: checked by measurement, to be listened to on a device.)
 
 ### Changed

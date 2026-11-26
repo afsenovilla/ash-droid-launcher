@@ -22,128 +22,225 @@ struct AshDroidLoop
 /* Sorted by total */
 static const AshDroidLoop ashdroidLoops[] =
 {
-	{ 1082156u, 0u, 1040319u }, /* Team Rocket OW Hoenn */
-	{ 1375936u, 679501u, 600493u }, /* AceTrainer2 */
-	{ 1432116u, 618508u, 672701u }, /* PkmRS_Victory2 */
-	{ 1454272u, 677212u, 631888u }, /* OmegaVict */
-	{ 1460696u, 676171u, 705600u }, /* Oak's Lab */
-	{ 1536080u, 0u, 1433600u }, /* Team Rocket OW Kalos */
-	{ 1609459u, 0u, 1454859u }, /* Team Rocket OW Unova */
-	{ 1662713u, 728550u, 781018u }, /* Radio - Oak */
-	{ 1670603u, 0u, 1591679u }, /* Team Rocket OW Journeys */
-	{ 1762112u, 0u, 1652427u }, /* rivalappears */
-	{ 1884267u, 0u, 1865280u }, /* in my memory */
-	{ 1910884u, 0u, 1596960u }, /* Team Rocket OW Alola */
-	{ 2026432u, 0u, 1961567u }, /* Johto Town */
-	{ 2068675u, 0u, 2055679u }, /* Team Rocket OW Kanto */
-	{ 2201221u, 1028150u, 1055267u }, /* Radio - March */
-	{ 2245824u, 0u, 2186919u }, /* Johto Route */
-	{ 2307000u, 1413600u, 768000u }, /* evolv */
-	{ 2337300u, 1356048u, 705600u }, /* Evolution */
-	{ 2645791u, 0u, 2630565u }, /* secretentry */
-	{ 2657598u, 1217972u, 1183733u }, /* Hall of Fame */
-	{ 2721983u, 0u, 1570842u }, /* sinnohrivalencounter */
-	{ 2814146u, 1261625u, 1404878u }, /* Radio - Lullaby */
-	{ 2863680u, 1226036u, 1235157u }, /* Contest Hall */
-	{ 3012160u, 0u, 2961756u }, /* Sinnoh Town */
-	{ 3073891u, 0u, 2970560u }, /* Team Rocket OW Sinnoh */
-	{ 3100211u, 1360664u, 1619205u }, /* secretelm */
-	{ 3121216u, 1547499u, 1215681u }, /* AceTrainer */
-	{ 3188288u, 1287881u, 1371218u }, /* Kanto Route */
-	{ 3221056u, 1539343u, 1349948u }, /* Hoenn Town */
-	{ 3242812u, 1529993u, 1620000u }, /* gym */
-	{ 3317857u, 331285u, 2875320u }, /* secretleaf */
-	{ 3342995u, 914488u, 2270415u }, /* secreteusine */
-	{ 3363000u, 1596000u, 1632000u }, /* cinnabar */
-	{ 3512303u, 1025286u, 2351265u }, /* secretavery */
-	{ 3528762u, 0u, 3515652u }, /* secretloungeautumn */
-	{ 3612480u, 1677553u, 1596236u }, /* Unova Route */
-	{ 3626432u, 0u, 3581360u }, /* Sinnoh Route */
-	{ 3658846u, 1807053u, 1772308u }, /* PokeCenter */
-	{ 3670848u, 1703675u, 1609608u }, /* Hoenn Route */
-	{ 3673184u, 2018667u, 1519120u }, /* fireleafbattle */
-	{ 3697745u, 728927u, 2896673u }, /* secretmarshal */
-	{ 3770681u, 1340331u, 2352000u }, /* secrethisuiroom */
-	{ 3805312u, 1762906u, 1890000u }, /* PkmRS-BTower */
-	{ 3890766u, 1969153u, 1860922u }, /* PkmRS-CaveForest */
-	{ 3933543u, 1032824u, 2766272u }, /* secretbianca */
-	{ 4008384u, 1981187u, 1724479u }, /* Unova Town */
-	{ 4020695u, 2085857u, 1875348u }, /* PokeMart */
-	{ 4029632u, 0u, 4001634u }, /* Frontier */
-	{ 4039124u, 648335u, 3310851u }, /* secrethoenn */
-	{ 4058707u, 1125308u, 2860254u }, /* secretdiantha */
-	{ 4157957u, 1415862u, 2487240u }, /* secretacerola */
-	{ 4158464u, 0u, 4030740u }, /* secretdespair */
-	{ 4203878u, 1480451u, 2605292u }, /* secretgiovanni */
-	{ 4214193u, 1476132u, 2587935u }, /* secretflint */
-	{ 4259681u, 1580946u, 2562441u }, /* secretgrimsley */
-	{ 4261049u, 1612887u, 2540160u }, /* secrethala */
-	{ 4277488u, 1822327u, 2378495u }, /* secretalolamc */
-	{ 4280320u, 0u, 4250358u }, /* TeamRocket1 */
-	{ 4285796u, 1690371u, 2494072u }, /* secretalder */
-	{ 4320960u, 1865760u, 2331476u }, /* rival-3 */
-	{ 4360768u, 2340143u, 1684225u }, /* rival-5 */
-	{ 4448452u, 1535685u, 2812127u }, /* secretduet */
-	{ 4452160u, 0u, 2786679u }, /* gymsinnoh */
-	{ 4648068u, 2307312u, 2229679u }, /* begin */
-	{ 4663646u, 1902635u, 2659164u }, /* secretarchie */
-	{ 4679676u, 739171u, 3836699u }, /* Battle! Legendary Raid */
-	{ 4716097u, 2251042u, 2154146u }, /* Kalos Town */
-	{ 4924471u, 2322811u, 2351985u }, /* HoF room */
-	{ 5112640u, 1150201u, 3566241u }, /* Bike */
-	{ 5128129u, 0u, 3342780u }, /* SinnohWild */
-	{ 5139726u, 2479833u, 2568647u }, /* PkmRS-Fallarbor */
-	{ 5253401u, 2655251u, 2471070u }, /* secretbertha */
-	{ 5292500u, 2735408u, 2469600u }, /* secretaaron */
-	{ 5312064u, 2456560u, 2442462u }, /* Alola Route */
-	{ 5334208u, 2488805u, 2397422u }, /* gymleader-1 */
-	{ 5364271u, 0u, 5326809u }, /* Surfing */
-	{ 5384864u, 2860677u, 2422432u }, /* elite */
-	{ 5391814u, 2585146u, 2683634u }, /* PkmRS-Sootopolis */
-	{ 5418816u, 3016935u, 1956356u }, /* champion-2 */
-	{ 5463000u, 1284000u, 4032000u }, /* Route_202 */
-	{ 5553863u, 1313622u, 4185406u }, /* National Park */
-	{ 5591360u, 2349942u, 2698893u }, /* Kanto Town */
-	{ 5661376u, 1726406u, 3485184u }, /* KyogreGroudon */
-	{ 5745267u, 3095423u, 2464762u }, /* Vs Cynthia */
-	{ 5871768u, 3068329u, 2473156u }, /* Vs Steven */
-	{ 5960495u, 3001958u, 2646037u }, /* Cave */
-	{ 6074543u, 3070644u, 2822398u }, /* Galar Route */
-	{ 6140736u, 2304241u, 3548708u }, /* gymleader-stadium */
-	{ 6145312u, 3124800u, 2880000u }, /* PkmRS-EverGrande */
-	{ 6391232u, 3361183u, 2633899u }, /* gymleader-2 */
-	{ 6435008u, 3108974u, 3024078u }, /* Kalos Route */
-	{ 6523072u, 3401292u, 2761873u }, /* TeamGalactic */
-	{ 6692221u, 3330009u, 3238779u }, /* secretbarry */
-	{ 6702238u, 3504524u, 3056323u }, /* gymleader-3 */
-	{ 6760128u, 0u, 4274172u }, /* gymleader-4 */
-	{ 6876335u, 3466487u, 3152749u }, /* TeamYell */
-	{ 6892941u, 3857187u, 2936471u }, /* PkmRS-MtPyre */
-	{ 7057199u, 3729457u, 3086940u }, /* Galar Town */
-	{ 7103720u, 3810594u, 2946976u }, /* uwater */
-	{ 7191983u, 3758460u, 3175331u }, /* rival-8 */
-	{ 7627328u, 4020881u, 3248261u }, /* gymleader-5 */
-	{ 7661376u, 4135968u, 3143127u }, /* TeamSkull */
-	{ 8224064u, 4118007u, 3645755u }, /* FireredTrainer */
-	{ 8307648u, 4319030u, 3662288u }, /* TeamPlasma */
-	{ 8333248u, 4343055u, 3641105u }, /* rival-1 */
-	{ 8817856u, 4510992u, 3927881u }, /* TeamMagmaAqua */
-	{ 8896576u, 0u, 8628165u }, /* Title */
-	{ 9213632u, 0u, 9149868u }, /* Greninja */
-	{ 9267200u, 4590569u, 4411916u }, /* secretkamado */
-	{ 9831104u, 5057708u, 4341092u }, /* kahuna */
-	{ 10539008u, 0u, 10219734u }, /* SPECIALZ */
-	{ 11560320u, 0u, 11341197u }, /* Acacia */
-	{ 12060073u, 0u, 11931360u }, /* Pokemon Master */
-	{ 12833764u, 5053223u, 7560000u }, /* secretlaventon */
-	{ 13224768u, 3133567u, 9889433u }, /* champion-3 */
-	{ 13225920u, 5904884u, 7092239u }, /* Zinnia */
-	{ 13259712u, 6732837u, 6324715u }, /* rival-7 */
-	{ 14957156u, 0u, 14878017u }, /* Endless Path */
-	{ 16262831u, 7532962u, 8467338u }, /* gymleader-8 */
-	{ 18500800u, 0u, 18452763u }, /* DiamondTrainer */
-	{ 18504512u, 0u, 18440856u }, /* LookerTheme */
-	{ 18518592u, 0u, 18466434u }, /* TeamRocket */
+	{ 639272u, 100540u, 529321u }, /* Unova/Trainer Victory */
+	{ 731137u, 138865u, 579952u }, /* Kalos/Wild Victory */
+	{ 1082156u, 0u, 1040319u }, /* BGM/Team Rocket OW Hoenn */
+	{ 1226250u, 508800u, 576000u }, /* ME/Victory - Trainer */
+	{ 1282353u, 562882u, 602353u }, /* ME/Victory - Wild Pokemon */
+	{ 1375936u, 679501u, 600493u }, /* BGM/AceTrainer2 */
+	{ 1432116u, 618508u, 672701u }, /* BGM/PkmRS_Victory2 */
+	{ 1454272u, 677212u, 631888u }, /* BGM/OmegaVict */
+	{ 1460696u, 676171u, 705600u }, /* Kanto/Oak's Lab */
+	{ 1533094u, 732308u, 604825u }, /* Hoenn/Wild Victory */
+	{ 1536080u, 0u, 1433600u }, /* BGM/Team Rocket OW Kalos */
+	{ 1543110u, 215609u, 1323000u }, /* BGM/secretsinnohroom */
+	{ 1566197u, 526608u, 1029735u }, /* BGM/secrethoennroom */
+	{ 1579275u, 401675u, 1167923u }, /* BGM/secretkantoroom */
+	{ 1609459u, 0u, 1454859u }, /* BGM/Team Rocket OW Unova */
+	{ 1662713u, 728550u, 781018u }, /* BGM/Radio - Oak */
+	{ 1662900u, 640729u, 604905u }, /* Kanto/Wild Victory */
+	{ 1670603u, 0u, 1591679u }, /* BGM/Team Rocket OW Journeys */
+	{ 1692935u, 704206u, 622545u }, /* Kanto/Trainer Victory */
+	{ 1762112u, 0u, 1652427u }, /* BGM/rivalappears */
+	{ 1837443u, 252751u, 1572304u }, /* BGM/Piano b4 Cynthia */
+	{ 1884267u, 0u, 1865280u }, /* BGM/in my memory */
+	{ 1910884u, 0u, 1596960u }, /* BGM/Team Rocket OW Alola */
+	{ 2025954u, 198728u, 1817287u }, /* Kanto/Wild Battle */
+	{ 2026432u, 0u, 1961567u }, /* BGM/Johto Town */
+	{ 2068675u, 0u, 2055679u }, /* BGM/Team Rocket OW Kanto */
+	{ 2116696u, 190748u, 1924414u }, /* Kanto/Pallet Town */
+	{ 2201221u, 1028150u, 1055267u }, /* BGM/Radio - March */
+	{ 2245824u, 0u, 2186919u }, /* BGM/Johto Route */
+	{ 2307000u, 1413600u, 768000u }, /* BGM/evolv */
+	{ 2337300u, 1356048u, 705600u }, /* BGM/Evolution */
+	{ 2359719u, 731085u, 1619438u }, /* Johto/Wild Battle Johto */
+	{ 2413939u, 939446u, 826926u }, /* ME/Battle victory */
+	{ 2645791u, 0u, 2630565u }, /* BGM/secretentry */
+	{ 2657598u, 1217972u, 1183733u }, /* BGM/Hall of Fame */
+	{ 2721983u, 0u, 1570842u }, /* BGM/sinnohrivalencounter */
+	{ 2726977u, 1155106u, 785664u }, /* ME/Battle victory trainer */
+	{ 2772365u, 599799u, 2171050u }, /* BGM/secretlegendhoenn2 */
+	{ 2775944u, 366377u, 2405455u }, /* BGM/sygnaRoxie */
+	{ 2799551u, 549231u, 2241318u }, /* BGM/rival-6 */
+	{ 2814146u, 1261625u, 1404878u }, /* BGM/Radio - Lullaby */
+	{ 2820627u, 546654u, 2262229u }, /* BGM/secretpiers */
+	{ 2847159u, 935904u, 1907736u }, /* BGM/secrethugh */
+	{ 2863680u, 1226036u, 1235157u }, /* BGM/Contest Hall */
+	{ 2904367u, 422395u, 2476215u }, /* BGM/secretklara */
+	{ 2910829u, 490131u, 2419082u }, /* BGM/sygnalysandre */
+	{ 2931849u, 597795u, 2332155u }, /* BGM/secrethoennmc */
+	{ 2953785u, 451937u, 2501672u }, /* BGM/sygnaSubway */
+	{ 2979974u, 537726u, 2436525u }, /* BGM/secretphoebe */
+	{ 2984737u, 454640u, 2527665u }, /* BGM/secretloungespring */
+	{ 2991498u, 656461u, 2326275u }, /* BGM/secretkukui */
+	{ 2997017u, 410558u, 2573970u }, /* BGM/secretbede */
+	{ 2998046u, 457634u, 2540159u }, /* BGM/arcAlder */
+	{ 2998925u, 567990u, 2419122u }, /* BGM/secretwally */
+	{ 3012160u, 0u, 2961756u }, /* BGM/Sinnoh Town */
+	{ 3073891u, 0u, 2970560u }, /* BGM/Team Rocket OW Sinnoh */
+	{ 3086813u, 719386u, 2358615u }, /* BGM/secretsinnohmc */
+	{ 3098074u, 820609u, 2276099u }, /* BGM/Legend Creation Trio */
+	{ 3100211u, 1360664u, 1619205u }, /* BGM/secretelm */
+	{ 3115167u, 761727u, 2351999u }, /* BGM/secretkoga */
+	{ 3120801u, 685858u, 2428095u }, /* BGM/Legend Steeds */
+	{ 3121216u, 1547499u, 1215681u }, /* BGM/AceTrainer */
+	{ 3128641u, 259939u, 2856827u }, /* BGM/secretgauntlet */
+	{ 3130602u, 607727u, 2513700u }, /* BGM/ncKalos */
+	{ 3130740u, 528777u, 2589405u }, /* BGM/secretmalva */
+	{ 3130974u, 840278u, 2283915u }, /* BGM/sygnaN */
+	{ 3130975u, 594495u, 2527522u }, /* BGM/sygnagiovanni */
+	{ 3131112u, 674466u, 2444068u }, /* BGM/secretsubway */
+	{ 3162686u, 754034u, 2408000u }, /* BGM/secretkaren */
+	{ 3173057u, 233691u, 2926164u }, /* BGM/TeamFlare */
+	{ 3173433u, 513963u, 2646245u }, /* BGM/secretmarnie */
+	{ 3188288u, 1287881u, 1371218u }, /* BGM/Kanto Route */
+	{ 3190651u, 756540u, 2422209u }, /* BGM/secretmaxie */
+	{ 3216696u, 725111u, 2490180u }, /* BGM/secretoleana */
+	{ 3218733u, 630822u, 2587494u }, /* BGM/secretwikstrom */
+	{ 3218904u, 531211u, 2681280u }, /* BGM/arcCynthia */
+	{ 3219208u, 667651u, 2539425u }, /* BGM/secrettrace */
+	{ 3220099u, 526889u, 2689935u }, /* BGM/secretsilver */
+	{ 3221056u, 1539343u, 1349948u }, /* BGM/Hoenn Town */
+	{ 3227990u, 595013u, 2620800u }, /* BGM/secretryuki */
+	{ 3235826u, 503944u, 2719577u }, /* BGM/secretgladion */
+	{ 3242812u, 1529993u, 1620000u }, /* BGM/gym */
+	{ 3261482u, 713017u, 2547510u }, /* BGM/secretjohtomc */
+	{ 3262232u, 193065u, 3065593u }, /* BGM/secretsygna */
+	{ 3262405u, 428044u, 2827233u }, /* BGM/sygnatapu */
+	{ 3262757u, 664876u, 2590875u }, /* BGM/secretrose */
+	{ 3262843u, 676726u, 2581430u }, /* BGM/secretsteven */
+	{ 3263349u, 838877u, 2411535u }, /* BGM/secretsiebold */
+	{ 3264172u, 574293u, 2682750u }, /* BGM/secretsidney */
+	{ 3274150u, 676263u, 2590140u }, /* BGM/secrethitsu */
+	{ 3306757u, 246518u, 3057600u }, /* BGM/ncMay */
+	{ 3307332u, 244587u, 3057600u }, /* BGM/ncBrendan */
+	{ 3317857u, 331285u, 2875320u }, /* BGM/secretleaf */
+	{ 3318949u, 728744u, 2587935u }, /* BGM/secretdrasna */
+	{ 3342995u, 914488u, 2270415u }, /* BGM/secreteusine */
+	{ 3351118u, 681159u, 2662170u }, /* BGM/secretmagnolia */
+	{ 3351770u, 1149465u, 2189565u }, /* BGM/secretraihan */
+	{ 3352229u, 695009u, 2645966u }, /* BGM/secretwallace */
+	{ 3363000u, 1596000u, 1632000u }, /* BGM/cinnabar */
+	{ 3395870u, 729632u, 2662170u }, /* BGM/secretsonia */
+	{ 3420129u, 763240u, 2645999u }, /* BGM/secretlegendalola2 */
+	{ 3474894u, 762377u, 2702595u }, /* BGM/secretlucian */
+	{ 3483098u, 623921u, 2852535u }, /* BGM/secrethisuimc */
+	{ 3502476u, 1072939u, 2419270u }, /* BGM/secretcyrus */
+	{ 3507827u, 639897u, 2855964u }, /* BGM/secretjohto */
+	{ 3512303u, 1025286u, 2351265u }, /* BGM/secretavery */
+	{ 3528762u, 0u, 3515652u }, /* BGM/secretloungeautumn */
+	{ 3554995u, 631807u, 2919687u }, /* BGM/secrethau */
+	{ 3566489u, 498945u, 3056865u }, /* BGM/secretkalosmc */
+	{ 3567665u, 714329u, 2851799u }, /* BGM/secretn */
+	{ 3588637u, 535339u, 3042900u }, /* BGM/ncGalar */
+	{ 3612480u, 1677553u, 1596236u }, /* BGM/Unova Route */
+	{ 3626432u, 0u, 3581360u }, /* BGM/Sinnoh Route */
+	{ 3627757u, 779510u, 2841052u }, /* BGM/secretlance */
+	{ 3640586u, 333671u, 3303958u }, /* BGM/secretfrontier1 */
+	{ 3644345u, 832493u, 2804760u }, /* BGM/secretmolayne */
+	{ 3649473u, 735473u, 2910601u }, /* BGM/secretlusamine */
+	{ 3658846u, 1807053u, 1772308u }, /* BGM/PokeCenter */
+	{ 3670848u, 1703675u, 1609608u }, /* BGM/Hoenn Route */
+	{ 3673184u, 2018667u, 1519120u }, /* BGM/fireleafbattle */
+	{ 3697745u, 728927u, 2896673u }, /* BGM/secretmarshal */
+	{ 3732056u, 810917u, 2919723u }, /* BGM/Legend Tapu */
+	{ 3770681u, 1340331u, 2352000u }, /* BGM/secrethisuiroom */
+	{ 3792571u, 544799u, 3245759u }, /* BGM/arcLeon */
+	{ 3805312u, 1762906u, 1890000u }, /* BGM/PkmRS-BTower */
+	{ 3872604u, 708160u, 3163127u }, /* BGM/Legend Kalos */
+	{ 3875556u, 866643u, 2996674u }, /* BGM/secretleon */
+	{ 3879815u, 379337u, 3488010u }, /* BGM/secretunova */
+	{ 3890766u, 1969153u, 1860922u }, /* BGM/PkmRS-CaveForest */
+	{ 3923475u, 802508u, 3116492u }, /* BGM/secretsinnoh */
+	{ 3933543u, 1032824u, 2766272u }, /* BGM/secretbianca */
+	{ 4001879u, 664389u, 3336218u }, /* BGM/secretkanto */
+	{ 4008384u, 1981187u, 1724479u }, /* BGM/Unova Town */
+	{ 4020695u, 2085857u, 1875348u }, /* BGM/PokeMart */
+	{ 4029632u, 0u, 4001634u }, /* BGM/Frontier */
+	{ 4039124u, 648335u, 3310851u }, /* BGM/secrethoenn */
+	{ 4039674u, 934420u, 3104731u }, /* BGM/secretkalos */
+	{ 4058707u, 1125308u, 2860254u }, /* BGM/secretdiantha */
+	{ 4133543u, 1089261u, 3034079u }, /* BGM/secretghetsis */
+	{ 4157957u, 1415862u, 2487240u }, /* BGM/secretacerola */
+	{ 4158464u, 0u, 4030740u }, /* BGM/secretdespair */
+	{ 4203878u, 1480451u, 2605292u }, /* BGM/secretgiovanni */
+	{ 4214193u, 1476132u, 2587935u }, /* BGM/secretflint */
+	{ 4259681u, 1580946u, 2562441u }, /* BGM/secretgrimsley */
+	{ 4261049u, 1612887u, 2540160u }, /* BGM/secrethala */
+	{ 4277488u, 1822327u, 2378495u }, /* BGM/secretalolamc */
+	{ 4280320u, 0u, 4250358u }, /* BGM/TeamRocket1 */
+	{ 4285796u, 1690371u, 2494072u }, /* BGM/secretalder */
+	{ 4320960u, 1865760u, 2331476u }, /* BGM/rival-3 */
+	{ 4328854u, 685232u, 3630533u }, /* Kanto/Trainer Battle */
+	{ 4360768u, 2340143u, 1684225u }, /* BGM/rival-5 */
+	{ 4437760u, 628115u, 3808770u }, /* BGM/secretcliff */
+	{ 4448452u, 1535685u, 2812127u }, /* BGM/secretduet */
+	{ 4452160u, 0u, 2786679u }, /* BGM/gymsinnoh */
+	{ 4648068u, 2307312u, 2229679u }, /* BGM/begin */
+	{ 4663646u, 1902635u, 2659164u }, /* BGM/secretarchie */
+	{ 4679676u, 739171u, 3836699u }, /* BGM/Battle! Legendary Raid */
+	{ 4716097u, 2251042u, 2154146u }, /* BGM/Kalos Town */
+	{ 4736311u, 1772973u, 2952341u }, /* BGM/secretfrontier2 */
+	{ 4924471u, 2322811u, 2351985u }, /* BGM/HoF room */
+	{ 5112640u, 1150201u, 3566241u }, /* BGM/Bike */
+	{ 5128129u, 0u, 3342780u }, /* BGM/SinnohWild */
+	{ 5139726u, 2479833u, 2568647u }, /* BGM/PkmRS-Fallarbor */
+	{ 5253401u, 2655251u, 2471070u }, /* BGM/secretbertha */
+	{ 5292500u, 2735408u, 2469600u }, /* BGM/secretaaron */
+	{ 5312064u, 2456560u, 2442462u }, /* BGM/Alola Route */
+	{ 5334208u, 2488805u, 2397422u }, /* BGM/gymleader-1 */
+	{ 5364271u, 0u, 5326809u }, /* BGM/Surfing */
+	{ 5384864u, 2860677u, 2422432u }, /* BGM/elite */
+	{ 5391714u, 1146658u, 4233508u }, /* BGM/secretred */
+	{ 5391814u, 2585146u, 2683634u }, /* BGM/PkmRS-Sootopolis */
+	{ 5418149u, 2398259u, 2285723u }, /* ME/Battle victory leader */
+	{ 5418816u, 3016935u, 1956356u }, /* BGM/champion-2 */
+	{ 5463000u, 1284000u, 4032000u }, /* BGM/Route_202 */
+	{ 5532961u, 1059701u, 4469824u }, /* Johto/Trainer Battle Johto */
+	{ 5553863u, 1313622u, 4185406u }, /* Johto/National Park */
+	{ 5591360u, 2349942u, 2698893u }, /* BGM/Kanto Town */
+	{ 5661376u, 1726406u, 3485184u }, /* BGM/KyogreGroudon */
+	{ 5745267u, 3095423u, 2464762u }, /* BGM/Vs Cynthia */
+	{ 5864911u, 650120u, 5206773u }, /* BGM/secretwarden */
+	{ 5871768u, 3068329u, 2473156u }, /* BGM/Vs Steven */
+	{ 5960495u, 3001958u, 2646037u }, /* BGM/Cave */
+	{ 6074543u, 3070644u, 2822398u }, /* BGM/Galar Route */
+	{ 6126976u, 968373u, 5150250u }, /* BGM/secrethisui */
+	{ 6140736u, 2304241u, 3548708u }, /* BGM/gymleader-stadium */
+	{ 6145312u, 3124800u, 2880000u }, /* BGM/PkmRS-EverGrande */
+	{ 6391232u, 3361183u, 2633899u }, /* BGM/gymleader-2 */
+	{ 6435008u, 3108974u, 3024078u }, /* BGM/Kalos Route */
+	{ 6523072u, 3401292u, 2761873u }, /* BGM/TeamGalactic */
+	{ 6692221u, 3330009u, 3238779u }, /* BGM/secretbarry */
+	{ 6702238u, 3504524u, 3056323u }, /* BGM/gymleader-3 */
+	{ 6760128u, 0u, 4274172u }, /* BGM/gymleader-4 */
+	{ 6876335u, 3466487u, 3152749u }, /* BGM/TeamYell */
+	{ 6892941u, 3857187u, 2936471u }, /* BGM/PkmRS-MtPyre */
+	{ 7057199u, 3729457u, 3086940u }, /* BGM/Galar Town */
+	{ 7103720u, 3810594u, 2946976u }, /* BGM/uwater */
+	{ 7191983u, 3758460u, 3175331u }, /* BGM/rival-8 */
+	{ 7627328u, 4020881u, 3248261u }, /* BGM/gymleader-5 */
+	{ 7661376u, 4135968u, 3143127u }, /* BGM/TeamSkull */
+	{ 8224064u, 4118007u, 3645755u }, /* BGM/FireredTrainer */
+	{ 8307648u, 4319030u, 3662288u }, /* BGM/TeamPlasma */
+	{ 8333248u, 4343055u, 3641105u }, /* BGM/rival-1 */
+	{ 8817856u, 4510992u, 3927881u }, /* BGM/TeamMagmaAqua */
+	{ 8896576u, 0u, 8628165u }, /* BGM/Title */
+	{ 9213632u, 0u, 9149868u }, /* BGM/Greninja */
+	{ 9267200u, 4590569u, 4411916u }, /* BGM/secretkamado */
+	{ 9831104u, 5057708u, 4341092u }, /* BGM/kahuna */
+	{ 10539008u, 0u, 10219734u }, /* BGM/SPECIALZ */
+	{ 11560320u, 0u, 11341197u }, /* BGM/Acacia */
+	{ 12060073u, 0u, 11931360u }, /* BGM/Pokemon Master */
+	{ 12833764u, 5053223u, 7560000u }, /* BGM/secretlaventon */
+	{ 13224768u, 3133567u, 9889433u }, /* BGM/champion-3 */
+	{ 13225920u, 5904884u, 7092239u }, /* BGM/Zinnia */
+	{ 13259712u, 6732837u, 6324715u }, /* BGM/rival-7 */
+	{ 14957156u, 0u, 14878017u }, /* BGM/Endless Path */
+	{ 16262831u, 7532962u, 8467338u }, /* BGM/gymleader-8 */
+	{ 18500800u, 0u, 18452763u }, /* BGM/DiamondTrainer */
+	{ 18504512u, 0u, 18440856u }, /* BGM/LookerTheme */
+	{ 18518592u, 0u, 18466434u }, /* BGM/TeamRocket */
 };
 
 static const int ashdroidLoopCount = sizeof(ashdroidLoops) / sizeof(ashdroidLoops[0]);

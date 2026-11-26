@@ -155,9 +155,47 @@ def analyse(path):
     return res
 
 
+def tail_overlap(path, rate):
+    """A track cut as intro + one loop + the first moments of the loop again: its last half second
+    is the same audio as an earlier point, one whole loop before. Returns the loop, or None."""
+    y = decode(path)
+    n = len(y)
+    w = int(0.5 * rate)
+    if n < 8 * rate:
+        return None
+    found = []
+    for back in (0.0, 0.1, 0.2, 0.3):
+        e = n - int(back * rate)
+        c = ncc_slide(y[: e - w - rate], y[e - w: e])
+        p = int(np.argmax(c))
+        found.append((float(c[p]), (e - w) - p))
+    lags = [lag for score, lag in found if score >= 0.7]
+    if len(lags) < 3:
+        return None
+    lag = int(np.median(lags))
+    hits = [score for score, l in found if abs(l - lag) <= rate // 1000 and score >= 0.7]
+    if len(hits) < 3:
+        return None
+    # the jump: in the last 0.3 s, where both waves agree best over a few ms
+    win = int(rate * 0.004)
+    lo = n - int(0.3 * rate)
+    a = y[lo - lag - win: n - lag]
+    b = y[lo - win: n]
+    cs = np.cumsum(np.concatenate([[0.0], (a - b) ** 2]))
+    en = np.cumsum(np.concatenate([[0.0], a * a + b * b]))
+    rel = (cs[2 * win:] - cs[:-2 * win]) / (en[2 * win:] - en[:-2 * win] + 1e-9)
+    q = int(np.argmin(rel))
+    end = lo + q
+    return {"start": int(end - lag), "length": int(lag), "hits": len(hits), "score": round(min(hits), 3),
+            "seam": round(float(rel[q]), 4), "len_s": round(lag / rate, 2), "start_s": round((end - lag) / rate, 2)}
+
+
 if __name__ == "__main__":
     for f in sys.argv[1:]:
         try:
-            print(json.dumps(analyse(f), ensure_ascii=False), flush=True)
+            r = analyse(f)
+            r["tail"] = None if r.get("loop") else tail_overlap(f, r["rate"])
+            r["path"] = f
+            print(json.dumps(r, ensure_ascii=False), flush=True)
         except Exception as ex:  # keep going over a folder
             print(json.dumps({"name": os.path.basename(f), "error": repr(ex)}), flush=True)

@@ -10,9 +10,9 @@ Requirements: Python 3 with numpy and scipy, `ffmpeg` / `ffprobe`, and `libvorbi
 
 ```
 # 1. analyse every track (about one second per minute of music)
-find "<game>/Audio/BGM" -name "*.ogg" -print0 | xargs -0 -n 6 python3 analyse.py > analysis.jsonl
+find "<game>/Audio/BGM" "<game>/Audio/ME" -name "*.ogg" -print0 | xargs -0 -n 6 python3 analyse.py > analysis.jsonl
 # 2. decide and write the engine's table
-python3 build_table.py analysis.jsonl "<game>/Audio/BGM" ../../app/jni/mkxp-z/src/audio/ashdroid-loops.h
+python3 build_table.py analysis.jsonl ../../app/jni/mkxp-z/src/audio/ashdroid-loops.h
 ```
 
 ## How a loop is found
@@ -23,6 +23,17 @@ python3 build_table.py analysis.jsonl "<game>/Audio/BGM" ../../app/jni/mkxp-z/sr
 2. The lag is refined to the sample by correlating the waveforms around the end of the loop.
 3. The jump is moved, within the last second and a half before the fade, to the spot where the two
    waveforms agree best over a few milliseconds, so it cannot click.
+
+The victory themes live in Audio/ME but the game plays them as looping music, so they are analysed too
+(a one-shot jingle is never looped by the engine, whatever the table says).
+
+## Tracks cut after a single loop
+
+Many tracks are "intro, one loop, and the first moments of the loop again". Nothing repeats for long, so
+the comparison above finds nothing; replayed whole, they play their intro again every time. For these the
+last half second of the file is searched for earlier in the track at four spots 0.1 s apart: when all four
+match the same audio exactly one lag earlier, that lag is the loop, and the jump is placed in the last
+0.3 s where the waves agree best. It is used when that loop is at least 60 % of the track.
 
 ## What gets a loop
 
