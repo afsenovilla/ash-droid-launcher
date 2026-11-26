@@ -359,18 +359,18 @@ category icons), that image is used; code-drawn elements are for what the game h
   whole-factor rule as the trainer card; previous / next and VOLVER sit in a strip below. The touch zones were
   measured on the English page background; the localized ones may place the words slightly differently.
 
-## Reported, to investigate: music does not loop seamlessly
+## Music does not loop seamlessly: it is in the game's files (checked 2026-11-26)
 
-Reported on the AYN Thor (2026-11-26): battle and overworld music plays to its end, goes silent for a moment
-and starts again, instead of looping without a seam; noticed "recently". Nothing found yet. What is known:
+Reported on the AYN Thor: battle and overworld music plays to its end, goes silent and starts again.
 
-- The launcher has not changed anything in the audio path: the engine's audio code is untouched since
-  0.4.x, and the patch only swaps the intro songs for their dubbed versions.
-- The engine loops Ogg Vorbis files at their LOOPSTART / LOOPLENGTH tags when they have them; any other
-  file (or an Ogg without tags) is replayed from the start when it ends, so a fade or silence at the end
-  of the file is heard.
-- To check with the game files at hand: the format and tags of the tracks that show it, whether it also
-  happens on PC and on the official 0.7.1 build, and whether the game update to 3.7.1 changed the music.
+- Checked on five tracks of the player's copy: none has LOOPSTART / LOOPLENGTH tags (most were encoded
+  with VLC). "Kanto Route" and "Kanto Town" fade out over their last seconds and end with about 3.5 s of
+  silence; "FireredTrainer" and "gymleader-1" fade out; "fireleafbattle" is level to the end and loops
+  cleanly. So the gap is recorded in the files and the engine, which replays an untagged file from its
+  start, plays it as it is. Nothing in the launcher or the second screen causes it.
+- A fix would have to be ours: the engine already honours loop tags, so it would need loop points for
+  each track (found by analysis, kept as numbers in a table, no audio shipped) and a way to hand them to
+  the engine, since the game's files are not to be modified. Not started; to be decided.
 
 ## Idea for later: foldable phones (not started, nothing tested)
 
